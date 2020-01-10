@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Polls</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div padding>
+    <h1 class="header">{{poll.description}}</h1>
+    <p class="sub-header">* Place vote to see results</p>
+  </div>
+  <div class="vote-area" *ngIf="!voted">
+    <div class="options"> 
+      <button ion-button full class="option" color="light" [ngClass]="{active: selectedOption === option}" 
+        (click)="selectOption(0)" >{{poll.pollOptions[0].name}}</button>
+    </div>
+    <div class="options"> 
+        <button ion-button full class="option" color="light" [ngClass]="{active: selectedOption === option}" 
+          (click)="selectOption(1)" >{{poll.pollOptions[1].name}}</button>
+    </div>
+    <div class="options" *ngIf="poll.pollOptions[2] != null"> 
+          <button ion-button full class="option" color="light" [ngClass]="{active: selectedOption === option}" 
+            (click)="selectOption(2)" >{{poll.pollOptions[2].name}}</button>
+    </div>
+    <div class="options" *ngIf="poll.pollOptions[3] != null"> 
+            <button ion-button full class="option" color="light" [ngClass]="{active: selectedOption === option}" 
+              (click)="selectOption(3)" >{{poll.pollOptions[3].name}}</button>
+    </div>
+    <!--<div >
+      <button ion-button block class="submit" (click)="vote()">Submit Vote!</button>
+    </div>-->
+  </div>
+  <div class="result-area" *ngIf="voted">
+    <canvas baseChart [data]="chartData" [labels]="optionsArray" [chartType]="chartType"></canvas>
+    <div ion-button block class="response">Thank you for voting!</div>
+  </div>
+</ion-content>

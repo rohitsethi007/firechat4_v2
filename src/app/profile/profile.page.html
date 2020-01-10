@@ -1,0 +1,97 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Profile</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        Logout
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div *ngIf="user">
+    <div class="center ion-padding">
+      <img src="{{user.img}}" style="border-radius: 100%;height: 80px;width:80px" tappable (click)="setPhoto()"
+        onError="this.src='http://placehold.it/80x80'">
+    </div>
+    <form [formGroup]="myForm">
+      <ion-list lines="none">
+        <ion-item>
+          <ion-label position="stacked">Fullname</ion-label>
+          <ion-input type="text" formControlName="name" [(ngModel)]="user.name"></ion-input>
+          <div *ngFor="let validation of errorMessages.name">
+            <p class="error"
+              *ngIf="myForm.get('name').hasError(validation.type) && (myForm.get('name').dirty || myForm.get('name').touched || submitAttempt) ">
+              {{validation.message}}
+            </p>
+          </div>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Username</ion-label>
+          <ion-input formControlName="username" type="text" [(ngModel)]="user.username"></ion-input>
+          <div *ngFor="let validation of errorMessages.username">
+            <p class="error"
+              *ngIf="myForm.get('username').hasError(validation.type) && (myForm.get('username').dirty || myForm.get('username').touched || submitAttempt) ">
+              {{validation.message}}
+            </p>
+          </div>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Bio</ion-label>
+          <ion-textarea formControlName="bio" [(ngModel)]="user.description"></ion-textarea>
+          <div *ngFor="let validation of errorMessages.bio">
+            <p class="error"
+              *ngIf="myForm.get('bio').hasError(validation.type) && (myForm.get('bio').dirty || myForm.get('bio').touched || submitAttempt) ">
+              {{validation.message}}
+            </p>
+          </div>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input type="text" formControlName="email" [(ngModel)]="user.email" disabled></ion-input>
+        </ion-item>
+        <div class="ion-padding">
+          <ion-button expand="block" (click)="save()">Save Changes</ion-button>
+        </div>
+      </ion-list>
+    </form>
+    <ion-item-divider>Other Settings</ion-item-divider>
+    <ion-list lines="none">
+
+      <ion-item>
+        <ion-label>Enable Public Visibility</ion-label>
+        <ion-toggle slot="end" [(ngModel)]="user.publicVisibility" (ionChange)="changeVisibility()"></ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-label>Show Online</ion-label>
+        <ion-toggle slot="end" [(ngModel)]="user.showOnline" (ionChange)="changeStatus()"></ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <ion-text>
+            <h3>Enable Notification</h3>
+          </ion-text>
+          <ion-text *ngIf="isBrowser">
+            <p>Push Notification only works on browser</p>
+          </ion-text>
+        </ion-label>
+        <ion-toggle slot="end" [(ngModel)]="user.isPushEnabled" [disabled]="isBrowser"
+          (ionChange)="changeNotification()">
+        </ion-toggle>
+      </ion-item>
+      <ion-item routerLink="/blockedlist">
+        <ion-label>Blocked List</ion-label>
+        <ion-icon slot="end" name="arrow-forward"></ion-icon>
+      </ion-item>
+      <ion-item tappable (click)="setPassword()" *ngIf="user && user.provider == 'Email'">
+        Update Password
+      </ion-item>
+      <ion-item tappable (click)="logout()">Logout</ion-item>
+      <ion-item tappable (click)="deleteAccount()" style="color:#F44336">
+        Delete Account
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>

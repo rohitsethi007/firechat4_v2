@@ -1,0 +1,248 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title (click)="groupInfo()">{{title}}</ion-title>
+    <ion-buttons slot="end">
+			<button *ngIf="loggedInUserIsMember == false" ion-button size="small" color="white" (click)="joinGroup()" >Join Group</button>
+		<!--	<button *ngIf="loggedInUserIsMember == false" ion-button color="primary" (click)="joinGroup()"><ion-icon name="add-circle-outline"></ion-icon></button>-->
+		<button *ngIf="loggedInUserIsMember == true && tab=='polls'" ion-button size="small" color="white" (click)="newPoll()" ><ion-icon name="thumbs-up"></ion-icon></button>
+		<button *ngIf="loggedInUserIsMember == true && tab=='polls'" ion-button size="small" color="white" (click)="newPoll()" ><ion-icon name="add-circle-outline"></ion-icon></button>
+		<button *ngIf="loggedInUserIsMember == true && tab=='resources'" ion-button size="small" color="white" (click)="newResource()" ><ion-icon name="add-circle-outline"></ion-icon></button>
+	</ion-buttons>
+
+  </ion-toolbar>
+
+  <ion-segment padding [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
+		<ion-segment-button value="group">
+  			<ion-icon name="chatbubbles"></ion-icon>
+		</ion-segment-button>
+		<ion-segment-button value="polls">
+			<ion-icon name="podium"></ion-icon>
+		</ion-segment-button>
+		<ion-segment-button value="resources">
+			<ion-icon name="document"></ion-icon>
+		</ion-segment-button>
+		<ion-segment-button value="groupInfo">
+			<ion-icon name="information-circle"></ion-icon>
+		</ion-segment-button>
+	</ion-segment>
+</ion-header>
+
+<ion-content>
+  <div [ngSwitch]="tab" >
+    <div *ngSwitchCase="'group'" >
+  <div class="messages" #content>
+    <p class="center" *ngIf="startIndex > 0"><span tappable (click)="loadPreviousMessages()">Load previous
+        messages</span></p>
+    <div *ngFor="let message of messagesToShow">
+      <!--  System Message -->
+      <div *ngIf="isSystemMessage(message)" style="text-align:center; float: left; color:#ccc">
+        <p>
+          <ion-icon name="{{message.icon}}"></ion-icon>
+          {{message.message}} {{message.date | DateFormat}}
+        </p>
+      </div>
+      <!--  Message -->
+      <div *ngIf="isSender(message) && !isSystemMessage(message)" class="chatbox right" (press)="onPress($event)" (pressup)="onPressUp($event,message)">
+
+        <div *ngIf="isSender(message) && !isSystemMessage(message)">
+          <div class="right" *ngIf="message.type == 'text'"  (press)="onPress($event)" (pressup)="onPressUp($event,message)">
+            <p>{{message.message}}</p>
+            <span>{{message.date | DateFormat}}</span>
+          </div>
+          <div class="right" *ngIf="message.type == 'location'" [innerHtml]="message.message"></div>
+          <div class="right" *ngIf="message.type == 'contact'" [innerHtml]="message.message"></div>
+          <div class="right" *ngIf="message.type == 'image'">
+            <img tappable (click)="enlargeImage(message.url)" src="{{message.url}}" (load)="doScroll()"
+              onError="this.src='./assets/images/default-dp.png'" />
+            <span>{{message.date | DateFormat}}</span>
+          </div>
+          <div *ngIf="message.type == 'video'">
+            <video controls width="100%">
+              <source src="{{message.message}}" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!isSender(message) && !isSystemMessage(message)" class="chatbox left">
+        <img src="{{message.avatar}}" tappable (click)="viewUser(message.sender)" (load)="doScroll()"
+          onError="this.src='./assets/images/default-dp.png'" style="height:30px; border-radius: 100%;float:left;" />
+        <div class="left" *ngIf="message.type == 'text'">
+          <p>{{message.message}}</p>
+          <span>{{message.date | DateFormat}}</span>
+        </div>
+        <div class="left" *ngIf="message.type == 'location'" [innerHtml]="message.message"></div>
+        <div class="left" *ngIf="message.type == 'contact'" [innerHtml]="message.message"></div>
+        <div class="left" *ngIf="message.type == 'image'">
+          <img tappable (click)="enlargeImage(message.url)" src="{{message.url}}"
+            onError="this.src='./assets/images/default-dp.png'" (load)="doScroll()" />
+          <span>{{message.date | DateFormat}}</span>
+        </div>
+        <div *ngIf="message.type == 'video'">
+          <video controls width="100%">
+            <source src="{{message.message}}" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>
+
+  <div *ngSwitchCase="'polls'">
+    <!-- No polls to show -->
+     <div *ngIf="polls && polls.length == 0">
+     <h1><ion-icon name="md-chatbubbles"></ion-icon></h1>
+     <p>No new polls yet.</p>
+     </div>
+     <!-- Show polls -->
+     <div *ngIf="polls && polls.length > 0">
+     <ion-searchbar [(ngModel)]="searchPoll" placeholder="Search for poll" showCancelButton="true" cancelButtonText="Done"></ion-searchbar>
+     <!--<ion-list no-lines>
+       <ion-item *ngFor="let poll of polls | pollFilter: searchPoll" (click)="viewPoll(poll)">
+       <ion-thumbnail item-start>
+         <ion-icon name="podium"></ion-icon>
+       </ion-thumbnail>
+       <h2>{{poll.description}}</h2>
+       <p>{{poll.dateCreated | DateFormat}}</p>
+       <p>{{poll.pollOptions[0].name}}, {{poll.pollOptions[1].name}} </p>
+       <p>Tags: {{poll.pollTagsString}} </p>
+       </ion-item>
+     </ion-list> -->
+         <!-- Card Test -->  fthis is a test
+       <ion-card *ngFor="let poll of polls | pollFilter: searchPoll" (click)="viewPoll(poll)"> 
+         <ion-item>
+           <ion-avatar item-start>
+           <ion-icon name="podium"></ion-icon>
+         </ion-avatar>
+           <h2>{{poll.description}}</h2>
+           <h3>{{poll.dateCreated | DateFormat}}</h3>
+         </ion-item>
+         <ion-row  *ngFor="let pollOption of poll.pollOptions">
+           <ion-col>
+           <!--<button ion-button color="primary" clear small icon-start> -->
+             <ion-icon name='pie'></ion-icon>
+             {{pollOption.name}}
+           <!--</button>-->
+           </ion-col>
+         </ion-row>
+         <ion-item >
+           <ion-avatar item-start>
+             <ion-icon name="pricetags"></ion-icon>
+           </ion-avatar>
+           <h3>{{poll.pollTagsString}}</h3>
+           </ion-item>
+         </ion-card>
+     </div>
+    </div>
+
+    <div *ngSwitchCase="'resources'" >
+    <!-- No Resources to show -->
+     <div *ngIf="resources && resources.length == 0">
+     <h1><ion-icon name="md-chatbubbles"></ion-icon></h1>
+     <p>No new Resources added to this group.</p>
+     </div>
+     <!-- Show Resources -->
+     <div *ngIf="resources && resources.length > 0">
+     <ion-searchbar [(ngModel)]="searchResource" placeholder="Search for Resources" showCancelButton="true" cancelButtonText="Done"></ion-searchbar>
+     <!--<ion-list no-lines>
+       <ion-item *ngFor="let resource of resources | resourceFilter: searchResource" (click)="viewResource(resource)">
+       <ion-thumbnail item-start>
+         <ion-icon name="podium"></ion-icon>
+       </ion-thumbnail>
+       <h2>{{resource.name}}</h2>
+       <p>{{resource.dateCreated | DateFormat}}</p>
+       <p>{{resource.type}} </p>
+       <p>Tags: {{resource.resourceTagsString}} </p>
+       
+       </ion-item>
+     </ion-list>-->
+     <ion-card *ngFor="let resource of resources | resourceFilter: searchResource" (click)="viewResource(resource)"> 
+       <ion-item >
+         <ion-avatar item-start>
+         <ion-icon name="podium"></ion-icon>
+       </ion-avatar>
+         <h2>{{resource.name}}</h2>
+         <h3>{{resource.dateCreated | DateFormat}}</h3>
+       </ion-item>
+       <ion-row>
+         <ion-col>
+         <!--<button ion-button color="primary" clear small icon-start> -->
+           <ion-icon name='pie'></ion-icon>
+           {{resource.type}}
+         <!--</button>-->
+         </ion-col>
+       </ion-row>
+       <ion-item >
+         <ion-avatar item-start>
+           <ion-icon name="pricetags"></ion-icon>
+         </ion-avatar>
+         <h3>{{resource.resourceTagsString}}</h3>
+         </ion-item>
+       </ion-card>
+     </div>
+    </div>
+
+      <!-- Group Info -->
+ <div *ngSwitchCase="'groupInfo'">
+   <ion-row  style="background: white" padding>
+     <ion-col col-md-8>
+     <h4 tappable (click)="setName()">{{group.name}}</h4>
+     <p tappable style="color:#aaa" (click)="setDescription()">{{group.description}}</p>
+     </ion-col>
+     <ion-col col-md-4 class="center">
+       <img src="{{group.img}}" style="border-radius: 100%; width: 80px; height: 80px;" tappable (click)="setPhoto()" onError="this.src='./assets/images/default-group.png'">
+     </ion-col>
+   </ion-row>
+   <ion-list *ngIf="groupMembers">
+     <ion-list-header>
+     Group Members ({{groupMembers.length}})
+     </ion-list-header>
+    <!-- <ion-item (click)="addMembers()">
+     <ion-icon name="add" item-left></ion-icon>
+     <h2>Add Members</h2>
+     </ion-item>-->
+     <ion-item *ngFor="let member of groupMembers" (click)="viewUser(member.$key)">
+     <ion-avatar item-left>
+       <img src="{{member.img}}" onError="this.src='./assets/images/default-dp.png'"/>
+     </ion-avatar>
+     <h2>{{member.name}}</h2>
+     <p>{{member.description}}</p>
+     </ion-item>
+   </ion-list>
+   <ion-list-header *ngIf="loggedInUserIsMember == true" >
+     More
+   </ion-list-header>
+   <ion-list *ngIf="loggedInUserIsMember == true"  style="text-align: center;">  
+     <ion-item no-lines tappable (click)="leaveGroup()" *ngIf="groupMembers && groupMembers.length > 1">
+     Leave Group
+     </ion-item>
+     <!-- When there's only one member left, allow deleting of group. -->
+     <ion-item color="danger" no-lines tappable (click)="deleteGroup()" *ngIf="groupMembers && groupMembers.length <= 1">
+     Delete Group
+     </ion-item>
+   </ion-list>
+   <p padding style="color:#aaa">Started {{group.dateCreated | DateFormat}}</p>
+   </div>
+  </div>
+</ion-content>
+<!-- Message Box -->
+<ion-footer *ngIf="loggedInUserIsMember == true  && tab=='group'">
+  <ion-toolbar>
+    <ion-item  class="bottom_bar">
+      <ion-textarea style="margin:0" type="text" rows="0" placeholder="Type your message" [(ngModel)]="message"
+        (ionFocus)="scrollBottom()" (keypress)="onType($event.keyCode)"></ion-textarea>
+      <ion-buttons slot="end" style="margin-left:4px;">
+        <ion-button fill="clear" (click)="attach()">
+          <ion-icon name="md-attach"></ion-icon>
+        </ion-button>
+        <ion-button slot="end" fill="clear" (click)="send('text')" [disabled]="!message">
+          <ion-icon name="md-send"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

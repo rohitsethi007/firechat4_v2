@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>New Poll</ion-title>
+    <ion-buttons end>
+      <button ion-button tappable (click)="done()" [disabled]="!pollForm.valid">Done</button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="poll">
+    <form [formGroup]="pollForm">
+    
+    <ion-row style="background: #f3f3f3">
+<!--        <ion-col col-3 style="text-align:center; margin-top: 4rem;">
+        <img src="{{group.img}}" *ngIf="group.img != ''" tappable (click)="setGroupPhoto()" onError="this.src='./assets/images/default-group.png'" /> 
+        <img style="border-radius: 100%; width: 100px; height: 100px;" src="{{group.img}}" onError="this.src='./assets/images/default-group.png'" *ngIf="group.img == ''" tappable (click)="setGroupPhoto()" />
+      </ion-col>-->
+      <ion-col col-12>
+        <ion-list no-lines style="margin:0;">
+          <ion-item>
+            <ion-label stacked>Poll Name</ion-label>
+            <ion-input type="text" formControlName="name" placeholder="Title"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked>Description</ion-label>
+            <ion-textarea rows="3" formControlName="description" placeholder="What would like to ask?"></ion-textarea>
+          </ion-item>
+      <ion-item>
+            <ion-label stacked>Option 1</ion-label>
+            <ion-textarea rows="3" formControlName="pollOption1" placeholder="Enter Option 1"></ion-textarea>
+          </ion-item>
+    <ion-item>
+            <ion-label stacked>Option 2</ion-label>
+            <ion-textarea rows="3" formControlName="pollOption2" placeholder="Enter Option 2"></ion-textarea>
+          </ion-item>
+      <ion-item>
+            <ion-label stacked>Option 3</ion-label>
+            <ion-textarea rows="3" formControlName="pollOption3" placeholder="Enter Option 3, you can leave it blank"></ion-textarea>
+          </ion-item>
+    <ion-item>
+            <ion-label stacked>Option 4</ion-label>
+            <ion-textarea rows="3" formControlName="pollOption4" placeholder="Enter Option 4, you can leave it blank"></ion-textarea>
+          </ion-item>
+            <ion-label stacked>Tags:</ion-label>
+            <ion-label stacked>{{pollTagsString}}</ion-label>
+            <button ion-button (click)="openModal()">Open Modal</button>
+  </ion-list>
+      </ion-col>
+    </ion-row>
+    </form>
+</div>
+
+</ion-content>
