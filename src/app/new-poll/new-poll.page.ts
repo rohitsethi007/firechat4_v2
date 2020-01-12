@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { NavController, ModalController } from '@ionic/angular';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
@@ -24,12 +24,35 @@ export class NewPollPage implements OnInit {
   private pollTagsString : any;
   private selectedTab : any;
 
+  
+  validations = {
+    'name': [
+      { type: 'required', message: 'Title is required.' },
+      { type: 'minlength', message: 'Title must be at least 5 characters long.' },
+      { type: 'maxlength', message: 'Title cannot be more than 25 characters long.' }
+    ],
+    'description': [
+      { type: 'required', message: 'Poll Question is required.' },
+      { type: 'minlength', message: 'Poll Question must be at least 10 characters long.' },
+      { type: 'maxlength', message: 'Poll Question cannot be more than 50 characters long.' }
+    ],
+    'pollOption1': [
+      { type: 'required', message: 'Poll Question is required.' },
+      { type: 'minlength', message: 'Poll Question must be at least 10 characters long.' },
+      { type: 'maxlength', message: 'Poll Question cannot be more than 50 characters long.' }
+    ],
+    'pollOption2': [
+      { type: 'required', message: 'Poll Question is required.' },
+      { type: 'minlength', message: 'Poll Question must be at least 10 characters long.' },
+      { type: 'maxlength', message: 'Poll Question cannot be more than 50 characters long.' }
+    ]
+    };
+
   constructor(
     public dataProvider: DataService,
     public loadingProvider: LoadingService,
     private route: ActivatedRoute,
     private router: Router,
-    public formBuilder: FormBuilder,
     public navCtrl: NavController,
     public modalCtrl: ModalController
   ) {
@@ -46,16 +69,6 @@ export class NewPollPage implements OnInit {
       this.loadingProvider.hide();
     });
 	
-    // Create our groupForm based on Validator.ts
-    this.pollForm = formBuilder.group({
-      name: Validator.pollNameValidator,
-      description: Validator.pollDescriptionValidator,
-      pollOption1: Validator.pollOption1Validator,
-      pollOption2: Validator.pollOption2Validator,
-      pollOption3: null,
-      pollOption4: null
-    });
- 
    }
 
   ngOnInit() {
@@ -67,6 +80,36 @@ export class NewPollPage implements OnInit {
       dateCreated: "",
       pollOptions : [],
     };
+
+    
+   this.pollForm = new FormGroup({
+
+    'name': new FormControl('', Validators.compose([
+      Validators.minLength(5),
+      Validators.maxLength(20),
+      Validators.required
+    ])),
+    'description': new FormControl('', Validators.compose([
+      Validators.minLength(10),
+      Validators.maxLength(50),
+      Validators.required
+    ])),
+    'pollOption1': new FormControl('', Validators.compose([
+      Validators.minLength(1),
+      Validators.maxLength(20),
+      Validators.required
+    ])),
+    'pollOption2': new FormControl('', Validators.compose([
+      Validators.minLength(1),
+      Validators.maxLength(20),
+      Validators.required
+    ])),
+    'pollOption3': new FormControl(''),
+    'pollOption4': new FormControl(''),
+    'pollTags': new FormControl('')
+  });
+
+   
   }
 
 
@@ -112,7 +155,7 @@ export class NewPollPage implements OnInit {
         // Add group poll details
         this.pollId = pollId;
         this.group.polls.push(this.pollId);
-        let uid = this.dataProvider.getCurrentUserId;
+        let uid = this.dataProvider.getCurrentUserId();
         // Add system message that the members are added to the group.
         this.group.messages.push({
             date: new Date().toString(),
