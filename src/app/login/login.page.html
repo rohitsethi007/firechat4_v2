@@ -1,6 +1,9 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Login</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Log In</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -48,20 +51,6 @@
           Create New Account
         </ion-button>
 
-        &nbsp;&nbsp;&nbsp;
-        <p class="gray-text" style="text-align: center;">Or continue with</p>
-        <ion-row>
-          <ion-col>
-            <ion-button color="facebook" expand="block" (click)="loginWithFacebook()">
-              <ion-icon name="logo-facebook"></ion-icon>
-            </ion-button>
-          </ion-col>
-          <ion-col>
-            <ion-button color="google" expand="block" (click)="loginWithGoogle()">
-              <ion-icon name="logo-google"></ion-icon>
-            </ion-button>
-          </ion-col>
-        </ion-row>
       </div>
     </ion-list>
   </form>

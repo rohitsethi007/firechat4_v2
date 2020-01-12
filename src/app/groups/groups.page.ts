@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-groups',
   templateUrl: './groups.page.html',
-  styleUrls: ['./groups.page.scss'],
+  styleUrls: ['./groups.page.scss','./groups.shell.scss'],
 })
 export class GroupsPage implements OnInit {
 

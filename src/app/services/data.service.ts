@@ -68,7 +68,7 @@ export class DataService {
   }
 
   // Get groups of the logged in user.
-  getGroups() {
+  getGroups_original() {
     return this.afdb.list('/accounts/' + this.afAuth.auth.currentUser.uid + '/groups');
   }
 
@@ -118,4 +118,9 @@ export class DataService {
   addPoll(poll){
     return this.afdb.list('polls').push(poll);
   }
+
+    // Get all groups.
+  getGroups() {
+      return this.afdb.list('/groups', ref => ref.orderByChild('name'));
+    }
 }

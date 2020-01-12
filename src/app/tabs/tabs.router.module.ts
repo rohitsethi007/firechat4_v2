@@ -12,8 +12,8 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: () =>
-              import('../messages/messages.module').then(m => m.MessagesPageModule)
+            loadChildren: () => 
+              import('../groups/groups.module').then(m => m.GroupsPageModule)
           }
         ]
       },
@@ -23,7 +23,7 @@ const routes: Routes = [
           {
             path: '',
             loadChildren: () =>
-              import('../groups/groups.module').then(m => m.GroupsPageModule)
+              import('../messages/messages.module').then(m => m.MessagesPageModule)
           }
         ]
       },

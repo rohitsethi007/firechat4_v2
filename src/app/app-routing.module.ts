@@ -2,8 +2,9 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
+  { path: '', redirectTo: '/walkthrough', pathMatch: 'full' },
   {
-    path: '',
+    path: 'app',
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
   },
   { path: 'friends', loadChildren: './friends/friends.module#FriendsPageModule' },
@@ -24,7 +25,9 @@ const routes: Routes = [
   { path: 'popover', loadChildren: './popover/popover.module#PopoverPageModule' },
   { path: 'tag-modal/:groupTags', loadChildren: './tag-modal/tag-modal.module#TagModalPageModule' },
   { path: 'poll', loadChildren: './poll/poll.module#PollPageModule' },
-  { path: 'new-poll/:id', loadChildren: './new-poll/new-poll.module#NewPollPageModule' }
+  { path: 'new-poll/:id', loadChildren: './new-poll/new-poll.module#NewPollPageModule' },
+  { path: 'walkthrough', loadChildren: './walkthrough/walkthrough.module#WalkthroughPageModule' },
+  { path: 'getting-started', loadChildren: './getting-started/getting-started.module#GettingStartedPageModule' },
 ];
 @NgModule({
   imports: [

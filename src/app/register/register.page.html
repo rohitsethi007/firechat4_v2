@@ -8,16 +8,19 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div class="center ion-padding">
+  <h2 class="auth-title">
+    Welcome!
+  </h2>
+<!--  <div class="center ion-padding">
     <img src="assets/images/logo.png" style="width:80px;height:80px;" />
-  </div>
+  </div>-->
   <form [formGroup]="myForm">
-    <ion-list lines="none">
+    <ion-list class="inputs-list" lines="full">
       <ion-item>
         <ion-label position="stacked">Fullname</ion-label>
         <ion-input type="text" formControlName="name" [(ngModel)]="name"></ion-input>
         <div *ngFor="let validation of errorMessages.name">
-          <p class="error"
+          <p class="error-message"
             *ngIf="myForm.get('name').hasError(validation.type) && (myForm.get('name').dirty || myForm.get('name').touched || submitAttempt) ">
             {{validation.message}}
           </p>
@@ -27,7 +30,7 @@
         <ion-label position="stacked">Username</ion-label>
         <ion-input type="text" formControlName="username" [(ngModel)]="username"></ion-input>
         <div *ngFor="let validation of errorMessages.username">
-          <p class="error"
+          <p class="error-message"
             *ngIf="myForm.get('username').hasError(validation.type) && (myForm.get('username').dirty || myForm.get('username').touched || submitAttempt) ">
             {{validation.message}}
           </p>
@@ -37,7 +40,7 @@
         <ion-label position="stacked">Email</ion-label>
         <ion-input type="text" formControlName="email" [(ngModel)]="email"></ion-input>
         <div *ngFor="let validation of errorMessages.email">
-          <p class="error"
+          <p class="error-message"
             *ngIf="myForm.get('email').hasError(validation.type) && (myForm.get('email').dirty || myForm.get('email').touched || submitAttempt) ">
             {{validation.message}}
           </p>
@@ -47,16 +50,22 @@
         <ion-label position="stacked">Password</ion-label>
         <ion-input type="password" formControlName="password" [(ngModel)]="password"></ion-input>
         <div *ngFor="let validation of errorMessages.password">
-          <p class="error"
+          <p class="error-message"
             *ngIf="myForm.get('password').hasError(validation.type) && (myForm.get('password').dirty || myForm.get('password').touched || submitAttempt) ">
             {{validation.message}}
           </p>
         </div>
       </ion-item>
       <div class="ion-padding">
-        <ion-button expand="block" (click)="register()">
+        <ion-button class="signup-btn" expand="block" (click)="register()">
           Register
         </ion-button>
+        <ion-row class="other-auth-options-row">
+          <ion-button class="login-btn" fill="clear" [routerLink]="['/login']">
+            Already have an account?
+          </ion-button>
+        </ion-row>
+    
       </div>
     </ion-list>
   </form>

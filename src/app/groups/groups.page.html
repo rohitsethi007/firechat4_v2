@@ -3,11 +3,11 @@
     <ion-title>Groups</ion-title>
     <ion-buttons slot="end">
       <ion-button routerLink="/newgroup">Create New</ion-button>
-    </ion-buttons>
+    </ion-buttons> 
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="food-listing-content">
 
   <div class="empty-list" *ngIf="groups && groups.length <= 0">
     <h1>
@@ -16,10 +16,56 @@
     <p>No new groups yet.</p>
   </div>
   <!-- Show groups -->
+  <ng-container>
   <div *ngIf="groups && groups.length > 0">
     <ion-searchbar [(ngModel)]="searchGroup" placeholder="search"></ion-searchbar>
     <ion-list lines="none">
       <ion-item *ngFor="let group of groups | groupFilter: searchGroup" (click)="viewGroup(group.key)">
+        <div class="cover-wrapper">
+          <a class="cover-anchor">
+            <app-image-shell class="cover-image add-overlay" animation="spinner" [mode]="'cover'" [src]="group.img">
+              <app-aspect-ratio [ratio]="{w:35, h:15}">
+                <div class="cover-icon-wrapper">
+                  <app-aspect-ratio [ratio]="{w: 20, h: 7}">
+                    <app-image-shell class="item-icon" [src]="default-group.png"></app-image-shell>
+                  </app-aspect-ratio>
+                </div>
+              </app-aspect-ratio>
+            </app-image-shell>
+          </a>
+        </div>
+        <ion-row class="info-row">
+          <ion-col class="description-col">
+            <ion-row class="description-wrapper">
+              <h3 class="item-name">
+                <a class="name-anchor" [routerLink]="">
+                  <app-text-shell [data]="item.name"></app-text-shell>
+                </a>
+              </h3>
+              <p class="item-address">
+                <app-text-shell [data]="item.address"></app-text-shell>
+              </p>
+              <ion-row class="item-tags">
+                <ion-col class="tag-wrapper" *ngFor="let tag of item.tags">
+                  <span class="item-tag">
+                    <app-text-shell [data]="tag"></app-text-shell>
+                  </span>
+                </ion-col>
+              </ion-row>
+            </ion-row>
+          </ion-col>
+          <ion-col class="stats-col" size="2">
+            <span class="item-rating" [attr.ratingBase]="item.rating | floor">
+              <app-text-shell [data]="item.rating"></app-text-shell>
+            </span>
+            <div class="item-price-range">
+              <span class="price" *ngFor="let price of [].constructor(item.priceRange)">$</span>
+              <span class="no-price" *ngFor="let price of [].constructor(5 - (item.priceRange || 1))">$</span>
+            </div>
+          </ion-col>
+        </ion-row>
+      
+        
         <ion-thumbnail slot="start">
           <img src="{{group.img}}" onError="this.src='./assets/images/default-group.png'">
         </ion-thumbnail>
@@ -36,4 +82,5 @@
       </ion-item>
     </ion-list>
   </div>
+</ng-container>
 </ion-content>

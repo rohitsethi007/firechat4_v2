@@ -32,9 +32,9 @@ export class AppComponent {
 
       this.afAuth.auth.onAuthStateChanged(user => {
         if (user == null)
-          this.router.navigateByUrl('/login', { replaceUrl: true, skipLocationChange: true })
+          this.router.navigateByUrl('walkthrough', { replaceUrl: true, skipLocationChange: true })
         else
-          this.router.navigateByUrl('/tabs/tab1', { skipLocationChange: true, replaceUrl: true })
+          this.router.navigateByUrl('/app/tabs/tab1', { skipLocationChange: true, replaceUrl: true })
       })
     });
   }
