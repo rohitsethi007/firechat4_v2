@@ -78,7 +78,8 @@ export class DataService {
   }
 
   getBlockedLists() {
-    return this.afdb.list('/accounts/' + this.afAuth.auth.currentUser.uid + '/conversations', ref => ref.orderByChild('blocked').equalTo(true));
+    return this.afdb.list('/accounts/' + this.afAuth.auth.currentUser.uid +
+      '/conversations', ref => ref.orderByChild('blocked').equalTo(true));
   }
 
 
@@ -110,7 +111,7 @@ export class DataService {
   }
 
   updatePollMembers(pollKey, pollOptionIndex, members) {
-    this.afdb.object('/polls/' + pollKey + '/pollOptions/' + pollOptionIndex).update({
+    this.afdb.object('/polls/' + pollKey + '/pollOptions/' + pollOptionIndex).update({ 
       members: members
     });
   }

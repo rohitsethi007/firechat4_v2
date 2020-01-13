@@ -148,7 +148,7 @@ export class NewPollPage implements OnInit {
     }
     this.poll.pollTags = [];
     this.poll.pollTags = this.pollTags; 
-      // Add poll to database.
+      // Add poll to database. 
       this.dataProvider.addPoll(this.poll).then((success) => {
         let pollId = success.key;
         // Add system message that group is created.

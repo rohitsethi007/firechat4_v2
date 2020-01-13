@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { Camera } from '@ionic-native/camera/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { NavController, ActionSheetController, AlertController, ModalController,PopoverController } from '@ionic/angular';
+import { NavController, ActionSheetController, AlertController, ModalController, PopoverController } from '@ionic/angular';
 import { Contacts } from '@ionic-native/contacts/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LoadingService } from '../services/loading.service';
@@ -43,8 +43,8 @@ export class GroupPage implements OnInit {
   private loggedInUserIsMember: any = 'false';
   private searchPoll: any;
   private searchResource: any;
-  private resourceTags : any;
-  private resourceTagsString : any;
+  private resourceTags: any;
+  private resourceTagsString: any;
   private alert: any;
   // GroupPage
   // This is the page where the user can chat with other group members and view group info.
@@ -79,10 +79,10 @@ export class GroupPage implements OnInit {
     });
 
     this.resourceTags = [];
-    this.resourceTags.push({val: "Diet Plan", isChecked: true});
-    this.resourceTags.push({val: "Contact", isChecked: true});
-    this.resourceTags.push({val: "Document", isChecked: true});
-    this.resourceTags.push({val: "Link", isChecked: true});
+    this.resourceTags.push({ val: "Diet Plan", isChecked: true });
+    this.resourceTags.push({ val: "Contact", isChecked: true });
+    this.resourceTags.push({ val: "Document", isChecked: true });
+    this.resourceTags.push({ val: "Link", isChecked: true });
   }
 
   ionViewDidEnter() {
@@ -333,7 +333,7 @@ export class GroupPage implements OnInit {
     this.router.navigateByUrl('/groupinfo/' + this.groupId);
   }
 
- // Controller Functions
+  // Controller Functions
   onPress($event) {
     console.log("onPress", $event);
   }
@@ -345,76 +345,76 @@ export class GroupPage implements OnInit {
     this.presentPopover(event, message);
   }
 
-// MY Methods ************************
+  // MY Methods ************************
 
-async joinGroup() {
-  this.alert = this.alertCtrl.create({
-    header: 'Join Group',
-    message: 'Are you sure you want to join this group?',
-    buttons: [
-      {
-        text: 'Cancel'
-      },
-      {
-        text: 'Join',
-        handler: data => {
-          // Proceed
-          this.loadingProvider.show();
+  async joinGroup() {
+    this.alert = this.alertCtrl.create({
+      header: 'Join Group',
+      message: 'Are you sure you want to join this group?',
+      buttons: [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Join',
+          handler: data => {
+            // Proceed
+            this.loadingProvider.show();
 
-          // Add groupInfo to each friend added to the group.
-          this.angularfire.object('/accounts/' + firebase.auth().currentUser.uid + '/groups/' + this.groupId).update({
-            messagesRead: 0
-          });
-          // Add friend as members of the group.
-          this.group.members.push(firebase.auth().currentUser.uid);
-          // Add system message that the members are added to the group.
-          this.group.messages.push({
-            date: new Date().toString(),
-            sender: firebase.auth().currentUser.uid,
-            type: 'system',
-            message: this.user.name + ' has joined the group.',
-            icon: 'md-contacts'
-          });
-          
-          // Update group data on the database.
-          this.dataProvider.getGroup(this.groupId).update({
-            members: this.group.members,
-            messages: this.group.messages
-          }).then(() => {
-            // Back.
-            this.loadingProvider.hide();
-            this.navCtrl.back();
-          });
+            // Add groupInfo to each friend added to the group.
+            this.angularfire.object('/accounts/' + firebase.auth().currentUser.uid + '/groups/' + this.groupId).update({
+              messagesRead: 0
+            });
+            // Add friend as members of the group.
+            this.group.members.push(firebase.auth().currentUser.uid);
+            // Add system message that the members are added to the group.
+            this.group.messages.push({
+              date: new Date().toString(),
+              sender: firebase.auth().currentUser.uid,
+              type: 'system',
+              message: this.user.name + ' has joined the group.',
+              icon: 'md-contacts'
+            });
+
+            // Update group data on the database.
+            this.dataProvider.getGroup(this.groupId).update({
+              members: this.group.members,
+              messages: this.group.messages
+            }).then(() => {
+              // Back.
+              this.loadingProvider.hide();
+              this.navCtrl.back();
+            });
+          }
+        }
+      ]
+    }).then(r => r.present());
+  }
+
+
+  async presentPopover(myEvent: any, message) {
+    let ev: any;
+    ev = {
+      target: {
+        getBoundingClientRect: () => {
+          return {
+            top: myEvent.center.y,
+            left: myEvent.center.x
+          };
         }
       }
-    ]
-  }).then(r => r.present());
-}
+    };
+    const popover = await this.popoverCtrl.create({
+      component: PopoverPage,
+      componentProps: { message: message, groupId: this.groupId },
+      event: ev,
+      translucent: true
+    });
+    return await popover.present();
+  }
+  ///********************* POLL Functions ***********************************/
 
-
-async presentPopover(myEvent: any, message) {
-  let ev : any;
-  ev = {
-    target : {
-      getBoundingClientRect : () => {
-        return {
-          top: myEvent.center.y,
-          left:myEvent.center.x
-        };
-      }
-    }
-  };
-  const popover = await this.popoverCtrl.create({
-    component: PopoverPage,
-    componentProps: {message:message, groupId: this.groupId},
-    event: ev,
-    translucent: true
-  });
-  return await popover.present();
-}
-///********************* POLL Functions ***********************************/
-  
-getGroupDetailsandMessages() {
+  getGroupDetailsandMessages() {
     // Get group details
 
     this.groupId = this.route.snapshot.params.id;
@@ -423,12 +423,12 @@ getGroupDetailsandMessages() {
         this.group = group.payload.val();
         this.title = group.payload.val().name;
 
-         //Get Group Members
-         if (this.group.members) {
+        //Get Group Members
+        if (this.group.members) {
           this.group.members.forEach((memberId) => {
             this.dataProvider.getUser(memberId).snapshotChanges().subscribe((member: any) => {
-              if(member.key != null){
-                member = { $key: member.key, ... member.payload.val()};
+              if (member.key != null) {
+                member = { $key: member.key, ...member.payload.val() };
                 this.addUpdateOrRemoveMember(member);
               }
             });
@@ -468,7 +468,7 @@ getGroupDetailsandMessages() {
               this.messages.push(message);
             });
             // Load messages in relation to numOfMessages.
-            if (this.startIndex == -1) {
+            if (this.startIndex === -1) {
               // Get initial index for numberOfMessages to show.
               if ((this.messages.length - this.numberOfMessages) > 0) {
                 this.startIndex = this.messages.length - this.numberOfMessages;
@@ -488,12 +488,11 @@ getGroupDetailsandMessages() {
         });
 
         this.dataProvider.getGroupMembers(group.key).snapshotChanges().subscribe((memberIdsRes: any) => {
-          let memberIds = memberIdsRes.payload.val();
+          const memberIds = memberIdsRes.payload.val();
           if (memberIds.includes(firebase.auth().currentUser.uid)) {
-            this.loggedInUserIsMember= true;
-          }
-          else {
-            this.loggedInUserIsMember= false;
+            this.loggedInUserIsMember = true;
+          } else {
+            this.loggedInUserIsMember = false;
           }
 
         });
@@ -501,92 +500,89 @@ getGroupDetailsandMessages() {
     });
 
     // Update messages' date time elapsed every minute based on Moment.js.
-    var that = this;
+    const that = this;
     if (!that.updateDateTime) {
-      that.updateDateTime = setInterval(function () {
+      that.updateDateTime = setInterval(() => {
         if (that.messages) {
           that.messages.forEach((message) => {
-            let date = message.date;
+            const date = message.date;
             message.date = new Date(date);
           });
         }
       }, 60000);
     }
-}
+  }
 
-// Check if user exists in the group then add/update user.
-// If the user has already left the group, remove user from the list.
-addUpdateOrRemoveMember(member) {
-  console.log(member);
-  if (this.group) {
-    if (this.group.members.indexOf(member.$key) > -1) {
-      // User exists in the group.
-      if (!this.groupMembers) {
-        this.groupMembers = [member];
-      } else {
-        var index = -1;
-        for (var i = 0; i < this.groupMembers.length; i++) {
-          if (this.groupMembers[i].$key == member.$key) {
-            index = i;
+  // Check if user exists in the group then add/update user.
+  // If the user has already left the group, remove user from the list.
+  addUpdateOrRemoveMember(member) {
+    console.log(member);
+    if (this.group) {
+      if (this.group.members.indexOf(member.$key) > -1) {
+        // User exists in the group.
+        if (!this.groupMembers) {
+          this.groupMembers = [member];
+        } else {
+          let index = -1;
+          for (let i = 0; i < this.groupMembers.length; i++) {
+            if (this.groupMembers[i].$key === member.$key) {
+              index = i;
+            }
+          }
+          // Add/Update User.
+          if (index > -1) {
+            this.groupMembers[index] = member;
+          } else {
+            this.groupMembers.push(member);
           }
         }
-        // Add/Update User.
-        if (index > -1) {
-          this.groupMembers[index] = member;
-        } else {
-          this.groupMembers.push(member);
+      } else {
+        // User already left the group, remove member from list.
+        let index1 = -1;
+        for (let j = 0; j < this.groupMembers.length; j++) {
+          if (this.groupMembers[j].$key === member.$key) {
+            index1 = j;
+          }
         }
-      }
-    } else {
-      // User already left the group, remove member from list.
-      var index1 = -1;
-      for (var j = 0; j < this.groupMembers.length; j++) {
-        if (this.groupMembers[j].$key == member.$key) {
-          index1 = j;
+        if (index1 > -1) {
+          this.groupMembers.splice(index1, 1);
         }
-      }
-      if (index1 > -1) {
-        this.groupMembers.splice(index1, 1);
       }
     }
   }
-}
 
 
-segmentChanged($event){
-    if(this.tab == 'groups'){
+  segmentChanged($event) {
+    if (this.tab === 'groups') {
       this.title = this.group.name; this.getGroupDetailsandMessages();
-    }
-    else if(this.tab == 'polls'){
+    } else if (this.tab === 'polls') {
       this.title = this.group.name; this.getPolls();
-    }
-    else if(this.tab == 'resources'){
+    } else if (this.tab === 'resources') {
       this.title = this.group.name; this.getResources();
-    }
-    else if(this.tab == 'groupInfo'){
+    } else if (this.tab === 'groupInfo') {
       this.title = this.group.name;
     }
   }
 
   getPolls() {
-      this.subscription = this.dataProvider.getGroupPolls(this.groupId).snapshotChanges().subscribe((pollIdsRes: any) => {
+    this.subscription = this.dataProvider.getGroupPolls(this.groupId).snapshotChanges().subscribe((pollIdsRes: any) => {
       let pollIds = pollIdsRes.payload.val();
-          if(pollIds == null || pollIds == undefined) pollIds = [];
+      if (pollIds == null || pollIds === undefined) { pollIds = []; }
       console.log(pollIds);
       if (pollIds.length > 0) {
         pollIds.forEach((pollId) => {
-          var pId = pollId;
-          
+          const pId = pollId;
+
           console.log(pId);
-          if (pId != null && pId != "system0000") {
+          if (pId != null && pId !== 'system0000') {
             this.dataProvider.getPollDetails(pId).snapshotChanges().subscribe((pollRes) => {
-              let poll = pollRes.payload.val();
+              const poll = { key: pollRes.key, ...pollRes.payload.val() };
               console.log(poll);
               this.addOrUpdatePoll(poll);
-            
 
-          });
-        }
+
+            });
+          }
         });
         this.loadingProvider.hide();
       } else {
@@ -597,46 +593,46 @@ segmentChanged($event){
   }
   // Open Group Chat.
   viewPoll(poll) {
-    let navigationExtras: NavigationExtras = {
+    const navigationExtras: NavigationExtras = {
       state: {
         poll: poll
       }
     };
     this.router.navigate(['poll'], navigationExtras);
 
-    //this.router.navigate('/poll/' + poll);
-//    this.app.getRootNav().push(PollPage, { poll: poll });
+    // this.router.navigate('/poll/' + poll);
+    //    this.app.getRootNav().push(PollPage, { poll: poll });
   }
 
   newPoll() {
     this.router.navigateByUrl('/new-poll/' + this.groupId);
     //this.app.getRootNav().push(NewPollPage, { groupId: this.groupId });
   }
-  
+
   newResource() {
     this.router.navigateByUrl('/new-resource/' + this.groupId);
     //this.app.getRootNav().push(NewResourcePage, { groupId: this.groupId });
   }
 
   getResources() {
-	  this.dataProvider.getGroupResources(this.groupId).snapshotChanges().subscribe((resourceIdsRes: any) => {
+    this.dataProvider.getGroupResources(this.groupId).snapshotChanges().subscribe((resourceIdsRes: any) => {
       let resourceIds = resourceIdsRes.payload.val();
-          if(resourceIds == null || resourceIds == undefined) resourceIds = [];
+      if (resourceIds == null || resourceIds == undefined) resourceIds = [];
       console.log(resourceIds);
       if (resourceIds.length > 0) {
         resourceIds.forEach((resourceId) => {
           var rId = resourceId;
-          
+
           console.log(rId);
           if (rId != null && rId != "system0000") {
             this.dataProvider.getResourceDetails(rId).snapshotChanges().subscribe((resourceRes: any) => {
               let resource = { key: resourceRes.key, ...resourceRes.payload.val() };
               console.log(resource);
               this.addOrUpdateResource(resource);
-            
 
-          });
-        }
+
+            });
+          }
         });
         this.loadingProvider.hide();
       } else {
@@ -646,32 +642,32 @@ segmentChanged($event){
     });
   }
 
-  openResourceFilter(){
+  openResourceFilter() {
     this.openModal();
   }
-  
-  
+
+
 
   openModal() {
 
     this.modalCtrl.create({
       component: TagModalPage,
       componentProps: { groupTags: this.resourceTags }
-     }).then(res => {
+    }).then(res => {
       res.present();
     })
 
     this.modalCtrl.dismiss((data) => {
-          this.resourceTagsString = "";
-        this.resourceTags = data;
-        this.resourceTags.forEach(element => {
-          if (element.isChecked == true) {
-            this.resourceTagsString = this.resourceTagsString + ", " + element.val;
-          }
-        });
-        this.resourceTagsString = this.resourceTagsString.replace(', ','');
-
+      this.resourceTagsString = "";
+      this.resourceTags = data;
+      this.resourceTags.forEach(element => {
+        if (element.isChecked == true) {
+          this.resourceTagsString = this.resourceTagsString + ", " + element.val;
+        }
       });
+      this.resourceTagsString = this.resourceTagsString.replace(', ', '');
+
+    });
 
   }
   // Add or update group for real-time sync based on our observer.
@@ -679,17 +675,17 @@ segmentChanged($event){
     poll.pollTagsString = "";
     if (poll.pollTags && poll.pollTags) {
 
-        poll.pollTags.forEach(element => {
-          if (element.isChecked == true) {
-            poll.pollTagsString = poll.pollTagsString + ", " + element.val;
-          }
-        });
+      poll.pollTags.forEach(element => {
+        if (element.isChecked == true) {
+          poll.pollTagsString = poll.pollTagsString + ", " + element.val;
+        }
+      });
 
-        poll.pollTagsString = poll.pollTagsString.replace(', ','');
-      }
-      else {
-        poll.pollTagsString = "No tags found";
-      }
+      poll.pollTagsString = poll.pollTagsString.replace(', ', '');
+    }
+    else {
+      poll.pollTagsString = "No tags found";
+    }
     if (!this.polls) {
       this.polls = [poll];
     } else {
@@ -708,18 +704,18 @@ segmentChanged($event){
   }
 
 
-  
+
   // Add or update group for real-time sync based on our observer.
   addOrUpdateResource(resource) {
     resource.resourceTagsString = "";
     if (resource.resourceTags && resource.resourceTags) {
-        resource.resourceTags.forEach(element => {
-          if (element.isChecked == true) {
-            resource.resourceTagsString = resource.resourceTagsString + ", " + element.val;
-          }
-        });
+      resource.resourceTags.forEach(element => {
+        if (element.isChecked == true) {
+          resource.resourceTagsString = resource.resourceTagsString + ", " + element.val;
+        }
+      });
 
-          resource.resourceTagsString = resource.resourceTagsString.replace(', ','');
+      resource.resourceTagsString = resource.resourceTagsString.replace(', ', '');
     }
     else {
       resource.resourceTagsString = "No tags found";

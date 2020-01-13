@@ -1,40 +1,53 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Polls</ion-title>
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
+    <ion-title>Poll - {{poll.name}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="filters-content">
   <div padding>
     <h1 class="header">{{poll.description}}</h1>
-    <p class="sub-header">* Place vote to see results</p>
+    <p class="sub-header" *ngIf="!voted">* Please vote to see results</p>
   </div>
-  <div class="vote-area" *ngIf="!voted">
-    <div class="options"> 
-      <button ion-button full class="option" color="light" [ngClass]="{active: selectedOption === option}" 
-        (click)="selectOption(0)" >{{poll.pollOptions[0].name}}</button>
-    </div>
-    <div class="options"> 
-        <button ion-button full class="option" color="light" [ngClass]="{active: selectedOption === option}" 
-          (click)="selectOption(1)" >{{poll.pollOptions[1].name}}</button>
-    </div>
-    <div class="options" *ngIf="poll.pollOptions[2] != null"> 
-          <button ion-button full class="option" color="light" [ngClass]="{active: selectedOption === option}" 
-            (click)="selectOption(2)" >{{poll.pollOptions[2].name}}</button>
-    </div>
-    <div class="options" *ngIf="poll.pollOptions[3] != null"> 
-            <button ion-button full class="option" color="light" [ngClass]="{active: selectedOption === option}" 
-              (click)="selectOption(3)" >{{poll.pollOptions[3].name}}</button>
-    </div>
+  <form [formGroup]="pollOptionForm">
+  <ion-list class="radio-list" lines="full" *ngIf="!voted">
+    <ion-radio-group class="radio-group" formControlName="selected_poll_option">
+      <ion-item class="radio-item">
+        <ion-label class="radio-label">{{poll.pollOptions[0].name}}</ion-label>
+        <ion-radio slot="start" color="secondary" value="0"></ion-radio>
+      </ion-item>
+      <ion-item class="radio-item">
+        <ion-label class="radio-label">{{poll.pollOptions[1].name}}</ion-label>
+        <ion-radio slot="start" color="secondary" value="1"></ion-radio>
+      </ion-item>
+      <ion-item class="radio-item" *ngIf="poll.pollOptions[2] != null">
+        <ion-label class="radio-label">{{poll.pollOptions[2].name}}</ion-label>
+        <ion-radio slot="start" color="secondary" value="2"></ion-radio>
+      </ion-item>
+      <ion-item class="radio-item" *ngIf="poll.pollOptions[3] != null">
+        <ion-label class="radio-label">{{poll.pollOptions[3].name}}</ion-label>
+        <ion-radio slot="start" color="secondary" value="3"></ion-radio>
+      </ion-item>
+      <ion-item class="input-item">
+        <ion-label position="floating">Comments</ion-label>
+        <ion-textarea rows="6"  placeholder="Enter more information here..." type="text" formControlName="comments" clearInput placeholder="Enter any additional comments that might help other members (optional) ..."></ion-textarea>
+
+      </ion-item>
+    </ion-radio-group>
+  </ion-list>
+  </form>
+  <div>
+  <ion-button *ngIf="!voted" class="submit-btn" type="submit" expand="block" (click)="vote()" fill="outline" [disabled]="!pollOptionForm.valid">Submit</ion-button>
+</div>
     <!--<div >
       <button ion-button block class="submit" (click)="vote()">Submit Vote!</button>
     </div>-->
-  </div>
-  <div class="result-area" *ngIf="voted">
+
+  <div padding *ngIf="voted">
     <canvas baseChart [data]="chartData" [labels]="optionsArray" [chartType]="chartType"></canvas>
-    <div ion-button block class="response">Thank you for voting!</div>
+    <h1>Thank you for voting!</h1>
   </div>
 </ion-content>
