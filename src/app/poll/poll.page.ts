@@ -14,13 +14,13 @@ import { DataService } from '../services/data.service';
 export class PollPage implements OnInit {
   private poll: any;
   private pollOptionForm: FormGroup;
-  private options1: any;
-  private options: any;
   private optionsArray: string[];
   private chartData: number[];
   private selectedOption: any;
   private chartType: any;
   private voted: any;
+  private pollClosed: any;
+  private comments: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -30,6 +30,8 @@ export class PollPage implements OnInit {
   ) {
 
     this.poll = this.router.getCurrentNavigation().extras.state.poll;
+    this.comments = this.poll.comments;
+    console.log(this.comments);
     this.pollOptionForm = new FormGroup({
       selected_poll_option: new FormControl('', Validators.compose([
         Validators.required
@@ -49,8 +51,6 @@ export class PollPage implements OnInit {
     let pollOption1Name: string;
     let pollOption2Name: string;
     let pollOption3Name: string;
-
-    this.options = {};
 
     pollOption0Name = this.poll.pollOptions[0].name;
     pollOption1Name = this.poll.pollOptions[1].name;
@@ -94,6 +94,15 @@ export class PollPage implements OnInit {
     this.chartType = 'doughnut';
 
     this.voted = false;
+
+    const today = new Date();
+    const de = new Date(this.poll.dateEnding);
+    if (de < today) {
+      this.pollClosed = true;
+    } else {
+      this.pollClosed = false;
+    }
+
     this.poll.pollOptions.forEach(pollOption => {
       if (pollOption.members != null) {
         pollOption.members.forEach(member => {
@@ -102,11 +111,14 @@ export class PollPage implements OnInit {
           }
         });
       }
-
     });
   }
 
   vote() {
+  // Get user's friends to add to the group.
+  this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accountRes: any) => {
+    const account = { $key: accountRes.key, ...accountRes.payload.val() };
+    console.log('Current User Details: ' + account.username);
     const pollOptionIndex = this.pollOptionForm.value["selected_poll_option"];
     console.log('selected poll option: ' + pollOptionIndex);
     this.loadingProvider.show();
@@ -114,13 +126,22 @@ export class PollPage implements OnInit {
     members.push(this.dataProvider.getCurrentUserId());
     this.poll.pollOptions[pollOptionIndex].members = members;
     this.voted = true;
+    const comments = [];
+    comments.push({
+      comment: this.pollOptionForm.value["comments"],
+      addedBy: account.username,
+      dateCreated: new Date().toString()
+    });
+
     // Update group data on the database.
     console.log('poll key' + this.poll.key);
     console.log('pollOptionIndex' + pollOptionIndex);
     console.log('members' + members);
+    console.log('updating poll comments ...' + this.poll.key, comments);
+    this.dataProvider.updatePollComments(this.poll.key, comments);
     this.dataProvider.updatePollMembers(this.poll.key, pollOptionIndex, members);
-
     this.ngOnInit();
     this.loadingProvider.hide();
+  });
   }
 }

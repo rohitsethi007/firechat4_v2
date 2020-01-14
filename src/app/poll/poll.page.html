@@ -3,17 +3,17 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Poll - {{poll.name}}</ion-title>
+    <ion-title>{{title}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="filters-content">
+<ion-content class="filters-content notifications-content">
   <div padding>
     <h1 class="header">{{poll.description}}</h1>
-    <p class="sub-header" *ngIf="!voted">* Please vote to see results</p>
+    <p class="sub-header" *ngIf="!voted && !pollClosed">* Please vote to see results</p>
   </div>
   <form [formGroup]="pollOptionForm">
-  <ion-list class="radio-list" lines="full" *ngIf="!voted">
+  <ion-list class="radio-list" lines="full" *ngIf="!voted && !pollClosed">
     <ion-radio-group class="radio-group" formControlName="selected_poll_option">
       <ion-item class="radio-item">
         <ion-label class="radio-label">{{poll.pollOptions[0].name}}</ion-label>
@@ -34,20 +34,34 @@
       <ion-item class="input-item">
         <ion-label position="floating">Comments</ion-label>
         <ion-textarea rows="6"  placeholder="Enter more information here..." type="text" formControlName="comments" clearInput placeholder="Enter any additional comments that might help other members (optional) ..."></ion-textarea>
-
       </ion-item>
     </ion-radio-group>
   </ion-list>
   </form>
   <div>
-  <ion-button *ngIf="!voted" class="submit-btn" type="submit" expand="block" (click)="vote()" fill="outline" [disabled]="!pollOptionForm.valid">Submit</ion-button>
-</div>
-    <!--<div >
-      <button ion-button block class="submit" (click)="vote()">Submit Vote!</button>
-    </div>-->
-
-  <div padding *ngIf="voted">
+  <ion-button *ngIf="!voted && !pollClosed" class="submit-btn" type="submit" expand="block" (click)="vote()" fill="outline" [disabled]="!pollOptionForm.valid">Submit</ion-button>
+  </div>
+  <div padding *ngIf="voted || pollClosed">
     <canvas baseChart [data]="chartData" [labels]="optionsArray" [chartType]="chartType"></canvas>
     <h1>Thank you for voting!</h1>
   </div>
+
+  <ng-container >
+    <ion-item-group >
+      <ion-item-divider sticky>
+        <ion-label>User Comments :</ion-label>
+      </ion-item-divider>
+      <ion-item class="notification-item" lines="none" *ngFor="let comment of comments">
+        <ion-row class="notification-item-wrapper">
+          <ion-col class="details-wrapper">
+            <h2 class="details-name">{{ comment.name }}</h2>
+            <p class="details-description">{{ comment.comment }}</p>
+          </ion-col>
+          <ion-col size="2" class="date-wrapper">
+            <h3 class="notification-date">{{comment.dateCreated | DateFormat}}</h3>
+          </ion-col>
+        </ion-row>
+      </ion-item>
+    </ion-item-group>
+    </ng-container>
 </ion-content>

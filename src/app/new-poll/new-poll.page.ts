@@ -78,6 +78,7 @@ export class NewPollPage implements OnInit {
       description: "",
       groupId: this.groupId,
       dateCreated: "",
+      dateEnding: "",
       pollOptions : [],
     };
 
@@ -119,6 +120,14 @@ export class NewPollPage implements OnInit {
   
       // Add poll info and date.
       this.poll.dateCreated = new Date().toString();
+      var today = new Date();
+      var dd = today.getDate();
+      var mm = today.getMonth(); //January is 0!
+      var yyyy = today.getFullYear();
+
+      let date: Date = new Date(yyyy, mm, dd + 2);
+      this.poll.dateEnding = date.toString();
+
       this.poll.name = this.pollForm.value["name"];
       this.poll.description = this.pollForm.value["description"];
       
@@ -178,24 +187,4 @@ export class NewPollPage implements OnInit {
   
     }
 
-    openModal() {
-      this.modalCtrl.create({
-        component: TagModalPage,
-        componentProps: { groupTags: this.pollTags }
-       }).then(res => {
-        res.present();
-      })
-      this.modalCtrl.dismiss((data) => {
-        this.pollTagsString = "";
-        this.pollTags = data;
-        this.pollTags.forEach(element => {
-          if (element.isChecked == true) {
-            this.pollTagsString = this.pollTagsString + ", " + element.val;
-          }
-        });
-        this.pollTagsString = this.pollTagsString.replace(', ','');
-    
-      });
-  
-    }
 }

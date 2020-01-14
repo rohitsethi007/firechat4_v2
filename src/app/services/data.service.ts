@@ -111,9 +111,16 @@ export class DataService {
   }
 
   updatePollMembers(pollKey, pollOptionIndex, members) {
-    this.afdb.object('/polls/' + pollKey + '/pollOptions/' + pollOptionIndex).update({ 
+    this.afdb.object('/polls/' + pollKey + '/pollOptions/' + pollOptionIndex).update( {
       members: members
     });
+  }
+   
+  updatePollComments(pollKey, comments) {
+    this.afdb.object('/polls/' + pollKey).update( {
+      comments: comments
+    });
+    console.log('updatePollComments:' + pollKey, comments);
   }
 
   addPoll(poll){

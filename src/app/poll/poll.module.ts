@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { ChartsModule } from 'ng2-charts'
 import { IonicModule } from '@ionic/angular';
-
+import { SharedModule } from '../services/share.module';
 import { PollPage } from './poll.page';
 
 const routes: Routes = [
@@ -21,6 +21,7 @@ const routes: Routes = [
     ReactiveFormsModule,
     IonicModule,
     ChartsModule,
+    SharedModule,
     RouterModule.forChild(routes)
   ],
   declarations: [PollPage]
