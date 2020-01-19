@@ -130,5 +130,9 @@ export class DataService {
     // Get all groups.
   getGroups() {
       return this.afdb.list('/groups', ref => ref.orderByChild('name'));
-    }
+  }
+
+  addResource(resource) {
+    return this.afdb.list('resources').push(resource);
+  }
 }

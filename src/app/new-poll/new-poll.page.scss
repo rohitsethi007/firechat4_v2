@@ -90,7 +90,7 @@
 
   .checkbox-tag {
     --checkbox-tag-color: var(--ion-color-medium);
-    --checkbox-tag-background: var(--ion-color-lightest);
+    --checkbox-tag-background: var(--ion-color-lightest); 
     --checkbox-tag-active-color: var(--ion-color-lightest);
     --checkbox-tag-active-background: var(--ion-color-secondary);
   }
@@ -101,7 +101,7 @@
       background-color: var(--page-background);
 
   .checkbox-tag {
-    --checkbox-tag-color: var(--ion-color-lightest);
+    --checkbox-tag-color: var(--ion-color-light-contrast);
     --checkbox-tag-background: var(--ion-color-light-shade);
     --checkbox-tag-active-color: var(--ion-color-lightest);
     --checkbox-tag-active-background: var(--ion-color-secondary);

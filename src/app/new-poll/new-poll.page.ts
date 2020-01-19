@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
-import { NavController, ModalController } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
 import { Validator } from 'src/environments/validator';
 
-import { TagModalPage } from '../tag-modal/tag-modal.page';
 
 @Component({
   selector: 'app-new-poll',
@@ -16,32 +15,31 @@ import { TagModalPage } from '../tag-modal/tag-modal.page';
 export class NewPollPage implements OnInit {
   private poll: any;
   private pollForm: FormGroup;
-  private groupId : any;
+  private groupId: any;
   private alert: any;
-  private group : any;
-  private pollId : any;
-  private pollTags : any;
-  private pollTagsString : any;
-  private selectedTab : any;
+  private group: any;
+  private pollId: any;
+  private pollTags: any;
+  private selectedTab: any;
 
-  
+
   validations = {
-    'name': [
+    name: [
       { type: 'required', message: 'Title is required.' },
       { type: 'minlength', message: 'Title must be at least 5 characters long.' },
       { type: 'maxlength', message: 'Title cannot be more than 25 characters long.' }
     ],
-    'description': [
+    description: [
       { type: 'required', message: 'Poll Question is required.' },
       { type: 'minlength', message: 'Poll Question must be at least 10 characters long.' },
       { type: 'maxlength', message: 'Poll Question cannot be more than 50 characters long.' }
     ],
-    'pollOption1': [
+    pollOption1: [
       { type: 'required', message: 'Poll Question is required.' },
       { type: 'minlength', message: 'Poll Question must be at least 10 characters long.' },
       { type: 'maxlength', message: 'Poll Question cannot be more than 50 characters long.' }
     ],
-    'pollOption2': [
+    pollOption2: [
       { type: 'required', message: 'Poll Question is required.' },
       { type: 'minlength', message: 'Poll Question must be at least 10 characters long.' },
       { type: 'maxlength', message: 'Poll Question cannot be more than 50 characters long.' }
@@ -53,11 +51,10 @@ export class NewPollPage implements OnInit {
     public loadingProvider: LoadingService,
     private route: ActivatedRoute,
     private router: Router,
-    public navCtrl: NavController,
-    public modalCtrl: ModalController
+    public navCtrl: NavController
   ) {
     this.groupId = this.route.snapshot.params.id;
-		console.log("Group Id: " + this.groupId);
+		  console.log('Group Id: ' + this.groupId);
 		    // Get group information
     this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
       this.group = group.payload.val();
@@ -68,103 +65,98 @@ export class NewPollPage implements OnInit {
       });
       this.loadingProvider.hide();
     });
-	
    }
 
   ngOnInit() {
      // Initialize
      this.poll = {
-      name: "",
-      description: "",
+      name: '',
+      description: '',
       groupId: this.groupId,
-      dateCreated: "",
-      dateEnding: "",
+      dateCreated: '',
+      dateEnding: '',
       pollOptions : [],
     };
 
-    
-   this.pollForm = new FormGroup({
 
-    'name': new FormControl('', Validators.compose([
-      Validators.minLength(5),
-      Validators.maxLength(20),
-      Validators.required
-    ])),
-    'description': new FormControl('', Validators.compose([
-      Validators.minLength(10),
-      Validators.maxLength(50),
-      Validators.required
-    ])),
-    'pollOption1': new FormControl('', Validators.compose([
-      Validators.minLength(1),
-      Validators.maxLength(20),
-      Validators.required
-    ])),
-    'pollOption2': new FormControl('', Validators.compose([
-      Validators.minLength(1),
-      Validators.maxLength(20),
-      Validators.required
-    ])),
-    'pollOption3': new FormControl(''),
-    'pollOption4': new FormControl(''),
-    'pollTags': new FormControl('')
+     this.pollForm = new FormGroup({
+
+  name: new FormControl('', Validators.compose([
+    Validators.minLength(5),
+    Validators.maxLength(20),
+    Validators.required
+  ])),
+  description: new FormControl('', Validators.compose([
+    Validators.minLength(10),
+    Validators.maxLength(50),
+    Validators.required
+  ])),
+  pollOption1: new FormControl('', Validators.compose([
+    Validators.minLength(1),
+    Validators.maxLength(20),
+    Validators.required
+  ])),
+  pollOption2: new FormControl('', Validators.compose([
+    Validators.minLength(1),
+    Validators.maxLength(20),
+    Validators.required
+  ])),
+  pollOption3: new FormControl(''),
+  pollOption4: new FormControl(''),
+  pollTags: new FormControl('')
   });
 
-   
+
   }
 
 
   // Proceed with group creation.
   done() {
     this.loadingProvider.show();
-  
+
       // Add poll info and date.
-      this.poll.dateCreated = new Date().toString();
-      var today = new Date();
-      var dd = today.getDate();
-      var mm = today.getMonth(); //January is 0!
-      var yyyy = today.getFullYear();
+    this.poll.dateCreated = new Date().toString();
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth(); // January is 0!
+    let yyyy = today.getFullYear();
 
-      let date: Date = new Date(yyyy, mm, dd + 2);
-      this.poll.dateEnding = date.toString();
+    const date: Date = new Date(yyyy, mm, dd + 2);
+    this.poll.dateEnding = date.toString();
 
-      this.poll.name = this.pollForm.value["name"];
-      this.poll.description = this.pollForm.value["description"];
-      
-      if (this.pollForm.value["pollOption1"] != null 
-          && this.pollForm.value["pollOption1"].trim() != "") 
-      {    
+    this.poll.name = this.pollForm.value['name'];
+    this.poll.description = this.pollForm.value['description'];
+
+    if (this.pollForm.value['pollOption1'] != null
+          && this.pollForm.value['pollOption1'].trim() != '') {
           this.poll.pollOptions.push({
-            name : this.pollForm.value["pollOption1"].trim()});
+            name : this.pollForm.value['pollOption1'].trim()});
       }
-      if (this.pollForm.value["pollOption2"] != null 
-          && this.pollForm.value["pollOption2"].trim() != "") 
-      {    
+    if (this.pollForm.value['pollOption2'] != null
+          && this.pollForm.value['pollOption2'].trim() != '') {
         this.poll.pollOptions.push({
-          name : this.pollForm.value["pollOption2"].trim()});
+          name : this.pollForm.value['pollOption2'].trim()});
     }
-      if (this.pollForm.value["pollOption3"] != null 
-          && this.pollForm.value["pollOption3"].trim() != "") 
-      {    
+    if (this.pollForm.value['pollOption3'] != null
+          && this.pollForm.value['pollOption3'].trim() != '') {
         this.poll.pollOptions.push({
-          name : this.pollForm.value["pollOption3"].trim()});
+          name : this.pollForm.value['pollOption3'].trim()});
     }
-      if (this.pollForm.value["pollOption4"] != null 
-          && this.pollForm.value["pollOption4"].trim() != "") 
-      {    
+    if (this.pollForm.value['pollOption4'] != null
+          && this.pollForm.value['pollOption4'].trim() != '') {
         this.poll.pollOptions.push({
-          name : this.pollForm.value["pollOption4"].trim()});
+          name : this.pollForm.value['pollOption4'].trim()});
     }
     this.poll.pollTags = [];
-    this.poll.pollTags = this.pollTags; 
-      // Add poll to database. 
-      this.dataProvider.addPoll(this.poll).then((success) => {
-        let pollId = success.key;
+    this.poll.pollTags = this.pollTags;
+      // Add poll to database.
+    this.dataProvider.addPoll(this.poll).then((success) => {
+        const pollId = success.key;
         // Add system message that group is created.
         // Add group poll details
         this.pollId = pollId;
         this.group.polls.push(this.pollId);
-        let uid = this.dataProvider.getCurrentUserId();
+        const uid = this.dataProvider.getCurrentUserId();
         // Add system message that the members are added to the group.
         this.group.messages.push({
             date: new Date().toString(),
@@ -173,7 +165,7 @@ export class NewPollPage implements OnInit {
             message: 'A new Poll has been added to the group : ' + this.poll.name,
             icon: 'md-contacts'
           });
-    
+
         // Update group data on the database.
         this.dataProvider.getGroup(this.groupId).update({
           polls: this.group.polls,
@@ -184,7 +176,7 @@ export class NewPollPage implements OnInit {
           this.navCtrl.back();
         });
       });
-  
+
     }
 
 }

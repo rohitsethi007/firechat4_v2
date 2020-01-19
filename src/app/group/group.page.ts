@@ -606,12 +606,12 @@ export class GroupPage implements OnInit {
 
   newPoll() {
     this.router.navigateByUrl('/new-poll/' + this.groupId);
-    //this.app.getRootNav().push(NewPollPage, { groupId: this.groupId });
+    // this.app.getRootNav().push(NewPollPage, { groupId: this.groupId });
   }
 
   newResource() {
     this.router.navigateByUrl('/new-resource/' + this.groupId);
-    //this.app.getRootNav().push(NewResourcePage, { groupId: this.groupId });
+    // this.app.getRootNav().push(NewResourcePage, { groupId: this.groupId });
   }
 
   getResources() {

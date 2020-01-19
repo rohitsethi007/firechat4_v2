@@ -1,0 +1,104 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Add a Resource</ion-title>
+  </ion-toolbar>
+</ion-header> 
+
+<ion-content  class="forms-validations-content">
+  <ion-segment color="primary" [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
+    <ion-segment-button value="contact">
+      Contact
+    </ion-segment-button>
+    <ion-segment-button value="upload">
+      Photo/Document
+    </ion-segment-button>
+    <ion-segment-button value="link">
+      Link
+    </ion-segment-button>
+  </ion-segment>
+
+  <div [ngSwitch]="tab">
+    <div *ngSwitchCase="'contact'">
+      <form class="validations-form" [formGroup]="contactForm" (ngSubmit)="submitContactForm()">
+        <ion-list class="inputs-list" lines="full">
+          <ion-list-header>
+            <ion-label class="header-title">Enter the details of the Contact..</ion-label>
+          </ion-list-header>
+          <ion-item class="input-item">
+            <ion-label position="floating">Title</ion-label>
+            <ion-input type="text" formControlName="title" clearInput placeholder="Enter a short description"></ion-input>
+          </ion-item>
+          <div class="error-container">
+            <ng-container *ngFor="let validation of validations.title">
+              <div class="error-message" *ngIf="contactForm.get('title').hasError(validation.type) && (contactForm.get('title').dirty || contactForm.get('title').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <span>{{ validation.message }}</span>
+              </div>
+            </ng-container>
+          </div>
+          <ion-item class="input-item">
+            <ion-label position="floating">Name:</ion-label>
+            <ion-input type="text" formControlName="name" clearInput placeholder="Enter the name of the contact (company or person)"></ion-input>
+          </ion-item>
+          <div class="error-container">
+            <ng-container *ngFor="let validation of validations.name">
+              <div class="error-message" *ngIf="contactForm.get('name').hasError(validation.type) && (contactForm.get('name').dirty || contactForm.get('name').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <span>{{ validation.message }}</span>
+              </div>
+            </ng-container>
+          </div>
+  
+          <ion-item class="input-item">
+            <ion-label position="floating">Address:</ion-label>
+            <ion-textarea rows="6"  formControlName="address" clearInput placeholder="Enter the full address of the contact"></ion-textarea>
+          </ion-item>
+          <div class="error-container">
+            <ng-container *ngFor="let validation of validations.address">
+              <div class="error-message" *ngIf="contactForm.get('address').hasError(validation.type) && (contactForm.get('address').dirty || contactForm.get('address').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <span>{{ validation.message }}</span>
+              </div>
+            </ng-container>
+          </div>
+          
+          <ion-item class="input-item">
+            <ion-label position="floating">Phone No:</ion-label>
+            <ion-input type="text" formControlName="phones" clearInput placeholder="Enter one or more phone numbers (comma separated)"></ion-input>
+          </ion-item>
+          <div class="error-container">
+            <ng-container *ngFor="let validation of validations.contactForm">
+              <div class="error-message" *ngIf="contactForm.get('phones').hasError(validation.type) && (contactForm.get('phones').dirty || contactForm.get('phones').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <span>{{ validation.message }}</span>
+              </div>
+            </ng-container>
+          </div>
+
+        <ion-list class="inputs-list" lines="full">
+          <ion-list-header>
+            <ion-label class="header-title">Select tags relevant to the contact</ion-label>
+          </ion-list-header>
+  
+          <ion-row class="checkbox-tags rounded-checkbox-tags">
+            <ion-item *ngFor="let entry of resourceTags" lines="none" class="checkbox-tag rounded-tag">
+              <ion-label class="tag-label">{{entry.val}}</ion-label>
+              <ion-checkbox formControlName="resourceTags" [(ngModel)]="entry.isChecked"></ion-checkbox>
+            </ion-item>
+          </ion-row>
+        </ion-list>
+  
+        <ion-button class="submit-btn" type="submit" expand="block" fill="outline" >Submit</ion-button>
+        </ion-list>
+      </form>
+    </div>
+    <div *ngSwitchCase="'requests'">
+    </div>
+    <div *ngSwitchCase="'search'">
+    </div>
+  </div>
+  
+</ion-content>

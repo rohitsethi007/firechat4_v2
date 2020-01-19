@@ -28,6 +28,10 @@ const routes: Routes = [
   { path: 'new-poll/:id', loadChildren: './new-poll/new-poll.module#NewPollPageModule' },
   { path: 'walkthrough', loadChildren: './walkthrough/walkthrough.module#WalkthroughPageModule' },
   { path: 'getting-started', loadChildren: './getting-started/getting-started.module#GettingStartedPageModule' },
+  { path: 'new-resource/:id', loadChildren: './new-resource/new-resource.module#NewResourcePageModule' },
+  { path: 'resource/:id', loadChildren: './resource/resource.module#ResourcePageModule' },
+
+
 ];
 @NgModule({
   imports: [
