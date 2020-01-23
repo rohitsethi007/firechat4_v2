@@ -81,6 +81,7 @@ export class DataService {
     return this.afdb.list('/accounts/' + this.afAuth.auth.currentUser.uid +
       '/conversations', ref => ref.orderByChild('blocked').equalTo(true));
   }
+  
 
 
 // MY CODE **********************************
@@ -135,4 +136,19 @@ export class DataService {
   addResource(resource) {
     return this.afdb.list('resources').push(resource);
   }
+
+  updateResourceReviews(resourceKey, review) {
+   // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
+   this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
+  }
+
+  addFirstResourceReview(resourceKey, review)
+  {
+    let r = [];
+    this.afdb.object('/resources/' + resourceKey).update( {
+      reviews: r
+    });
+    this.updateResourceReviews(resourceKey, review);
+  }
+
 }

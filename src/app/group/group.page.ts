@@ -591,7 +591,7 @@ export class GroupPage implements OnInit {
       }
     });
   }
-  // Open Group Chat.
+  // Open Poll
   viewPoll(poll) {
     const navigationExtras: NavigationExtras = {
       state: {
@@ -602,6 +602,17 @@ export class GroupPage implements OnInit {
 
     // this.router.navigate('/poll/' + poll);
     //    this.app.getRootNav().push(PollPage, { poll: poll });
+  }
+
+  // View Resource selected
+  viewResource(resource) {
+    this.router.navigateByUrl('resource/' + resource.key);
+    /*const navigationExtras: NavigationExtras = {
+      state: {
+        resource: resource
+      }
+    };
+    this.router.navigate(['resource'], navigationExtras); */
   }
 
   newPoll() {

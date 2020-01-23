@@ -21,6 +21,7 @@ export class NewResourcePage implements OnInit {
   private group: any;
   private resourceId: any;
 
+
   private title: any;
 
   validations = {
@@ -35,6 +36,9 @@ export class NewResourcePage implements OnInit {
     ],
     phones: [
       { type: 'required', message: 'Phone is a required field.' }
+    ],
+    email: [
+      { type: 'pattern', message: 'Enter a valid email.' }
     ],
     resourceTags: [
       { type: 'required', message: 'Please select at least one tag.' }
@@ -75,12 +79,15 @@ export class NewResourcePage implements OnInit {
     // Initialize
     this.resource = {
       dateCreated: '',
+      createdBy: this.dataProvider.getCurrentUserId(),
       title: '',
       name: '',
       address: '',
       phones: '',
+      email: '',
       type: '',
-      resrouceTags : []
+      resrouceTags : [],
+      reviews: []
     };
 
 
@@ -102,6 +109,9 @@ export class NewResourcePage implements OnInit {
         Validators.required
       ])),
       phones: new FormControl(''),
+      email: new FormControl('', Validators.compose([
+        Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+      ])),
       resourceTags: new FormControl('')
       });
   }
@@ -120,17 +130,19 @@ export class NewResourcePage implements OnInit {
    submitContactForm() {
     this.loadingProvider.show();
 
-      // Add resource info and date.
+    // Add resource info and date.
     this.resource.dateCreated = new Date().toString();
-
     this.resource.title = this.contactForm.value['title'];
     this.resource.name = this.contactForm.value['name'];
     this.resource.address = this.contactForm.value['address'];
     this.resource.phones = this.contactForm.value['phones'];
+    this.resource.email = this.contactForm.value['email'];
     this.resource.type = 'contact';
     this.resource.resourceTags = [];
     this.resource.resourceTags = this.resourceTags;
-      // Add resource to database.
+
+
+    // Add resource to database.
     this.dataProvider.addResource(this.resource).then((success) => {
         const resourceId = success.key;
         // Add system message that group is created.

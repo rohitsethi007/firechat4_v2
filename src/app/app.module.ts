@@ -32,7 +32,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ImagemodalPageModule } from './imagemodal/imagemodal.module'
 import { TagModalPageModule } from './tag-modal/tag-modal.module'
 import { PopoverPageModule } from './popover/popover.module';
-
+import { ReviewModalPageModule } from './review-modal/review-modal.module'
 @NgModule({
   declarations: [
     AppComponent
@@ -52,6 +52,7 @@ import { PopoverPageModule } from './popover/popover.module';
     FormsModule,
     ReactiveFormsModule,
     ImagemodalPageModule,
+    ReviewModalPageModule,
     TagModalPageModule,
     PopoverPageModule
   ],
@@ -69,6 +70,6 @@ import { PopoverPageModule } from './popover/popover.module';
     Keyboard,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

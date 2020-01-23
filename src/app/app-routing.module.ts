@@ -30,7 +30,7 @@ const routes: Routes = [
   { path: 'getting-started', loadChildren: './getting-started/getting-started.module#GettingStartedPageModule' },
   { path: 'new-resource/:id', loadChildren: './new-resource/new-resource.module#NewResourcePageModule' },
   { path: 'resource/:id', loadChildren: './resource/resource.module#ResourcePageModule' },
-
+  { path: 'review-modal', loadChildren: './review-modal/review-modal.module#ReviewModalPageModule' }
 
 ];
 @NgModule({

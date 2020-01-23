@@ -126,7 +126,7 @@ export class PollPage implements OnInit {
     members.push(this.dataProvider.getCurrentUserId());
     this.poll.pollOptions[pollOptionIndex].members = members;
     this.voted = true;
-    const comments = [];
+    const comments = []; 
     comments.push({
       comment: this.pollOptionForm.value["comments"],
       addedBy: account.username,
@@ -134,10 +134,6 @@ export class PollPage implements OnInit {
     });
 
     // Update group data on the database.
-    console.log('poll key' + this.poll.key);
-    console.log('pollOptionIndex' + pollOptionIndex);
-    console.log('members' + members);
-    console.log('updating poll comments ...' + this.poll.key, comments);
     this.dataProvider.updatePollComments(this.poll.key, comments);
     this.dataProvider.updatePollMembers(this.poll.key, pollOptionIndex, members);
     this.ngOnInit();

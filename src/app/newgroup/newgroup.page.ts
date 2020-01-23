@@ -26,6 +26,7 @@ export class NewgroupPage implements OnInit {
   alert: any;
   name: any;
   description: any;
+  groupTags: any;
 
   myForm: FormGroup;
   submitAttempt = false;
@@ -46,6 +47,7 @@ export class NewgroupPage implements OnInit {
     this.myForm = this.formBuilder.group({
       groupName: Validator.groupNameValidator,
       groupDescription: Validator.groupDescriptionValidator,
+      groupTags: Validator.groupTagsValidator
     })
   }
 
@@ -102,9 +104,12 @@ export class NewgroupPage implements OnInit {
   // Proceed with group creation.
   done() {
     this.submitAttempt = true;
+    let polls = [];
+    let resources = [];
+
     if (this.myForm.valid) {
       this.loadingProvider.show();
-      var messages = [];
+      let messages = [];
       // Add system message that group is created.
       messages.push({
         date: new Date().toString(),
@@ -113,6 +118,11 @@ export class NewgroupPage implements OnInit {
         message: 'This group has been created.',
         icon: 'md-chatbubbles'
       });
+
+     // Add empty poll. 
+     polls.push("system0000");
+     resources.push("system0000");
+    
       // Add members of the group.
       var members = [];
       for (var i = 0; i < this.groupMembers.length; i++) {
@@ -122,8 +132,12 @@ export class NewgroupPage implements OnInit {
       this.group.dateCreated = new Date().toString();
       this.group.messages = messages;
       this.group.members = members;
+      this.group.polls = polls;
+      this.group.resources = resources;
       this.group.name = this.name;
       this.group.description = this.description;
+      this.group.groupTags = this.groupTags.split('\n');
+      console.log('Group Tags: ', this.group.groupTags);
       // Add group to database.
       this.angularfire.list('groups').push(this.group).then((success) => {
         let groupId = success.key;

@@ -2,17 +2,16 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
-import { ChartsModule } from 'ng2-charts';
 import { IonicModule } from '@ionic/angular';
-import { SharedModule } from '../services/share.module';
-import { PollPage } from './poll.page';
+import { ReviewModalPage } from './review-modal.page';
+import { ComponentsModule } from '../components/components.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: PollPage
+    component: ReviewModalPage
   }
-]; 
+];
 
 @NgModule({
   imports: [
@@ -20,10 +19,9 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    ChartsModule,
-    SharedModule,
+    ComponentsModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [PollPage]
+  declarations: [ReviewModalPage]
 })
-export class PollPageModule {}
+export class ReviewModalPageModule {}

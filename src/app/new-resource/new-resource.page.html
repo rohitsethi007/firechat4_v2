@@ -78,6 +78,19 @@
             </ng-container>
           </div>
 
+          <ion-item class="input-item">
+            <ion-label position="floating">Email:</ion-label>
+            <ion-input type="text" formControlName="email" clearInput placeholder="Enter an email address if available"></ion-input>
+          </ion-item>
+          <div class="error-container">
+            <ng-container *ngFor="let validation of validations.contactForm">
+              <div class="error-message" *ngIf="contactForm.get('email').hasError(validation.type) && (contactForm.get('email').dirty)">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <span>{{ validation.message }}</span>
+              </div>
+            </ng-container>
+          </div>
+
         <ion-list class="inputs-list" lines="full">
           <ion-list-header>
             <ion-label class="header-title">Select tags relevant to the contact</ion-label>

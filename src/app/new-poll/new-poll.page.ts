@@ -74,11 +74,10 @@ export class NewPollPage implements OnInit {
       description: '',
       groupId: this.groupId,
       dateCreated: '',
+      createdBy: this.dataProvider.getCurrentUserId(),
       dateEnding: '',
       pollOptions : [],
     };
-
-
      this.pollForm = new FormGroup({
 
   name: new FormControl('', Validators.compose([
@@ -116,10 +115,10 @@ export class NewPollPage implements OnInit {
 
       // Add poll info and date.
     this.poll.dateCreated = new Date().toString();
-    let today = new Date();
-    let dd = today.getDate();
-    let mm = today.getMonth(); // January is 0!
-    let yyyy = today.getFullYear();
+    const today = new Date();
+    const dd = today.getDate();
+    const mm = today.getMonth(); // January is 0!
+    const yyyy = today.getFullYear();
 
     const date: Date = new Date(yyyy, mm, dd + 2);
     this.poll.dateEnding = date.toString();
