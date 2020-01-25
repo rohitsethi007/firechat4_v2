@@ -29,10 +29,13 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { SharedModule } from './services/share.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { ImagemodalPageModule } from './imagemodal/imagemodal.module'
-import { TagModalPageModule } from './tag-modal/tag-modal.module'
+import { ImagemodalPageModule } from './imagemodal/imagemodal.module';
+import { TagModalPageModule } from './tag-modal/tag-modal.module';
 import { PopoverPageModule } from './popover/popover.module';
-import { ReviewModalPageModule } from './review-modal/review-modal.module'
+import { ReviewModalPageModule } from './review-modal/review-modal.module';
+
+import { Chooser } from '@ionic-native/chooser/ngx';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -67,6 +70,7 @@ import { ReviewModalPageModule } from './review-modal/review-modal.module'
     FirebaseX,
     Geolocation,
     Contacts,
+    Chooser,
     Keyboard,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],

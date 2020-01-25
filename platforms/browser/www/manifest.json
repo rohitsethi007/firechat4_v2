@@ -1,0 +1,11 @@
+{
+  "background_color": "#FFF",
+  "display": "standalone",
+  "name": "IonChat",
+  "short_name": "IonChat",
+  "version": "com.codesundar.ionicchat",
+  "description": "Ionic Chat App.",
+  "author": "MyThemeBox Team",
+  "icons": [],
+  "start_url": "index.html"
+}

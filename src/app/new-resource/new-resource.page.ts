@@ -4,6 +4,9 @@ import { NavController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
+import { Chooser, ChooserResult } from '@ionic-native/chooser/ngx';
+
+
 
 @Component({
   selector: 'app-new-resource',
@@ -13,6 +16,7 @@ import { LoadingService } from '../services/loading.service';
 export class NewResourcePage implements OnInit {
   private resource: any;
   private contactForm: FormGroup;
+  private uploadForm: FormGroup;
   private resourceTags: any;
   private tab: any;
   private groupId: any;
@@ -20,7 +24,7 @@ export class NewResourcePage implements OnInit {
   private alert: any;
   private group: any;
   private resourceId: any;
-
+  private fileObj: ChooserResult;
 
   private title: any;
 
@@ -51,7 +55,8 @@ export class NewResourcePage implements OnInit {
     private router: Router,
     public dataProvider: DataService,
     public loadingProvider: LoadingService,
-    public navCtrl: NavController
+    public navCtrl: NavController,
+    private chooser: Chooser
   ) {
     this.groupId = this.route.snapshot.params.id;
     // this.message  = navParams.get('message');
@@ -114,6 +119,16 @@ export class NewResourcePage implements OnInit {
       ])),
       resourceTags: new FormControl('')
       });
+
+    this.uploadForm = new FormGroup(
+        {
+          title: new FormControl('', Validators.compose([
+              Validators.minLength(5),
+              Validators.maxLength(20),
+              Validators.required
+            ])),
+          resourceTags: new FormControl('')
+          });
   }
 
   segmentChanged($event) {
@@ -170,5 +185,13 @@ export class NewResourcePage implements OnInit {
         });
       });
 
-    }
+   }
+
+   pickFile() {
+     this.chooser.getFile("image/jpeg").then((value) => {
+        this.fileObj = value;
+     }, (err) => {
+       alert(JSON.stringify(err));
+     });
+   }
 }
