@@ -7,7 +7,53 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="food-listing-content">
+  <ng-container *ngIf="groups && groups.length > 0">
+    <div class="listing-item" *ngFor="let group of groups | groupFilter: searchGroup" (click)="viewGroup(group.key)">
+      <div class="cover-wrapper">
+          <app-image-shell class="cover-image add-overlay" animation="spinner" [mode]="'cover'" [src]="group.image">
+            <app-aspect-ratio [ratio]="{w:35, h:15}">
+              <div class="cover-icon-wrapper">
+                <app-aspect-ratio [ratio]="{w: 20, h: 7}">
+                  <app-image-shell class="group-icon" [src]="group.icon"></app-image-shell>
+                </app-aspect-ratio>
+              </div>
+            </app-aspect-ratio>
+          </app-image-shell>
+
+      </div>
+      <ion-row class="info-row">
+        <ion-col class="description-col">
+          <ion-row class="description-wrapper">
+            <h3 class="item-name">
+                <app-text-shell [data]="group.name"></app-text-shell>
+            </h3>
+            <p class="item-address">
+              <app-text-shell [data]="group.description"></app-text-shell>
+            </p>
+            <ion-row class="item-tags">
+              <ion-col class="tag-wrapper" *ngFor="let tag of group.groupTags">
+                <span class="item-tag">
+                  <app-text-shell [data]="tag"></app-text-shell>
+                </span>
+              </ion-col>
+            </ion-row>
+          </ion-row>
+        </ion-col>
+        <ion-col class="stats-col" size="2">
+          <span class="item-rating" [attr.ratingBase]="group.members.length">
+            <app-text-shell [data]="group.members.length"></app-text-shell>
+          </span>
+
+        </ion-col>
+      </ion-row>
+
+    </div>
+
+  </ng-container>
+</ion-content>
+<!--
+<ion-content > 
 
   <div class="empty-list" *ngIf="groups && groups.length <= 0">
     <h1>
@@ -15,7 +61,7 @@
     </h1>
     <p>No new groups yet.</p>
   </div>
-  <!-- Show groups -->
+
   <div *ngIf="groups && groups.length > 0">
     <ion-searchbar [(ngModel)]="searchGroup" placeholder="search"></ion-searchbar>
     <ion-list lines="none">
@@ -36,4 +82,4 @@
       </ion-item>
     </ion-list>
   </div>
-</ion-content>
+</ion-content>-->
