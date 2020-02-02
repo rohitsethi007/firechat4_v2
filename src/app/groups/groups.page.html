@@ -11,7 +11,7 @@
   <ng-container *ngIf="groups && groups.length > 0">
     <div class="listing-item" *ngFor="let group of groups | groupFilter: searchGroup" (click)="viewGroup(group.key)">
       <div class="cover-wrapper">
-          <app-image-shell class="cover-image add-overlay" animation="spinner" [mode]="'cover'" [src]="group.image">
+          <app-image-shell class="cover-image add-overlay" animation="spinner" [mode]="'cover'" [src]="group.img">
             <app-aspect-ratio [ratio]="{w:35, h:15}">
               <div class="cover-icon-wrapper">
                 <app-aspect-ratio [ratio]="{w: 20, h: 7}">
@@ -31,18 +31,51 @@
             <p class="item-address">
               <app-text-shell [data]="group.description"></app-text-shell>
             </p>
-            <ion-row class="item-tags">
+            <!--<ion-row class="item-tags">
               <ion-col class="tag-wrapper" *ngFor="let tag of group.groupTags">
                 <span class="item-tag">
                   <app-text-shell [data]="tag"></app-text-shell>
                 </span>
               </ion-col>
+            </ion-row>-->
+            <ion-row class="accommodations-wrapper">
+              <ion-col class="item-accommodation">
+                <ion-icon class="accommodation-icon" src="./assets/sample-icons/real-estate/guests.svg"></ion-icon>
+                <span class="accommodation-property">Members</span>
+                <span class="accommodation-value">
+                  <app-text-shell [data]="1"></app-text-shell>
+                </span>
+              </ion-col>
+              <ion-col class="item-accommodation">
+                <ion-icon class="accommodation-icon" src="./assets/sample-icons/real-estate/bedrooms.svg"></ion-icon>
+                <span class="accommodation-property">Resources</span>
+                <span class="accommodation-value">
+                  <app-text-shell [data]="2"></app-text-shell>
+                </span>
+              </ion-col>
+              <ion-col class="item-accommodation">
+                <ion-icon class="accommodation-icon" src="./assets/sample-icons/real-estate/bathroom.svg"></ion-icon>
+                <span class="accommodation-property">Polls</span>
+                <span class="accommodation-value">
+                  <app-text-shell [data]="3"></app-text-shell>
+                </span>
+              </ion-col>
+              <ion-col class="item-accommodation">
+                <ion-icon class="accommodation-icon" src="./assets/sample-icons/real-estate/patio.svg"></ion-icon>
+                <span class="accommodation-property">Messages</span>
+                <span class="accommodation-value">
+                  <app-text-shell [data]="4"></app-text-shell>
+                </span>
+              </ion-col>
             </ion-row>
           </ion-row>
+
+          
         </ion-col>
         <ion-col class="stats-col" size="2">
           <span class="item-rating" [attr.ratingBase]="group.members.length">
-            <app-text-shell [data]="group.members.length"></app-text-shell>
+           <!-- <app-text-shell [data]="group.members.length">Peek</app-text-shell>-->
+           Peek
           </span>
 
         </ion-col>

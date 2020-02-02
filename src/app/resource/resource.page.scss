@@ -267,5 +267,14 @@
         margin: var(--page-margin) 0px 0px;
       }
     }
+
+    .detail-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--ion-color-dark-tint);
+      margin: 0px;
+      margin-bottom: var(--page-margin);
+    }
+  
   }
   

@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { SharedModule } from '../services/share.module';
 import { IonicModule } from '@ionic/angular';
-import { ResourcePage } from './resource.page';
+import { ResourcePage } from './resource.page'; 
+import { ComponentsModule } from '../components/components.module';
 
 const routes: Routes = [
   {
@@ -19,6 +20,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     SharedModule,
+    ComponentsModule,
     RouterModule.forChild(routes)
   ],
   declarations: [ResourcePage],
