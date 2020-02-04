@@ -126,18 +126,31 @@ export class PollPage implements OnInit {
     members.push(this.dataProvider.getCurrentUserId());
     this.poll.pollOptions[pollOptionIndex].members = members;
     this.voted = true;
-    const comments = []; 
-    comments.push({
-      comment: this.pollOptionForm.value["comments"],
-      addedBy: account.username,
-      dateCreated: new Date().toString()
-    });
+    let comment: any;
+    let currentUserName: any;
+    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
+      if (account.payload.exists()) {
+        currentUserName = account.payload.val().username; 
 
-    // Update group data on the database.
-    this.dataProvider.updatePollComments(this.poll.key, comments);
-    this.dataProvider.updatePollMembers(this.poll.key, pollOptionIndex, members);
-    this.ngOnInit();
-    this.loadingProvider.hide();
+        comment = {
+          dateCreated: new Date().toString(),
+          addedBy: this.dataProvider.getCurrentUserId(),
+          addedByUsername: currentUserName,
+          comment: this.pollOptionForm.value["comments"]
+        };
+
+        if (this.poll.comments === undefined) {
+          let comments = [];
+          comments.push(comment);
+          this.dataProvider.addFirstPollReview(this.poll.key, comment);
+        } else {
+          this.dataProvider.updatePollReviews(this.poll.key, comment);
+        }
+        // Update group data on the database.
+        this.dataProvider.updatePollMembers(this.poll.key, pollOptionIndex, members);
+        this.ngOnInit();
+        this.loadingProvider.hide();
+      }});
   });
   }
 }

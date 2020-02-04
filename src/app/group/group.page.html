@@ -99,65 +99,95 @@
      <!-- Show polls -->
      <div *ngIf="polls && polls.length > 0">
      <ion-searchbar [(ngModel)]="searchPoll" placeholder="Search for poll" showCancelButton="true" cancelButtonText="Done"></ion-searchbar>
-     <!--<ion-list no-lines>
-       <ion-item *ngFor="let poll of polls | pollFilter: searchPoll" (click)="viewPoll(poll)">
-       <ion-thumbnail item-start>
-         <ion-icon name="podium"></ion-icon>
-       </ion-thumbnail>
-       <h2>{{poll.description}}</h2>
-       <p>{{poll.dateCreated | DateFormat}}</p>
-       <p>{{poll.pollOptions[0].name}}, {{poll.pollOptions[1].name}} </p>
-       <p>Tags: {{poll.pollTagsString}} </p>
-       </ion-item>
-     </ion-list> -->
-         <!-- Card Test -->
-       <ion-card *ngFor="let poll of polls | pollFilter: searchPoll" (click)="viewPoll(poll)"> 
-         <ion-item>
-           <ion-avatar item-start>
-           <ion-icon name="podium"></ion-icon>
-         </ion-avatar>
-           <h2>{{poll.description}}</h2>
-           <h3>{{poll.dateCreated | DateFormat}}</h3>
-         </ion-item>
-         <ion-row  *ngFor="let pollOption of poll.pollOptions">
-           <ion-col>
-           <!--<button ion-button color="primary" clear small icon-start> -->
-             <ion-icon name='pie'></ion-icon>
-             {{pollOption.name}}
-           <!--</button>-->
-           </ion-col>
-         </ion-row>
-         <ion-item >
-           <ion-avatar item-start>
-             <ion-icon name="pricetags"></ion-icon>
-           </ion-avatar>
-           <h3>{{poll.pollTagsString}}</h3>
-           </ion-item>
-         </ion-card>
+     <div class="listing-item" *ngFor="let item of polls" (click)="viewPoll(item)">
+      <ion-row class="info-row">
+        <ion-col class="main-info-col">
+          <h3 class="item-name">
+              <app-text-shell animation="bouncing" [data]="(item?.name && item?.type) ? (item.name + ' - ' + item.type) : (item.name)"></app-text-shell>
+          </h3>
+          <p class="item-description">
+            <app-text-shell animation="bouncing" [data]="item.description" lines="3"></app-text-shell>
+          </p>
+          <p class="item-address">
+            <app-text-shell animation="bouncing" [data]="'Tags: ' + item.pollTagsString"></app-text-shell>
+          </p>
+        </ion-col>
+      </ion-row>
+      <ion-row class="info-row" *ngFor="let pollOption of item.pollOptions">
+        <ion-col class="poll-option-col">
+        <!--<button ion-button color="primary" clear small icon-start> -->
+          <ion-icon name='pie'></ion-icon>
+          {{pollOption.name}}
+        <!--</button>-->
+        </ion-col>
+      </ion-row>
+      <ion-row class="stats-row">
+        <ion-col size="2" class="item-rating">
+          <span class="rating-value"> 
+            <app-text-shell [data]="item.dateCreated | DateFormat"></app-text-shell>
+          </span>
+        </ion-col>
+        <ion-col size="2" class="item-rating">
+          <span class="rating-value">
+            <app-text-shell [data]="2"></app-text-shell>
+          </span>
+          <ion-icon class="stats-icon" src="./assets/sample-icons/travel/star.svg"></ion-icon>
+        </ion-col>
+        <ion-col size="2" class="item-reviews">
+          <span class="reviews-count">
+            <app-text-shell [data]="4"></app-text-shell>
+          </span>
+          <ion-icon class="stats-icon" src="./assets/sample-icons/travel/comments.svg"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </div>
      </div>
     </div>
 
-    <div *ngSwitchCase="'resources'" >
+    <div *ngSwitchCase="'resources'">
     <!-- No Resources to show -->
      <div *ngIf="resources && resources.length == 0">
      <h1><ion-icon name="md-chatbubbles"></ion-icon></h1>
      <p>No new Resources added to this group.</p>
      </div>
      <!-- Show Resources -->
-     <div *ngIf="resources && resources.length > 0">
+     <div *ngIf="resources && resources.length > 0" >
      <ion-searchbar [(ngModel)]="searchResource" placeholder="Search for Resources" showCancelButton="true" cancelButtonText="Done"></ion-searchbar>
-     <!--<ion-list no-lines>
-       <ion-item *ngFor="let resource of resources | resourceFilter: searchResource" (click)="viewResource(resource)">
-       <ion-thumbnail item-start>
-         <ion-icon name="podium"></ion-icon>
-       </ion-thumbnail>
-       <h2>{{resource.name}}</h2>
-       <p>{{resource.dateCreated | DateFormat}}</p>
-       <p>{{resource.type}} </p>
-       <p>Tags: {{resource.resourceTagsString}} </p>
-       
-       </ion-item>
-     </ion-list>-->
+     <div class="listing-item" *ngFor="let item of resources" (click)="viewResource(item)">
+      <ion-row class="info-row">
+        <ion-col class="main-info-col">
+          <h3 class="item-name">
+              <app-text-shell animation="bouncing" [data]="(item?.title && item?.type) ? (item.title + ' - ' + item.type) : (item.title)"></app-text-shell>
+          </h3>
+          <p class="item-description">
+            <app-text-shell animation="bouncing" [data]="item.name" lines="3"></app-text-shell>
+          </p>
+          <p class="item-address">
+            <app-text-shell animation="bouncing" [data]="item.address"></app-text-shell>
+          </p>
+        </ion-col>
+      </ion-row>
+      <ion-row class="stats-row">
+        <ion-col size="2" class="item-rating">
+          <span class="rating-value"> 
+            <app-text-shell [data]="item.dateCreated | DateFormat"></app-text-shell>
+          </span>
+        </ion-col>
+        <ion-col size="2" class="item-rating">
+          <span class="rating-value">
+            <app-text-shell [data]="2"></app-text-shell>
+          </span>
+          <ion-icon class="stats-icon" src="./assets/sample-icons/travel/star.svg"></ion-icon>
+        </ion-col>
+        <ion-col size="2" class="item-reviews">
+          <span class="reviews-count">
+            <app-text-shell [data]="4"></app-text-shell>
+          </span>
+          <ion-icon class="stats-icon" src="./assets/sample-icons/travel/comments.svg"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </div>
+     <!--
      <ion-card *ngFor="let resource of resources | resourceFilter: searchResource" (click)="viewResource(resource)"> 
        <ion-item >
          <ion-avatar item-start>
@@ -168,10 +198,6 @@
        </ion-item>
        <ion-row>
          <ion-col>
-         <!--<button ion-button color="primary" clear small icon-start> -->
-           <ion-icon name='pie'></ion-icon>
-           {{resource.type}}
-         <!--</button>-->
          </ion-col>
        </ion-row>
        <ion-item >
@@ -180,7 +206,7 @@
          </ion-avatar>
          <h3>{{resource.resourceTagsString}}</h3>
          </ion-item>
-       </ion-card>
+       </ion-card> -->
      </div>
     </div>
 

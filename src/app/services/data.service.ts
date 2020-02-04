@@ -142,8 +142,7 @@ export class DataService {
    this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
   }
 
-  addFirstResourceReview(resourceKey, review)
-  {
+  addFirstResourceReview(resourceKey, review) {
     let r = [];
     this.afdb.object('/resources/' + resourceKey).update( {
       reviews: r
@@ -151,4 +150,17 @@ export class DataService {
     this.updateResourceReviews(resourceKey, review);
   }
 
+  updatePollReviews(pollId, comment) {
+    // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
+    this.afdb.list('/polls/' + pollId + '/comments/').push(comment);
+   }
+ 
+   addFirstPollReview(pollId, comment) {
+     let r = [];
+     this.afdb.object('/resources/' + pollId).update( {
+       comments: r
+     });
+     this.updateResourceReviews(pollId, comment);
+   }
+ 
 }

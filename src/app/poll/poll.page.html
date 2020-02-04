@@ -46,22 +46,35 @@
     <h1>Thank you for voting!</h1>
   </div>
 
-  <ng-container >
-    <ion-item-group >
-      <ion-item-divider sticky>
-        <ion-label>User Comments :</ion-label>
-      </ion-item-divider>
-      <ion-item class="notification-item" lines="none" *ngFor="let comment of comments">
-        <ion-row class="notification-item-wrapper">
-          <ion-col class="details-wrapper">
-            <h2 class="details-name">{{ comment.name }}</h2>
-            <p class="details-description">{{ comment.comment }}</p>
+  <hr class="details-divider">
+  <div class="reviews-wrapper">
+    <h3 class="detail-title">Reviews</h3>
+    <div class="reviews-list">
+      <div class="review-item" *ngFor="let comment of comments">
+        <ion-row class="review-user">
+          <ion-col size="2" class="user-image-wrapper">
+            <app-aspect-ratio [ratio]="{w: 1, h: 1}">
+              <app-image-shell class="review-user-image" [src]="'./assets/sample-images/food/user-image-1.png'" [alt]="'review user image'"></app-image-shell>
+            </app-aspect-ratio>
           </ion-col>
-          <ion-col size="2" class="date-wrapper">
-            <h3 class="notification-date">{{comment.dateCreated | DateFormat}}</h3>
+          <ion-col class="user-brief-wrapper">
+            <h5 class="review-user-name">
+              <app-text-shell [data]="comment.addedByUsername"></app-text-shell>
+            </h5>
+
+          </ion-col>
+          <ion-col class="review-info-wrapper">
+            <span class="review-date">
+              <app-text-shell [data]="comment.dateCreated | DateFormat"></app-text-shell>
+            </span>
           </ion-col>
         </ion-row>
-      </ion-item>
-    </ion-item-group>
-    </ng-container>
+        <p class="review-message">
+          <app-text-shell [data]="comment.comment" lines="5"></app-text-shell>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
 </ion-content>

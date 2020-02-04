@@ -6,6 +6,7 @@ import { ChartsModule } from 'ng2-charts';
 import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '../services/share.module';
 import { PollPage } from './poll.page';
+import { ComponentsModule } from '../components/components.module';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
     ReactiveFormsModule,
     IonicModule,
     ChartsModule,
+    ComponentsModule,
     SharedModule,
     RouterModule.forChild(routes)
   ],
