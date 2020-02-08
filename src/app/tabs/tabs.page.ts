@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { DataService } from '../services/data.service';
+import { Storage } from '@ionic/storage';
+
 import * as firebase from 'firebase';
 
 @Component({
@@ -15,23 +17,34 @@ export class TabsPage {
   groupList: any;
   groupsInfo: any;
   conversationList: any;
-  conversationsInfo: any;
+  conversationsInfo: any; 
   // TabsPage
   // This is the page where we set our tabs.
-  constructor(public dataProvider: DataService) {
+  constructor(
+    public dataProvider: DataService,
+    public storage: Storage) {
   }
 
   ionViewDidEnter() {
-    if (firebase.auth().currentUser == null)
-      return;
+
+    this.storage.get('currentUser').then((val) => {
+      console.log('currentUser from storage', val);
+      if (val === null) {
+        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
+          // set a key/value
+          this.storage.set('currentUser', account.payload.val());
+        });
+      }
+    });
+
     // Get friend requests count.
     this.dataProvider.getRequests(firebase.auth().currentUser.uid).snapshotChanges().subscribe((requestsRes: any) => {
-      let requests = requestsRes.payload.val();
+      const requests = requestsRes.payload.val();
       if (requests != null) {
-        if (requests.friendRequests != null) this.friendRequestCount = requests.friendRequests.length;
-        else this.friendRequestCount = null
-      } else this.friendRequestCount = null
-
+        if (requests.friendRequests != null) {
+          this.friendRequestCount = requests.friendRequests.length;
+        } else { this.friendRequestCount = null; }
+      } else { this.friendRequestCount = null; }
     });
 
     // Get conversations and add/update if the conversation exists, otherwise delete from list.

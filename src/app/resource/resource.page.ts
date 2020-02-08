@@ -18,6 +18,8 @@ export class ResourcePage implements OnInit {
   private review: any;
   private reviews: any;
   subscription: any;
+  
+  private loggedInUserIsMember: any = 'true';
 
   constructor(
     private dataProvider: DataService,

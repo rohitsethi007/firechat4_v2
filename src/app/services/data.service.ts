@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase, AngularFireAction } from '@angular/fire/database';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Storage } from '@ionic/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,8 @@ export class DataService {
 
   constructor(
     private afAuth: AngularFireAuth,
-    private afdb: AngularFireDatabase
+    private afdb: AngularFireDatabase,
+    private storage: Storage
   ) { }
 
 
@@ -163,4 +165,8 @@ export class DataService {
      this.updateResourceReviews(pollId, comment);
    }
  
+   async getFromStorageAsync(section) {
+     console.log('inside getFromStorageAsync');
+     return await this.storage.get(section).then((val) => val);
+   }
 }

@@ -53,6 +53,9 @@
     },
     "cordova-plugin-contacts": {
       "PACKAGE_NAME": "com.codesundar.ionicchat"
+    },
+    "cordova-sqlite-storage": {
+      "PACKAGE_NAME": "com.codesundar.ionicchat"
     }
   },
   "dependent_plugins": {}

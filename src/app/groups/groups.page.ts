@@ -14,6 +14,7 @@ export class GroupsPage implements OnInit {
   groups: any;
   searchGroup: any;
   updateDateTime: any;
+  unreadMessagesCount: any;
   // GroupsPage
   // This is the page where the user can add, view and search for groups.
   constructor(
@@ -48,11 +49,13 @@ export class GroupsPage implements OnInit {
             console.log(group);
 
             if (group.key != null) {
-
               // Get group's unreadMessagesCount
               group.unreadMessagesCount = group.messages.length - groupId.messagesRead;
               // Get group's last active date
               group.date = group.messages[group.messages.length - 1].date;
+              group.membersCount = group.members.length;
+              group.pollsCount = group.polls.length - 1; // exclude default system000
+              group.resourcesCount = group.resources.length - 1; // exclude default system000
               this.addOrUpdateGroup(group);
             }
 
@@ -78,6 +81,7 @@ export class GroupsPage implements OnInit {
       }, 60000);
     }
   }
+
 
   // Add or update group for real-time sync based on our observer.
   addOrUpdateGroup(group) {

@@ -40,7 +40,7 @@ export class GroupPage implements OnInit {
   private group: any;
   private user: any;
   private groupMembers: any;
-  private loggedInUserIsMember: any = 'false';
+  private loggedInUserIsMember: any = 'false'; 
   private searchPoll: any;
   private searchResource: any;
   private resourceTags: any;

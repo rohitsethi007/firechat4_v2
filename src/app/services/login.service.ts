@@ -3,6 +3,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { auth } from 'firebase/app';
 
+import { DataService } from './data.service';
 import { LoadingService } from './loading.service';
 import { Platform } from '@ionic/angular';
 
@@ -11,6 +12,7 @@ import { Facebook } from '@ionic-native/facebook/ngx';
 
 import { environment } from 'src/environments/environment.prod';
 import { Router } from '@angular/router';
+import { Storage } from '@ionic/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -20,23 +22,27 @@ export class LoginService {
   constructor(
     private afAuth: AngularFireAuth,
     private afdb: AngularFireDatabase,
+    private dataService: DataService,
     private loadingProvider: LoadingService,
     private platform: Platform,
     private gplus: GooglePlus,
     private facebook: Facebook,
     private router: Router,
+    private storage: Storage
   ) { }
 
   login(email, password) {
     this.loadingProvider.show();
     this.afAuth.auth.signInWithEmailAndPassword(email, password).then((res) => {
-      console.log(res)
+      console.log(res);
+      console.log("******* " + this.afAuth.user + " *********");
+      //this.dataService.getUser(this.afAuth.user.)
       this.loadingProvider.hide();
     }).catch(err => {
       console.log(err);
       this.loadingProvider.hide();
       this.loadingProvider.showToast(err.message)
-    })
+    });
   }
 
   register(name, username, email, password, img) {
@@ -77,9 +83,9 @@ export class LoginService {
             this.createNewUser(uid, userInfo.name, uid, userInfo.email, 'Available', 'Facebook', userInfo.picture);
           }
           else {
-            this.router.navigateByUrl('tabs')
+            this.router.navigateByUrl('tabs');
           }
-        }).catch(err => console.log(err))
+        }).catch(err => console.log(err));
 
       }).catch(err => {
         console.log(err)
@@ -168,6 +174,7 @@ export class LoginService {
   }
 
   logout() {
-    this.afAuth.auth.signOut().then(() => this.router.navigateByUrl('/login', { replaceUrl: true }))
+    this.afAuth.auth.signOut().then(() => this.router.navigateByUrl('/login', { replaceUrl: true }));
+    this.storage.clear();
   }
 }

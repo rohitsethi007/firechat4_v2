@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
+import { AuthGuardService } from '../services/auth-guard.service';
 
 const routes: Routes = [
   {
@@ -14,6 +15,7 @@ const routes: Routes = [
             path: '',
             loadChildren: () => 
               import('../groups/groups.module').then(m => m.GroupsPageModule)
+             // canActivate: [AuthGuardService]
           }
         ]
       },
@@ -23,7 +25,8 @@ const routes: Routes = [
           {
             path: '',
             loadChildren: () =>
-              import('../messages/messages.module').then(m => m.MessagesPageModule)
+              import('../messages/messages.module').then(m => m.MessagesPageModule),
+              canActivate: [AuthGuardService]
           }
         ]
       },
@@ -33,7 +36,8 @@ const routes: Routes = [
           {
             path: '',
             loadChildren: () =>
-              import('../friends/friends.module').then(m => m.FriendsPageModule)
+              import('../friends/friends.module').then(m => m.FriendsPageModule),
+              canActivate: [AuthGuardService]
           }
         ]
       },
@@ -43,7 +47,8 @@ const routes: Routes = [
           {
             path: '',
             loadChildren: () =>
-              import('../profile/profile.module').then(m => m.ProfilePageModule)
+              import('../profile/profile.module').then(m => m.ProfilePageModule),
+              canActivate: [AuthGuardService]
           }
         ]
       },

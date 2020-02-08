@@ -31,40 +31,34 @@
             <p class="item-address">
               <app-text-shell [data]="group.description"></app-text-shell>
             </p>
-            <!--<ion-row class="item-tags">
-              <ion-col class="tag-wrapper" *ngFor="let tag of group.groupTags">
-                <span class="item-tag">
-                  <app-text-shell [data]="tag"></app-text-shell>
-                </span>
-              </ion-col>
-            </ion-row>-->
+         
             <ion-row class="accommodations-wrapper">
               <ion-col class="item-accommodation">
-                <ion-icon class="accommodation-icon" src="./assets/sample-icons/real-estate/guests.svg"></ion-icon>
+                <ion-icon size="large" ios="ios-people" md="md-people"></ion-icon>
                 <span class="accommodation-property">Members</span>
                 <span class="accommodation-value">
-                  <app-text-shell [data]="1"></app-text-shell>
+                  <app-text-shell [data]="group.membersCount"></app-text-shell>
                 </span>
               </ion-col>
               <ion-col class="item-accommodation">
-                <ion-icon class="accommodation-icon" src="./assets/sample-icons/real-estate/bedrooms.svg"></ion-icon>
+                <ion-icon size="large" ios="ios-albums" md="md-albums"></ion-icon>
                 <span class="accommodation-property">Resources</span>
                 <span class="accommodation-value">
-                  <app-text-shell [data]="2"></app-text-shell>
+                  <app-text-shell [data]="group.resourcesCount"></app-text-shell>
                 </span>
               </ion-col>
               <ion-col class="item-accommodation">
-                <ion-icon class="accommodation-icon" src="./assets/sample-icons/real-estate/bathroom.svg"></ion-icon>
+                <ion-icon  size="large"  ios="ios-podium" md="md-podium"></ion-icon>
                 <span class="accommodation-property">Polls</span>
                 <span class="accommodation-value">
-                  <app-text-shell [data]="3"></app-text-shell>
+                  <app-text-shell [data]="group.pollsCount"></app-text-shell>
                 </span>
               </ion-col>
               <ion-col class="item-accommodation">
-                <ion-icon class="accommodation-icon" src="./assets/sample-icons/real-estate/patio.svg"></ion-icon>
+                <ion-icon size="large" ios="ios-chatbubbles" md="md-chatbubbles"></ion-icon>
                 <span class="accommodation-property">Messages</span>
                 <span class="accommodation-value">
-                  <app-text-shell [data]="4"></app-text-shell>
+                  <app-text-shell [data]="group.unreadMessagesCount"></app-text-shell>
                 </span>
               </ion-col>
             </ion-row>

@@ -4,6 +4,7 @@ import { LoginService } from '../services/login.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Validator } from '../../environments/validator';
 
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -37,7 +38,7 @@ export class LoginPage implements OnInit {
       this.loginService.login(this.email, this.password);
     }
     else {
-      console.log('invalid')
+      console.log('invalid');
     }
   }
 

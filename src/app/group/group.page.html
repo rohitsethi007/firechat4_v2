@@ -108,7 +108,7 @@
           <p class="item-description">
             <app-text-shell animation="bouncing" [data]="item.description" lines="3"></app-text-shell>
           </p>
-          <p class="item-address">
+          <p class="item-tags">
             <app-text-shell animation="bouncing" [data]="'Tags: ' + item.pollTagsString"></app-text-shell>
           </p>
         </ion-col>
@@ -164,6 +164,10 @@
           </p>
           <p class="item-address">
             <app-text-shell animation="bouncing" [data]="item.address"></app-text-shell>
+          </p>
+
+          <p class="item-tags">
+            <app-text-shell animation="bouncing" [data]="'Tags: ' + item.resourceTagsString"></app-text-shell>
           </p>
         </ion-col>
       </ion-row>
