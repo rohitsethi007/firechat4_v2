@@ -152,6 +152,29 @@ export class DataService {
     this.updateResourceReviews(resourceKey, review);
   }
 
+  updateResourceBookmark(resourceKey, bookmarkedBy) {
+    // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
+    console.log("inside updateResourceBookmark");
+    this.afdb.list('/resources/' + resourceKey + '/bookmarkedBy/').push(bookmarkedBy);
+   }
+
+   addFirstResourceBookmark(resourceKey, bookmarkedBy) {
+     let r = [];
+     this.afdb.object('/resources/' + resourceKey).update( {
+      bookmarkedBy: r
+     });
+     console.log("inside addFirstResourceBookmark:" + resourceKey);
+     this.updateResourceBookmark(resourceKey, bookmarkedBy);
+   }
+
+  addUserBookmark(userId, resourceId) {
+    let r = [];
+    this.afdb.object('/accounts/' + userId).update( {
+      bookmarkedResources: r
+     });
+    this.afdb.list('/accounts/' + userId + '/bookmarkedResources/').push(resourceId);
+  }
+
   updatePollReviews(pollId, comment) {
     // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
     this.afdb.list('/polls/' + pollId + '/comments/').push(comment);

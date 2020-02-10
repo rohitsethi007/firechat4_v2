@@ -50,7 +50,7 @@ export class GroupsPage implements OnInit {
 
             if (group.key != null) {
               // Get group's unreadMessagesCount
-              group.unreadMessagesCount = group.messages.length - groupId.messagesRead;
+              group.unreadMessagesCount = group.messages.length; // - groupId.messagesRead;
               // Get group's last active date
               group.date = group.messages[group.messages.length - 1].date;
               group.membersCount = group.members.length;

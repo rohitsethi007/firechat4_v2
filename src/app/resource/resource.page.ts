@@ -5,6 +5,8 @@ import { NavController, ModalController } from '@ionic/angular';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
 import { ReviewModalPage } from '../review-modal/review-modal.page';
+import * as firebase from 'firebase';
+import { AngularFireDatabase } from '@angular/fire/database';
 
 @Component({
   selector: 'app-resource',
@@ -27,7 +29,8 @@ export class ResourcePage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private navCtrl: NavController,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private angularfire: AngularFireDatabase
   ) {}
 
   ionViewDidEnter() {
@@ -94,5 +97,42 @@ export class ResourcePage implements OnInit {
 
       this.loadingProvider.hide();
     });
+  }
+
+  bookmarResource() {
+    this.loadingProvider.show();
+    let currentUserName: any;
+    // update user collection with the resource that was just bookmarked
+    this.dataProvider.getFromStorageAsync('currentUser').then((account) => {
+        currentUserName = account.username;
+
+        // update resources collection with the user who bookmarked it
+        if (this.resource.bookmarkedBy === undefined) {
+          console.log("this.resource.bookmarkedBy is null, userId : " + account.userId);
+          this.resource.bookMarkedBy = [];
+          this.resource.bookMarkedBy.push(account.userId);
+          console.log(this.resource.bookMarkedBy);
+          this.angularfire.object('/resources/' + this.resourceId).update({
+            bookmarkedBy: this.resource.bookMarkedBy
+          });
+
+        } else {
+          this.angularfire.list('/resources/' + this.resourceId + '/bookMarkedBy/').push(account.userId);
+        }
+
+        // update user collection with the resource that was just bookmarked
+
+        if (account.bookmarkedResources === null) {
+            account.bookmarkedResources = [];
+            account.bookmarkedResources.push(this.resourceId);
+            this.angularfire.object('/accounts/' + firebase.auth().currentUser.uid).update({
+            bookmarkedResources: account.bookmarkedResources
+          });
+      } else {
+        this.angularfire.list('/accounts/' + account.userId + '/bookmarkedResources/').push(this.resourceId);
+      }
+
+    });
+    this.loadingProvider.hide();
   }
 }

@@ -42,13 +42,19 @@
       </p>
     </ion-col>
     <br/>
-    <ion-col size="12">
+    <ion-col size="10">
       <h4 class="preference-name">Mobile</h4>
       <p class="preference-value">
         {{resource.phones}}
       </p>
     </ion-col>
-
+    <ion-col size="2">
+      <p class="bookmark">
+        <ion-buttons>
+        <ion-button (click)="bookmarResource()"><ion-icon size="large" ios="ios-bookmark" md="md-bookmark"></ion-icon></ion-button>
+      </ion-buttons>
+    </p>
+    </ion-col>
   </ion-row>
 
   <hr class="details-divider">
@@ -67,10 +73,16 @@
 
   <hr class="details-divider">
   <div class="reviews-wrapper">
-    <h3 class="detail-title">Reviews</h3>
-    <ion-buttons slot="end"> 
-      <ion-button (click)="openReviewModal()" ><ion-icon name="create"></ion-icon></ion-button>
+  <ion-row>
+     <ion-col>
+        <h3 class="detail-title">Reviews</h3>
+    </ion-col>
+  <ion-col>
+      <ion-buttons> 
+        <ion-button (click)="openReviewModal()">Add a review</ion-button>
       </ion-buttons>
+    </ion-col>
+   </ion-row>
     <div class="reviews-list">
       <div class="review-item" *ngFor="let review of reviews">
         <ion-row class="review-user">
@@ -85,19 +97,11 @@
             </h5>
             <ion-row class="details-scores user-scores">
               <ion-col class="score-item user-score">
-                <ion-icon class="score-icon" src="./assets/sample-icons/food/reviews.svg"></ion-icon>
-                <div class="score-value">
-                  <app-text-shell [data]="10"></app-text-shell>
-                </div>
-                <span class="score-title">Reviews</span>
+                <p class="review-message">
+                  <app-text-shell [data]="review.review" lines="5"></app-text-shell>
+                </p>
               </ion-col>
-              <ion-col class="score-item user-score">
-                <ion-icon class="score-icon" src="./assets/sample-icons/food/points.svg"></ion-icon>
-                <div class="score-value">
-                  <app-text-shell [data]="2"></app-text-shell>
-                </div>
-                <span class="score-title">Points</span>
-              </ion-col>
+
             </ion-row>
           </ion-col>
           <ion-col class="review-info-wrapper">
@@ -109,9 +113,7 @@
             </div>
           </ion-col>
         </ion-row>
-        <p class="review-message">
-          <app-text-shell [data]="review.review" lines="5"></app-text-shell>
-        </p>
+        
       </div>
     </div>
 
