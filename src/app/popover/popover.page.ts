@@ -11,8 +11,8 @@ import { PopoverController} from '@ionic/angular';
     `
 })
 export class PopoverPage implements OnInit {
-  private message : any;
-  private groupId : any;
+  private message: any;
+  private groupId: any;
 
   constructor(private route: ActivatedRoute, public popCtrl: PopoverController) { 
     this.message = this.route.snapshot.params.message;
@@ -21,7 +21,7 @@ export class PopoverPage implements OnInit {
 
   ngOnInit() {
   }
-  
+
   close() {
     //this.app.getRootNav().push(NewResourcePage, { message: this.message, groupId: this.groupId });
     this.popCtrl.dismiss();

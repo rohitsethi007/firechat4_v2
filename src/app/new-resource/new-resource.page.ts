@@ -4,8 +4,9 @@ import { NavController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
-import { Chooser, ChooserResult } from '@ionic-native/chooser/ngx';
-
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { EventDataService } from '../services/event-data.service';
 
 
 @Component({
@@ -24,9 +25,12 @@ export class NewResourcePage implements OnInit {
   private alert: any;
   private group: any;
   private resourceId: any;
-  private fileObj: ChooserResult;
-
+  private cordova: any;
+  private files: any;
+  private filesnum: any;
   private title: any;
+  private sbaid: any;
+  private returnPath: string = '';
 
   validations = {
     title: [
@@ -56,7 +60,9 @@ export class NewResourcePage implements OnInit {
     public dataProvider: DataService,
     public loadingProvider: LoadingService,
     public navCtrl: NavController,
-    private chooser: Chooser
+    public filePath: FilePath,
+    public fileChooser: FileChooser,
+    public eventsdata: EventDataService
   ) {
     this.groupId = this.route.snapshot.params.id;
     // this.message  = navParams.get('message');
@@ -67,8 +73,22 @@ export class NewResourcePage implements OnInit {
         this.group = group.payload.val();
         console.log(this.group);
         this.resourceTags = [];
-        this.group.groupTags.forEach(element => {
+        this.group.groupTags.forEach((element: any) => {
           this.resourceTags.push({val: element, isChecked: false});
+        });
+
+        this.eventsdata.getRequestFiles().on('value', snapshot => {
+          let rawList = [];
+          snapshot.forEach(snap => {
+            rawList.unshift({
+              id: snap.key,
+              file: snap.val().file,
+              name: snap.val().name,
+              ext: snap.val().ext,
+            })
+          })
+          this.files = rawList;
+          this.filesnum = rawList.length
         });
 
         this.loadingProvider.hide();
@@ -78,8 +98,8 @@ export class NewResourcePage implements OnInit {
 
   ngOnInit() {
 
-    this.tab = "contact";
-    this.title = "Share a Contact";
+    this.tab = 'contact';
+    this.title = 'Share a Contact';
 
     // Initialize
     this.resource = {
@@ -131,7 +151,7 @@ export class NewResourcePage implements OnInit {
           });
   }
 
-  segmentChanged($event) {
+  segmentChanged($event: any) {
     if (this.tab === 'contact') {
       this.title = 'Share a Contact';
     } else if (this.tab === 'upload') {
@@ -147,11 +167,11 @@ export class NewResourcePage implements OnInit {
 
     // Add resource info and date.
     this.resource.dateCreated = new Date().toString();
-    this.resource.title = this.contactForm.value['title'];
-    this.resource.name = this.contactForm.value['name'];
-    this.resource.address = this.contactForm.value['address'];
-    this.resource.phones = this.contactForm.value['phones'];
-    this.resource.email = this.contactForm.value['email'];
+    this.resource.title = this.contactForm.value.title;
+    this.resource.name = this.contactForm.value.name;
+    this.resource.address = this.contactForm.value.address;
+    this.resource.phones = this.contactForm.value.phones;
+    this.resource.email = this.contactForm.value.email;
     this.resource.type = 'contact';
     this.resource.resourceTags = [];
     this.resource.resourceTags = this.resourceTags;
@@ -187,11 +207,101 @@ export class NewResourcePage implements OnInit {
 
    }
 
-   pickFile() {
-     this.chooser.getFile("image/jpeg").then((value) => {
-        this.fileObj = value;
-     }, (err) => {
-       alert(JSON.stringify(err));
-     });
-   }
+   selectFile() {
+    let file: { blob: any; type: string; fileext: any; filename: any; };
+
+
+    this.fileChooser.open().then((fileuri) => {
+      this.filePath.resolveNativePath(fileuri).then((resolveNativePath) => {
+        this.returnPath = resolveNativePath;
+      });
+    });
+
+    this.fileChooser.open().then((uri: any) => {
+         this.filePath.resolveNativePath(uri).then((fileentry: any) => {
+           const filename = this.eventsdata.getfilename(fileentry);
+           const fileext = this.eventsdata.getfileext(fileentry);
+
+           if (fileext === 'pdf') {
+              this.eventsdata.makeFileIntoBlob(fileentry, fileext,'application/pdf').then((fileblob: any) => {
+                file = {
+                   blob : fileblob,
+                  type: 'application/pdf',
+                  fileext,
+                  filename
+                };
+                this.eventsdata.addAssignmentFile(this.sbaid.sbaid, file);
+          });
+           }
+           if (fileext === 'docx') {
+              // tslint:disable-next-line: max-line-length
+              this.eventsdata.makeFileIntoBlob(fileentry, fileext, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document').then((fileblob: any) => {
+              file = {
+                   blob : fileblob,
+                  type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                  fileext,
+                  filename
+                };
+              this.eventsdata.addAssignmentFile(this.sbaid.sbaid, file);
+          });
+           }
+           if (fileext == 'doc') {
+              this.eventsdata.makeFileIntoBlob(fileentry, fileext,'application/msword').then((fileblob: any) => {
+                file = {
+                   blob : fileblob,
+                  type: 'application/msword',
+                  fileext,
+                  filename
+                };
+                this.eventsdata.addAssignmentFile(this.sbaid.sbaid, file);
+            });
+           }
+           if (fileext == 'epub') {
+              this.eventsdata.makeFileIntoBlob(fileentry, fileext,'application/octet-stream').then((fileblob: any) => {
+             file = {
+                   blob : fileblob,
+                  type: 'application/octet-stream',
+                  fileext,
+                  filename
+                };
+             this.eventsdata.addAssignmentFile(this.sbaid.sbaid, file);
+            });
+           }
+           if (fileext == 'accdb') {
+              this.eventsdata.makeFileIntoBlob(fileentry, filename,'application/msaccess').then((fileblob: any) => {
+             file = {
+                   blob : fileblob,
+                  type: 'application/msaccess',
+                  fileext,
+                  filename
+                };
+             this.eventsdata.addAssignmentFile(this.sbaid.sbaid, file);
+            });
+           }
+           if (fileext == 'xlsx') {
+              // tslint:disable-next-line: max-line-length
+              this.eventsdata.makeFileIntoBlob(fileentry, filename,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet').then((fileblob: any) => {
+             file = {
+                   blob : fileblob,
+                  type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                  fileext,
+                  filename
+                };
+             this.eventsdata.addAssignmentFile(this.sbaid.sbaid, file);
+            });
+           }
+
+     //      else if (fileext!="doc"||"epub"||"xlsx"||"pdf"||"accdb"||"docx" ){
+
+     // alert("Can't add "+  filename)
+
+     //      }
+
+          });
+        });
+    }
+
+    gotoFilePage(file: any) {
+     // cordova.InAppBrowser.open(file,'_system', 'location=yes');
+    }
 }

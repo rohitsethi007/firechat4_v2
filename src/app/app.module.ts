@@ -24,6 +24,8 @@ import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { MediaCapture } from '@ionic-native/media-capture/ngx';
 import { File } from '@ionic-native/file/ngx';
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Contacts } from '@ionic-native/contacts/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
@@ -70,6 +72,8 @@ import { Chooser } from '@ionic-native/chooser/ngx';
     Camera,
     MediaCapture,
     File,
+    FilePath,
+    FileChooser,
     FirebaseX,
     Geolocation,
     Contacts,
