@@ -14,21 +14,39 @@ export class EventDataService {
     this.sbaList = firebase.database().ref('/sbalist');
   }
 
-  makeFileIntoBlob(imagePath, name, type) {
-    return new Promise((resolve, reject) => {
-      this.file.readAsArrayBuffer(imagePath, name).then((resFile) => {
-          let reader = new FileReader();
-          reader.onloadend = (evt: any) => {
-            let imgBlob: any = new Blob([evt.target.result], { type: type });
-            imgBlob.name = name;
-            resolve(imgBlob);
-          };
-          reader.onerror = (e) => {
-           alert('Failed file read: ' + e.toString());
-           reject(e);
-          };
-      });
-    });
+  makeFileIntoBlob(_imagePath, name, type) {
+   // INSTALL PLUGIN - cordova plugin add cordova-plugin-file
+   return new Promise((resolve, reject) => {
+    let fileName = name;
+    this.file
+      .resolveLocalFilesystemUrl(_imagePath)
+      .then(fileEntry => {
+        let { name, nativeURL } = fileEntry;
+
+        // get the path..
+        let path = _imagePath; // nativeURL.substring(0, nativeURL.lastIndexOf("/"));
+        console.log("path", path);
+        console.log("fileName", name);
+
+        fileName = name;
+
+        // we are provided the name, so now read the file into
+        // a buffer
+        return this.file.readAsArrayBuffer(path, name);
+      })
+      .then(buffer => {
+        // get the buffer and make a blob to be saved
+        let imgBlob = new Blob([buffer], {
+          type: type
+        });
+        console.log(imgBlob.type, imgBlob.size);
+        resolve({
+          fileName,
+          imgBlob
+        });
+      })
+      .catch(e => reject(e));
+  });
   }
 
   getfilename(filestring) {

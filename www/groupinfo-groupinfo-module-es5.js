@@ -1,0 +1,673 @@
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["groupinfo-groupinfo-module"], {
+  /***/
+  "./node_modules/raw-loader/dist/cjs.js!./src/app/groupinfo/groupinfo.page.html":
+  /*!*************************************************************************************!*\
+    !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/groupinfo/groupinfo.page.html ***!
+    \*************************************************************************************/
+
+  /*! exports provided: default */
+
+  /***/
+  function node_modulesRawLoaderDistCjsJsSrcAppGroupinfoGroupinfoPageHtml(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+
+    __webpack_require__.r(__webpack_exports__);
+    /* harmony default export */
+
+
+    __webpack_exports__["default"] = "<ion-header>\r\n  <ion-toolbar color=\"primary\">\r\n    <ion-buttons slot=\"start\">\r\n      <ion-back-button></ion-back-button>\r\n    </ion-buttons>\r\n    <ion-title *ngIf=\"group\">{{group.name}}</ion-title>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n  <div *ngIf=\"group\">\r\n    <ion-row style=\"background:#f3f3f3\" padding>\r\n      <ion-col size=\"8\">\r\n        <h4 tappable (click)=\"setName()\">{{group.name}} <ion-icon name=\"create\"></ion-icon>\r\n        </h4>\r\n        <p tappable style=\"color:#aaa\" (click)=\"setDescription()\">{{group.description}} <ion-icon name=\"create\">\r\n          </ion-icon>\r\n        </p>\r\n        <p style=\"color:#aaa;margin:0\">Started {{group.dateCreated | DateFormat}}</p>\r\n        <div>\r\n          <ion-button size=\"small\" (click)=\"leaveGroup()\" *ngIf=\"groupMembers && groupMembers.length > 1\">Leave\r\n          </ion-button>\r\n          <ion-button size=\"small\" (click)=\"deleteGroup()\" *ngIf=\"groupMembers && groupMembers.length <= 1\">Delete\r\n          </ion-button>\r\n        </div>\r\n      </ion-col>\r\n      <ion-col size=\"4\">\r\n        <img src=\"{{group.img}}\" style=\"border-radius: 100%; width: 80px; height: 80px;\" tappable (click)=\"setPhoto()\"\r\n          onError=\"this.src='./assets/images/default-group.png'\">\r\n      </ion-col>\r\n    </ion-row>\r\n    <ion-list *ngIf=\"groupMembers\" lines=\"none\">\r\n      <ion-item>\r\n        <ion-label>\r\n          <ion-text>\r\n            Group Members ({{groupMembers.length}})\r\n          </ion-text>\r\n        </ion-label>\r\n        <ion-button slot=\"end\" (click)=\"addMembers()\" fill=\"outline\">Add</ion-button>\r\n      </ion-item>\r\n      <ion-item *ngFor=\"let member of groupMembers\" (click)=\"viewUser(member.$key)\">\r\n        <ion-avatar slot=\"start\">\r\n          <img src=\"{{member.img}}\" onError=\"this.src='./assets/images/default-dp.png'\" />\r\n        </ion-avatar>\r\n        <ion-label>\r\n          <ion-text>\r\n            <h2>{{member.name}}</h2>\r\n          </ion-text>\r\n          <ion-text>\r\n            <p>{{member.description}}</p>\r\n          </ion-text>\r\n        </ion-label>\r\n      </ion-item>\r\n    </ion-list>\r\n  </div>\r\n</ion-content>";
+    /***/
+  },
+
+  /***/
+  "./src/app/groupinfo/groupinfo.module.ts":
+  /*!***********************************************!*\
+    !*** ./src/app/groupinfo/groupinfo.module.ts ***!
+    \***********************************************/
+
+  /*! exports provided: GroupinfoPageModule */
+
+  /***/
+  function srcAppGroupinfoGroupinfoModuleTs(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+
+    __webpack_require__.r(__webpack_exports__);
+    /* harmony export (binding) */
+
+
+    __webpack_require__.d(__webpack_exports__, "GroupinfoPageModule", function () {
+      return GroupinfoPageModule;
+    });
+    /* harmony import */
+
+
+    var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
+    /*! tslib */
+    "./node_modules/tslib/tslib.es6.js");
+    /* harmony import */
+
+
+    var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
+    /*! @angular/core */
+    "./node_modules/@angular/core/fesm2015/core.js");
+    /* harmony import */
+
+
+    var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
+    /*! @angular/common */
+    "./node_modules/@angular/common/fesm2015/common.js");
+    /* harmony import */
+
+
+    var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+    /*! @angular/forms */
+    "./node_modules/@angular/forms/fesm2015/forms.js");
+    /* harmony import */
+
+
+    var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+    /*! @angular/router */
+    "./node_modules/@angular/router/fesm2015/router.js");
+    /* harmony import */
+
+
+    var _ionic_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+    /*! @ionic/angular */
+    "./node_modules/@ionic/angular/dist/fesm5.js");
+    /* harmony import */
+
+
+    var _groupinfo_page__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
+    /*! ./groupinfo.page */
+    "./src/app/groupinfo/groupinfo.page.ts");
+    /* harmony import */
+
+
+    var _services_share_module__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
+    /*! ../services/share.module */
+    "./src/app/services/share.module.ts");
+
+    var routes = [{
+      path: '',
+      component: _groupinfo_page__WEBPACK_IMPORTED_MODULE_6__["GroupinfoPage"]
+    }];
+
+    var GroupinfoPageModule = function GroupinfoPageModule() {
+      _classCallCheck(this, GroupinfoPageModule);
+    };
+
+    GroupinfoPageModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
+      imports: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormsModule"], _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["IonicModule"], _services_share_module__WEBPACK_IMPORTED_MODULE_7__["SharedModule"], _angular_router__WEBPACK_IMPORTED_MODULE_4__["RouterModule"].forChild(routes)],
+      declarations: [_groupinfo_page__WEBPACK_IMPORTED_MODULE_6__["GroupinfoPage"]]
+    })], GroupinfoPageModule);
+    /***/
+  },
+
+  /***/
+  "./src/app/groupinfo/groupinfo.page.scss":
+  /*!***********************************************!*\
+    !*** ./src/app/groupinfo/groupinfo.page.scss ***!
+    \***********************************************/
+
+  /*! exports provided: default */
+
+  /***/
+  function srcAppGroupinfoGroupinfoPageScss(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+
+    __webpack_require__.r(__webpack_exports__);
+    /* harmony default export */
+
+
+    __webpack_exports__["default"] = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2dyb3VwaW5mby9ncm91cGluZm8ucGFnZS5zY3NzIn0= */";
+    /***/
+  },
+
+  /***/
+  "./src/app/groupinfo/groupinfo.page.ts":
+  /*!*********************************************!*\
+    !*** ./src/app/groupinfo/groupinfo.page.ts ***!
+    \*********************************************/
+
+  /*! exports provided: GroupinfoPage */
+
+  /***/
+  function srcAppGroupinfoGroupinfoPageTs(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+
+    __webpack_require__.r(__webpack_exports__);
+    /* harmony export (binding) */
+
+
+    __webpack_require__.d(__webpack_exports__, "GroupinfoPage", function () {
+      return GroupinfoPage;
+    });
+    /* harmony import */
+
+
+    var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
+    /*! tslib */
+    "./node_modules/tslib/tslib.es6.js");
+    /* harmony import */
+
+
+    var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
+    /*! @angular/core */
+    "./node_modules/@angular/core/fesm2015/core.js");
+    /* harmony import */
+
+
+    var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
+    /*! @angular/router */
+    "./node_modules/@angular/router/fesm2015/router.js");
+    /* harmony import */
+
+
+    var _services_data_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+    /*! ../services/data.service */
+    "./src/app/services/data.service.ts");
+    /* harmony import */
+
+
+    var _services_loading_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+    /*! ../services/loading.service */
+    "./src/app/services/loading.service.ts");
+    /* harmony import */
+
+
+    var _ionic_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+    /*! @ionic/angular */
+    "./node_modules/@ionic/angular/dist/fesm5.js");
+    /* harmony import */
+
+
+    var _angular_fire_database__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
+    /*! @angular/fire/database */
+    "./node_modules/@angular/fire/database/es2015/index.js");
+    /* harmony import */
+
+
+    var _services_image_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
+    /*! ../services/image.service */
+    "./src/app/services/image.service.ts");
+    /* harmony import */
+
+
+    var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
+    /*! @ionic-native/camera/ngx */
+    "./node_modules/@ionic-native/camera/ngx/index.js");
+    /* harmony import */
+
+
+    var firebase__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(
+    /*! firebase */
+    "./node_modules/firebase/dist/index.cjs.js");
+    /* harmony import */
+
+
+    var firebase__WEBPACK_IMPORTED_MODULE_9___default =
+    /*#__PURE__*/
+    __webpack_require__.n(firebase__WEBPACK_IMPORTED_MODULE_9__);
+
+    var GroupinfoPage =
+    /*#__PURE__*/
+    function () {
+      // GroupInfoPage
+      // This is the page where the user can view group information, change group information, add members, and leave/delete group.
+      function GroupinfoPage(router, route, dataProvider, loadingProvider, modalCtrl, alertCtrl, angularfire, imageProvider, camera) {
+        _classCallCheck(this, GroupinfoPage);
+
+        this.router = router;
+        this.route = route;
+        this.dataProvider = dataProvider;
+        this.loadingProvider = loadingProvider;
+        this.modalCtrl = modalCtrl;
+        this.alertCtrl = alertCtrl;
+        this.angularfire = angularfire;
+        this.imageProvider = imageProvider;
+        this.camera = camera;
+      }
+
+      _createClass(GroupinfoPage, [{
+        key: "ngOnInit",
+        value: function ngOnInit() {}
+      }, {
+        key: "ionViewDidEnter",
+        value: function ionViewDidEnter() {
+          var _this = this;
+
+          // Initialize
+          this.groupId = this.route.snapshot.params.id;
+          console.log(this.groupId); // Get group details.
+
+          this.subscription = this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe(function (groupRes) {
+            var group = Object.assign({
+              $key: groupRes.key
+            }, groupRes.payload.val());
+            console.log(group);
+
+            if (group != null) {
+              _this.loadingProvider.show();
+
+              _this.group = group;
+
+              if (group.members) {
+                group.members.forEach(function (memberId) {
+                  _this.dataProvider.getUser(memberId).snapshotChanges().subscribe(function (member) {
+                    if (member.key != null) {
+                      member = Object.assign({
+                        $key: member.key
+                      }, member.payload.val());
+
+                      _this.addUpdateOrRemoveMember(member);
+                    }
+                  });
+                });
+              }
+
+              _this.loadingProvider.hide();
+            } else {
+              _this.router.navigateByUrl('/');
+            }
+          }); // Get user details.
+
+          this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (user) {
+            _this.user = Object.assign({
+              $key: user.key
+            }, user.payload.val());
+          });
+        } // Delete subscription.
+        // ionViewDidLeave() {
+        //   if(this.deleteSubscription)
+        //
+        // }
+        // Check if user exists in the group then add/update user.
+        // If the user has already left the group, remove user from the list.
+
+      }, {
+        key: "addUpdateOrRemoveMember",
+        value: function addUpdateOrRemoveMember(member) {
+          console.log(member);
+
+          if (this.group) {
+            if (this.group.members.indexOf(member.$key) > -1) {
+              // User exists in the group.
+              if (!this.groupMembers) {
+                this.groupMembers = [member];
+              } else {
+                var index = -1;
+
+                for (var i = 0; i < this.groupMembers.length; i++) {
+                  if (this.groupMembers[i].$key == member.$key) {
+                    index = i;
+                  }
+                } // Add/Update User.
+
+
+                if (index > -1) {
+                  this.groupMembers[index] = member;
+                } else {
+                  this.groupMembers.push(member);
+                }
+              }
+            } else {
+              // User already left the group, remove member from list.
+              var index1 = -1;
+
+              for (var j = 0; j < this.groupMembers.length; j++) {
+                if (this.groupMembers[j].$key == member.$key) {
+                  index1 = j;
+                }
+              }
+
+              if (index1 > -1) {
+                this.groupMembers.splice(index1, 1);
+              }
+            }
+          }
+        } // View user info.
+
+      }, {
+        key: "viewUser",
+        value: function viewUser(userId) {
+          if (firebase__WEBPACK_IMPORTED_MODULE_9__["auth"]().currentUser.uid != userId) this.router.navigateByUrl('/userinfo/' + userId);
+        } // Enlarge group image.
+
+      }, {
+        key: "enlargeImage",
+        value: function enlargeImage(img) {} // let imageModal = this.modalCtrl.create("ImageModalPage", { img: img });
+        // imageModal.present();
+        // Change group name.
+
+      }, {
+        key: "setName",
+        value: function setName() {
+          var _this2 = this;
+
+          this.alert = this.alertCtrl.create({
+            header: 'Change Group Name',
+            message: "Please enter a new group name.",
+            inputs: [{
+              name: 'name',
+              placeholder: 'Group Name',
+              value: this.group.name
+            }],
+            buttons: [{
+              text: 'Cancel',
+              handler: function handler(data) {}
+            }, {
+              text: 'Save',
+              handler: function handler(data) {
+                var name = data["name"];
+
+                if (_this2.group.name != name) {
+                  _this2.loadingProvider.show(); // Add system message.
+
+
+                  _this2.group.messages.push({
+                    date: new Date().toString(),
+                    sender: _this2.user.$key,
+                    type: 'system',
+                    message: _this2.user.name + ' has changed the group name to: ' + name + '.',
+                    icon: 'md-create'
+                  }); // Update group on database.
+
+
+                  _this2.dataProvider.getGroup(_this2.groupId).update({
+                    name: name,
+                    messages: _this2.group.messages
+                  }).then(function (success) {
+                    _this2.loadingProvider.hide();
+
+                    _this2.loadingProvider.showToast("Updated Succesfully");
+                  }).catch(function (error) {
+                    _this2.loadingProvider.hide();
+
+                    _this2.loadingProvider.showToast("Something went wrong");
+                  });
+                }
+              }
+            }]
+          }).then(function (r) {
+            return r.present();
+          });
+        } // Change group image, the user is asked if they want to take a photo or choose from gallery.
+
+      }, {
+        key: "setPhoto",
+        value: function setPhoto() {
+          var _this3 = this;
+
+          this.alert = this.alertCtrl.create({
+            header: 'Set Group Photo',
+            message: 'Do you want to take a photo or choose from your photo gallery?',
+            buttons: [{
+              text: 'Cancel',
+              handler: function handler(data) {}
+            }, {
+              text: 'Choose from Gallery',
+              handler: function handler() {
+                _this3.loadingProvider.show(); // Upload photo and set to group photo, afterwards, return the group object as promise.
+
+
+                _this3.imageProvider.setGroupPhotoPromise(_this3.group, _this3.camera.PictureSourceType.PHOTOLIBRARY).then(function (group) {
+                  // Add system message.
+                  _this3.group.messages.push({
+                    date: new Date().toString(),
+                    sender: _this3.user.$key,
+                    type: 'system',
+                    message: _this3.user.name + ' has changed the group photo.',
+                    icon: 'ios-camera'
+                  }); // Update group image on database.
+
+
+                  _this3.dataProvider.getGroup(_this3.groupId).update({
+                    img: group.img,
+                    messages: _this3.group.messages
+                  }).then(function (success) {
+                    _this3.loadingProvider.hide();
+
+                    _this3.loadingProvider.showToast("Updated Successfully");
+                  }).catch(function (error) {
+                    _this3.loadingProvider.hide();
+
+                    _this3.loadingProvider.showToast("Something went wrong");
+                  });
+                });
+              }
+            }, {
+              text: 'Take Photo',
+              handler: function handler() {
+                _this3.loadingProvider.show(); // Upload photo and set to group photo, afterwwards, return the group object as promise.
+
+
+                _this3.imageProvider.setGroupPhotoPromise(_this3.group, _this3.camera.PictureSourceType.CAMERA).then(function (group) {
+                  // Add system message.
+                  _this3.group.messages.push({
+                    date: new Date().toString(),
+                    sender: _this3.user.$key,
+                    type: 'system',
+                    message: _this3.user.name + ' has changed the group photo.',
+                    icon: 'ios-camera'
+                  }); // Update group image on database.
+
+
+                  _this3.dataProvider.getGroup(_this3.groupId).update({
+                    img: group.img,
+                    messages: _this3.group.messages
+                  }).then(function (success) {
+                    _this3.loadingProvider.hide();
+
+                    _this3.loadingProvider.showToast("Updated Successfully");
+                  }).catch(function (error) {
+                    _this3.loadingProvider.hide();
+
+                    _this3.loadingProvider.showToast("Something went wrong");
+                  });
+                });
+              }
+            }]
+          }).then(function (r) {
+            return r.present();
+          });
+        } // Change group description.
+
+      }, {
+        key: "setDescription",
+        value: function setDescription() {
+          var _this4 = this;
+
+          this.alert = this.alertCtrl.create({
+            header: 'Change Group Description',
+            message: "Please enter a new group description.",
+            inputs: [{
+              name: 'description',
+              placeholder: 'Group Description',
+              value: this.group.description
+            }],
+            buttons: [{
+              text: 'Cancel',
+              handler: function handler(data) {}
+            }, {
+              text: 'Save',
+              handler: function handler(data) {
+                var description = data["description"];
+
+                if (_this4.group.description != description) {
+                  _this4.loadingProvider.show(); // Add system message.
+
+
+                  _this4.group.messages.push({
+                    date: new Date().toString(),
+                    sender: _this4.user.$key,
+                    type: 'system',
+                    message: _this4.user.name + ' has changed the group description.',
+                    icon: 'md-clipboard'
+                  }); // Update group on database.
+
+
+                  _this4.dataProvider.getGroup(_this4.groupId).update({
+                    description: description,
+                    messages: _this4.group.messages
+                  }).then(function (success) {
+                    _this4.loadingProvider.hide();
+
+                    _this4.loadingProvider.showToast("Updated Successfully");
+                  }).catch(function (error) {
+                    _this4.loadingProvider.hide();
+
+                    _this4.loadingProvider.showToast("Something went wrong");
+                  });
+                }
+              }
+            }]
+          }).then(function (r) {
+            return r.present();
+          });
+        } // Leave group.
+
+      }, {
+        key: "leaveGroup",
+        value: function leaveGroup() {
+          var _this5 = this;
+
+          this.alert = this.alertCtrl.create({
+            header: 'Confirm Leave',
+            message: 'Are you sure you want to leave this group?',
+            buttons: [{
+              text: 'Cancel'
+            }, {
+              text: 'Leave',
+              handler: function handler(data) {
+                _this5.loadingProvider.show(); // Remove member from group.
+
+
+                _this5.group.members.splice(_this5.group.members.indexOf(_this5.user.$key), 1); // Add system message.
+
+
+                _this5.group.messages.push({
+                  date: new Date().toString(),
+                  sender: _this5.user.$key,
+                  type: 'system',
+                  message: _this5.user.name + ' has left this group.',
+                  icon: 'md-log-out'
+                }); // Update group on database.
+
+
+                _this5.dataProvider.getGroup(_this5.groupId).update({
+                  members: _this5.group.members,
+                  messages: _this5.group.messages
+                }).then(function (success) {
+                  // Remove group from user's group list.
+                  _this5.angularfire.object('/accounts/' + firebase__WEBPACK_IMPORTED_MODULE_9__["auth"]().currentUser.uid + '/groups/' + _this5.groupId).remove().then(function () {
+                    // Pop this view because user already has left this group.
+                    _this5.group = null;
+                    setTimeout(function () {
+                      _this5.loadingProvider.hide();
+
+                      _this5.router.navigateByUrl('/');
+                    }, 300);
+                  });
+                }).catch(function (error) {
+                  _this5.loadingProvider.showToast("Something went wrong");
+                });
+              }
+            }]
+          }).then(function (r) {
+            return r.present();
+          });
+        } // Delete group.
+
+      }, {
+        key: "deleteGroup",
+        value: function deleteGroup() {
+          var _this6 = this;
+
+          this.alert = this.alertCtrl.create({
+            header: 'Confirm Delete',
+            message: 'Are you sure you want to delete this group?',
+            buttons: [{
+              text: 'Cancel'
+            }, {
+              text: 'Delete',
+              handler: function handler(data) {
+                var group = JSON.parse(JSON.stringify(_this6.group));
+                console.log(group); // Delete all images of image messages.
+
+                group.messages.forEach(function (message) {
+                  if (message.type == 'image') {
+                    console.log("Delete: " + message.url + " of " + group.$key);
+
+                    _this6.imageProvider.deleteGroupImageFile(group.$key, message.url);
+                  }
+                });
+
+                _this6.angularfire.object('/accounts/' + firebase__WEBPACK_IMPORTED_MODULE_9__["auth"]().currentUser.uid + '/groups/' + group.$key).remove().then(function () {
+                  _this6.dataProvider.getGroup(group.$key).remove();
+                }); // Delete group image.
+
+
+                console.log("Delete: " + group.img);
+
+                _this6.imageProvider.deleteImageFile(group.img); // this.navCtrl.popToRoot();
+
+
+                _this6.router.navigateByUrl('/');
+              }
+            }]
+          }).then(function (r) {
+            return r.present();
+          });
+        } // Add members.
+
+      }, {
+        key: "addMembers",
+        value: function addMembers() {
+          this.router.navigateByUrl('/addmembers/' + this.groupId);
+        }
+      }]);
+
+      return GroupinfoPage;
+    }();
+
+    GroupinfoPage.ctorParameters = function () {
+      return [{
+        type: _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"]
+      }, {
+        type: _angular_router__WEBPACK_IMPORTED_MODULE_2__["ActivatedRoute"]
+      }, {
+        type: _services_data_service__WEBPACK_IMPORTED_MODULE_3__["DataService"]
+      }, {
+        type: _services_loading_service__WEBPACK_IMPORTED_MODULE_4__["LoadingService"]
+      }, {
+        type: _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["ModalController"]
+      }, {
+        type: _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["AlertController"]
+      }, {
+        type: _angular_fire_database__WEBPACK_IMPORTED_MODULE_6__["AngularFireDatabase"]
+      }, {
+        type: _services_image_service__WEBPACK_IMPORTED_MODULE_7__["ImageService"]
+      }, {
+        type: _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_8__["Camera"]
+      }];
+    };
+
+    GroupinfoPage = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
+      selector: 'app-groupinfo',
+      template: tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(
+      /*! raw-loader!./groupinfo.page.html */
+      "./node_modules/raw-loader/dist/cjs.js!./src/app/groupinfo/groupinfo.page.html")).default,
+      styles: [tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(
+      /*! ./groupinfo.page.scss */
+      "./src/app/groupinfo/groupinfo.page.scss")).default]
+    }), tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"], _angular_router__WEBPACK_IMPORTED_MODULE_2__["ActivatedRoute"], _services_data_service__WEBPACK_IMPORTED_MODULE_3__["DataService"], _services_loading_service__WEBPACK_IMPORTED_MODULE_4__["LoadingService"], _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["ModalController"], _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["AlertController"], _angular_fire_database__WEBPACK_IMPORTED_MODULE_6__["AngularFireDatabase"], _services_image_service__WEBPACK_IMPORTED_MODULE_7__["ImageService"], _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_8__["Camera"]])], GroupinfoPage);
+    /***/
+  }
+}]);
+//# sourceMappingURL=groupinfo-groupinfo-module-es5.js.map

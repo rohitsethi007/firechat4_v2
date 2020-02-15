@@ -31,7 +31,10 @@ const routes: Routes = [
   { path: 'getting-started', loadChildren: './getting-started/getting-started.module#GettingStartedPageModule' },
   { path: 'new-resource/:id', loadChildren: './new-resource/new-resource.module#NewResourcePageModule', canActivate: [AuthGuardService] },
   { path: 'resource/:id', loadChildren: './resource/resource.module#ResourcePageModule', canActivate: [AuthGuardService] },
-  { path: 'review-modal', loadChildren: './review-modal/review-modal.module#ReviewModalPageModule', canActivate: [AuthGuardService] }
+  { path: 'review-modal', loadChildren: './review-modal/review-modal.module#ReviewModalPageModule', canActivate: [AuthGuardService] },
+  { path: 'event', loadChildren: './event/event.module#EventPageModule', canActivate: [AuthGuardService] },
+  { path: 'new-event/:id', loadChildren: './new-event/new-event.module#NewEventPageModule', canActivate: [AuthGuardService] }
+
 
 ];
 @NgModule({

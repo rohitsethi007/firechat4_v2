@@ -9,7 +9,7 @@ import { FilePath } from '@ionic-native/file-path/ngx';
 import { EventDataService } from '../services/event-data.service';
 
 
-@Component({
+@Component({ 
   selector: 'app-new-resource',
   templateUrl: './new-resource.page.html',
   styleUrls: ['./new-resource.page.scss'],
@@ -183,6 +183,9 @@ export class NewResourcePage implements OnInit {
         // Add system message that group is created.
         // Add group resource details
         this.resourceId = resourceId;
+        if (this.group.resources === undefined) {
+          this.group.resources = [];
+        }
         this.group.resources.push(this.resourceId);
         const uid = this.dataProvider.getCurrentUserId();
         // Add system message that the members are added to the group.

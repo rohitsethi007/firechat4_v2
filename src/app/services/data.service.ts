@@ -103,11 +103,20 @@ export class DataService {
     return this.afdb.object('/groups/' + groupId + '/resources/');
   }
 
+  // Get Events of the logged in user.
+  getGroupEvents(groupId) {
+    return this.afdb.object('/groups/' + groupId + '/events/');
+  }
+
   // Get Resource details of the logged in user.
   getResourceDetails(rId) {
     return this.afdb.object('/resources/' + rId);
   }
 
+  // Get Events details of the logged in user.
+  getEventDetails(eId) {
+    return this.afdb.object('/events/' + eId);
+  }
   // Get Polls of the logged in user.
   getGroupMembers(groupId) {
     return this.afdb.object('/groups/' + groupId + '/members/');
@@ -137,6 +146,10 @@ export class DataService {
 
   addResource(resource) {
     return this.afdb.list('resources').push(resource);
+  }
+
+  addEvent(event) {
+    return this.afdb.list('events').push(event);
   }
 
   updateResourceReviews(resourceKey, review) {

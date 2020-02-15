@@ -8,6 +8,7 @@
 			<ion-button *ngIf="loggedInUserIsMember == false" (click)="joinGroup()" >Join Group</ion-button>
 		<ion-button *ngIf="loggedInUserIsMember == true && tab=='polls'" (click)="newPoll()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
 		<ion-button *ngIf="loggedInUserIsMember == true && tab=='resources'" (click)="newResource()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
+		<ion-button *ngIf="loggedInUserIsMember == true && tab=='events'" (click)="newEvent()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
 	</ion-buttons>
 
   </ion-toolbar>
@@ -21,6 +22,9 @@
 		</ion-segment-button>
 		<ion-segment-button value="resources">
 			<ion-icon name="document"></ion-icon>
+    </ion-segment-button>
+    <ion-segment-button value="events">
+			<ion-icon name="calender"></ion-icon>
 		</ion-segment-button>
 		<ion-segment-button value="groupInfo">
 			<ion-icon name="information-circle"></ion-icon>
@@ -92,7 +96,7 @@
 
   <div *ngSwitchCase="'polls'">
     <!-- No polls to show -->
-     <div *ngIf="polls && polls.length == 0">
+     <div class="empty-list" *ngIf="polls && polls.length == 0">
      <h1><ion-icon name="md-chatbubbles"></ion-icon></h1>
      <p>No new polls yet.</p>
      </div>
@@ -146,7 +150,7 @@
 
     <div *ngSwitchCase="'resources'">
     <!-- No Resources to show -->
-     <div *ngIf="resources && resources.length == 0">
+     <div class="empty-list" *ngIf="resources && resources.length == 0">
      <h1><ion-icon name="md-chatbubbles"></ion-icon></h1>
      <p>No new Resources added to this group.</p>
      </div>
@@ -217,6 +221,61 @@
      </div>
     </div>
 
+    
+    <div *ngSwitchCase="'events'">
+      <!-- No Events to show -->
+       <div class="empty-list" *ngIf="events && events.length == 0">
+       <h1><ion-icon name="md-chatbubbles"></ion-icon></h1>
+       <p>No new upcoming Events added to this group.</p>
+       </div>
+       <!-- Show Events -->
+       <div *ngIf="events && events.length > 0" >
+       <ion-searchbar [(ngModel)]="searchEvents" placeholder="Search for Events" showCancelButton="true" cancelButtonText="Done"></ion-searchbar>
+       <div class="listing-item" *ngFor="let item of events" (click)="viewEvent(item)">
+        <ion-row class="info-row">
+          <ion-col class="main-info-col">
+            <h3 class="item-name">
+                <app-text-shell animation="bouncing" [data]="(item?.title && item?.type) ? (item.title + ' - ' + item.type) : (item.title)"></app-text-shell>
+            </h3>
+            <p class="item-description">
+              <app-text-shell animation="bouncing" [data]="item.description" lines="3"></app-text-shell>
+            </p>
+            <p class="item-address">
+              <app-text-shell animation="bouncing" [data]="item.eventDate"></app-text-shell>
+              <app-text-shell animation="bouncing" [data]="item.eventTime"></app-text-shell>
+            </p>
+  
+            <p class="item-tags">
+              <app-text-shell animation="bouncing" [data]="'Tags: ' + item.eventTagsString"></app-text-shell>
+            </p>
+          </ion-col>
+        </ion-row>
+        <ion-row class="stats-row">
+          <ion-col size="2" class="item-rating">
+            <span class="rating-value"> 
+              <app-text-shell [data]="item.dateCreated | DateFormat"></app-text-shell>
+            </span>
+          </ion-col>
+          <ion-col size="2" class="item-rating">
+            <span class="rating-value">
+              <app-text-shell [data]="2"></app-text-shell>
+            </span>
+            <ion-icon class="stats-icon" src="./assets/sample-icons/travel/star.svg"></ion-icon>
+          </ion-col>
+          <ion-col size="2" class="item-reviews">
+            <span class="reviews-count">
+              <app-text-shell [data]="item.attendees"></app-text-shell>
+            </span>
+            <ion-icon class="stats-icon" src="./assets/sample-icons/travel/comments.svg"></ion-icon>
+          </ion-col>
+          <ion-col size="2" class="item-reviews">
+            <ion-icon size="large" ios="ios-bookmark" md="md-bookmark"></ion-icon>
+          </ion-col>
+        </ion-row>
+      </div>
+       
+       </div>
+      </div>
       <!-- Group Info -->
  <div *ngSwitchCase="'groupInfo'">
    <ion-row  style="background: white" padding>

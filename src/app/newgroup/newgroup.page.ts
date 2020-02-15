@@ -120,8 +120,8 @@ export class NewgroupPage implements OnInit {
       });
 
      // Add empty poll. 
-     polls.push("system0000");
-     resources.push("system0000");
+     //polls.push("system0000");
+     //resources.push("system0000");
     
       // Add members of the group.
       var members = [];

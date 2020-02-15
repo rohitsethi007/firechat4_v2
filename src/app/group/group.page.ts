@@ -36,15 +36,19 @@ export class GroupPage implements OnInit {
   numberOfMessages = 10;
   private polls: any = [];
   private resources: any = [];
+  private events: any = [];
   private tab: any;
   private group: any;
   private user: any;
   private groupMembers: any;
-  private loggedInUserIsMember: any = 'false'; 
+  private loggedInUserIsMember: any = 'false';
   private searchPoll: any;
   private searchResource: any;
+  private searchEvent: any;
   private resourceTags: any;
   private resourceTagsString: any;
+  private eventTags: any;
+  private eventTagsString: any;
   private alert: any;
   // GroupPage
   // This is the page where the user can chat with other group members and view group info.
@@ -114,8 +118,9 @@ export class GroupPage implements OnInit {
 
   // Update messagesRead when user lefts this page.
   ionViewWillLeave() {
-    if (this.messages)
+    if (this.messages) {
       this.setMessagesRead(this.messages);
+    }
   }
 
   // Check if currentPage is active, then update user's messagesRead.
@@ -138,15 +143,15 @@ export class GroupPage implements OnInit {
 
   // Scroll to bottom of page after a short delay.
   scrollBottom() {
-    var that = this;
-    setTimeout(function () {
+    const that = this;
+    setTimeout(function() {
       that.content.nativeElement.scrollBottom = that.content.nativeElement.scrollHeight;
     }, 300);
   }
 
   // Scroll to top of the page after a short delay.
   scrollTop() {
-    var that = this;
+    const that = this;
     setTimeout(function () {
       that.content.nativeElement.scrollTop = that.content.nativeElement.scrollHeight;
     }, 300);
@@ -154,16 +159,16 @@ export class GroupPage implements OnInit {
 
   // Scroll depending on the direction.
   doScroll() {
-    if (this.scrollDirection == 'bottom') {
+    if (this.scrollDirection === 'bottom') {
       this.scrollBottom();
-    } else if (this.scrollDirection == 'top') {
+    } else if (this.scrollDirection === 'top') {
       this.scrollTop();
     }
   }
 
   // Check if the user is the sender of the message.
   isSender(message) {
-    if (message.sender == firebase.auth().currentUser.uid) {
+    if (message.sender === firebase.auth().currentUser.uid) {
       return true;
     } else {
       return false;
@@ -172,7 +177,7 @@ export class GroupPage implements OnInit {
 
   // Check if the message is a system message.
   isSystemMessage(message) {
-    if (message.type == 'system') {
+    if (message.type === 'system') {
       return true;
     } else {
       return false;
@@ -188,17 +193,19 @@ export class GroupPage implements OnInit {
   send(type) {
     // Clone an instance of messages object so it will not directly be updated.
     // The messages object should be updated by our observer declared on ionViewDidLoad.
-    let messages = JSON.parse(JSON.stringify(this.messages));
+    const messages = JSON.parse(JSON.stringify(this.messages));
 
     messages.push({
       date: new Date().toString(),
       sender: firebase.auth().currentUser.uid,
+      // tslint:disable-next-line: object-literal-shorthand
       type: type,
       message: this.message
     });
 
     // Update group messages.
     this.dataProvider.getGroup(this.groupId).update({
+      // tslint:disable-next-line: object-literal-shorthand
       messages: messages
     });
     // Clear messagebox.
@@ -212,12 +219,12 @@ export class GroupPage implements OnInit {
   }
 
   attach() {
-    let action = this.actionSheet.create({
+    const action = this.actionSheet.create({
       header: 'Choose attachments',
       buttons: [{
         text: 'Camera',
         handler: () => {
-          console.log("take photo");
+          console.log('take photo');
           this.imageProvider.uploadGroupPhotoMessage(this.groupId, this.camera.PictureSourceType.CAMERA).then((url) => {
             // Process image message.
             this.sendPhotoMessage(url);
@@ -226,7 +233,7 @@ export class GroupPage implements OnInit {
       }, {
         text: 'Photo Library',
         handler: () => {
-          console.log("Access gallery");
+          console.log('Access gallery');
           this.imageProvider.uploadGroupPhotoMessage(this.groupId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
             // Process image message.
             this.sendPhotoMessage(url);
@@ -235,7 +242,7 @@ export class GroupPage implements OnInit {
       }, {
         text: 'Video',
         handler: () => {
-          console.log("Video");
+          console.log('Video');
           this.imageProvider.uploadGroupVideoMessage(this.groupId).then(url => {
             this.sendVideoMessage(url);
           });
@@ -243,11 +250,11 @@ export class GroupPage implements OnInit {
       }, {
         text: 'Location',
         handler: () => {
-          console.log("Location");
+          console.log('Location');
           this.geolocation.getCurrentPosition({
             timeout: 2000
           }).then(res => {
-            let locationMessage = "current location: lat:" + res.coords.latitude + " lng:" + res.coords.longitude;
+            let locationMessage = 'current location: lat:' + res.coords.latitude + ' lng:' + res.coords.longitude;
             let mapUrl = "<a href='https://www.google.com/maps/search/" + res.coords.latitude + "," + res.coords.longitude + "'>View on Map</a>";
             let confirm = this.alertCtrl.create({
               header: 'Your Location',
@@ -255,25 +262,25 @@ export class GroupPage implements OnInit {
               buttons: [{
                 text: 'cancel',
                 handler: () => {
-                  console.log("canceled");
+                  console.log('canceled');
                 }
               }, {
                 text: 'Share',
                 handler: () => {
-                  console.log("share");
-                  this.message = locationMessage + "<br>" + mapUrl;
+                  console.log('share');
+                  this.message = locationMessage + '<br>' + mapUrl;
                   this.send('location');
                 }
               }]
             }).then(r => r.present());
           }, locationErr => {
-            console.log("Location Error" + JSON.stringify(locationErr));
+            console.log('Location Error' + JSON.stringify(locationErr));
           });
         }
       }, {
         text: 'Contact',
         handler: () => {
-          console.log("Share contact");
+          console.log('Share contact');
           this.contacts.pickContact().then(data => {
             console.log(data.displayName);
             console.log(data.phoneNumbers[0].value);
@@ -287,7 +294,7 @@ export class GroupPage implements OnInit {
         text: 'cancel',
         role: 'cancel',
         handler: () => {
-          console.log("cancelled");
+          console.log('cancelled');
         }
       }]
     }).then(r => r.present());
@@ -301,7 +308,7 @@ export class GroupPage implements OnInit {
 
   // Process photoMessage on database.
   sendPhotoMessage(url) {
-    let messages = JSON.parse(JSON.stringify(this.messages));
+    const messages = JSON.parse(JSON.stringify(this.messages));
     messages.push({
       date: new Date().toString(),
       sender: firebase.auth().currentUser.uid,
@@ -335,11 +342,11 @@ export class GroupPage implements OnInit {
 
   // Controller Functions
   onPress($event) {
-    console.log("onPress", $event);
+    console.log('onPress', $event);
   }
 
   onPressUp(event, message) {
-    console.log("onPressUp", event);
+    console.log('onPressUp', event);
     console.log(event.center.x);
     console.log(event.center.y);
     this.presentPopover(event, message);
@@ -412,6 +419,7 @@ export class GroupPage implements OnInit {
     });
     return await popover.present();
   }
+
   ///********************* POLL Functions ***********************************/
 
   getGroupDetailsandMessages() {
@@ -559,6 +567,8 @@ export class GroupPage implements OnInit {
       this.title = this.group.name; this.getPolls();
     } else if (this.tab === 'resources') {
       this.title = this.group.name; this.getResources();
+    } else if (this.tab === 'events') {
+      this.title = this.group.name; this.getEvents();
     } else if (this.tab === 'groupInfo') {
       this.title = this.group.name;
     }
@@ -579,8 +589,6 @@ export class GroupPage implements OnInit {
               const poll = { key: pollRes.key, ...pollRes.payload.val() };
               console.log(poll);
               this.addOrUpdatePoll(poll);
-
-
             });
           }
         });
@@ -615,6 +623,11 @@ export class GroupPage implements OnInit {
     this.router.navigate(['resource'], navigationExtras); */
   }
 
+  // View Resource selected
+  viewEvents(event) {
+    this.router.navigateByUrl('event/' + event.key);
+  }
+
   newPoll() {
     this.router.navigateByUrl('/new-poll/' + this.groupId);
     // this.app.getRootNav().push(NewPollPage, { groupId: this.groupId });
@@ -622,6 +635,11 @@ export class GroupPage implements OnInit {
 
   newResource() {
     this.router.navigateByUrl('/new-resource/' + this.groupId);
+    // this.app.getRootNav().push(NewResourcePage, { groupId: this.groupId });
+  }
+
+  newEvent() {
+    this.router.navigateByUrl('/new-event/' + this.groupId);
     // this.app.getRootNav().push(NewResourcePage, { groupId: this.groupId });
   }
 
@@ -647,7 +665,35 @@ export class GroupPage implements OnInit {
         });
         this.loadingProvider.hide();
       } else {
-        this.polls = [];
+        this.resources = [];
+        this.loadingProvider.hide();
+      }
+    });
+  }
+
+  getEvents() {
+    this.dataProvider.getGroupEvents(this.groupId).snapshotChanges().subscribe((eventIdsRes: any) => {
+      let eventIds = eventIdsRes.payload.val();
+      if (eventIds == null || eventIds == undefined) eventIds = [];
+      console.log(eventIds);
+      if (eventIds.length > 0) {
+        eventIds.forEach((eventId) => {
+          var eId = eventId;
+
+          console.log(eId);
+          if (eId != null && eId != "system0000") {
+            this.dataProvider.getEventDetails(eId).snapshotChanges().subscribe((eventRes: any) => {
+              let event = { key: eventRes.key, ...eventRes.payload.val() };
+              console.log(event);
+              this.addOrUpdateEvent(event);
+
+
+            });
+          }
+        });
+        this.loadingProvider.hide();
+      } else {
+        this.events = [];
         this.loadingProvider.hide();
       }
     });
@@ -749,5 +795,36 @@ export class GroupPage implements OnInit {
     }
   }
 
+    // Add or update group for real-time sync based on our observer.
+    addOrUpdateEvent(event) {
+      event.eventTagsString = '';
+      if (event.eventTags) {
+        event.eventTags.forEach(element => {
+          if (element.isChecked === true) {
+            event.eventTagsString = event.eventTagsString + ', ' + element.val;
+          }
+        });
+        // Remove first comma from the string
+        event.eventTagsString = event.eventTagsString.replace(', ', '');
+      } else {
+        event.eventTagsString = 'No tags found';
+      }
+      if (!this.events) {
+        this.events = [event];
+      } else {
+        let index = -1;
+        for (let i = 0; i < this.events.length; i++) {
+          if (this.events[i].key === event.key) {
+            index = i;
+          }
+        }
+        if (index > -1) {
+          this.events[index] = event;
+        } else {
+          this.events.push(event);
+        }
+      }
+    }
+  
 
 }

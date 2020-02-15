@@ -154,6 +154,9 @@ export class NewPollPage implements OnInit {
         // Add system message that group is created.
         // Add group poll details
         this.pollId = pollId;
+        if (this.group.polls === undefined) {
+          this.group.polls = [];
+        }
         this.group.polls.push(this.pollId);
         const uid = this.dataProvider.getCurrentUserId();
         // Add system message that the members are added to the group.

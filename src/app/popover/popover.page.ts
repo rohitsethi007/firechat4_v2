@@ -6,9 +6,9 @@ import { PopoverController} from '@ionic/angular';
   selector: 'app-popover',
   templateUrl: './popover.page.html',
   styleUrls: ['./popover.page.scss'],
-  template: `
-    <button ion-item (click)="close()">Tag it as a Resource</button>
-    `
+  // template: `
+  //   <button ion-item (click)="close()">Tag it as a Resource</button>
+  //   `
 })
 export class PopoverPage implements OnInit {
   private message: any;
