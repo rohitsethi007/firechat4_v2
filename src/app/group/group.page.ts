@@ -624,7 +624,7 @@ export class GroupPage implements OnInit {
   }
 
   // View Resource selected
-  viewEvents(event) {
+  viewEvent(event) {
     this.router.navigateByUrl('event/' + event.key);
   }
 

@@ -42,7 +42,7 @@ export class ResourcePage implements OnInit {
   async openReviewModal() {
     const modal = await this.modalCtrl.create({
       component: ReviewModalPage,
-      componentProps: { resource: this.resource }
+      componentProps: { data: this.resource }
     });
  
     modal.onDidDismiss().then((data) => {

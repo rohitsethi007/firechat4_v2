@@ -7,17 +7,19 @@ import { LoadingService } from '../services/loading.service';
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { EventDataService } from '../services/event-data.service';
-
+import * as urlmetadata from 'url-metadata';
 
 @Component({ 
   selector: 'app-new-resource',
   templateUrl: './new-resource.page.html',
   styleUrls: ['./new-resource.page.scss'],
 })
+
 export class NewResourcePage implements OnInit {
   private resource: any;
   private contactForm: FormGroup;
   private uploadForm: FormGroup;
+  private weblinkForm: FormGroup;
   private resourceTags: any;
   private tab: any;
   private groupId: any;
@@ -30,8 +32,11 @@ export class NewResourcePage implements OnInit {
   private filesnum: any;
   private title: any;
   private sbaid: any;
-  private returnPath: string = '';
-
+  private returnPath: any;
+  private metaicon: any;
+  private metadescription: any;
+  private metatitle: any;
+  private site: any;
   validations = {
     title: [
       { type: 'required', message: 'Title is a required field.' }
@@ -50,6 +55,9 @@ export class NewResourcePage implements OnInit {
     ],
     resourceTags: [
       { type: 'required', message: 'Please select at least one tag.' }
+    ],
+    link: [
+      { type: 'pattern', message: 'Please enter a correct weblink.' }
     ]
     };
 
@@ -149,6 +157,20 @@ export class NewResourcePage implements OnInit {
             ])),
           resourceTags: new FormControl('')
           });
+
+    this.weblinkForm = new FormGroup(
+      {
+        title: new FormControl('', Validators.compose([
+            Validators.minLength(5),
+            Validators.maxLength(20),
+            Validators.required
+          ])),
+          link: new FormControl('', Validators.compose([
+            Validators.pattern('(?:(?:(?:ht|f)tp)s?://)?[\\w_-]+(?:\\.[\\w_-]+)+([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?'),
+            Validators.required
+          ])),
+        resourceTags: new FormControl('')
+        });
   }
 
   segmentChanged($event: any) {
@@ -306,5 +328,21 @@ export class NewResourcePage implements OnInit {
 
     gotoFilePage(file: any) {
      // cordova.InAppBrowser.open(file,'_system', 'location=yes');
+    }
+
+    linkFocusOut() {
+      const urlMetadata = require('url-metadata');
+      urlMetadata('https://cors-anywhere.herokuapp.com/' + this.weblinkForm.value.link).then(
+        (metadata)  => { // success handler
+          console.log(metadata);
+          console.log(metadata.image);
+          this.metaicon = metadata.image;
+          console.log(metadata.image);
+          this.metadescription = metadata.description;
+          console.log(metadata.description);
+          this.metatitle = metadata.title;
+          console.log(metadata.title);
+          }
+      )
     }
 }

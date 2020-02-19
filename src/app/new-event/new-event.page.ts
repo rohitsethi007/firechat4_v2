@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
 
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-new-event',
@@ -122,7 +123,8 @@ export class NewEventPage implements OnInit {
     this.event.title = this.eventForm.value.title;
     this.event.description = this.eventForm.value.description;
     this.event.eventDate = this.eventForm.value.eventDate;
-    this.event.eventTime = this.eventForm.value.eventTime;
+    this.event.eventTime = moment(this.eventForm.value.eventTime).format('h:mm A');
+    console.log('Event Time: ' + moment(this.eventForm.value.eventTime).format('h:mm A'));
     this.event.eventTags = [];
     this.event.eventTags = this.eventTags;
 

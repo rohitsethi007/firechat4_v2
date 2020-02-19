@@ -161,6 +161,66 @@
     </div>
       </div>
     <div *ngSwitchCase="'link'">
+      <form class="validations-form" [formGroup]="weblinkForm" (ngSubmit)="submitLinkForm()">
+        <ion-list class="inputs-list" lines="full">
+          <ion-list-header>
+            <ion-label class="header-title">Enter the details of the link you want to share ..</ion-label>
+          </ion-list-header>
+          <ion-item class="input-item">
+            <ion-label position="floating">Title</ion-label>
+            <ion-input type="text" formControlName="title" clearInput placeholder="Enter a short description"></ion-input>
+          </ion-item>
+          <div class="error-container">
+            <ng-container *ngFor="let validation of validations.title">
+              <div class="error-message" *ngIf="weblinkForm.get('title').hasError(validation.type) && (weblinkForm.get('title').dirty || weblinkForm.get('title').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <span>{{ validation.message }}</span>
+              </div>
+            </ng-container>
+          </div>
+
+          <ion-item class="input-item">
+            <ion-label position="floating">Weblink</ion-label>
+            <ion-input type="text" formControlName="link" clearInput placeholder="Paste of type the link" (focusout)="linkFocusOut()"></ion-input>
+          </ion-item>
+          <div class="error-container">
+            <ng-container *ngFor="let validation of validations.link">
+              <div class="error-message" *ngIf="weblinkForm.get('link').hasError(validation.type) && (weblinkForm.get('link').dirty || weblinkForm.get('link').touched)">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <span>{{ validation.message }}</span>
+              </div>
+            </ng-container>
+          </div>
+          <div>
+            <hr/>
+            <div>
+              <div>
+                <img [src]="metaicon"/>      
+              </div>
+              <div>
+                <h2>{{metatitle}}</h2>
+                <span>{{metadescription}}</span>
+              </div>
+              <div> <h6></h6>{{metasite}}</div>
+            </div>
+          </div>
+
+        <ion-list class="inputs-list" lines="full">
+          <ion-list-header>
+            <ion-label class="header-title">Select tags relevant to the contact</ion-label>
+          </ion-list-header>
+  
+          <ion-row class="checkbox-tags rounded-checkbox-tags">
+            <ion-item *ngFor="let entry of resourceTags" lines="none" class="checkbox-tag rounded-tag">
+              <ion-label class="tag-label">{{entry.val}}</ion-label>
+              <ion-checkbox formControlName="resourceTags" [(ngModel)]="entry.isChecked"></ion-checkbox>
+            </ion-item>
+          </ion-row>
+        </ion-list>
+  
+        <ion-button class="submit-btn" type="submit" expand="block" fill="outline" >Submit</ion-button>
+        </ion-list>
+      </form>
     </div>
   </div>
   

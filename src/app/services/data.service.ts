@@ -165,6 +165,19 @@ export class DataService {
     this.updateResourceReviews(resourceKey, review);
   }
 
+  updateEventReviews(eventKey, review) {
+    // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
+    this.afdb.list('/events/' + eventKey + '/reviews/').push(review);
+   }
+ 
+   addFirstEventReview(eventKey, review) {
+     let r = [];
+     this.afdb.object('/events/' + eventKey).update( {
+       reviews: r
+     });
+     this.updateEventReviews(eventKey, review);
+   }
+ 
   updateResourceBookmark(resourceKey, bookmarkedBy) {
     // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
     console.log("inside updateResourceBookmark");

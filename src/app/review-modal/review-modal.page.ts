@@ -11,7 +11,7 @@ import { LoadingService } from '../services/loading.service';
   styleUrls: ['./review-modal.page.scss'],
 })
 export class ReviewModalPage implements OnInit {
-  private resource: any;
+  private data: any;
   private ratingForm: FormGroup;
   private title: any;
   private review: any;
@@ -24,8 +24,8 @@ export class ReviewModalPage implements OnInit {
     private navParam: NavParams,
     public loadingProvider: LoadingService
   ) {
-    this.resource = this.navParam.data.resource;
-    this.title = this.resource.title;
+    this.data = this.navParam.data.data;
+    this.title = this.data.title;
     this.ratingForm = new FormGroup({
       review: new FormControl('', Validators.compose([
         Validators.required

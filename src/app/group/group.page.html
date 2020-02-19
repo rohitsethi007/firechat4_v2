@@ -18,13 +18,14 @@
   			<ion-icon name="chatbubbles"></ion-icon>
 		</ion-segment-button>
 		<ion-segment-button value="polls">
-			<ion-icon name="podium"></ion-icon>
+      <ion-icon name="podium"></ion-icon>
+      <span >Polls</span>
 		</ion-segment-button>
 		<ion-segment-button value="resources">
 			<ion-icon name="document"></ion-icon>
     </ion-segment-button>
     <ion-segment-button value="events">
-			<ion-icon name="calender"></ion-icon>
+			<ion-icon name="calendar"></ion-icon>
 		</ion-segment-button>
 		<ion-segment-button value="groupInfo">
 			<ion-icon name="information-circle"></ion-icon>
@@ -120,7 +121,7 @@
       <ion-row class="info-row" *ngFor="let pollOption of item.pollOptions">
         <ion-col class="poll-option-col">
         <!--<button ion-button color="primary" clear small icon-start> -->
-          <ion-icon name='pie'></ion-icon>
+          <ion-icon size="medium" name='pie-chart-outline'></ion-icon>
           {{pollOption.name}}
         <!--</button>-->
         </ion-col>
@@ -135,13 +136,13 @@
           <span class="rating-value">
             <app-text-shell [data]="2"></app-text-shell>
           </span>
-          <ion-icon class="stats-icon" src="./assets/sample-icons/travel/star.svg"></ion-icon>
+          <ion-icon class="stats-icon" name="star-outline"></ion-icon>
         </ion-col>
         <ion-col size="2" class="item-reviews">
           <span class="reviews-count">
             <app-text-shell [data]="4"></app-text-shell>
           </span>
-          <ion-icon class="stats-icon" src="./assets/sample-icons/travel/comments.svg"></ion-icon>
+          <ion-icon class="stats-icon" name="chatbox-ellipses-outline"></ion-icon>
         </ion-col>
       </ion-row>
     </div>
@@ -151,7 +152,7 @@
     <div *ngSwitchCase="'resources'">
     <!-- No Resources to show -->
      <div class="empty-list" *ngIf="resources && resources.length == 0">
-     <h1><ion-icon name="md-chatbubbles"></ion-icon></h1>
+     <h1><ion-icon name="chatbubbles-outline"></ion-icon></h1>
      <p>No new Resources added to this group.</p>
      </div>
      <!-- Show Resources -->
@@ -185,39 +186,19 @@
           <span class="rating-value">
             <app-text-shell [data]="2"></app-text-shell>
           </span>
-          <ion-icon class="stats-icon" src="./assets/sample-icons/travel/star.svg"></ion-icon>
+          <ion-icon class="stats-icon" name="star-outline"></ion-icon>
         </ion-col>
         <ion-col size="2" class="item-reviews">
           <span class="reviews-count">
             <app-text-shell [data]="4"></app-text-shell>
           </span>
-          <ion-icon class="stats-icon" src="./assets/sample-icons/travel/comments.svg"></ion-icon>
+          <ion-icon class="stats-icon" name="chatbox-ellipses-outline"></ion-icon>
         </ion-col>
         <ion-col size="2" class="item-reviews">
-          <ion-icon size="large" ios="ios-bookmark" md="md-bookmark"></ion-icon>
+          <ion-icon size="medium" name="pin-outline" ></ion-icon>
         </ion-col>
       </ion-row>
     </div>
-     <!--
-     <ion-card *ngFor="let resource of resources | resourceFilter: searchResource" (click)="viewResource(resource)"> 
-       <ion-item >
-         <ion-avatar item-start>
-         <ion-icon name="podium"></ion-icon>
-       </ion-avatar>
-         <h2>{{resource.name}}</h2>
-         <h3>{{resource.dateCreated | DateFormat}}</h3>
-       </ion-item>
-       <ion-row>
-         <ion-col>
-         </ion-col>
-       </ion-row>
-       <ion-item >
-         <ion-avatar item-start>
-           <ion-icon name="pricetags"></ion-icon>
-         </ion-avatar>
-         <h3>{{resource.resourceTagsString}}</h3>
-         </ion-item>
-       </ion-card> -->
      </div>
     </div>
 
@@ -225,7 +206,7 @@
     <div *ngSwitchCase="'events'">
       <!-- No Events to show -->
        <div class="empty-list" *ngIf="events && events.length == 0">
-       <h1><ion-icon name="md-chatbubbles"></ion-icon></h1>
+       <h1><ion-icon name="chatbubbles"></ion-icon></h1>
        <p>No new upcoming Events added to this group.</p>
        </div>
        <!-- Show Events -->
@@ -260,16 +241,16 @@
             <span class="rating-value">
               <app-text-shell [data]="2"></app-text-shell>
             </span>
-            <ion-icon class="stats-icon" src="./assets/sample-icons/travel/star.svg"></ion-icon>
+            <ion-icon class="stats-icon" name="pie-chart-outline"></ion-icon>
           </ion-col>
           <ion-col size="2" class="item-reviews">
             <span class="reviews-count">
               <app-text-shell [data]="item.attendees"></app-text-shell>
             </span>
-            <ion-icon class="stats-icon" src="./assets/sample-icons/travel/comments.svg"></ion-icon>
+            <ion-icon class="stats-icon" name="people-outline"></ion-icon>
           </ion-col>
           <ion-col size="2" class="item-reviews">
-            <ion-icon size="large" ios="ios-bookmark" md="md-bookmark"></ion-icon>
+            <ion-icon size="large" ios="pin-outline"></ion-icon>
           </ion-col>
         </ion-row>
       </div>
@@ -327,10 +308,10 @@
         (ionFocus)="scrollBottom()" (keypress)="onType($event.keyCode)"></ion-textarea>
       <ion-buttons slot="end" style="margin-left:4px;">
         <ion-button fill="clear" (click)="attach()">
-          <ion-icon name="md-attach"></ion-icon>
+          <ion-icon name="attach"></ion-icon>
         </ion-button>
         <ion-button slot="end" fill="clear" (click)="send('text')" [disabled]="!message">
-          <ion-icon name="md-send"></ion-icon>
+          <ion-icon name="send"></ion-icon>
         </ion-button>
       </ion-buttons>
     </ion-item>

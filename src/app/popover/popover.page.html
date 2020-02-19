@@ -1,9 +1,9 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>popover</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <button ion-item (click)="close()">OyeTag it as a Resource</button>
+<ion-content class="ion-float-left">
+  <ion-list>
+    <!--<ion-list-header>Ionic</ion-list-header>-->
+    <ion-item button>Tag as as Resource</ion-item>
+    <ion-item button>Report inappropriate</ion-item>
+    <ion-item button>Message user</ion-item>
+    <ion-item lines="none" detail="false" button onClick="close()">Close</ion-item>
+  </ion-list>
 </ion-content>
