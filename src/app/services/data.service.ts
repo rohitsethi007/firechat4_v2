@@ -113,6 +113,11 @@ export class DataService {
     return this.afdb.object('/resources/' + rId);
   }
 
+  // Get Post details of the logged in user.
+  getPostDetails(pId) {
+    return this.afdb.object('/posts/' + pId);
+  }
+  
   // Get Events details of the logged in user.
   getEventDetails(eId) {
     return this.afdb.object('/events/' + eId);
@@ -168,6 +173,18 @@ export class DataService {
       reviews: r
     });
     this.updateResourceReviews(resourceKey, review);
+  }
+
+  updatePostReviews(postKey, review) {
+    this.afdb.list('/posts/' + postKey + '/reviews/').push(review);
+   }
+ 
+  addFirstPostReview(postKey, review) {
+    let r = [];
+    this.afdb.object('/posts/' + postKey).update( {
+      reviews: r
+    });
+    this.updatePostReviews(postKey, review);
   }
 
   updateEventReviews(eventKey, review) {

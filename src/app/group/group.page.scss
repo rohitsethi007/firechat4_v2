@@ -12,6 +12,23 @@
     padding: 0px 0px var(--page-margin);
     background-color: var(--page-background);
     border-bottom: calc(var(--page-margin) / 2) solid var(--page-color);
+  .subtitle img {
+      height: 30px;
+      vertical-align:middle;
+    }
+  .message {
+    font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+    margin: 0 0 8px;
+    overflow: hidden;
+    padding-right: 20px;
+    text-overflow: ellipsis;
+  }
+
   
     .info-row {
       --ion-grid-column-padding: 0px;

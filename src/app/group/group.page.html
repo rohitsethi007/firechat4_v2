@@ -109,44 +109,16 @@
      <!-- Show Posts -->
      <div *ngIf="posts && posts.length > 0" >
      <div class="listing-item" *ngFor="let item of posts" (click)="viewPost(item)">
-      <div>
-      <ion-row class="info-row">
-        <ion-col class="main-info-col">
-          <h3 class="item-name">
-              <app-text-shell animation="bouncing" [data]="(item?.title && item?.type) ? (item.title + ' - ' + item.type) : (item.title)"></app-text-shell>
-          </h3>
-          <p class="item-address">
-            <app-text-shell animation="bouncing" [data]="item.message"></app-text-shell>
-          </p>
-
-          <p class="item-tags">
-            <app-text-shell animation="bouncing" [data]="'Tags: ' + item.resourceTagsString"></app-text-shell>
-          </p>
-        </ion-col>
-      </ion-row>
-      <ion-row class="stats-row">
-        <ion-col size="2" class="item-rating">
-          <span class="rating-value"> 
-            <app-text-shell [data]="item.dateCreated | DateFormat"></app-text-shell>
-          </span>
-        </ion-col>
-        <ion-col size="2" class="item-rating">
-          <span class="rating-value">
-            <app-text-shell [data]="2"></app-text-shell>
-          </span>
-          <ion-icon class="stats-icon" name="star-outline"></ion-icon>
-        </ion-col>
-        <ion-col size="2" class="item-reviews">
-          <span class="reviews-count">
-            <app-text-shell [data]="4"></app-text-shell>
-          </span>
-          <ion-icon class="stats-icon" name="chatbox-ellipses-outline"></ion-icon>
-        </ion-col>
-        <ion-col size="2" class="item-reviews">
-          <ion-icon size="medium" name="pin-outline" ></ion-icon>
-        </ion-col>
-      </ion-row>
-      </div>
+      <ion-card>
+        <ion-card-header>
+           <ion-card-subtitle class="subtitle"><img src="assets\icon\alpha\icons8-circled-r-50.png" /> rohitsethi 2 seconds ago</ion-card-subtitle>
+          <ion-card-title>{{item.title}}</ion-card-title>
+        </ion-card-header>
+      
+        <ion-card-content class="message">
+          {{item.message}}
+        </ion-card-content>
+      </ion-card>
     </div>
      </div>
     </div>

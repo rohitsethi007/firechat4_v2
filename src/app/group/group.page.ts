@@ -51,6 +51,9 @@ export class GroupPage implements OnInit {
   private eventTagsString: any;
   private alert: any;
 
+  private toggled: boolean = false;
+  private emojitext: string;
+
   // posts
   private posts: any = [];
   private postsToShow: any;
@@ -76,6 +79,10 @@ export class GroupPage implements OnInit {
 
     public popoverCtrl: PopoverController
   ) { }
+
+  handleSelection(event) {
+    this.emojitext = this.emojitext + " " + event.char;
+  }
 
   ngOnInit() {
     this.loadingProvider.show();
@@ -554,6 +561,7 @@ export class GroupPage implements OnInit {
         .on('value', (snapshot) => {
           console.log('where clause' + snapshot);
           snapshot.forEach((childSnapshot) => {
+            console.log('post key:' + childSnapshot.key);
             const key = childSnapshot.key;
             const childData = childSnapshot.val();
             console.log('group posts: ' + childData.message);
@@ -693,6 +701,13 @@ export class GroupPage implements OnInit {
       }
     };
     this.router.navigate(['resource'], navigationExtras); */
+  }
+
+  // View Post selected
+  viewPost(post) {
+    console.log("postID: " + post.key);
+    this.router.navigateByUrl('post/' + post.key);
+    
   }
 
   // View Resource selected
