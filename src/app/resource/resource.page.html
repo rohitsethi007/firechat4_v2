@@ -122,4 +122,90 @@
  
 </div>
 
+<div *ngIf="resource.type == 'weblink'" >
+
+  <ion-row class="user-preferences-wrapper">
+    <div>
+      <div>
+        <img [src]="resource.metaicon"/>      
+      </div>
+      <div>
+        <h2>{{resource.metatitle}}</h2>
+        <span>{{resource.metadescription}}</span>
+      </div>
+      <div> <h6></h6>{{resource.metasite}}</div>
+    </div>
+    <ion-col size="2">
+      <p class="bookmark">
+        <ion-buttons>
+        <ion-button (click)="bookmarResource()"><ion-icon size="large" ios="ios-bookmark" md="md-bookmark"></ion-icon></ion-button>
+      </ion-buttons>
+    </p>
+    </ion-col>
+  </ion-row>
+
+  <hr class="details-divider">
+  <div class="reviews-wrapper">
+    <h3 class="detail-title">Selected Tags</h3>
+ 
+      <ion-row class="checkbox-tags rounded-checkbox-tags user-preferences-wrapper">
+    <ion-item  *ngFor="let entry of resource.resourceTags" lines="none" class="checkbox-tag rounded-tag">
+      <div>
+        <ion-label class="tag-label">{{entry.val}}</ion-label>
+      <ion-checkbox [(ngModel)]="entry.isChecked" disabled="true"></ion-checkbox>
+    </div>
+    </ion-item>
+  </ion-row>
+</div>
+
+  <hr class="details-divider">
+  <div class="reviews-wrapper">
+  <ion-row>
+     <ion-col>
+        <h3 class="detail-title">Reviews</h3>
+    </ion-col>
+  <ion-col>
+      <ion-buttons> 
+        <ion-button (click)="openReviewModal()">Add a review</ion-button>
+      </ion-buttons>
+    </ion-col>
+   </ion-row>
+    <div class="reviews-list">
+      <div class="review-item" *ngFor="let review of reviews">
+        <ion-row class="review-user">
+          <ion-col size="2" class="user-image-wrapper">
+            <app-aspect-ratio [ratio]="{w: 1, h: 1}">
+              <app-image-shell class="review-user-image" [src]="'./assets/sample-images/food/user-image-1.png'" [alt]="'review user image'"></app-image-shell>
+            </app-aspect-ratio>
+          </ion-col>
+          <ion-col class="user-brief-wrapper">
+            <h5 class="review-user-name">
+              <app-text-shell [data]="review.addedByUsername"></app-text-shell>
+            </h5>
+            <ion-row class="details-scores user-scores">
+              <ion-col class="score-item user-score">
+                <p class="review-message">
+                  <app-text-shell [data]="review.review" lines="5"></app-text-shell>
+                </p>
+              </ion-col>
+
+            </ion-row>
+          </ion-col>
+          <ion-col class="review-info-wrapper">
+            <span class="review-date">
+              <app-text-shell [data]="review.dateCreated | DateFormat"></app-text-shell>
+            </span>
+            <div class="review-rating" [attr.ratingBase]="review.rating">
+              <app-text-shell [data]="review.rating"></app-text-shell>
+            </div>
+          </ion-col>
+        </ion-row>
+        
+      </div>
+    </div>
+
+  </div>
+
+ 
+</div>
 </ion-content>

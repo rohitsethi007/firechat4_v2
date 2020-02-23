@@ -33,7 +33,9 @@ const routes: Routes = [
   { path: 'resource/:id', loadChildren: './resource/resource.module#ResourcePageModule', canActivate: [AuthGuardService] },
   { path: 'review-modal', loadChildren: './review-modal/review-modal.module#ReviewModalPageModule', canActivate: [AuthGuardService] },
   { path: 'event/:id', loadChildren: './event/event.module#EventPageModule', canActivate: [AuthGuardService] },
-  { path: 'new-event/:id', loadChildren: './new-event/new-event.module#NewEventPageModule', canActivate: [AuthGuardService] }
+  { path: 'new-event/:id', loadChildren: './new-event/new-event.module#NewEventPageModule', canActivate: [AuthGuardService] },
+  { path: 'new-post/:id', loadChildren: './new-post/new-post.module#NewPostPageModule', canActivate: [AuthGuardService] }
+
 
 
 ];

@@ -3,11 +3,12 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { NavController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../services/data.service';
+import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { EventDataService } from '../services/event-data.service';
-import * as urlmetadata from 'url-metadata';
+import * as urlmetadata from 'url-metadata'; 
 
 @Component({ 
   selector: 'app-new-resource',
@@ -33,10 +34,10 @@ export class NewResourcePage implements OnInit {
   private title: any;
   private sbaid: any;
   private returnPath: any;
-  private metaicon: any;
+  private metaicon: any = null;
   private metadescription: any;
   private metatitle: any;
-  private site: any;
+  private metasite: any;
   validations = {
     title: [
       { type: 'required', message: 'Title is a required field.' }
@@ -66,6 +67,7 @@ export class NewResourcePage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public dataProvider: DataService,
+    public imageProvider: ImageService,
     public loadingProvider: LoadingService,
     public navCtrl: NavController,
     public filePath: FilePath,
@@ -232,6 +234,55 @@ export class NewResourcePage implements OnInit {
 
    }
 
+   submitLinkForm() {
+    this.loadingProvider.show();
+
+    // Add resource info and date.
+    this.resource.dateCreated = new Date().toString();
+    this.resource.title = this.weblinkForm.value.title;
+    this.resource.metaicon = this.metaicon;
+    this.resource.metasite = this.weblinkForm.value.link;
+    this.resource.metatitle = this.metatitle;
+    this.resource.metadescription = this.metadescription;
+    this.resource.type = 'weblink';
+
+    this.resource.resourceTags = [];
+    this.resource.resourceTags = this.resourceTags;
+
+
+    // Add resource to database.
+    this.dataProvider.addResource(this.resource).then((success) => {
+        const resourceId = success.key;
+        // Add system message that group is created.
+        // Add group resource details
+        this.resourceId = resourceId;
+        if (this.group.resources === undefined) {
+          this.group.resources = [];
+        }
+        this.group.resources.push(this.resourceId);
+        const uid = this.dataProvider.getCurrentUserId();
+        // Add system message that the members are added to the group.
+        this.group.messages.push({
+            date: new Date().toString(),
+            sender: uid,
+            type: 'system',
+            message: 'A new Contact has been shared with the group : ' + this.resource.name,
+            icon: 'md-contacts'
+          });
+
+        // Update group data on the database.
+        this.dataProvider.getGroup(this.groupId).update({
+          resources: this.group.resources,
+          messages: this.group.messages
+        }).then(() => {
+          // Back.
+          this.loadingProvider.hide();
+          this.navCtrl.back();
+        });
+      });
+   }
+
+
    selectFile() {
     let file: { blob: any; type: string; fileext: any; filename: any; };
 
@@ -335,14 +386,12 @@ export class NewResourcePage implements OnInit {
       urlMetadata('https://cors-anywhere.herokuapp.com/' + this.weblinkForm.value.link).then(
         (metadata)  => { // success handler
           console.log(metadata);
-          console.log(metadata.image);
           this.metaicon = metadata.image;
-          console.log(metadata.image);
           this.metadescription = metadata.description;
-          console.log(metadata.description);
           this.metatitle = metadata.title;
-          console.log(metadata.title);
-          }
-      )
+          }).catch((error) => {
+            this.metaicon = null;
+            this.metadescription = 'The URL seems to be invalid. Please check the url';
+          });
     }
 }

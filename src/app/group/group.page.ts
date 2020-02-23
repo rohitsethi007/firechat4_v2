@@ -45,11 +45,17 @@ export class GroupPage implements OnInit {
   private searchPoll: any;
   private searchResource: any;
   private searchEvent: any;
-  private resourceTags: any;
+  private resourceTags: any = [];
   private resourceTagsString: any;
   private eventTags: any;
   private eventTagsString: any;
   private alert: any;
+
+  // posts
+  private posts: any = [];
+  private postsToShow: any;
+  private numberOfPosts = 10;
+
   // GroupPage
   // This is the page where the user can chat with other group members and view group info.
   constructor(
@@ -72,26 +78,24 @@ export class GroupPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.tab = "group";
-    this.title = "Group";
+    this.loadingProvider.show();
+    this.tab = "posts";
+    this.title = "Posts";
     this.searchResource = '';
     this.searchPoll = '';
+    this.searchEvent = '';
 
     // Get user information for system message sent to the group when a member was added.
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user) => {
       this.user = user.payload.val();
     });
+    this.getGroupDetailsandPosts();
 
-    this.resourceTags = [];
-    this.resourceTags.push({ val: "Diet Plan", isChecked: true });
-    this.resourceTags.push({ val: "Contact", isChecked: true });
-    this.resourceTags.push({ val: "Document", isChecked: true });
-    this.resourceTags.push({ val: "Link", isChecked: true });
+    this.loadingProvider.hide();
   }
 
   ionViewDidEnter() {
-    this.getGroupDetailsandMessages();
-
+    // this.getGroupDetailsandMessages();
   }
 
   // Load previous messages in relation to numberOfMessages.
@@ -521,6 +525,72 @@ export class GroupPage implements OnInit {
     }
   }
 
+  
+  getGroupDetailsandPosts() {
+    // Get group details
+    this.posts = [];
+    this.groupId = this.route.snapshot.params.id;
+    this.subscription = this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group: any) => {
+      if (group.payload.exists()) {
+        this.group = group.payload.val();
+        this.title = group.payload.val().name;
+
+        //Get Group Members
+        if (this.group.members) {
+          this.group.members.forEach((memberId) => {
+            this.dataProvider.getUser(memberId).snapshotChanges().subscribe((member: any) => {
+              if (member.key != null) {
+                member = { $key: member.key, ...member.payload.val() };
+                this.addUpdateOrRemoveMember(member);
+              }
+            });
+          });
+        }
+
+        // Get group posts
+        this.angularfire.database.ref('/posts/')
+        .orderByChild('groupId')
+        .equalTo(this.groupId)
+        .on('value', (snapshot) => {
+          console.log('where clause' + snapshot);
+          snapshot.forEach((childSnapshot) => {
+            const key = childSnapshot.key;
+            const childData = childSnapshot.val();
+            console.log('group posts: ' + childData.message);
+            this.posts.push(childData);
+          // this.dataProvider.getUser(childData.sender).snapshotChanges().subscribe((user: any) => {
+          //   childData.avatar = user.payload.val().img;
+          // });
+          // this.posts.push(childData);
+
+       });
+      });
+        this.dataProvider.getGroupMembers(group.key).snapshotChanges().subscribe((memberIdsRes: any) => {
+          const memberIds = memberIdsRes.payload.val();
+          if (memberIds.includes(firebase.auth().currentUser.uid)) {
+            this.loggedInUserIsMember = true;
+          } else {
+            this.loggedInUserIsMember = false;
+          }
+
+        });
+      }
+    });
+
+    // Update messages' date time elapsed every minute based on Moment.js.
+    const that = this;
+    if (!that.updateDateTime) {
+      that.updateDateTime = setInterval(() => {
+        if (that.posts) {
+          that.posts.forEach((post) => {
+            const date = post.date;
+            post.date = new Date(date);
+          });
+        }
+      }, 60000);
+    }
+  }
+
   // Check if user exists in the group then add/update user.
   // If the user has already left the group, remove user from the list.
   addUpdateOrRemoveMember(member) {
@@ -563,6 +633,8 @@ export class GroupPage implements OnInit {
   segmentChanged($event) {
     if (this.tab === 'groups') {
       this.title = this.group.name; this.getGroupDetailsandMessages();
+    } else if (this.tab === 'posts') {
+      this.title = this.group.name; this.getGroupDetailsandPosts();
     } else if (this.tab === 'polls') {
       this.title = this.group.name; this.getPolls();
     } else if (this.tab === 'resources') {
@@ -630,6 +702,11 @@ export class GroupPage implements OnInit {
 
   newPoll() {
     this.router.navigateByUrl('/new-poll/' + this.groupId);
+    // this.app.getRootNav().push(NewPollPage, { groupId: this.groupId });
+  }
+
+  newPost() {
+    this.router.navigateByUrl('/new-post/' + this.groupId);
     // this.app.getRootNav().push(NewPollPage, { groupId: this.groupId });
   }
 

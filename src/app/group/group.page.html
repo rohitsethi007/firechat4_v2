@@ -5,8 +5,9 @@
     </ion-buttons>
     <ion-title (click)="groupInfo()">{{title}}</ion-title>
     <ion-buttons slot="end"> 
-			<ion-button *ngIf="loggedInUserIsMember == false" (click)="joinGroup()" >Join Group</ion-button>
-		<ion-button *ngIf="loggedInUserIsMember == true && tab=='polls'" (click)="newPoll()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
+    <ion-button *ngIf="loggedInUserIsMember == false" (click)="joinGroup()" >Join Group</ion-button>
+    <ion-button *ngIf="loggedInUserIsMember == true && tab=='posts'" (click)="newPost()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
+    <ion-button *ngIf="loggedInUserIsMember == true && tab=='polls'" (click)="newPoll()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
 		<ion-button *ngIf="loggedInUserIsMember == true && tab=='resources'" (click)="newResource()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
 		<ion-button *ngIf="loggedInUserIsMember == true && tab=='events'" (click)="newEvent()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
 	</ion-buttons>
@@ -14,12 +15,15 @@
   </ion-toolbar>
 
   <ion-segment padding [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
-		<ion-segment-button value="group">
+		<!-- <ion-segment-button value="group">
   			<ion-icon name="chatbubbles"></ion-icon>
-		</ion-segment-button>
+    </ion-segment-button> -->
+    <ion-segment-button value="posts">
+      <ion-icon name="chatbubbles"></ion-icon>
+    </ion-segment-button>
 		<ion-segment-button value="polls">
       <ion-icon name="podium"></ion-icon>
-      <span >Polls</span>
+      <span class="tab-title">Polls</span>
 		</ion-segment-button>
 		<ion-segment-button value="resources">
 			<ion-icon name="document"></ion-icon>
@@ -35,19 +39,19 @@
 
 <ion-content>
   <div [ngSwitch]="tab" >
-    <div *ngSwitchCase="'group'" >
+    <!-- <div *ngSwitchCase="'group'" >
   <div class="messages" #content>
     <p class="center" *ngIf="startIndex > 0"><span tappable (click)="loadPreviousMessages()">Load previous
         messages</span></p>
     <div *ngFor="let message of messagesToShow">
-      <!--  System Message -->
+    
       <div *ngIf="isSystemMessage(message)" style="text-align:center; float: left; color:#ccc">
         <p>
           <ion-icon name="{{message.icon}}"></ion-icon>
           {{message.message}} {{message.date | DateFormat}}
         </p>
       </div>
-      <!--  Message -->
+ 
       <div *ngIf="isSender(message) && !isSystemMessage(message)" class="chatbox right" (press)="onPress($event)" (pressup)="onPressUp($event,message)">
 
         <div *ngIf="isSender(message) && !isSystemMessage(message)">
@@ -93,7 +97,59 @@
 
     </div>
   </div>
-  </div>
+  </div> -->
+
+  
+  <div *ngSwitchCase="'posts'">
+    <!-- No Posts to show -->
+     <div class="empty-list" *ngIf="posts && posts.length == 0">
+     <h1><ion-icon name="chatbubbles-outline"></ion-icon></h1>
+     <p>No new Posts added to this group.</p>
+     </div>
+     <!-- Show Posts -->
+     <div *ngIf="posts && posts.length > 0" >
+     <div class="listing-item" *ngFor="let item of posts" (click)="viewPost(item)">
+      <div>
+      <ion-row class="info-row">
+        <ion-col class="main-info-col">
+          <h3 class="item-name">
+              <app-text-shell animation="bouncing" [data]="(item?.title && item?.type) ? (item.title + ' - ' + item.type) : (item.title)"></app-text-shell>
+          </h3>
+          <p class="item-address">
+            <app-text-shell animation="bouncing" [data]="item.message"></app-text-shell>
+          </p>
+
+          <p class="item-tags">
+            <app-text-shell animation="bouncing" [data]="'Tags: ' + item.resourceTagsString"></app-text-shell>
+          </p>
+        </ion-col>
+      </ion-row>
+      <ion-row class="stats-row">
+        <ion-col size="2" class="item-rating">
+          <span class="rating-value"> 
+            <app-text-shell [data]="item.dateCreated | DateFormat"></app-text-shell>
+          </span>
+        </ion-col>
+        <ion-col size="2" class="item-rating">
+          <span class="rating-value">
+            <app-text-shell [data]="2"></app-text-shell>
+          </span>
+          <ion-icon class="stats-icon" name="star-outline"></ion-icon>
+        </ion-col>
+        <ion-col size="2" class="item-reviews">
+          <span class="reviews-count">
+            <app-text-shell [data]="4"></app-text-shell>
+          </span>
+          <ion-icon class="stats-icon" name="chatbox-ellipses-outline"></ion-icon>
+        </ion-col>
+        <ion-col size="2" class="item-reviews">
+          <ion-icon size="medium" name="pin-outline" ></ion-icon>
+        </ion-col>
+      </ion-row>
+      </div>
+    </div>
+     </div>
+    </div>
 
   <div *ngSwitchCase="'polls'">
     <!-- No polls to show -->
@@ -159,6 +215,7 @@
      <div *ngIf="resources && resources.length > 0" >
      <ion-searchbar [(ngModel)]="searchResource" placeholder="Search for Resources" showCancelButton="true" cancelButtonText="Done"></ion-searchbar>
      <div class="listing-item" *ngFor="let item of resources" (click)="viewResource(item)">
+      <div *ngIf="item?.type == 'contact'">
       <ion-row class="info-row">
         <ion-col class="main-info-col">
           <h3 class="item-name">
@@ -198,6 +255,54 @@
           <ion-icon size="medium" name="pin-outline" ></ion-icon>
         </ion-col>
       </ion-row>
+      </div>
+      <div *ngIf="item?.type == 'weblink'">
+        <ion-row class="info-row">
+          <ion-col class="main-info-col">
+            <h3 class="item-name">
+                <app-text-shell animation="bouncing" [data]="(item?.title && item?.type) ? (item.title + ' - ' + item.type) : (item.title)"></app-text-shell>
+            </h3>
+            <h3 class="item-name">
+              <app-text-shell animation="bouncing" [data]="item.metatitle"></app-text-shell>
+          </h3>
+          <p class="item-description">
+            <app-text-shell animation="bouncing" [data]="item.metadescription"></app-text-shell>
+          </p>
+          <p class="item-description">
+              <app-image-shell animation="bouncing" [src]="item.metaicon"></app-image-shell>
+            </p>
+            <p class="item-address">
+              <app-text-shell animation="bouncing" [data]="item.metasite"></app-text-shell>
+            </p>
+  
+            <p class="item-tags">
+              <app-text-shell animation="bouncing" [data]="'Tags: ' + item.resourceTagsString"></app-text-shell>
+            </p>
+          </ion-col>
+        </ion-row>
+        <ion-row class="stats-row">
+          <ion-col size="2" class="item-rating">
+            <span class="rating-value"> 
+              <app-text-shell [data]="item.dateCreated | DateFormat"></app-text-shell>
+            </span>
+          </ion-col>
+          <ion-col size="2" class="item-rating">
+            <span class="rating-value">
+              <app-text-shell [data]="2"></app-text-shell>
+            </span>
+            <ion-icon class="stats-icon" name="star-outline"></ion-icon>
+          </ion-col>
+          <ion-col size="2" class="item-reviews">
+            <span class="reviews-count">
+              <app-text-shell [data]="4"></app-text-shell>
+            </span>
+            <ion-icon class="stats-icon" name="chatbox-ellipses-outline"></ion-icon>
+          </ion-col>
+          <ion-col size="2" class="item-reviews">
+            <ion-icon size="medium" name="pin-outline" ></ion-icon>
+          </ion-col>
+        </ion-row>
+        </div>
     </div>
      </div>
     </div>
@@ -225,6 +330,9 @@
               <app-text-shell animation="bouncing" [data]="item.eventDate"></app-text-shell>
               <app-text-shell animation="bouncing" [data]="item.eventTime"></app-text-shell>
             </p>
+            <p class="item-address" *ngIf="item.address">
+              <app-text-shell animation="bouncing" [data]="item.address"></app-text-shell>
+            </p>
   
             <p class="item-tags">
               <app-text-shell animation="bouncing" [data]="'Tags: ' + item.eventTagsString"></app-text-shell>
@@ -245,7 +353,8 @@
           </ion-col>
           <ion-col size="2" class="item-reviews">
             <span class="reviews-count">
-              <app-text-shell [data]="item.attendees"></app-text-shell>
+              <app-text-shell *ngIf = "item.attendees" [data]="item.attendees.length"></app-text-shell>
+              <app-text-shell *ngIf = "!item.attendees" [data]="0"></app-text-shell>
             </span>
             <ion-icon class="stats-icon" name="people-outline"></ion-icon>
           </ion-col>

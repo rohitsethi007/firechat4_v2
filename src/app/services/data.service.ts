@@ -148,6 +148,11 @@ export class DataService {
     return this.afdb.list('resources').push(resource);
   }
 
+  
+  addPost(post) {
+    return this.afdb.list('posts').push(post);
+  }
+
   addEvent(event) {
     return this.afdb.list('events').push(event);
   }
@@ -218,4 +223,9 @@ export class DataService {
      console.log('inside getFromStorageAsync');
      return await this.storage.get(section).then((val) => val);
    }
+  
+   // Get messages of the group given the Id.
+   getGroupPosts(groupId) {
+    return this.afdb.object('/groups/' + groupId + '/posts');
+  }
 }

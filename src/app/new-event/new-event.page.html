@@ -55,8 +55,16 @@
             </ng-container>
           </div>
           <ion-item class="input-item">
+            <ion-label position="floating">Address:</ion-label>
+            <ion-textarea rows="6"  formControlName="address" clearInput placeholder="Enter the full address of the event"></ion-textarea>
+          </ion-item>
+          <ion-item class="input-item">
+            <ion-label position="floating">Weblink:</ion-label>
+            <ion-input type="text" formControlName="weblink" clearInput placeholder="Paste or type the link" (focusout)="linkFocusOut()"></ion-input>
+          </ion-item> 
+          <ion-item class="input-item">
             <ion-label position="floating">Description:</ion-label>
-            <ion-textarea rows="6"  formControlName="description" clearInput placeholder="Enter the details of the event"></ion-textarea>
+            <ion-textarea rows="6"   [(ngModel)]="linkDescription" name="linkDescription" formControlName="description" clearInput placeholder="Enter the details of the event"></ion-textarea>
           </ion-item>
           <div class="error-container">
             <ng-container *ngFor="let validation of validations.description">
@@ -68,7 +76,7 @@
           </div>
           <ion-item>
             <ion-label>I'll be attending the Event.</ion-label>
-            <ion-checkbox formControlName="eventAttending" color="primary"></ion-checkbox>
+            <ion-checkbox formControlName="eventAttending" checked="false"  color="primary"></ion-checkbox>
           </ion-item>
 
         <ion-list class="inputs-list" lines="full">

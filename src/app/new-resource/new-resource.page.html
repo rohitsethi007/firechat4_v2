@@ -181,7 +181,7 @@
 
           <ion-item class="input-item">
             <ion-label position="floating">Weblink</ion-label>
-            <ion-input type="text" formControlName="link" clearInput placeholder="Paste of type the link" (focusout)="linkFocusOut()"></ion-input>
+            <ion-input type="text" formControlName="link" clearInput placeholder="Paste or type the link" (focusout)="linkFocusOut()"></ion-input>
           </ion-item>
           <div class="error-container">
             <ng-container *ngFor="let validation of validations.link">
@@ -195,7 +195,7 @@
             <hr/>
             <div>
               <div>
-                <img [src]="metaicon"/>      
+                <img *ngIf="metaicon" [src]="metaicon"/>      
               </div>
               <div>
                 <h2>{{metatitle}}</h2>

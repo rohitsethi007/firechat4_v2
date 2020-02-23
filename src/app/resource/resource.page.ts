@@ -44,7 +44,7 @@ export class ResourcePage implements OnInit {
       component: ReviewModalPage,
       componentProps: { data: this.resource }
     });
- 
+
     modal.onDidDismiss().then((data) => {
       if (data !== null) {
         let review: any;
@@ -72,11 +72,11 @@ export class ResourcePage implements OnInit {
           }});
       }
     });
- 
+
     return await modal.present();
   }
 
-  
+
   getResourceDetails() {
     this.loadingProvider.show();
     // Get group details
