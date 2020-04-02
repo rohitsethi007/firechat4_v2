@@ -23,6 +23,8 @@ export class PostPage implements OnInit {
 
   private loggedInUserIsMember: any = 'true';
 
+  private commentBox: any = false;
+
   constructor(
     private dataProvider: DataService,
     private loadingProvider: LoadingService,
@@ -83,12 +85,13 @@ export class PostPage implements OnInit {
     this.subscription = this.dataProvider.getPostDetails(this.postId).snapshotChanges().subscribe((post: any) => {
       if (post.payload.exists()) {
         this.post = post.payload.val();
-        this.title = post.payload.val().name;
+        this.title = post.payload.val().title;
 
         if (this.post.reviews !== undefined) {
           this.reviews = [];
-          Object.keys(this.post.reviews).forEach((key) => {
-            this.reviews.push(this.post.reviews[key]);
+          Object.keys(this.post.reviews).forEach((snap) => {
+            // const r = { key: snap, snap };
+            this.reviews.push(snap);
           });
           this.reviews.sort((a, b) => (a.dateCreated < b.dateCreated) ? 1 : -1);
         }
@@ -96,5 +99,24 @@ export class PostPage implements OnInit {
 
       this.loadingProvider.hide();
     });
+  }
+
+  submitReview(reviewKey) {
+    let review: any;
+    let currentUserName: any;
+    console.log("reviewkey:" + reviewKey);
+    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
+      if (account.payload.exists()) {
+        currentUserName = account.payload.val().username;
+
+        review = {
+          dateCreated: new Date().toString(),
+          addedBy: this.dataProvider.getCurrentUserId(),
+          addedByUsername: currentUserName,
+          review: review
+        };
+
+        //this.dataProvider.addPostReview(this.postId, reviewKey, review);  
+      }});
   }
 }

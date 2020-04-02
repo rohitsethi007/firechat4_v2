@@ -39,7 +39,7 @@ export class NewPostPage implements OnInit {
     public imageProvider: ImageService,
     public loadingProvider: LoadingService,
     public navCtrl: NavController
-  ) { 
+  ) {
     this.groupId = this.route.snapshot.params.id;
     // this.message  = navParams.get('message');
 
@@ -72,21 +72,24 @@ export class NewPostPage implements OnInit {
   }
 
   ngOnInit() {
-    //this.title = 'Post a message in ' + this.group.name;
-    console.log("group: " + this.group);
+    // this.title = 'Post a message in ' + this.group.name;
+    console.log('group: ' + this.group);
       // Initialize
-    this.post = {
-      avatar: '',
-      date: '',
-      sender: this.dataProvider.getCurrentUserId(),
-      title: '',
-      message: '',
-      postTags : [],
-      comments: [],
-      groupId: ''
-    };
+    this.dataProvider.getFromStorageAsync('currentUser').then((value) => {
+        this.post = {
+          avatar: value.img,
+          date: '',
+          sender: value.userId,
+          senderName: value.username,
+          title: '',
+          message: '',
+          postTags : [],
+          comments: [],
+          groupId: ''
+        };
+      });
 
-    
+
   }
 
    // Proceed with group creation.

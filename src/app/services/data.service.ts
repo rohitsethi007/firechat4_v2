@@ -7,6 +7,7 @@ import { Storage } from '@ionic/storage';
   providedIn: 'root'
 })
 export class DataService {
+  [x: string]: any;
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -187,33 +188,60 @@ export class DataService {
     this.updatePostReviews(postKey, review);
   }
 
+  addPostReview(postId, topReviewKey, reviewKey, review) {
+    this.afdb.list('/posts/' + postId + '/reviews/' + reviewKey).push(review);
+  }
+
   updateEventReviews(eventKey, review) {
     // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
     this.afdb.list('/events/' + eventKey + '/reviews/').push(review);
-   }
+  }
  
-   addFirstEventReview(eventKey, review) {
-     let r = [];
-     this.afdb.object('/events/' + eventKey).update( {
-       reviews: r
-     });
-     this.updateEventReviews(eventKey, review);
-   }
+  addFirstEventReview(eventKey, review) {
+    let r = [];
+    this.afdb.object('/events/' + eventKey).update( {
+      reviews: r
+    });
+    this.updateEventReviews(eventKey, review);
+  }
  
+  updatePostReactions(postKey, reaction) {
+    // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
+    var newRef = this.afdb.list('/posts/' + postKey + '/reactions/').push(reaction);
+    return newRef.key;
+  }
+
+  addFirstPostReactions(postKey, reaction) {
+    let r = [];
+    this.afdb.object('/posts/' + postKey).update( {
+      reactions: r
+    });
+    return this.updatePostReactions(postKey, reaction);
+  }
+
+  removePostReaction(postKey, reactionKey) {
+    var adaRef = this.afdb.database.ref('/posts/' + postKey + '/reactions/' + reactionKey);
+    adaRef.remove()
+      .then(function() {
+        console.log("Remove succeeded.")
+      })
+      .catch(function(error) {
+        console.log("Remove failed: " + error.message)
+      });  }
+
   updateResourceBookmark(resourceKey, bookmarkedBy) {
     // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
-    console.log("inside updateResourceBookmark");
     this.afdb.list('/resources/' + resourceKey + '/bookmarkedBy/').push(bookmarkedBy);
    }
 
-   addFirstResourceBookmark(resourceKey, bookmarkedBy) {
-     let r = [];
-     this.afdb.object('/resources/' + resourceKey).update( {
-      bookmarkedBy: r
-     });
-     console.log("inside addFirstResourceBookmark:" + resourceKey);
-     this.updateResourceBookmark(resourceKey, bookmarkedBy);
-   }
+  addFirstResourceBookmark(resourceKey, bookmarkedBy) {
+    let r = [];
+    this.afdb.object('/resources/' + resourceKey).update( {
+    bookmarkedBy: r
+    });
+    console.log("inside addFirstResourceBookmark:" + resourceKey);
+    this.updateResourceBookmark(resourceKey, bookmarkedBy);
+  }
 
   addUserBookmark(userId, resourceId) {
     let r = [];

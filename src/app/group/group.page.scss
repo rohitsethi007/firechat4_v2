@@ -5,16 +5,27 @@
     --page-color: #00AFFF;
   }
 
+.GroupAction {
+  .cancelAction {
+    color: red;
+  }
+}
 .tab-title {
-  font-size: 12px;
+  font-size: 10px;
+  padding-bottom: 8px;
 }
 .listing-item {
     padding: 0px 0px var(--page-margin);
     background-color: var(--page-background);
-    border-bottom: calc(var(--page-margin) / 2) solid var(--page-color);
-  .subtitle img {
+//    border-bottom: calc(var(--page-margin) / 2) solid var(--page-color);
+  .subtitle {
       height: 30px;
-      vertical-align:middle;
+      width: 30px;
+      vertical-align: middle;
+    }
+    .newIcon {
+      height: 40px;
+      vertical-align: middle;
     }
   .message {
     font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;

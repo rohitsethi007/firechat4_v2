@@ -15,8 +15,8 @@
 
   <ion-row class="user-preferences-wrapper">
     <ion-card>
-      <ion-card-header>
-        <ion-card-subtitle class="subtitle"><img src="assets\icon\alpha\icons8-circled-r-50.png" /> rohitsethi 2 seconds ago</ion-card-subtitle>
+      <ion-card-header class="subtitle">
+        <img src="{{post.avatar}}" onError="this.src='./assets/images/default-dp.png'" /> {{post.senderName}} {{post.date | DateFormat}}
         <ion-card-title>{{post.title}}</ion-card-title>
       </ion-card-header>
     
@@ -90,11 +90,11 @@
     <div class="reviews-list">
       <div class="review-item" *ngFor="let review of reviews">
         <ion-row class="review-user">
-          <ion-col size="2" class="user-image-wrapper">
+          <!--<ion-col size="2" class="user-image-wrapper">
             <app-aspect-ratio [ratio]="{w: 1, h: 1}">
               <app-image-shell class="review-user-image" [src]="'./assets/sample-images/food/user-image-1.png'" [alt]="'review user image'"></app-image-shell>
             </app-aspect-ratio>
-          </ion-col>
+          </ion-col>-->
           <ion-col class="user-brief-wrapper">
             <h5 class="review-user-name">
               <app-text-shell [data]="review.addedByUsername"></app-text-shell>
@@ -103,6 +103,16 @@
               <ion-col class="score-item user-score">
                 <p class="review-message">
                   <app-text-shell [data]="review.review" lines="5"></app-text-shell>
+                  <ion-buttons>
+                    <ion-button (click)="commentBox=!commentBox">reply</ion-button>
+                  </ion-buttons>
+                  <ion-item *ngIf="commentBox" class="input-item">
+                    <ion-label position="floating">Comments</ion-label>
+                    <ion-textarea rows="3"  placeholder="Enter more information here..." type="text" clearInput ></ion-textarea>
+                    <ion-buttons>
+                      <ion-button (click)="submitReview(review.key)">reply</ion-button>
+                    </ion-buttons>
+                  </ion-item>
                 </p>
               </ion-col>
 
@@ -117,12 +127,8 @@
             </div>
           </ion-col>
         </ion-row>
-        
-      </div>
+     </div>
     </div>
-
   </div>
-
- 
 </div>
 </ion-content>

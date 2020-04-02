@@ -5,12 +5,13 @@
     </ion-buttons>
     <ion-title (click)="groupInfo()">{{title}}</ion-title>
     <ion-buttons slot="end"> 
-    <ion-button *ngIf="loggedInUserIsMember == false" (click)="joinGroup()" >Join Group</ion-button>
+      <ion-button *ngIf="loggedInUserIsMember == true" (click)="showGroupOptions()" ><ion-icon name="ellipsis-vertical"></ion-icon></ion-button>
+   <!-- <ion-button *ngIf="loggedInUserIsMember == false" (click)="joinGroup()" >Join Group</ion-button>
     <ion-button *ngIf="loggedInUserIsMember == true && tab=='posts'" (click)="newPost()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
     <ion-button *ngIf="loggedInUserIsMember == true && tab=='polls'" (click)="newPoll()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
 		<ion-button *ngIf="loggedInUserIsMember == true && tab=='resources'" (click)="newResource()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
 		<ion-button *ngIf="loggedInUserIsMember == true && tab=='events'" (click)="newEvent()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
-	</ion-buttons>
+	--></ion-buttons>
 
   </ion-toolbar>
 
@@ -20,21 +21,24 @@
     </ion-segment-button> -->
     <ion-segment-button value="posts">
       <ion-icon name="chatbubbles"></ion-icon>
+      <span class="tab-title">Posts</span>
     </ion-segment-button>
 		<ion-segment-button value="polls">
       <ion-icon name="podium"></ion-icon>
       <span class="tab-title">Polls</span>
 		</ion-segment-button>
 		<ion-segment-button value="resources">
-			<ion-icon name="document"></ion-icon>
+      <ion-icon name="library"></ion-icon>
+      <span class="tab-title">Resources</span>
     </ion-segment-button>
     <ion-segment-button value="events">
-			<ion-icon name="calendar"></ion-icon>
+      <ion-icon name="calendar"></ion-icon>
+      <span class="tab-title">Events</span>
+    </ion-segment-button>
+	<!--	<ion-segment-button value="groupInfo">
+      <ion-icon layout="icon-end" name="ellipsis-vertical"></ion-icon>
 		</ion-segment-button>
-		<ion-segment-button value="groupInfo">
-			<ion-icon name="information-circle"></ion-icon>
-		</ion-segment-button>
-	</ion-segment>
+--></ion-segment>
 </ion-header>
 
 <ion-content>
@@ -108,15 +112,49 @@
      </div>
      <!-- Show Posts -->
      <div *ngIf="posts && posts.length > 0" >
-     <div class="listing-item" *ngFor="let item of posts" (click)="viewPost(item)">
+     <div class="listing-item" *ngFor="let item of posts | reverse" >
       <ion-card>
         <ion-card-header>
-           <ion-card-subtitle class="subtitle"><img src="assets\icon\alpha\icons8-circled-r-50.png" /> rohitsethi 2 seconds ago</ion-card-subtitle>
+           <ion-card-subtitle (click)="viewPost(item)">
+            <img class="subtitle" src="{{item.avatar}}" onError="this.src='./assets/images/default-dp.png'" /> {{item.senderName}} {{item.date | DateFormat}}
+            <img *ngIf="item.showNewIcon" class="newIcon" src="./assets/icon/new.svg" /> 
+          </ion-card-subtitle>
           <ion-card-title>{{item.title}}</ion-card-title>
         </ion-card-header>
-      
-        <ion-card-content class="message">
+        <ion-card-content class="message" (click)="viewPost(item)">
           {{item.message}}
+        </ion-card-content>
+        <ion-card-content>
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-buttons>
+                  <ion-button class="ion-text-capitalize" (click)="submitReactionSmile(item)">
+                 <div *ngIf="item.showSmiley"><ion-icon size="small" src="./assets/icon/smile-active.svg" ></ion-icon> Thanks</div> 
+                 <div *ngIf="!item.showSmiley"><ion-icon size="small" src="./assets/icon/smile.svg" ></ion-icon> Thanks</div> 
+                </ion-button>
+                </ion-buttons> 
+              </ion-col>
+              <ion-col>
+                <ion-buttons>
+                  <ion-button class="ion-text-capitalize" (click)="submitReactionHug(item)">
+                 <div *ngIf="item.showHug"><ion-icon size="small" src="./assets/icon/hug-active.svg" ></ion-icon> Hug</div> 
+                 <div *ngIf="!item.showHug"><ion-icon size="small" src="./assets/icon/hug.svg" ></ion-icon> Hug</div> 
+                </ion-button>
+                </ion-buttons> 
+              </ion-col>
+              <ion-col>
+              </ion-col>
+              <ion-col>
+              </ion-col>
+              <ion-col>
+                <div><ion-icon size="small" src="./assets/icon/smile-active.svg" ></ion-icon><ion-icon size="small" src="./assets/icon/hug-active.svg" ></ion-icon> {{item.totalReactionCount}}</div>
+              </ion-col>
+              <ion-col>
+                <ion-icon size="small" src="./assets/icon/chat.svg"></ion-icon> {{item.totalReviewCount}}
+              </ion-col>
+            </ion-row>
+          </ion-grid>
         </ion-card-content>
       </ion-card>
     </div>

@@ -56,7 +56,12 @@ export class GroupsPage implements OnInit {
               group.membersCount = group.members.length;
               group.pollsCount = group.polls.length - 1; // exclude default system000
               group.resourcesCount = group.resources.length - 1; // exclude default system000
-              this.addOrUpdateGroup(group);
+              if (group.posts === undefined) {
+                group.postsCount = 0;
+              } else {
+                group.postsCount = group.posts.length ;
+              }
+            this.addOrUpdateGroup(group);
             }
 
           });

@@ -561,18 +561,63 @@ export class GroupPage implements OnInit {
         .on('value', (snapshot) => {
           console.log('where clause' + snapshot);
           snapshot.forEach((childSnapshot) => {
-            console.log('post key:' + childSnapshot.key);
-            const key = childSnapshot.key;
-            const childData = childSnapshot.val();
-            console.log('group posts: ' + childData.message);
-            this.posts.push(childData);
-          // this.dataProvider.getUser(childData.sender).snapshotChanges().subscribe((user: any) => {
-          //   childData.avatar = user.payload.val().img;
-          // });
-          // this.posts.push(childData);
+            const post = { key: childSnapshot.key, ...childSnapshot.val() };
+            const startDate = new Date(post.date);
+            // Do your operations
+            const endDate   = new Date();
+            const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+            if (seconds > 120) {
+              post.showNewIcon = false;
+            } else {
+              post.showNewIcon = true;
+            }
 
-       });
-      });
+            // Check for Thanks
+            let totalReactionCount = 0;
+            let totalReviewCount = 0;
+            var rev = Object.keys(post.reviews).map(function(e) {
+              totalReviewCount += 1;
+            });
+
+
+            let foundSmiley = false;
+            if (post.reactions !== undefined) {
+              var values = Object.keys(post.reactions).map(function(e) {
+                post.reactions[e].key = e;
+                totalReactionCount += 1;
+                return post.reactions[e];
+              });
+              foundSmiley = values.some(el => el.addedBy === this.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks');
+            }
+            if (foundSmiley) {
+              post.showSmiley = true;
+            } else {
+              post.showSmiley = false;
+            }
+            // Check for Hugs
+            let foundHug = false;
+            if (post.reactions !== undefined) {
+              var values = Object.keys(post.reactions).map(function(e) {
+                post.reactions[e].key = e;
+                return post.reactions[e];
+              });
+              foundHug = values.some(el => el.addedBy === this.dataProvider.getCurrentUserId() && el.reactionType === 'Hug');
+            }
+            if (foundHug) {
+              post.showHug = true;
+            } else {
+              post.showHug = false;
+            }
+
+            post.totalReactionCount = totalReactionCount;
+            post.totalReviewCount = totalReviewCount;
+            this.addOrUpdatePost(post);
+            // this.dataProvider.getUser(childData.sender).snapshotChanges().subscribe((user: any) => {
+            //   childData.avatar = user.payload.val().img;
+            // });
+            // this.posts.push(childData);
+          });
+          });
         this.dataProvider.getGroupMembers(group.key).snapshotChanges().subscribe((memberIdsRes: any) => {
           const memberIds = memberIdsRes.payload.val();
           if (memberIds.includes(firebase.auth().currentUser.uid)) {
@@ -887,36 +932,263 @@ export class GroupPage implements OnInit {
     }
   }
 
-    // Add or update group for real-time sync based on our observer.
-    addOrUpdateEvent(event) {
-      event.eventTagsString = '';
-      if (event.eventTags) {
-        event.eventTags.forEach(element => {
-          if (element.isChecked === true) {
-            event.eventTagsString = event.eventTagsString + ', ' + element.val;
-          }
-        });
-        // Remove first comma from the string
-        event.eventTagsString = event.eventTagsString.replace(', ', '');
-      } else {
-        event.eventTagsString = 'No tags found';
+  addOrUpdatePost(post) {
+    post.postTagsString = "";
+    if (post.resourceTags && post.resourceTags) {
+      post.resourceTags.forEach(element => {
+        if (element.isChecked == true) {
+          post.postTagsString = post.resourceTagsString + ", " + element.val;
+        }
+      });
+
+      post.postTagsString = post.postTagsString.replace(', ', '');
+    }
+    else {
+      post.postTagsString = "No tags found";
+
+    }
+    if (!this.posts) {
+      this.posts = [post];
+    } else {
+      var index = -1;
+      for (var i = 0; i < this.posts.length; i++) {
+        if (this.posts[i].key == post.key) {
+          index = i;
+        }
       }
-      if (!this.events) {
-        this.events = [event];
+      if (index > -1) {
+        this.posts[index] = post;
       } else {
-        let index = -1;
-        for (let i = 0; i < this.events.length; i++) {
-          if (this.events[i].key === event.key) {
-            index = i;
-          }
-        }
-        if (index > -1) {
-          this.events[index] = event;
-        } else {
-          this.events.push(event);
-        }
+        this.posts.push(post);
       }
     }
-  
 
+    // // once post is added to array, get that reference
+    // const postIndex = this.posts.findIndex(el => el.key ===  post.key);
+    // let p = this.posts[postIndex];
+    // p.reactions = [];
+    // Object.keys(post.reactions).map(function(key){
+    //   p.reactions.push({[key]:post.reactions[key]})
+    // });
+  }
+
+  
+  // Add or update post reactions for real-time sync based on our observer.
+  addOrUpdateReaction(postKey, reaction) {
+    // console.log("check " + JSON.stringify(this.posts));
+    //   // first find the post in the collection
+    // const postIndex = this.posts.findIndex(el => el.key ===  postKey);
+    // let p = this.posts[postIndex];
+
+    // if (!p.reactions || p.reactions.length === 0) {
+    //   p.reactions = [reaction];
+    // } else {
+    //   let index = -1;
+    //   for (let i = 0; i < p.reactions.length; i++) {
+    //     if (p.reactions[i].key === reaction.key) {
+    //       index = i;
+    //     }
+    //   }
+    //   if (index > -1) {
+    //     p.reactions[index] = reaction;
+    //   } else {
+    //     p.reactions.push(reaction);
+    //   }
+    // }
+  }
+
+   // Add or update post reactions for real-time sync based on our observer.
+   removeReaction(postKey, reaction) {
+    // let p = this.posts[postKey];
+    // let index = -1;
+    // for (let i = 0; i < p.reactions.length; i++) {
+    //   if (p.reactions[i].key === reaction.key) {
+    //     index = i;
+    //   }
+    // }
+    // if (index > -1) {
+    //   p.reactions.splice(index, 1);
+    // }
+  }
+
+
+
+  // Add or update group for real-time sync based on our observer.
+  addOrUpdateEvent(event) {
+    event.eventTagsString = '';
+    if (event.eventTags) {
+      event.eventTags.forEach(element => {
+        if (element.isChecked === true) {
+          event.eventTagsString = event.eventTagsString + ', ' + element.val;
+        }
+      });
+      // Remove first comma from the string
+      event.eventTagsString = event.eventTagsString.replace(', ', '');
+    } else {
+      event.eventTagsString = 'No tags found';
+    }
+    if (!this.events) {
+      this.events = [event];
+    } else {
+      let index = -1;
+      for (let i = 0; i < this.events.length; i++) {
+        if (this.events[i].key === event.key) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        this.events[index] = event;
+      } else {
+        this.events.push(event);
+      }
+    }
+  }
+
+  showGroupOptions() {
+  const action = this.actionSheet.create({
+    header: 'Create a new ...',
+    backdropDismiss: true,
+    mode: "md",
+    cssClass: 'GroupAction',
+    buttons: [{
+      text: 'Post',
+      icon: 'chatbubbles',
+      handler: () => {
+        this.newPost();
+      }
+    }, {
+      text: 'Resource',
+      icon: 'document',
+      handler: () => {
+        this.newResource();
+      }
+    }, {
+      text: 'Poll',
+      icon: 'podium',
+      handler: () => {
+        this.newPoll();
+      }
+    }, {
+      text: 'Event',
+      icon: 'calendar',
+      cssClass: 'cancelAction',
+      handler: () => {
+        this.newEvent();
+      }
+    }]
+  }).then(r => r.present());
+}
+
+submitReactionSmile(post) {
+  // first find the post in the collection
+  const postIndex = this.posts.findIndex(el => el.key ===  post.key);
+  let p = this.posts[postIndex];
+
+  if (!post.showSmiley) {
+    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
+      if (account.payload.exists()) {
+        const currentUserName = account.payload.val().username;
+
+        const reaction = {
+          key: '',
+          dateCreated: new Date().toString(),
+          addedBy: this.dataProvider.getCurrentUserId(),
+          addedByUsername: currentUserName,
+          reactionType: 'Thanks'
+        };
+
+
+        if (postIndex >= 0) {
+          if (p.reactions === undefined) {
+            // TODO : After saving, get the key back and add!!!
+            const key = this.dataProvider.addFirstPostReactions(post.key, reaction);
+            reaction.key = key;
+            this.addOrUpdateReaction(p.key, reaction);
+//            const reactions = [];
+//            reaction.key = key;
+//            reactions.push(reaction);
+
+//            p.reactions = reactions;
+          } else {
+            var key = this.dataProvider.updatePostReactions(post.key, reaction);
+            reaction.key = key;
+            this.addOrUpdateReaction(p.key, reaction);
+//            p.reactions.push(reaction);
+          }
+          post.showSmiley = true;
+          post.totalReactionCount += 1;
+      }
+      }});
+    } else {
+      let found = false;
+      if (p.reactions !== undefined) {
+        var values = Object.keys(p.reactions).map(function(e) {
+          return p.reactions[e];
+        });
+
+        let reactionIndex = values.find(el => el.addedBy === this.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks');
+        if (reactionIndex === undefined) {
+          // this shouldn't have happened, so set the smiley to false for now
+          post.showSmiley = false;
+        } else {
+          console.log('remove reaction now : ' + post.key + ' : ' + reactionIndex.key);
+          this.dataProvider.removePostReaction(post.key, reactionIndex.key);
+          this.removeReaction(postIndex, reactionIndex);
+          post.showSmiley = false;
+          post.totalReactionCount -= 1;
+        }
+    }
+  }
+  }
+
+submitReactionHug(post) {
+ // first find the post in the collection
+ const postIndex = this.posts.findIndex(el => el.key ===  post.key);
+ let p = this.posts[postIndex];
+
+ if (!post.showHug) {
+   this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
+     if (account.payload.exists()) {
+       const currentUserName = account.payload.val().username;
+
+       const reaction = {
+         key: '',
+         dateCreated: new Date().toString(),
+         addedBy: this.dataProvider.getCurrentUserId(),
+         addedByUsername: currentUserName,
+         reactionType: 'Hug'
+       };
+
+
+       if (postIndex >= 0) {
+         if (p.reactions === undefined) {
+           // TODO : After saving, get the key back and add!!!
+           const key = this.dataProvider.addFirstPostReactions(post.key, reaction);
+         } else {
+           var key = this.dataProvider.updatePostReactions(post.key, reaction);
+          
+         }
+         post.showHug = true;
+         post.totalReactionCount += 1;
+     }
+     }});
+   } else {
+     let found = false;
+     if (p.reactions !== undefined) {
+       var values = Object.keys(p.reactions).map(function(e) {
+         return p.reactions[e];
+       });
+
+       let reactionIndex = values.find(el => el.addedBy === this.dataProvider.getCurrentUserId() && el.reactionType === 'Hug');
+       if (reactionIndex === undefined) {
+         // this shouldn't have happened, so set the smiley to false for now
+         post.showHug = false;
+       } else {
+         this.dataProvider.removePostReaction(post.key, reactionIndex.key);
+         post.showHug = false;
+         post.totalReactionCount -= 1;
+       }
+   }
+ }
+}
 }

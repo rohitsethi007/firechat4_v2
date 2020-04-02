@@ -74,8 +74,11 @@
     .user-preferences-wrapper {
       --ion-grid-column-padding: 0px;
   
-      padding: var(--page-margin);
-  
+      .subtitle img {
+        height: 30px;
+        width: 30px;
+        vertical-align: middle;
+      }
       .preference-name {
         margin: 0px 0px 5px;
         font-size: 16px;

@@ -40,6 +40,7 @@ import { ReviewModalPageModule } from './review-modal/review-modal.module';
 
 import { Chooser } from '@ionic-native/chooser/ngx';
 
+
 @NgModule({
   declarations: [
     AppComponent
