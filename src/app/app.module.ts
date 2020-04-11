@@ -37,7 +37,7 @@ import { ImagemodalPageModule } from './imagemodal/imagemodal.module';
 import { TagModalPageModule } from './tag-modal/tag-modal.module';
 import { PopoverPageModule } from './popover/popover.module';
 import { ReviewModalPageModule } from './review-modal/review-modal.module';
-
+import { ReactionListModalPageModule } from './reaction-list-modal/reaction-list-modal.module';
 import { Chooser } from '@ionic-native/chooser/ngx';
 
 
@@ -63,7 +63,8 @@ import { Chooser } from '@ionic-native/chooser/ngx';
     ImagemodalPageModule,
     ReviewModalPageModule,
     TagModalPageModule,
-    PopoverPageModule
+    PopoverPageModule,
+    ReactionListModalPageModule
   ],
   providers: [
     StatusBar,

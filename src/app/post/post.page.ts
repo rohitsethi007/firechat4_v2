@@ -7,6 +7,7 @@ import { LoadingService } from '../services/loading.service';
 import { ReviewModalPage } from '../review-modal/review-modal.page';
 import * as firebase from 'firebase';
 import { AngularFireDatabase } from '@angular/fire/database';
+import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
 
 @Component({
   selector: 'app-post',
@@ -15,7 +16,7 @@ import { AngularFireDatabase } from '@angular/fire/database';
 })
 export class PostPage implements OnInit {
   private postId: any;
-  private post: any = [];
+  private post: any;
   private title: any;
   private review: any;
   private reviews: any;
@@ -33,12 +34,17 @@ export class PostPage implements OnInit {
     private navCtrl: NavController,
     private modalCtrl: ModalController,
     private angularfire: AngularFireDatabase
-  ) { }
+  ) {
+    this.post = {showSmiley: false, showHug: false}; 
+    this.getPostDetails();
+
+  }
 
   ionViewDidEnter() {
-    this.getPostDetails();
+    
   }
   ngOnInit() {
+    
   }
 
   async openReviewModal() {
@@ -53,7 +59,7 @@ export class PostPage implements OnInit {
         let currentUserName: any;
         this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
           if (account.payload.exists()) {
-            currentUserName = account.payload.val().username; 
+            currentUserName = account.payload.val().username;
 
             review = {
               dateCreated: new Date().toString(),
@@ -64,13 +70,13 @@ export class PostPage implements OnInit {
             };
 
             if (this.post.reviews === undefined) {
-              let reviews = [];
+              const reviews = [];
               reviews.push(review);
               this.dataProvider.addFirstPostReview(this.postId, review);
             } else {
               this.dataProvider.updatePostReviews(this.postId, review);
             }
-            //this.ngOnInit();
+            // this.ngOnInit();
           }});
       }
     });
@@ -84,17 +90,63 @@ export class PostPage implements OnInit {
     this.postId = this.route.snapshot.params.id;
     this.subscription = this.dataProvider.getPostDetails(this.postId).snapshotChanges().subscribe((post: any) => {
       if (post.payload.exists()) {
-        this.post = post.payload.val();
+        let p = post.payload.val();
+        p.key = post.payload.key;
         this.title = post.payload.val().title;
 
-        if (this.post.reviews !== undefined) {
+         // Check for Thanks
+        let totalReactionCount = 0;
+        let totalReviewCount = 0;
+
+        if (p.reviews !== undefined) {
+          let rev = Object.keys(p.reviews).map(function(e) {
+            totalReviewCount += 1;
+         });
+        }
+
+        let foundSmiley = false;
+        if (p.reactions !== undefined) {
+           let values = Object.keys(p.reactions).map(function(e) {
+            p.reactions[e].key = e;
+            totalReactionCount += 1;
+            return p.reactions[e];
+           });
+           // tslint:disable-next-line: max-line-length
+           foundSmiley = values.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks');
+         }
+        if (foundSmiley) {
+          p.showSmiley = true;
+         } else {
+          p.showSmiley = false;
+         }
+         // Check for Hugs
+        let foundHug = false;
+        if (p.reactions !== undefined) {
+           let values = Object.keys(p.reactions).map(function(e) {
+            p.reactions[e].key = e;
+            return p.reactions[e];
+           });
+           foundHug = values.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() && el.reactionType === 'Hug');
+         }
+        if (foundHug) {
+          p.showHug = true;
+         } else {
+          p.showHug = false;
+         }
+
+        p.totalReactionCount = totalReactionCount;
+        p.totalReviewCount = totalReviewCount;
+
+        if (p.reviews !== undefined) {
           this.reviews = [];
-          Object.keys(this.post.reviews).forEach((snap) => {
+          Object.keys(p.reviews).forEach((snap) => {
             // const r = { key: snap, snap };
             this.reviews.push(snap);
           });
           this.reviews.sort((a, b) => (a.dateCreated < b.dateCreated) ? 1 : -1);
         }
+
+        this.post = p;
       }
 
       this.loadingProvider.hide();
@@ -104,7 +156,7 @@ export class PostPage implements OnInit {
   submitReview(reviewKey) {
     let review: any;
     let currentUserName: any;
-    console.log("reviewkey:" + reviewKey);
+    console.log('reviewkey:' + reviewKey);
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
       if (account.payload.exists()) {
         currentUserName = account.payload.val().username;
@@ -113,10 +165,129 @@ export class PostPage implements OnInit {
           dateCreated: new Date().toString(),
           addedBy: this.dataProvider.getCurrentUserId(),
           addedByUsername: currentUserName,
-          review: review
+          review
         };
 
-        //this.dataProvider.addPostReview(this.postId, reviewKey, review);  
+        // this.dataProvider.addPostReview(this.postId, reviewKey, review);
       }});
   }
+
+
+  submitReactionSmile() {
+    if (!this.post.showSmiley) {
+      this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
+        if (account.payload.exists()) {
+          const currentUserName = account.payload.val().username;
+  
+          const reaction = {
+            key: '',
+            dateCreated: new Date().toString(),
+            // tslint:disable-next-line: max-line-length
+            addedByUser: {
+                          addedByKey: this.dataProvider.getCurrentUserId(),
+                          addedByUsername: account.payload.val().username,
+                          addedByImg: account.payload.val().img
+                        },
+            reactionType: 'Thanks'
+          };
+
+          if (this.post.reactions === undefined) {
+              const key = this.dataProvider.addFirstPostReactions(this.post.key, reaction);
+              reaction.key = key;
+            } else {
+              let key = this.dataProvider.updatePostReactions(this.post.key, reaction);
+              reaction.key = key;
+            }
+          this.post.showSmiley = true;
+          this.post.totalReactionCount += 1;
+
+        }});
+      } else {
+        const found = false;
+        if (this.post.reactions !== undefined) {
+          let r = this.post.reactions;
+          let values = Object.keys(r).map(function(e) {
+            return r[e];
+          });
+  
+          const reactionIndex = values.find(
+                                    el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+                                    && el.reactionType === 'Thanks');
+          if (reactionIndex === undefined) {
+            // this shouldn't have happened, so set the smiley to false for now
+            this.post.showSmiley = false;
+          } else {
+            this.dataProvider.removePostReaction(this.post.key, reactionIndex.key);
+            this.post.showSmiley = false;
+            this.post.totalReactionCount -= 1;
+          }
+      }
+    }
+    }
+  
+  submitReactionHug() {
+   if (!this.post.showHug) {
+     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
+       if (account.payload.exists()) {
+         const currentUserName = account.payload.val().username;
+  
+         const reaction = {
+           key: '',
+           dateCreated: new Date().toString(),
+           // tslint:disable-next-line: max-line-length
+           addedByUser: {
+                          addedByKey: this.dataProvider.getCurrentUserId(),
+                          addedByUsername: account.payload.val().username,
+                          addedByImg: account.payload.val().img
+                        },
+           reactionType: 'Hug'
+         };
+         if (this.post.reactions === undefined) {
+            // TODO : After saving, get the key back and add!!!
+            const key = this.dataProvider.addFirstPostReactions(this.post.key, reaction);
+          } else {
+            let key = this.dataProvider.updatePostReactions(this.post.key, reaction);
+          }
+         this.post.showHug = true;
+         this.post.totalReactionCount += 1;
+
+       }});
+     } else {
+       const found = false;
+       if (this.post.reactions !== undefined) {
+        let r = this.post.reactions;
+        let values = Object.keys(r).map(function(e) {
+           return r[e];
+         });
+
+        const reactionIndex = values.find(
+          el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+          && el.reactionType === 'Hug');
+
+        if (reactionIndex === undefined) {
+           // this shouldn't have happened, so set the smiley to false for now
+           this.post.showHug = false;
+         } else {
+           this.dataProvider.removePostReaction(this.post.key, reactionIndex.key);
+           this.post.showHug = false;
+           this.post.totalReactionCount -= 1;
+         }
+     }
+   }
+  }
+
+  async showReactionsList() {
+    if (this.post.totalReactionCount === 0) {
+      return;
+    }
+    const p = this.post;
+    const modal = await this.modalCtrl.create({
+       component: ReactionListModalPage,
+       componentProps: {
+         reactions: p.reactions
+       }
+     });
+    return await modal.present();
+   
+   }
 }

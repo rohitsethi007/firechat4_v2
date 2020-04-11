@@ -35,7 +35,8 @@ const routes: Routes = [
   { path: 'event/:id', loadChildren: './event/event.module#EventPageModule', canActivate: [AuthGuardService] },
   { path: 'new-event/:id', loadChildren: './new-event/new-event.module#NewEventPageModule', canActivate: [AuthGuardService] },
   { path: 'new-post/:id', loadChildren: './new-post/new-post.module#NewPostPageModule', canActivate: [AuthGuardService] },
-  { path: 'post/:id', loadChildren: './post/post.module#PostPageModule', canActivate: [AuthGuardService] }
+  { path: 'post/:id', loadChildren: './post/post.module#PostPageModule', canActivate: [AuthGuardService] },  { path: 'reaction-list-modal', loadChildren: './reaction-list-modal/reaction-list-modal.module#ReactionListModalPageModule' }
+
 
 
 

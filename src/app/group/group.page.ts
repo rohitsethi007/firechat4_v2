@@ -13,6 +13,7 @@ import * as firebase from 'firebase';
 
 import { PopoverPage } from '../popover/popover.page';
 import { TagModalPage } from '../tag-modal/tag-modal.page';
+import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
 
 @Component({
   selector: 'app-group',
@@ -51,7 +52,7 @@ export class GroupPage implements OnInit {
   private eventTagsString: any;
   private alert: any;
 
-  private toggled: boolean = false;
+  private toggled = false;
   private emojitext: string;
 
   // posts
@@ -81,13 +82,13 @@ export class GroupPage implements OnInit {
   ) { }
 
   handleSelection(event) {
-    this.emojitext = this.emojitext + " " + event.char;
+    this.emojitext = this.emojitext + ' ' + event.char;
   }
 
   ngOnInit() {
     this.loadingProvider.show();
-    this.tab = "posts";
-    this.title = "Posts";
+    this.tab = 'posts';
+    this.title = 'Posts';
     this.searchResource = '';
     this.searchPoll = '';
     this.searchEvent = '';
@@ -107,10 +108,10 @@ export class GroupPage implements OnInit {
 
   // Load previous messages in relation to numberOfMessages.
   loadPreviousMessages() {
-    var that = this;
+    let that = this;
     // Show loading.
     this.loadingProvider.show();
-    setTimeout(function () {
+    setTimeout(function() {
       // Set startIndex to load more messages.
       if (that.startIndex - that.numberOfMessages > -1) {
         that.startIndex -= that.numberOfMessages;
@@ -163,7 +164,7 @@ export class GroupPage implements OnInit {
   // Scroll to top of the page after a short delay.
   scrollTop() {
     const that = this;
-    setTimeout(function () {
+    setTimeout(function() {
       that.content.nativeElement.scrollTop = that.content.nativeElement.scrollHeight;
     }, 300);
   }
@@ -265,9 +266,9 @@ export class GroupPage implements OnInit {
           this.geolocation.getCurrentPosition({
             timeout: 2000
           }).then(res => {
-            let locationMessage = 'current location: lat:' + res.coords.latitude + ' lng:' + res.coords.longitude;
-            let mapUrl = "<a href='https://www.google.com/maps/search/" + res.coords.latitude + "," + res.coords.longitude + "'>View on Map</a>";
-            let confirm = this.alertCtrl.create({
+            const locationMessage = 'current location: lat:' + res.coords.latitude + ' lng:' + res.coords.longitude;
+            const mapUrl = '<a href=\'https://www.google.com/maps/search/' + res.coords.latitude + ',' + res.coords.longitude + '\'>View on Map</a>';
+            const confirm = this.alertCtrl.create({
               header: 'Your Location',
               message: locationMessage,
               buttons: [{
@@ -295,11 +296,11 @@ export class GroupPage implements OnInit {
           this.contacts.pickContact().then(data => {
             console.log(data.displayName);
             console.log(data.phoneNumbers[0].value);
-            this.message = "<b>Name:</b> " + data.displayName + "<br><b>Mobile:</b> <a href='tel:" + data.phoneNumbers[0].value + "'>" + data.phoneNumbers[0].value + "</a>";
+            this.message = '<b>Name:</b> ' + data.displayName + '<br><b>Mobile:</b> <a href=\'tel:' + data.phoneNumbers[0].value + '\'>' + data.phoneNumbers[0].value + '</a>';
             this.send('contact');
           }, err => {
             console.log(err);
-          })
+          });
         }
       }, {
         text: 'cancel',
@@ -324,24 +325,24 @@ export class GroupPage implements OnInit {
       date: new Date().toString(),
       sender: firebase.auth().currentUser.uid,
       type: 'image',
-      url: url
+      url
     });
     this.dataProvider.getGroup(this.groupId).update({
-      messages: messages
+      messages
     });
     this.message = '';
   }
 
   sendVideoMessage(url) {
-    let messages = JSON.parse(JSON.stringify(this.messages));
+    const messages = JSON.parse(JSON.stringify(this.messages));
     messages.push({
       date: new Date().toString(),
       sender: firebase.auth().currentUser.uid,
       type: 'video',
-      url: url
+      url
     });
     this.dataProvider.getGroup(this.groupId).update({
-      messages: messages
+      messages
     });
     this.message = '';
   }
@@ -424,14 +425,14 @@ export class GroupPage implements OnInit {
     };
     const popover = await this.popoverCtrl.create({
       component: PopoverPage,
-      componentProps: { message: message, groupId: this.groupId },
+      componentProps: { message, groupId: this.groupId },
       event: ev,
       translucent: true
     });
     return await popover.present();
   }
 
-  ///********************* POLL Functions ***********************************/
+  /// ********************* POLL Functions ***********************************/
 
   getGroupDetailsandMessages() {
     // Get group details
@@ -442,7 +443,7 @@ export class GroupPage implements OnInit {
         this.group = group.payload.val();
         this.title = group.payload.val().name;
 
-        //Get Group Members
+        // Get Group Members
         if (this.group.members) {
           this.group.members.forEach((memberId) => {
             this.dataProvider.getUser(memberId).snapshotChanges().subscribe((member: any) => {
@@ -457,14 +458,14 @@ export class GroupPage implements OnInit {
         // Get group messages
         this.dataProvider.getGroupMessages(group.key).snapshotChanges().subscribe((messagesRes: any) => {
           let messages = messagesRes.payload.val();
-          if (messages == null || messages == undefined) messages = [];
+          if (messages == null || messages == undefined) { messages = []; }
 
           console.log(this.messages);
           if (this.messages != null && this.messages != undefined) {
             // Just append newly added messages to the bottom of the view.
 
             if (messages.length > this.messages.length) {
-              let message = messages[messages.length - 1];
+              const message = messages[messages.length - 1];
               this.dataProvider.getUser(message.sender).snapshotChanges().subscribe((user: any) => {
                 message.avatar = user.payload.val().img;
               });
@@ -478,7 +479,7 @@ export class GroupPage implements OnInit {
             // Get all messages, this will be used as reference object for messagesToShow.
             this.messages = [];
             messages.forEach((message) => {
-              console.log(message)
+              console.log(message);
               this.dataProvider.getUser(message.sender).snapshotChanges().subscribe((user: any) => {
                 if (user.key != null) {
                   message.avatar = user.payload.val().img;
@@ -499,7 +500,7 @@ export class GroupPage implements OnInit {
               this.messagesToShow = [];
             }
             // Set messagesToShow
-            for (var i = this.startIndex; i < this.messages.length; i++) {
+            for (let i = this.startIndex; i < this.messages.length; i++) {
               this.messagesToShow.push(this.messages[i]);
             }
             this.loadingProvider.hide();
@@ -532,7 +533,7 @@ export class GroupPage implements OnInit {
     }
   }
 
-  
+
   getGroupDetailsandPosts() {
     // Get group details
     this.posts = [];
@@ -542,7 +543,7 @@ export class GroupPage implements OnInit {
         this.group = group.payload.val();
         this.title = group.payload.val().name;
 
-        //Get Group Members
+        // Get Group Members
         if (this.group.members) {
           this.group.members.forEach((memberId) => {
             this.dataProvider.getUser(memberId).snapshotChanges().subscribe((member: any) => {
@@ -575,19 +576,20 @@ export class GroupPage implements OnInit {
             // Check for Thanks
             let totalReactionCount = 0;
             let totalReviewCount = 0;
-            var rev = Object.keys(post.reviews).map(function(e) {
-              totalReviewCount += 1;
+            if (post.reviews !== undefined) {
+              let rev = Object.keys(post.reviews).map(function(e) {
+                totalReviewCount += 1;
             });
-
+          }
 
             let foundSmiley = false;
             if (post.reactions !== undefined) {
-              var values = Object.keys(post.reactions).map(function(e) {
+              let values = Object.keys(post.reactions).map(function(e) {
                 post.reactions[e].key = e;
                 totalReactionCount += 1;
                 return post.reactions[e];
               });
-              foundSmiley = values.some(el => el.addedBy === this.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks');
+              foundSmiley = values.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks');
             }
             if (foundSmiley) {
               post.showSmiley = true;
@@ -597,11 +599,11 @@ export class GroupPage implements OnInit {
             // Check for Hugs
             let foundHug = false;
             if (post.reactions !== undefined) {
-              var values = Object.keys(post.reactions).map(function(e) {
+              let values = Object.keys(post.reactions).map(function(e) {
                 post.reactions[e].key = e;
                 return post.reactions[e];
               });
-              foundHug = values.some(el => el.addedBy === this.dataProvider.getCurrentUserId() && el.reactionType === 'Hug');
+              foundHug = values.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() && el.reactionType === 'Hug');
             }
             if (foundHug) {
               post.showHug = true;
@@ -728,7 +730,7 @@ export class GroupPage implements OnInit {
   viewPoll(poll) {
     const navigationExtras: NavigationExtras = {
       state: {
-        poll: poll
+        poll
       }
     };
     this.router.navigate(['poll'], navigationExtras);
@@ -750,9 +752,9 @@ export class GroupPage implements OnInit {
 
   // View Post selected
   viewPost(post) {
-    console.log("postID: " + post.key);
+    console.log('postID: ' + post.key);
     this.router.navigateByUrl('post/' + post.key);
-    
+
   }
 
   // View Resource selected
@@ -783,16 +785,16 @@ export class GroupPage implements OnInit {
   getResources() {
     this.dataProvider.getGroupResources(this.groupId).snapshotChanges().subscribe((resourceIdsRes: any) => {
       let resourceIds = resourceIdsRes.payload.val();
-      if (resourceIds == null || resourceIds == undefined) resourceIds = [];
+      if (resourceIds == null || resourceIds == undefined) { resourceIds = []; }
       console.log(resourceIds);
       if (resourceIds.length > 0) {
         resourceIds.forEach((resourceId) => {
-          var rId = resourceId;
+          let rId = resourceId;
 
           console.log(rId);
-          if (rId != null && rId != "system0000") {
+          if (rId != null && rId != 'system0000') {
             this.dataProvider.getResourceDetails(rId).snapshotChanges().subscribe((resourceRes: any) => {
-              let resource = { key: resourceRes.key, ...resourceRes.payload.val() };
+              const resource = { key: resourceRes.key, ...resourceRes.payload.val() };
               console.log(resource);
               this.addOrUpdateResource(resource);
 
@@ -811,16 +813,16 @@ export class GroupPage implements OnInit {
   getEvents() {
     this.dataProvider.getGroupEvents(this.groupId).snapshotChanges().subscribe((eventIdsRes: any) => {
       let eventIds = eventIdsRes.payload.val();
-      if (eventIds == null || eventIds == undefined) eventIds = [];
+      if (eventIds == null || eventIds == undefined) { eventIds = []; }
       console.log(eventIds);
       if (eventIds.length > 0) {
         eventIds.forEach((eventId) => {
-          var eId = eventId;
+          let eId = eventId;
 
           console.log(eId);
-          if (eId != null && eId != "system0000") {
+          if (eId != null && eId != 'system0000') {
             this.dataProvider.getEventDetails(eId).snapshotChanges().subscribe((eventRes: any) => {
-              let event = { key: eventRes.key, ...eventRes.payload.val() };
+              const event = { key: eventRes.key, ...eventRes.payload.val() };
               console.log(event);
               this.addOrUpdateEvent(event);
 
@@ -849,14 +851,14 @@ export class GroupPage implements OnInit {
       componentProps: { groupTags: this.resourceTags }
     }).then(res => {
       res.present();
-    })
+    });
 
     this.modalCtrl.dismiss((data) => {
-      this.resourceTagsString = "";
+      this.resourceTagsString = '';
       this.resourceTags = data;
       this.resourceTags.forEach(element => {
         if (element.isChecked == true) {
-          this.resourceTagsString = this.resourceTagsString + ", " + element.val;
+          this.resourceTagsString = this.resourceTagsString + ', ' + element.val;
         }
       });
       this.resourceTagsString = this.resourceTagsString.replace(', ', '');
@@ -866,25 +868,24 @@ export class GroupPage implements OnInit {
   }
   // Add or update group for real-time sync based on our observer.
   addOrUpdatePoll(poll) {
-    poll.pollTagsString = "";
+    poll.pollTagsString = '';
     if (poll.pollTags && poll.pollTags) {
 
       poll.pollTags.forEach(element => {
         if (element.isChecked == true) {
-          poll.pollTagsString = poll.pollTagsString + ", " + element.val;
+          poll.pollTagsString = poll.pollTagsString + ', ' + element.val;
         }
       });
 
       poll.pollTagsString = poll.pollTagsString.replace(', ', '');
-    }
-    else {
-      poll.pollTagsString = "No tags found";
+    } else {
+      poll.pollTagsString = 'No tags found';
     }
     if (!this.polls) {
       this.polls = [poll];
     } else {
-      var index = -1;
-      for (var i = 0; i < this.polls.length; i++) {
+      let index = -1;
+      for (let i = 0; i < this.polls.length; i++) {
         if (this.polls[i].key == poll.key) {
           index = i;
         }
@@ -901,25 +902,24 @@ export class GroupPage implements OnInit {
 
   // Add or update group for real-time sync based on our observer.
   addOrUpdateResource(resource) {
-    resource.resourceTagsString = "";
+    resource.resourceTagsString = '';
     if (resource.resourceTags && resource.resourceTags) {
       resource.resourceTags.forEach(element => {
         if (element.isChecked == true) {
-          resource.resourceTagsString = resource.resourceTagsString + ", " + element.val;
+          resource.resourceTagsString = resource.resourceTagsString + ', ' + element.val;
         }
       });
 
       resource.resourceTagsString = resource.resourceTagsString.replace(', ', '');
-    }
-    else {
-      resource.resourceTagsString = "No tags found";
+    } else {
+      resource.resourceTagsString = 'No tags found';
 
     }
     if (!this.resources) {
       this.resources = [resource];
     } else {
-      var index = -1;
-      for (var i = 0; i < this.resources.length; i++) {
+      let index = -1;
+      for (let i = 0; i < this.resources.length; i++) {
         if (this.resources[i].key == resource.key) {
           index = i;
         }
@@ -933,25 +933,24 @@ export class GroupPage implements OnInit {
   }
 
   addOrUpdatePost(post) {
-    post.postTagsString = "";
+    post.postTagsString = '';
     if (post.resourceTags && post.resourceTags) {
       post.resourceTags.forEach(element => {
         if (element.isChecked == true) {
-          post.postTagsString = post.resourceTagsString + ", " + element.val;
+          post.postTagsString = post.resourceTagsString + ', ' + element.val;
         }
       });
 
       post.postTagsString = post.postTagsString.replace(', ', '');
-    }
-    else {
-      post.postTagsString = "No tags found";
+    } else {
+      post.postTagsString = 'No tags found';
 
     }
     if (!this.posts) {
       this.posts = [post];
     } else {
-      var index = -1;
-      for (var i = 0; i < this.posts.length; i++) {
+      let index = -1;
+      for (let i = 0; i < this.posts.length; i++) {
         if (this.posts[i].key == post.key) {
           index = i;
         }
@@ -963,16 +962,9 @@ export class GroupPage implements OnInit {
       }
     }
 
-    // // once post is added to array, get that reference
-    // const postIndex = this.posts.findIndex(el => el.key ===  post.key);
-    // let p = this.posts[postIndex];
-    // p.reactions = [];
-    // Object.keys(post.reactions).map(function(key){
-    //   p.reactions.push({[key]:post.reactions[key]})
-    // });
   }
 
-  
+
   // Add or update post reactions for real-time sync based on our observer.
   addOrUpdateReaction(postKey, reaction) {
     // console.log("check " + JSON.stringify(this.posts));
@@ -1048,7 +1040,7 @@ export class GroupPage implements OnInit {
   const action = this.actionSheet.create({
     header: 'Create a new ...',
     backdropDismiss: true,
-    mode: "md",
+    mode: 'md',
     cssClass: 'GroupAction',
     buttons: [{
       text: 'Post',
@@ -1082,7 +1074,7 @@ export class GroupPage implements OnInit {
 submitReactionSmile(post) {
   // first find the post in the collection
   const postIndex = this.posts.findIndex(el => el.key ===  post.key);
-  let p = this.posts[postIndex];
+  const p = this.posts[postIndex];
 
   if (!post.showSmiley) {
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
@@ -1092,25 +1084,23 @@ submitReactionSmile(post) {
         const reaction = {
           key: '',
           dateCreated: new Date().toString(),
-          addedBy: this.dataProvider.getCurrentUserId(),
-          addedByUsername: currentUserName,
+          // tslint:disable-next-line: max-line-length
+          addedByUser: {
+                        addedByKey: this.dataProvider.getCurrentUserId(),
+                        addedByUsername: account.payload.val().username,
+                        addedByImg: account.payload.val().img
+                      },
           reactionType: 'Thanks'
         };
 
 
         if (postIndex >= 0) {
           if (p.reactions === undefined) {
-            // TODO : After saving, get the key back and add!!!
             const key = this.dataProvider.addFirstPostReactions(post.key, reaction);
             reaction.key = key;
             this.addOrUpdateReaction(p.key, reaction);
-//            const reactions = [];
-//            reaction.key = key;
-//            reactions.push(reaction);
-
-//            p.reactions = reactions;
           } else {
-            var key = this.dataProvider.updatePostReactions(post.key, reaction);
+            let key = this.dataProvider.updatePostReactions(post.key, reaction);
             reaction.key = key;
             this.addOrUpdateReaction(p.key, reaction);
 //            p.reactions.push(reaction);
@@ -1120,13 +1110,15 @@ submitReactionSmile(post) {
       }
       }});
     } else {
-      let found = false;
+      const found = false;
       if (p.reactions !== undefined) {
-        var values = Object.keys(p.reactions).map(function(e) {
+        let values = Object.keys(p.reactions).map(function(e) {
           return p.reactions[e];
         });
 
-        let reactionIndex = values.find(el => el.addedBy === this.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks');
+        const reactionIndex = values.find(
+                                  el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+                                  && el.reactionType === 'Thanks');
         if (reactionIndex === undefined) {
           // this shouldn't have happened, so set the smiley to false for now
           post.showSmiley = false;
@@ -1144,7 +1136,7 @@ submitReactionSmile(post) {
 submitReactionHug(post) {
  // first find the post in the collection
  const postIndex = this.posts.findIndex(el => el.key ===  post.key);
- let p = this.posts[postIndex];
+ const p = this.posts[postIndex];
 
  if (!post.showHug) {
    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
@@ -1154,8 +1146,12 @@ submitReactionHug(post) {
        const reaction = {
          key: '',
          dateCreated: new Date().toString(),
-         addedBy: this.dataProvider.getCurrentUserId(),
-         addedByUsername: currentUserName,
+         // tslint:disable-next-line: max-line-length
+         addedByUser: {
+                        addedByKey: this.dataProvider.getCurrentUserId(),
+                        addedByUsername: account.payload.val().username,
+                        addedByImg: account.payload.val().img
+                      },
          reactionType: 'Hug'
        };
 
@@ -1165,21 +1161,23 @@ submitReactionHug(post) {
            // TODO : After saving, get the key back and add!!!
            const key = this.dataProvider.addFirstPostReactions(post.key, reaction);
          } else {
-           var key = this.dataProvider.updatePostReactions(post.key, reaction);
-          
+           let key = this.dataProvider.updatePostReactions(post.key, reaction);
          }
          post.showHug = true;
          post.totalReactionCount += 1;
      }
      }});
    } else {
-     let found = false;
+     const found = false;
      if (p.reactions !== undefined) {
-       var values = Object.keys(p.reactions).map(function(e) {
+       let values = Object.keys(p.reactions).map(function(e) {
          return p.reactions[e];
        });
 
-       let reactionIndex = values.find(el => el.addedBy === this.dataProvider.getCurrentUserId() && el.reactionType === 'Hug');
+       const reactionIndex = values.find(
+        el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+        && el.reactionType === 'Hug');
+
        if (reactionIndex === undefined) {
          // this shouldn't have happened, so set the smiley to false for now
          post.showHug = false;
@@ -1190,5 +1188,24 @@ submitReactionHug(post) {
        }
    }
  }
+}
+
+
+async showReactionsList(post) {
+  if (post.totalReactionCount === 0) {
+    return;
+  }
+ // first find the post in the collection
+  const postIndex = this.posts.findIndex(el => el.key ===  post.key);
+  const p = this.posts[postIndex];
+
+  const modal = await this.modalCtrl.create({
+    component: ReactionListModalPage,
+    componentProps: {
+      reactions: p.reactions
+    }
+  });
+  return await modal.present();
+
 }
 }

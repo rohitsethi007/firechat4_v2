@@ -18,6 +18,17 @@
     padding: 0px 0px var(--page-margin);
     background-color: var(--page-background);
 //    border-bottom: calc(var(--page-margin) / 2) solid var(--page-color);
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+ }
+ 
+ .text{
+   display: inline-block;
+   vertical-align: middle;
+   padding-left: 3px;
+   text-transform: capitalize !important;
+ }
   .subtitle {
       height: 30px;
       width: 30px;
