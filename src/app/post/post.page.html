@@ -53,46 +53,85 @@
   </ion-buttons> 
     </ion-col>
     <ion-col>
+      <ion-buttons>
+        <ion-button>
       <div><ion-icon size="small" src="./assets/icon/chat.svg" class="icon"></ion-icon> <span class="text">{{post.totalReviewCount}}</span></div>
-    </ion-col>
+    </ion-button>
+  </ion-buttons> 
+  </ion-col>
   </ion-row>
-    </ion-card>
-
 
   <hr class="details-divider">
   <div class="reviews-wrapper">
     <h3 class="detail-title">Selected Tags</h3>
- 
-      <ion-row class="checkbox-tags rounded-checkbox-tags user-preferences-wrapper">
-    <ion-item  *ngFor="let entry of post.postTags" lines="none" class="checkbox-tag rounded-tag">
-      <div>
-        <ion-label class="tag-label">{{entry.val}}</ion-label>
-      <ion-checkbox [(ngModel)]="entry.isChecked" disabled="true"></ion-checkbox>
+  <ion-row>
+    <div class="tags" *ngFor="let tag of post.postTags">
+      <span *ngIf="tag.isChecked" class="item-rating" [attr.ratingBase]="1">{{tag.val}}</span>
+      <span *ngIf="!tag.isChecked" class="item-rating" [attr.ratingBase]="0">{{tag.val}}</span>
     </div>
-    </ion-item>
   </ion-row>
-</div>
+  </div>
 
+  
   <hr class="details-divider">
   <div class="reviews-wrapper">
-  <ion-row>
-     <ion-col>
-        <h3 class="detail-title">Reviews</h3>
+    <h3 class="detail-title-reply">Replies</h3>
+    <ion-row nowrap>
+    <ion-col size="9">
+        <ion-textarea class="placeholder" rows="0" placeholder="Type your message" [(ngModel)]="message">
+          </ion-textarea>
     </ion-col>
-  <ion-col>
-      <ion-buttons> 
-        <ion-button (click)="openReviewModal()">Add a review</ion-button>
-      </ion-buttons>
+    <ion-col size="3">
+      <ion-buttons>
+        <ion-button (click)="attach()">
+          <ion-icon name="attach"></ion-icon>
+        </ion-button>
+        <ion-button color="primary" fill="clear" (click)="submitReply()"> <!-- [disabled]="!message">-->
+          <ion-icon name="send-sharp"></ion-icon>
+        </ion-button>
+      </ion-buttons> 
     </ion-col>
    </ion-row>
     <div class="reviews-list">
-      <div class="review-item" *ngFor="let review of reviews">
-        <ion-row class="review-user">
-          <!--<ion-col size="2" class="user-image-wrapper">
-            <app-aspect-ratio [ratio]="{w: 1, h: 1}">
-              <app-image-shell class="review-user-image" [src]="'./assets/sample-images/food/user-image-1.png'" [alt]="'review user image'"></app-image-shell>
-            </app-aspect-ratio>
-          </ion-col>-->
+      <div class="review-item" *ngFor="let r of postReviews">
+        <ion-row>
+          <ion-col size="2" class="review">
+            <img src="{{r.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" /> 
+          </ion-col>
+          <ion-col size="10">
+            <app-text-shell class="comment-detail-author-name" [data]="r.addedByUser.addedByUsername"></app-text-shell>
+            <app-text-shell [data]="r.review"></app-text-shell>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col >
+          <app-text-shell class="review-date" [data]="r.dateCreated | DateFormat"></app-text-shell>
+        </ion-col>
+
+        <!-- TODO: Commenting out thumbs up/Thanks option on the comments section
+          <ion-col class="review">
+          <ion-buttons>
+            <ion-button (click)="submitReactionSmile()">
+           <div *ngIf="post.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+           <div *ngIf="!post.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+          </ion-button>
+          </ion-buttons> 
+        </ion-col> -->
+        </ion-row>
+<!-- 
+        <ion-item class="bottom_bar">
+          <ion-textarea style="margin:0" rows="0" placeholder="Type your message" [(ngModel)]="message">
+          </ion-textarea>
+          <ion-buttons slot="end" style="margin-left:4px;">
+            <ion-button fill="clear" (click)="attach()">
+              <ion-icon name="attach"></ion-icon>
+            </ion-button>
+            <ion-button color="primary" fill="clear" (click)="send('text')" [disabled]="!message">
+              send
+            </ion-button>
+          </ion-buttons>
+        </ion-item> -->
+        <!-- <ion-row class="review-user">
           <ion-col class="user-brief-wrapper">
             <h5 class="review-user-name">
               <app-text-shell [data]="review.addedByUsername"></app-text-shell>
@@ -124,9 +163,11 @@
               <app-text-shell [data]="review.rating"></app-text-shell>
             </div>
           </ion-col>
-        </ion-row>
+        </ion-row> -->
      </div>
     </div>
   </div>
+
+ </ion-card>
 </div>
 </ion-content>

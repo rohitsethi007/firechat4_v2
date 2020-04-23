@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-groups',
   templateUrl: './groups.page.html',
-  styleUrls: ['./groups.page.scss','./groups.shell.scss'],
+  styleUrls: ['./groups.page.scss', './groups.shell.scss'],
 })
 export class GroupsPage implements OnInit {
 
@@ -45,7 +45,7 @@ export class GroupsPage implements OnInit {
         groupIds.forEach((groupId) => {
           console.log(groupId);
           this.dataProvider.getGroup(groupId.key).snapshotChanges().subscribe((groupRes: any) => {
-            let group = { key: groupRes.key, ...groupRes.payload.val() };
+            const group = { key: groupRes.key, ...groupRes.payload.val() };
             console.log(group);
 
             if (group.key != null) {
@@ -53,15 +53,26 @@ export class GroupsPage implements OnInit {
               group.unreadMessagesCount = group.messages.length; // - groupId.messagesRead;
               // Get group's last active date
               group.date = group.messages[group.messages.length - 1].date;
-              group.membersCount = group.members.length;
-              group.pollsCount = group.polls.length - 1; // exclude default system000
-              group.resourcesCount = group.resources.length - 1; // exclude default system000
+
+              group.membersCount = 0;
+              group.pollsCount = 0;
+              group.resourcesCount = 0;
+
+              if (group.members) {
+                group.membersCount = group.members.length;
+              }
+              if (group.polls) {
+                group.pollsCount = group.polls.length;
+              }
+              if (group.resources ) {
+                group.resourcesCount = group.resources.length;
+              }
               if (group.posts === undefined) {
                 group.postsCount = 0;
               } else {
                 group.postsCount = group.posts.length ;
               }
-            this.addOrUpdateGroup(group);
+              this.addOrUpdateGroup(group);
             }
 
           });
@@ -74,12 +85,12 @@ export class GroupsPage implements OnInit {
     });
 
     // Update groups' last active date time elapsed every minute based on Moment.js.
-    var that = this;
+    let that = this;
     if (!that.updateDateTime) {
-      that.updateDateTime = setInterval(function () {
+      that.updateDateTime = setInterval(function() {
         if (that.groups) {
           that.groups.forEach((group) => {
-            let date = group.date;
+            const date = group.date;
             group.date = new Date(date);
           });
         }
@@ -93,8 +104,8 @@ export class GroupsPage implements OnInit {
     if (!this.groups) {
       this.groups = [group];
     } else {
-      var index = -1;
-      for (var i = 0; i < this.groups.length; i++) {
+      let index = -1;
+      for (let i = 0; i < this.groups.length; i++) {
         if (this.groups[i].key == group.key) {
           index = i;
         }
@@ -116,7 +127,8 @@ export class GroupsPage implements OnInit {
   hasUnreadMessages(group) {
     if (group.unreadMessagesCount > 0) {
       return 'group bold';
-    } else
+    } else {
       return 'group';
+    }
   }
 }

@@ -88,7 +88,6 @@ export class NewEventPage implements OnInit {
     // Initialize
     this.event = {
       dateCreated: '',
-      createdBy: this.dataProvider.getCurrentUserId(),
       title: '',
       description: '',
       eventDate: '',

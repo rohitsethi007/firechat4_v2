@@ -19,8 +19,9 @@ export class PostPage implements OnInit {
   private post: any;
   private title: any;
   private review: any;
-  private reviews: any;
+  private postReviews: any;
   private subscription: any;
+  private message: any;
 
   private loggedInUserIsMember: any = 'true';
 
@@ -36,15 +37,13 @@ export class PostPage implements OnInit {
     private angularfire: AngularFireDatabase
   ) {
     this.post = {showSmiley: false, showHug: false}; 
-    this.getPostDetails();
-
   }
 
   ionViewDidEnter() {
-    
+    this.getPostDetails();
   }
+
   ngOnInit() {
-    
   }
 
   async openReviewModal() {
@@ -138,17 +137,18 @@ export class PostPage implements OnInit {
         p.totalReviewCount = totalReviewCount;
 
         if (p.reviews !== undefined) {
-          this.reviews = [];
-          Object.keys(p.reviews).forEach((snap) => {
-            // const r = { key: snap, snap };
-            this.reviews.push(snap);
-          });
-          this.reviews.sort((a, b) => (a.dateCreated < b.dateCreated) ? 1 : -1);
+          this.postReviews = [];
+          let values = Object.keys(p.reviews).map(function(e) {
+            p.reviews[e].key = e;
+            return p.reviews[e];
+           });
+           this.postReviews = values;
+          this.postReviews.sort((a, b) => (a.dateCreated < b.dateCreated) ? 1 : -1);
         }
 
         this.post = p;
       }
-
+      console.log("RS Reviews:" + this.postReviews);
       this.loadingProvider.hide();
     });
   }
@@ -289,5 +289,33 @@ export class PostPage implements OnInit {
      });
     return await modal.present();
    
+   }
+
+   submitReply() {
+     console.log('Message Typed : ' + this.message);
+     let review: any;
+     let currentUserName: any;
+     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
+       if (account.payload.exists()) {
+         currentUserName = account.payload.val().username;
+ 
+         review = {
+           dateCreated: new Date().toString(),
+           addedByUser: {
+              addedByKey: this.dataProvider.getCurrentUserId(),
+              addedByUsername: account.payload.val().username,
+              addedByImg: account.payload.val().img
+            },
+           review: this.message
+         };
+
+         if (this.post.reviews === undefined) {
+          this.dataProvider.addFirstPostReview(this.postId, review);
+         } else {
+           this.dataProvider.updatePostReviews(this.postId, review);
+         }
+
+         this.message = '';
+        }});
    }
 }

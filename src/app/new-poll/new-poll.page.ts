@@ -74,7 +74,7 @@ export class NewPollPage implements OnInit {
       description: '',
       groupId: this.groupId,
       dateCreated: '',
-      createdBy: this.dataProvider.getCurrentUserId(),
+      addedByUser: {},
       dateEnding: '',
       pollOptions : [],
     };
@@ -112,44 +112,52 @@ export class NewPollPage implements OnInit {
   // Proceed with group creation.
   done() {
     this.loadingProvider.show();
+    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
+      if (account.payload.exists()) {
 
       // Add poll info and date.
-    this.poll.dateCreated = new Date().toString();
-    const today = new Date();
-    const dd = today.getDate();
-    const mm = today.getMonth(); // January is 0!
-    const yyyy = today.getFullYear();
+        this.poll.dateCreated = new Date().toString();
+        const today = new Date();
+        const dd = today.getDate();
+        const mm = today.getMonth(); // January is 0!
+        const yyyy = today.getFullYear();
 
-    const date: Date = new Date(yyyy, mm, dd + 2);
-    this.poll.dateEnding = date.toString();
+        this.poll.addedByUser = {
+          addedByKey: this.dataProvider.getCurrentUserId(),
+          addedByUsername: account.payload.val().username,
+          addedByImg: account.payload.val().img
+        };
 
-    this.poll.name = this.pollForm.value['name'];
-    this.poll.description = this.pollForm.value['description'];
+        const date: Date = new Date(yyyy, mm, dd + 2);
+        this.poll.dateEnding = date.toString();
 
-    if (this.pollForm.value['pollOption1'] != null
+        this.poll.name = this.pollForm.value['name'];
+        this.poll.description = this.pollForm.value['description'];
+
+        if (this.pollForm.value['pollOption1'] != null
           && this.pollForm.value['pollOption1'].trim() != '') {
           this.poll.pollOptions.push({
             name : this.pollForm.value['pollOption1'].trim()});
       }
-    if (this.pollForm.value['pollOption2'] != null
+        if (this.pollForm.value['pollOption2'] != null
           && this.pollForm.value['pollOption2'].trim() != '') {
         this.poll.pollOptions.push({
           name : this.pollForm.value['pollOption2'].trim()});
     }
-    if (this.pollForm.value['pollOption3'] != null
+        if (this.pollForm.value['pollOption3'] != null
           && this.pollForm.value['pollOption3'].trim() != '') {
         this.poll.pollOptions.push({
           name : this.pollForm.value['pollOption3'].trim()});
     }
-    if (this.pollForm.value['pollOption4'] != null
+        if (this.pollForm.value['pollOption4'] != null
           && this.pollForm.value['pollOption4'].trim() != '') {
         this.poll.pollOptions.push({
           name : this.pollForm.value['pollOption4'].trim()});
     }
-    this.poll.pollTags = [];
-    this.poll.pollTags = this.pollTags;
+        this.poll.pollTags = [];
+        this.poll.pollTags = this.pollTags;
       // Add poll to database.
-    this.dataProvider.addPoll(this.poll).then((success) => {
+        this.dataProvider.addPoll(this.poll).then((success) => {
         const pollId = success.key;
         // Add system message that group is created.
         // Add group poll details
@@ -180,5 +188,6 @@ export class NewPollPage implements OnInit {
       });
 
     }
-
+  });
+}
 }

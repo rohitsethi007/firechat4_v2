@@ -15,9 +15,14 @@
   padding-bottom: 8px;
 }
 .listing-item {
-    padding: 0px 0px var(--page-margin);
+    //padding: 0px 0px var(--page-margin);
     background-color: var(--page-background);
 //    border-bottom: calc(var(--page-margin) / 2) solid var(--page-color);
+
+.reactions-col {
+  margin: -3px;
+}
+
 .icon {
   display: inline-block;
   vertical-align: middle;
@@ -45,9 +50,7 @@
     line-height: 19px;
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-osx-font-smoothing: auto;
-    margin: 0 0 8px;
     overflow: hidden;
-    padding-right: 20px;
     text-overflow: ellipsis;
   }
 
@@ -55,9 +58,9 @@
     .info-row {
       --ion-grid-column-padding: 0px;
   
-      padding: var(--page-margin);
+      padding-left: var(--page-margin);
       padding-bottom: calc(var(--page-margin) / 2);
-  
+
       .main-info-col {
         padding-right: calc(var(--page-margin) / 2);
         line-height: 1;

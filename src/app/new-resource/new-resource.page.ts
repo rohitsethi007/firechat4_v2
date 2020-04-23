@@ -199,6 +199,7 @@ export class NewResourcePage implements OnInit {
     this.resource.type = 'contact';
     this.resource.resourceTags = [];
     this.resource.resourceTags = this.resourceTags;
+    
 
 
     // Add resource to database.

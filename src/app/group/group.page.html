@@ -124,12 +124,11 @@
         <ion-card-content class="message" (click)="viewPost(item)">
           {{item.message}}
         </ion-card-content>
-        <ion-card-content>
-          <ion-grid>
-            <ion-row>
+
+            <ion-row >
               <ion-col>
                 <ion-buttons>
-                  <ion-button (click)="submitReactionSmile(item)">
+                  <ion-button (click)="submitReactionPost(item, 'Thanks')">
                  <div *ngIf="item.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
                  <div *ngIf="!item.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> <span class="text">Thanks</span></div> 
                 </ion-button>
@@ -137,15 +136,11 @@
               </ion-col>
               <ion-col>
                 <ion-buttons>
-                  <ion-button (click)="submitReactionHug(item)">
+                  <ion-button (click)="submitReactionPost(item, 'Hug')">
                  <div *ngIf="item.showHug"><ion-icon size="small" class="icon" src="./assets/icon/hug-active.svg" ></ion-icon> <span class="text">Hug</span></div> 
                  <div *ngIf="!item.showHug"><ion-icon size="small" class="icon"  src="./assets/icon/hug.svg" ></ion-icon> <span class="text">Hug</span></div> 
                 </ion-button>
                 </ion-buttons> 
-              </ion-col>
-              <ion-col>
-              </ion-col>
-              <ion-col>
               </ion-col>
               <ion-col>
                 <ion-buttons>
@@ -155,17 +150,20 @@
             </ion-buttons> 
               </ion-col>
               <ion-col>
+                <ion-buttons>
+                  <ion-button>
                 <div><ion-icon size="small" src="./assets/icon/chat.svg" class="icon"></ion-icon> <span class="text">{{item.totalReviewCount}}</span></div>
+              </ion-button>
+            </ion-buttons> 
               </ion-col>
             </ion-row>
-          </ion-grid>
-        </ion-card-content>
+
       </ion-card>
     </div>
      </div>
     </div>
 
-  <div *ngSwitchCase="'polls'">
+     <div *ngSwitchCase="'polls'">
     <!-- No polls to show -->
      <div class="empty-list" *ngIf="polls && polls.length == 0">
      <h1><ion-icon name="md-chatbubbles"></ion-icon></h1>
@@ -173,50 +171,36 @@
      </div>
      <!-- Show polls -->
      <div *ngIf="polls && polls.length > 0">
-     <ion-searchbar [(ngModel)]="searchPoll" placeholder="Search for poll" showCancelButton="true" cancelButtonText="Done"></ion-searchbar>
-     <div class="listing-item" *ngFor="let item of polls" (click)="viewPoll(item)">
-      <ion-row class="info-row">
-        <ion-col class="main-info-col">
-          <h3 class="item-name">
-              <app-text-shell animation="bouncing" [data]="(item?.name && item?.type) ? (item.name + ' - ' + item.type) : (item.name)"></app-text-shell>
-          </h3>
-          <p class="item-description">
-            <app-text-shell animation="bouncing" [data]="item.description" lines="3"></app-text-shell>
-          </p>
-          <p class="item-tags">
-            <app-text-shell animation="bouncing" [data]="'Tags: ' + item.pollTagsString"></app-text-shell>
-          </p>
-        </ion-col>
-      </ion-row>
-      <ion-row class="info-row" *ngFor="let pollOption of item.pollOptions">
-        <ion-col class="poll-option-col">
-        <!--<button ion-button color="primary" clear small icon-start> -->
-          <ion-icon size="medium" name='pie-chart-outline'></ion-icon>
-          {{pollOption.name}}
-        <!--</button>-->
-        </ion-col>
-      </ion-row>
-      <ion-row class="stats-row">
-        <ion-col size="2" class="item-rating">
-          <span class="rating-value"> 
-            <app-text-shell [data]="item.dateCreated | DateFormat"></app-text-shell>
-          </span>
-        </ion-col>
-        <ion-col size="2" class="item-rating">
-          <span class="rating-value">
-            <app-text-shell [data]="2"></app-text-shell>
-          </span>
-          <ion-icon class="stats-icon" name="star-outline"></ion-icon>
-        </ion-col>
-        <ion-col size="2" class="item-reviews">
-          <span class="reviews-count">
-            <app-text-shell [data]="4"></app-text-shell>
-          </span>
-          <ion-icon class="stats-icon" name="chatbox-ellipses-outline"></ion-icon>
-        </ion-col>
-      </ion-row>
-    </div>
-     </div>
+      <div class="listing-item" *ngFor="let item of polls  | reverse">
+     <ion-card>
+       <ion-card-header>
+            <ion-card-subtitle (click)="viewPoll(item)">
+             <img class="subtitle" src="{{item.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" /> {{item.addedByUser.addedByUsername}}, posted {{item.dateCreated | DateFormat}}
+             <img *ngIf="item.showNewIcon" class="newIcon" src="./assets/icon/new.svg" /> 
+           </ion-card-subtitle>
+           <ion-card-title>{{item.description}}</ion-card-title>
+         </ion-card-header>
+       <ion-row class="info-row" *ngFor="let pollOption of item.pollOptions">
+         <ion-col class="poll-option-col">
+         <!--<button ion-button color="primary" clear small icon-start> -->
+            <div><ion-icon size="small" class="icon" src="./assets/icon/checked.svg" ></ion-icon> <span class="text">{{pollOption.name}}</span></div>
+           
+         <!--</button>-->
+         </ion-col>
+       </ion-row>
+             <ion-row class="info-row" >
+				<ion-col size="8">
+                  <span class="text">Poll ends {{item.dateEnding | date:'fullDate'}}</span> 
+               </ion-col>
+			   <ion-col size="2">
+			   </ion-col>
+               <ion-col size="2">
+                 <div><span class="text">{{item.totalPollCount}} voted</span></div>
+               </ion-col>
+             </ion-row>
+      </ion-card>
+   </div>
+      </div>
     </div>
 
     <div *ngSwitchCase="'resources'">
@@ -227,98 +211,105 @@
      </div>
      <!-- Show Resources -->
      <div *ngIf="resources && resources.length > 0" >
-     <ion-searchbar [(ngModel)]="searchResource" placeholder="Search for Resources" showCancelButton="true" cancelButtonText="Done"></ion-searchbar>
-     <div class="listing-item" *ngFor="let item of resources" (click)="viewResource(item)">
-      <div *ngIf="item?.type == 'contact'">
-      <ion-row class="info-row">
-        <ion-col class="main-info-col">
-          <h3 class="item-name">
-              <app-text-shell animation="bouncing" [data]="(item?.title && item?.type) ? (item.title + ' - ' + item.type) : (item.title)"></app-text-shell>
-          </h3>
-          <p class="item-description">
-            <app-text-shell animation="bouncing" [data]="item.name" lines="3"></app-text-shell>
-          </p>
-          <p class="item-address">
-            <app-text-shell animation="bouncing" [data]="item.address"></app-text-shell>
-          </p>
-
-          <p class="item-tags">
-            <app-text-shell animation="bouncing" [data]="'Tags: ' + item.resourceTagsString"></app-text-shell>
-          </p>
-        </ion-col>
-      </ion-row>
-      <ion-row class="stats-row">
-        <ion-col size="2" class="item-rating">
-          <span class="rating-value"> 
-            <app-text-shell [data]="item.dateCreated | DateFormat"></app-text-shell>
-          </span>
-        </ion-col>
-        <ion-col size="2" class="item-rating">
-          <span class="rating-value">
-            <app-text-shell [data]="2"></app-text-shell>
-          </span>
-          <ion-icon class="stats-icon" name="star-outline"></ion-icon>
-        </ion-col>
-        <ion-col size="2" class="item-reviews">
-          <span class="reviews-count">
-            <app-text-shell [data]="4"></app-text-shell>
-          </span>
-          <ion-icon class="stats-icon" name="chatbox-ellipses-outline"></ion-icon>
-        </ion-col>
-        <ion-col size="2" class="item-reviews">
-          <ion-icon size="medium" name="pin-outline" ></ion-icon>
-        </ion-col>
-      </ion-row>
-      </div>
-      <div *ngIf="item?.type == 'weblink'">
-        <ion-row class="info-row">
-          <ion-col class="main-info-col">
-            <h3 class="item-name">
-                <app-text-shell animation="bouncing" [data]="(item?.title && item?.type) ? (item.title + ' - ' + item.type) : (item.title)"></app-text-shell>
-            </h3>
-            <h3 class="item-name">
-              <app-text-shell animation="bouncing" [data]="item.metatitle"></app-text-shell>
-          </h3>
-          <p class="item-description">
-            <app-text-shell animation="bouncing" [data]="item.metadescription"></app-text-shell>
-          </p>
-          <p class="item-description">
-              <app-image-shell animation="bouncing" [src]="item.metaicon"></app-image-shell>
-            </p>
-            <p class="item-address">
-              <app-text-shell animation="bouncing" [data]="item.metasite"></app-text-shell>
-            </p>
-  
-            <p class="item-tags">
-              <app-text-shell animation="bouncing" [data]="'Tags: ' + item.resourceTagsString"></app-text-shell>
-            </p>
-          </ion-col>
-        </ion-row>
-        <ion-row class="stats-row">
-          <ion-col size="2" class="item-rating">
-            <span class="rating-value"> 
-              <app-text-shell [data]="item.dateCreated | DateFormat"></app-text-shell>
-            </span>
-          </ion-col>
-          <ion-col size="2" class="item-rating">
-            <span class="rating-value">
-              <app-text-shell [data]="2"></app-text-shell>
-            </span>
-            <ion-icon class="stats-icon" name="star-outline"></ion-icon>
-          </ion-col>
-          <ion-col size="2" class="item-reviews">
-            <span class="reviews-count">
-              <app-text-shell [data]="4"></app-text-shell>
-            </span>
-            <ion-icon class="stats-icon" name="chatbox-ellipses-outline"></ion-icon>
-          </ion-col>
-          <ion-col size="2" class="item-reviews">
-            <ion-icon size="medium" name="pin-outline" ></ion-icon>
-          </ion-col>
-        </ion-row>
-        </div>
-    </div>
+      <div class="listing-item" *ngFor="let item of resources">
+       <div *ngIf="item?.type == 'contact'">
+     <ion-card>
+        <ion-card-header>
+             <ion-card-subtitle (click)="viewResource(item)">
+              <img class="subtitle" src="{{item.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" /> {{item.addedByUser.addedByUsername}}, posted {{item.dateCreated | DateFormat}}
+              <img *ngIf="item.showNewIcon" class="newIcon" src="./assets/icon/new.svg" /> 
+            </ion-card-subtitle>
+            <ion-card-title>{{item.title}}</ion-card-title>
+          </ion-card-header>
+              <ion-card-content class="message" (click)="viewResource(item)">
+			   {{item.name}}<br/>
+			   {{item.address}}<br/><br/>
+			   {{item.email}}<br/>
+			   {{item.phones}}<br/>
+         </ion-card-content>
+              <ion-row>
+         <ion-col class="reactions-col">
+                 <ion-buttons>
+                   <ion-button (click)="submitReactionResource(item, 'Bookmark')">
+                  <div *ngIf="item.showBookmark"><ion-icon size="small" class="icon" src="./assets/icon/bookmark-active.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
+                  <div *ngIf="!item.showBookmark"><ion-icon size="small" class="icon"  src="./assets/icon/bookmark.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
+                 </ion-button>
+                 </ion-buttons> 
+               </ion-col>
+         <ion-col class="reactions-col">
+                 <ion-buttons>
+                   <ion-button (click)="submitReactionResource(item, 'Thanks')">
+                  <div *ngIf="item.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+                  <div *ngIf="!item.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+                 </ion-button>
+                 </ion-buttons> 
+               </ion-col>
+          <ion-col class="reactions-col">
+                 <ion-buttons>
+                   <ion-button (click)="showResourceReactionsList(item)">
+                 <div><ion-icon size="small" src="./assets/icon/bookmark-active.svg" class="icon"></ion-icon><ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon><span class="text">{{item.totalReactionCount}}</span></div>
+               </ion-button>
+             </ion-buttons> 
+               </ion-col>
+               <ion-col class="reactions-col">
+                 <ion-buttons>
+                   <ion-button>
+                    <div><ion-icon size="small" src="./assets/icon/chat.svg" class="icon"></ion-icon> <span class="text">{{item.totalReviewCount}}</span></div>
+                  </ion-button>
+             </ion-buttons> 
+               </ion-col>
+              </ion-row>
+       </ion-card>
+       </div>
+       <div *ngIf="item?.type == 'weblink'">
+         <ion-row class="info-row">
+           <ion-col class="main-info-col">
+             <h3 class="item-name">
+                 <app-text-shell animation="bouncing" [data]="(item?.title && item?.type) ? (item.title + ' - ' + item.type) : (item.title)"></app-text-shell>
+             </h3>
+             <h3 class="item-name">
+               <app-text-shell animation="bouncing" [data]="item.metatitle"></app-text-shell>
+           </h3>
+           <p class="item-description">
+             <app-text-shell animation="bouncing" [data]="item.metadescription"></app-text-shell>
+           </p>
+           <p class="item-description">
+               <app-image-shell animation="bouncing" [src]="item.metaicon"></app-image-shell>
+             </p>
+             <p class="item-address">
+               <app-text-shell animation="bouncing" [data]="item.metasite"></app-text-shell>
+             </p>
+   
+             <p class="item-tags">
+               <app-text-shell animation="bouncing" [data]="'Tags: ' + item.resourceTagsString"></app-text-shell>
+             </p>
+           </ion-col>
+         </ion-row>
+         <ion-row class="stats-row">
+           <ion-col size="2" class="item-rating">
+             <span class="rating-value"> 
+               <app-text-shell [data]="item.dateCreated | DateFormat"></app-text-shell>
+             </span>
+           </ion-col>
+           <ion-col size="2" class="item-rating">
+             <span class="rating-value">
+               <app-text-shell [data]="2"></app-text-shell>
+             </span>
+             <ion-icon class="stats-icon" name="star-outline"></ion-icon>
+           </ion-col>
+           <ion-col size="2" class="item-reviews">
+             <span class="reviews-count">
+               <app-text-shell [data]="4"></app-text-shell>
+             </span>
+             <ion-icon class="stats-icon" name="chatbox-ellipses-outline"></ion-icon>
+           </ion-col>
+           <ion-col size="2" class="item-reviews">
+             <ion-icon size="medium" name="pin-outline" ></ion-icon>
+           </ion-col>
+         </ion-row>
+         </div>
      </div>
+      </div>
     </div>
 
     
@@ -330,54 +321,54 @@
        </div>
        <!-- Show Events -->
        <div *ngIf="events && events.length > 0" >
-       <ion-searchbar [(ngModel)]="searchEvents" placeholder="Search for Events" showCancelButton="true" cancelButtonText="Done"></ion-searchbar>
-       <div class="listing-item" *ngFor="let item of events" (click)="viewEvent(item)">
-        <ion-row class="info-row">
-          <ion-col class="main-info-col">
-            <h3 class="item-name">
-                <app-text-shell animation="bouncing" [data]="(item?.title && item?.type) ? (item.title + ' - ' + item.type) : (item.title)"></app-text-shell>
-            </h3>
-            <p class="item-description">
-              <app-text-shell animation="bouncing" [data]="item.description" lines="3"></app-text-shell>
-            </p>
-            <p class="item-address">
-              <app-text-shell animation="bouncing" [data]="item.eventDate"></app-text-shell>
-              <app-text-shell animation="bouncing" [data]="item.eventTime"></app-text-shell>
-            </p>
-            <p class="item-address" *ngIf="item.address">
-              <app-text-shell animation="bouncing" [data]="item.address"></app-text-shell>
-            </p>
-  
-            <p class="item-tags">
-              <app-text-shell animation="bouncing" [data]="'Tags: ' + item.eventTagsString"></app-text-shell>
-            </p>
-          </ion-col>
-        </ion-row>
-        <ion-row class="stats-row">
-          <ion-col size="2" class="item-rating">
-            <span class="rating-value"> 
-              <app-text-shell [data]="item.dateCreated | DateFormat"></app-text-shell>
-            </span>
-          </ion-col>
-          <ion-col size="2" class="item-rating">
-            <span class="rating-value">
-              <app-text-shell [data]="2"></app-text-shell>
-            </span>
-            <ion-icon class="stats-icon" name="pie-chart-outline"></ion-icon>
-          </ion-col>
-          <ion-col size="2" class="item-reviews">
-            <span class="reviews-count">
-              <app-text-shell *ngIf = "item.attendees" [data]="item.attendees.length"></app-text-shell>
-              <app-text-shell *ngIf = "!item.attendees" [data]="0"></app-text-shell>
-            </span>
-            <ion-icon class="stats-icon" name="people-outline"></ion-icon>
-          </ion-col>
-          <ion-col size="2" class="item-reviews">
-            <ion-icon size="large" ios="pin-outline"></ion-icon>
-          </ion-col>
-        </ion-row>
-      </div>
-       
+        <div class="listing-item" *ngFor="let item of events">
+          <ion-card>
+         <ion-card-header>
+              <ion-card-subtitle (click)="viewEvent(item)">
+               <img class="subtitle" src="{{item.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" /> {{item.addedByUser.addedByUsername}}, posted {{item.dateCreated | DateFormat}}
+               <img *ngIf="item.showNewIcon" class="newIcon" src="./assets/icon/new.svg" /> 
+             </ion-card-subtitle>
+             <ion-card-title>{{item.title}}</ion-card-title>
+           </ion-card-header>
+               <ion-card-content class="message" (click)="viewEvent(item)">
+          {{item.eventDate}} at {{item.eventTime}}<br/><br/>
+          {{item.address}}<br/><br/>
+          {{item.link}}
+          </ion-card-content>
+               <ion-row>
+          <ion-col>
+                  <ion-buttons>
+                    <ion-button (click)="submitReactionEvent(item, 'Checkin')">
+                   <div *ngIf="item.showCheckin"><ion-icon size="small" class="icon" src="./assets/icon/checkin-active.svg" ></ion-icon> <span class="text">Checkin</span></div> 
+                   <div *ngIf="!item.showCheckin"><ion-icon size="small" class="icon"  src="./assets/icon/checkin.svg" ></ion-icon> <span class="text">Checkin</span></div> 
+                  </ion-button>
+                  </ion-buttons> 
+                </ion-col>
+          <ion-col>
+                  <ion-buttons>
+                    <ion-button (click)="submitReactionEvent(item, 'Thanks')">
+                   <div *ngIf="item.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+                   <div *ngIf="!item.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+                  </ion-button>
+                  </ion-buttons> 
+                </ion-col>
+                <ion-col>
+                  <ion-buttons>
+                    <ion-button (click)="showEventReactionsList(item)">
+                  <div><ion-icon size="small" src="./assets/icon/checkin-active.svg" class="icon"></ion-icon><ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon><span class="text">{{item.totalReactionCount}}</span></div>
+                </ion-button>
+              </ion-buttons> 
+                </ion-col>
+                <ion-col>
+                  <ion-buttons>
+                    <ion-button>
+                     <div><ion-icon size="small" src="./assets/icon/chat.svg" class="icon"></ion-icon> <span class="text">{{item.totalReviewCount}}</span></div>
+                   </ion-button>
+              </ion-buttons> 
+                </ion-col>
+               </ion-row>
+        </ion-card>
+        </div>
        </div>
       </div>
       <!-- Group Info -->

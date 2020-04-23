@@ -8,12 +8,24 @@ import { Storage } from '@ionic/storage';
 })
 export class DataService {
   [x: string]: any;
+  private addedByUser: any;
 
   constructor(
     private afAuth: AngularFireAuth,
     private afdb: AngularFireDatabase,
-    private storage: Storage
-  ) { }
+    private storage: Storage,
+
+  ) {
+    this.getFromStorageAsync('currentUser').then((element) => {
+      const addedByUser = {
+        addedByKey: element.userId,
+        addedByUsername: element.username,
+        addedByImg: element.img
+      };
+
+      this.addedByUser = addedByUser;
+   });
+  }
 
 
   // Get all users
@@ -151,6 +163,7 @@ export class DataService {
   }
 
   addResource(resource) {
+    resource.addedByUser = this.addedByUser;
     return this.afdb.list('resources').push(resource);
   }
 
@@ -160,6 +173,7 @@ export class DataService {
   }
 
   addEvent(event) {
+    event.addedByUser = this.addedByUser;
     return this.afdb.list('events').push(event);
   }
 
@@ -207,6 +221,7 @@ export class DataService {
  
   updatePostReactions(postKey, reaction) {
     // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
+    reaction.addedByUser = this.addedByUser;
     var newRef = this.afdb.list('/posts/' + postKey + '/reactions/').push(reaction);
     return newRef.key;
   }
@@ -227,29 +242,61 @@ export class DataService {
       })
       .catch(function(error) {
         console.log("Remove failed: " + error.message)
-      });  }
+      });  
+    }
 
-  updateResourceBookmark(resourceKey, bookmarkedBy) {
+  updateResourceReactions(resourceKey, reaction) {
     // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
-    this.afdb.list('/resources/' + resourceKey + '/bookmarkedBy/').push(bookmarkedBy);
-   }
+    reaction.addedByUser = this.addedByUser;
+    var newRef = this.afdb.list('/resources/' + resourceKey + '/reactions/').push(reaction);
+    return newRef.key;
+  }
 
-  addFirstResourceBookmark(resourceKey, bookmarkedBy) {
+  addFirstResourceReactions(resourceKey, reaction) {
     let r = [];
     this.afdb.object('/resources/' + resourceKey).update( {
-    bookmarkedBy: r
+      reactions: r
     });
-    console.log("inside addFirstResourceBookmark:" + resourceKey);
-    this.updateResourceBookmark(resourceKey, bookmarkedBy);
+    return this.updateResourceReactions(resourceKey, reaction);
   }
 
-  addUserBookmark(userId, resourceId) {
-    let r = [];
-    this.afdb.object('/accounts/' + userId).update( {
-      bookmarkedResources: r
-     });
-    this.afdb.list('/accounts/' + userId + '/bookmarkedResources/').push(resourceId);
+  
+  removeEventReaction(eventKey, reactionKey) {
+    var adaRef = this.afdb.database.ref('/events/' + eventKey + '/reactions/' + reactionKey);
+    adaRef.remove()
+      .then(function() {
+        console.log("Remove succeeded.")
+      })
+      .catch(function(error) {
+        console.log("Remove failed: " + error.message)
+      });  
+    }
+
+  updateEventReactions(eventKey, reaction) {
+    // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
+    reaction.addedByUser = this.addedByUser;
+    var newRef = this.afdb.list('/events/' + eventKey + '/reactions/').push(reaction);
+    return newRef.key;
   }
+
+  addFirstEventReactions(eventKey, reaction) {
+    let r = [];
+    this.afdb.object('/events/' + eventKey).update( {
+      reactions: r
+    });
+    return this.updateEventReactions(eventKey, reaction);
+  }
+
+  removeResourceReaction(resourceKey, reactionKey) {
+    var adaRef = this.afdb.database.ref('/resources/' + resourceKey + '/reactions/' + reactionKey);
+    adaRef.remove()
+      .then(function() {
+        console.log("Remove succeeded.")
+      })
+      .catch(function(error) {
+        console.log("Remove failed: " + error.message)
+      });
+    }
 
   updatePollReviews(pollId, comment) {
     // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
