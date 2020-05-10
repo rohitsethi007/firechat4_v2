@@ -148,7 +148,6 @@ export class PostPage implements OnInit {
 
         this.post = p;
       }
-      console.log("RS Reviews:" + this.postReviews);
       this.loadingProvider.hide();
     });
   }

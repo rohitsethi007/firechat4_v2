@@ -154,6 +154,7 @@ export class DataService {
   }
 
   addPoll(poll){
+    poll.addedByUser = this.addedByUser;
     return this.afdb.list('polls').push(poll);
   }
 
@@ -169,6 +170,7 @@ export class DataService {
 
   
   addPost(post) {
+    post.addedByUser = this.addedByUser;
     return this.afdb.list('posts').push(post);
   }
 
@@ -179,6 +181,7 @@ export class DataService {
 
   updateResourceReviews(resourceKey, review) {
    // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
+   review.addedByUser = this.addedByUser;
    this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
   }
 
@@ -208,6 +211,7 @@ export class DataService {
 
   updateEventReviews(eventKey, review) {
     // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
+    review.addedByUser = this.addedByUser;
     this.afdb.list('/events/' + eventKey + '/reviews/').push(review);
   }
  
@@ -298,17 +302,18 @@ export class DataService {
       });
     }
 
-  updatePollReviews(pollId, comment) {
+  updatePollReviews(pollId, review) {
     // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
-    this.afdb.list('/polls/' + pollId + '/comments/').push(comment);
+    review.addedByUser = this.addedByUser;
+    this.afdb.list('/polls/' + pollId + '/reviews/').push(review);
    }
  
-   addFirstPollReview(pollId, comment) {
+   addFirstPollReview(pollId, review) {
      let r = [];
-     this.afdb.object('/resources/' + pollId).update( {
-       comments: r
+     this.afdb.object('/polls/' + pollId).update( {
+       reviews: r
      });
-     this.updateResourceReviews(pollId, comment);
+     this.updatePollReviews(pollId, review);
    }
  
    async getFromStorageAsync(section) {

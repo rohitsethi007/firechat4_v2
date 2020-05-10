@@ -7,6 +7,7 @@ import { LoadingService } from '../services/loading.service';
 import { ReviewModalPage } from '../review-modal/review-modal.page';
 import * as firebase from 'firebase';
 import { AngularFireDatabase } from '@angular/fire/database';
+import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
 
 @Component({
   selector: 'app-resource',
@@ -15,11 +16,13 @@ import { AngularFireDatabase } from '@angular/fire/database';
 })
 export class ResourcePage implements OnInit {
   private resourceId: any;
-  private resource: any = [];
+  private resource: any;
   private title: any;
   private review: any;
+  private resourceReviews: any;
   private reviews: any;
   subscription: any;
+  private message: any;
   
   private loggedInUserIsMember: any = 'true';
 
@@ -31,10 +34,13 @@ export class ResourcePage implements OnInit {
     private navCtrl: NavController,
     private modalCtrl: ModalController,
     private angularfire: AngularFireDatabase
-  ) {}
+  ) {
+    this.resource = {showSmiley: false, showBookmark: false, addedByUser: {}, type: ''}; 
+    this.getResourceDetails();
+  }
 
   ionViewDidEnter() {
-    this.getResourceDetails();
+
   }
 
   ngOnInit() {}
@@ -83,56 +89,166 @@ export class ResourcePage implements OnInit {
     this.resourceId = this.route.snapshot.params.id;
     this.subscription = this.dataProvider.getResourceDetails(this.resourceId).snapshotChanges().subscribe((resource: any) => {
       if (resource.payload.exists()) {
-        this.resource = resource.payload.val();
-        this.title = resource.payload.val().name;
+        let p = resource.payload.val();
+        p.key = resource.payload.key;
+        this.title = resource.payload.val().title;
+       // Check for Thanks
+        let totalReactionCount = 0;
+        let totalReviewCount = 0;
 
-        if (this.resource.reviews !== undefined) {
-          this.reviews = [];
-          Object.keys(this.resource.reviews).forEach((key) => {
-            this.reviews.push(this.resource.reviews[key]);
+        if (p.reviews !== undefined) {
+          let rev = Object.keys(p.reviews).map(function(e) {
+          totalReviewCount += 1;
           });
-          this.reviews.sort((a, b) => (a.dateCreated < b.dateCreated) ? 1 : -1);
         }
+
+        let foundSmiley = false;
+        if (p.reactions !== undefined) {
+           let values = Object.keys(p.reactions).map(function(e) {
+            p.reactions[e].key = e;
+            totalReactionCount += 1;
+            return p.reactions[e];
+           });
+           // tslint:disable-next-line: max-line-length
+           foundSmiley = values.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks');
+         }
+        if (foundSmiley) {
+          p.showSmiley = true;
+         } else {
+          p.showSmiley = false;
+         }
+        // Check for Bookmark
+        let foundBookmark = false;
+        if (p.reactions !== undefined) {
+           let values = Object.keys(p.reactions).map(function(e) {
+            p.reactions[e].key = e;
+            return p.reactions[e];
+           });
+           foundBookmark = values.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+                                            && el.reactionType === 'Bookmark');
+         }
+        if (foundBookmark) {
+          p.showBookmark = true;
+         } else {
+          p.showBookmark = false;
+         }
+
+        p.totalReactionCount = totalReactionCount;
+        p.totalReviewCount = totalReviewCount;
+
+        if (p.reviews !== undefined) {
+          this.resourceReviews = [];
+          let values = Object.keys(p.reviews).map(function(e) {
+            p.reviews[e].key = e;
+            return p.reviews[e];
+           });
+          this.resourceReviews = values;
+          this.resourceReviews.sort((a, b) => (a.dateCreated < b.dateCreated) ? 1 : -1);
+        }
+        this.resource = p;
       }
 
       this.loadingProvider.hide();
     });
   }
 
-  bookmarResource() {
-    this.loadingProvider.show();
-    let currentUserName: any;
-    // update user collection with the resource that was just bookmarked
-    this.dataProvider.getFromStorageAsync('currentUser').then((account) => {
-        currentUserName = account.username;
-
-        // update resources collection with the user who bookmarked it
-        if (this.resource.bookmarkedBy === undefined) {
-          console.log("this.resource.bookmarkedBy is null, userId : " + account.userId);
-          this.resource.bookMarkedBy = [];
-          this.resource.bookMarkedBy.push(account.userId);
-          console.log(this.resource.bookMarkedBy);
-          this.angularfire.object('/resources/' + this.resourceId).update({
-            bookmarkedBy: this.resource.bookMarkedBy
-          });
-
+  submitReactionResource(resource, reactionType) {
+    switch (reactionType) {
+      case 'Bookmark': {
+        if (!resource.showBookmark) {
+          this.addResourceReaction(resource, reactionType);
+          resource.showBookmark = true;
+          resource.totalReactionCount += 1;
         } else {
-          this.angularfire.list('/resources/' + this.resourceId + '/bookMarkedBy/').push(account.userId);
+          this.removeResourceReaction(resource, reactionType);
+          resource.showBookmark = false;
+          resource.totalReactionCount -= 1;
         }
+        break;
+      }
+  
+      case 'Thanks': {
+        if (!resource.showSmiley) {
+          this.addResourceReaction(resource, reactionType);
+          resource.showSmiley = true;
+          resource.totalReactionCount += 1;
+        } else {
+          this.removeResourceReaction(resource, reactionType);
+          resource.showSmiley = false;
+          resource.totalReactionCount -= 1;
+        }
+        break;
+      }
+    }
+  
+  }
+  
+  addResourceReaction(resource, reactionType) {
+    const reaction = {
+      dateCreated: new Date().toString(),
+      reactionType
+    };
 
-        // update user collection with the resource that was just bookmarked
-
-        if (account.bookmarkedResources === null) {
-            account.bookmarkedResources = [];
-            account.bookmarkedResources.push(this.resourceId);
-            this.angularfire.object('/accounts/' + firebase.auth().currentUser.uid).update({
-            bookmarkedResources: account.bookmarkedResources
-          });
+    if (resource.reactions === undefined) {
+        this.dataProvider.addFirstResourceReactions(resource.key, reaction);
       } else {
-        this.angularfire.list('/accounts/' + account.userId + '/bookmarkedResources/').push(this.resourceId);
+        this.dataProvider.updateResourceReactions(resource.key, reaction);
       }
 
+  }
+  
+  removeResourceReaction(resource, reactionType) {
+    if (resource.reactions !== undefined) {
+      let values = Object.keys(resource.reactions).map(function(e) {
+        return resource.reactions[e];
+      });
+  
+      const reactionIndex = values.find(
+                                el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+                                && el.reactionType === reactionType);
+      if (reactionIndex === undefined) {
+        // this shouldn't have happened, so set the smiley to false for now
+        // post.showSmiley = false;
+      } else {
+        console.log('remove reaction now : ' + resource.key + ' : ' + reactionIndex.key);
+        this.dataProvider.removeResourceReaction(resource.key, reactionIndex.key);
+      }
+  }
+  }
+  
+  async showResourceReactionsList(resource) {
+    if (resource.totalReactionCount === 0) {
+      return;
+    }
+    const modal = await this.modalCtrl.create({
+      component: ReactionListModalPage,
+      componentProps: {
+        reactions: resource.reactions
+      }
     });
-    this.loadingProvider.hide();
+    return await modal.present();
+  
+  }
+
+  submitReply() {
+    let review: any;
+    let currentUserName: any;
+    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
+      if (account.payload.exists()) {
+        currentUserName = account.payload.val().username;
+  
+        review = {
+          dateCreated: new Date().toString(),
+          review: this.message
+        };
+  
+        if (this.resource.reviews === undefined) {
+         this.dataProvider.addFirstResourceReview(this.resourceId, review);
+        } else {
+          this.dataProvider.updateResourceReviews(this.resourceId, review);
+        }
+  
+        this.message = '';
+       }});
   }
 }

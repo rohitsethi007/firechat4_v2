@@ -46,8 +46,8 @@
       </ion-list-header>
 
       <ion-row class="checkbox-tags rounded-checkbox-tags">
-        <ion-item *ngFor="let entry of postTags" lines="none" class="checkbox-tag rounded-tag">
-          <ion-label class="tag-label">{{entry.val}}</ion-label>
+        <ion-item *ngFor="let entry of postTags" lines="none" class="checkbox-tag">
+          <ion-label class="new-tag-label">{{entry.val}}</ion-label>
           <ion-checkbox formControlName="postTags" [(ngModel)]="entry.isChecked"></ion-checkbox>
         </ion-item>
       </ion-row>

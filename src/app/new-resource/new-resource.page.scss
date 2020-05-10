@@ -6,109 +6,143 @@
 :host {
     --page-margin: var(--app-fair-margin);
     --page-background: var(--app-background-shade);
+    --page-rating-5-color: #7ce198;
+    --page-rating-4-color: #a8e07c;
+    --page-rating-3-color: #cee07c;
+    --page-rating-2-color: #e0c77c;
+    --page-rating-1-color: #bbb2b2;
   }
 
 // Note:  All the CSS variables defined below are overrides of Ionic elements CSS Custom Properties
 .forms-validations-content {
-    --background: var(--page-background);
-  
-    .validations-form {
-      margin-bottom: calc(var(--page-margin) * 2);
-  
-      .inputs-list {
-        --ion-item-background: var(--page-background);
-  
-        padding: var(--page-margin) var(--page-margin) calc(var(--page-margin) * 2);
-  
-        ion-list-header {
-          padding-inline-start: 0px;
-  
-          .header-title {
-            text-transform: uppercase;
-                font-size: 16px;
-                color: var(--ion-color-secondary);
-          }
-        }
-  
-        .input-item {
-          --padding-start: 0px;
-          --padding-end: 0px;
-          --inner-padding-end: 0px;
-        }
-  
-        .terms-item {
-          --border-width: 0px;
-          --inner-padding-end: 0px;
-        }
-  
-        .error-container {
-          .error-message {
-            margin: calc(var(--page-margin) / 2) 0px;
-            display: flex;
-            align-items: center;
-            color: var(--ion-color-danger);
-            font-size: 14px;
-  
-            ion-icon {
-              padding-inline-end: calc(var(--page-margin) / 2);
-              flex-shrink: 0;
-            }
-          }
-          }
-  
-        .counter-item {
-          app-counter-input {
-            --counter-background: transparent;
-            --counter-color: var(--ion-color-primary);
-            --counter-border-color: var(--ion-color-primary);
-          }
-  
-          .counter-value {
-            text-align: center;
-          }
+  --background: var(--page-background);
+
+  .validations-form {
+    margin-bottom: calc(var(--page-margin) * 2);
+
+    .inputs-list {
+      --ion-item-background: var(--page-background);
+
+      padding: var(--page-margin) var(--page-margin) calc(var(--page-margin) * 2);
+
+      ion-list-header {
+        padding-inline-start: 0px;
+
+        .header-title {
+          font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+          font-weight: 400;
+          font-size: 20px;
+          line-height: 19px;
+          -webkit-font-smoothing: subpixel-antialiased;
+          -moz-osx-font-smoothing: auto;
+          overflow: hidden; 
+          text-overflow: ellipsis;
         }
       }
-  
-      .submit-btn {
-        margin: var(--page-margin);
+
+      .input-item {
+        --padding-start: 0px;
+        --padding-end: 0px;
+        --inner-padding-end: 0px;
+        font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+        font-weight: 400;
+        font-size: 20px;
+        -webkit-font-smoothing: subpixel-antialiased;
+        -moz-osx-font-smoothing: auto;
+        overflow: hidden; 
+        text-overflow: ellipsis;
+      }
+
+      .terms-item {
+        --border-width: 0px;
+        --inner-padding-end: 0px;
+      }
+
+      .error-container {
+        .error-message {
+          margin: calc(var(--page-margin) / 2) 0px;
+          display: flex;
+          align-items: center;
+          color: var(--ion-color-danger);
+          font-size: 14px;
+
+          ion-icon {
+            padding-inline-end: calc(var(--page-margin) / 2);
+            flex-shrink: 0;
+          }
+        }
+        }
+
+      .counter-item {
+        app-counter-input {
+          --counter-background: transparent;
+          --counter-color: var(--ion-color-primary);
+          --counter-border-color: var(--ion-color-primary);
+        }
+
+        .counter-value {
+          text-align: center;
+        }
       }
     }
-  
-    .checkbox-tags {
-      padding: calc(var(--page-margin) / 2) calc(var(--page-margin) - var(--page-tags-gutter));
-  
-      @include checkbox-tag();
-  
+
+    .submit-btn {
+      margin: var(--page-margin);
+    }
+  }
+
+  .checkbox-tags {
+    padding: calc(var(--page-margin) / 2) calc(var(--page-margin) - var(--page-tags-gutter));
+
+    @include checkbox-tag();
+
+.checkbox-tag {
+  padding: 0px var(--page-tags-gutter);
+  margin: var(--page-tags-gutter) 0px;
+}
+
+// Add a deeper selector to override default colors
+&.square-checkbox-tags {
+  background-color: var(--page-background);
+
   .checkbox-tag {
-    padding: 0px var(--page-tags-gutter);
-    margin: var(--page-tags-gutter) 0px;
+    --checkbox-tag-color: var(--ion-color-medium);
+    --checkbox-tag-background: var(--ion-color-lightest); 
+    --checkbox-tag-active-color: var(--ion-color-lightest);
+    --checkbox-tag-active-background: var(--ion-color-secondary);
   }
-  
-  // Add a deeper selector to override default colors
-  &.square-checkbox-tags {
-    background-color: var(--page-background);
-  
-    .checkbox-tag {
-      --checkbox-tag-color: var(--ion-color-medium);
-      --checkbox-tag-background: var(--ion-color-lightest); 
-      --checkbox-tag-active-color: var(--ion-color-lightest);
-      --checkbox-tag-active-background: var(--ion-color-secondary);
-    }
+}
+
+// Add a deeper selector to override default colors
+&.rounded-checkbox-tags {
+      background-color: var(--page-background);
+      padding-right: 5px;
+      padding-bottom: 5px;
+      border-radius: 15px;
+      
+
+  .checkbox-tag {
+    --checkbox-tag-color: var(--ion-color-light-contrast);
+    --checkbox-tag-background: #bbb2b2;
+    --checkbox-tag-active-color: var(--ion-color-lightest);
+    --checkbox-tag-active-background: #e0c77c;
+    padding-top: calc(var(--page-margin) / 3);
+    padding-bottom: calc(var(--page-margin) / 3);
+    padding-left: calc(var(--page-margin) / 2);
+    padding-right: calc(var(--page-margin) / 2);
+    background-color: rgba(var(--page-color-rgb), .35);
+    color: var(--ion-color-lightest);
+
+    font-size: 12px;
+    font-weight: 600;
+    display: block;
+    text-align: center;
+    
+
   }
-  
-  // Add a deeper selector to override default colors
-  &.rounded-checkbox-tags {
-        background-color: var(--page-background);
-  
-    .checkbox-tag {
-      --checkbox-tag-color: var(--ion-color-light-contrast);
-      --checkbox-tag-background: var(--ion-color-light-shade);
-      --checkbox-tag-active-color: var(--ion-color-lightest);
-      --checkbox-tag-active-background: var(--ion-color-secondary);
-    }
-  }
-  }
-  }
+}
+}
+}
 
   // Alerts and in general all overlays are attached to the body or ion-app directly
 // We need to use ::ng-deep to access it from here

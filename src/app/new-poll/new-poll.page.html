@@ -8,26 +8,11 @@
 </ion-header>
 
 <ion-content class="forms-validations-content">
-  <div *ngIf="poll">
     <form class="validations-form" [formGroup]="pollForm" (ngSubmit)="done()">
       <ion-list class="inputs-list" lines="full">
         <ion-list-header>
           <ion-label class="header-title">What would you like to ask the group?</ion-label>
         </ion-list-header>
-
-        <ion-item class="input-item">
-          <ion-label position="floating">Poll Title</ion-label>
-          <ion-input type="text" formControlName="name" clearInput placeholder="Enter the Title"></ion-input>
-        </ion-item>
-        <div class="error-container">
-          <ng-container *ngFor="let validation of validations.name">
-            <div class="error-message" *ngIf="pollForm.get('name').hasError(validation.type) && (pollForm.get('name').dirty || pollForm.get('name').touched)">
-              <ion-icon name="information-circle-outline"></ion-icon>
-              <span>{{ validation.message }}</span>
-            </div>
-          </ng-container>
-        </div>
-
         <ion-item class="input-item">
           <ion-label position="floating">Poll Question</ion-label>
           <ion-input type="text" formControlName="description" clearInput placeholder="What would like to ask?"></ion-input>
@@ -69,30 +54,31 @@
 
         <ion-item class="input-item">
           <ion-label position="floating">Poll Option 3</ion-label>
-          <ion-input type="text" formControlName="pollOption3" clearInput placeholder="Enter the third option"></ion-input>
+          <ion-input type="text" formControlName="pollOption3" clearInput placeholder="This is optional"></ion-input>
         </ion-item>
         <ion-item class="input-item">
           <ion-label position="floating">Poll Option 4</ion-label>
-          <ion-input type="text" formControlName="pollOption4" clearInput placeholder="Enter the last option"></ion-input>
+          <ion-input type="text" formControlName="pollOption4" clearInput placeholder="This is optional"></ion-input>
         </ion-item>
       </ion-list>
  
       <ion-list class="inputs-list" lines="full">
         <ion-list-header>
-          <ion-label class="header-title">Select tags relevant to the poll</ion-label>
+          <ion-label class="header-title">Select tags relevant for the post</ion-label>
         </ion-list-header>
-
+  
         <ion-row class="checkbox-tags rounded-checkbox-tags">
-          <ion-item *ngFor="let entry of pollTags" lines="none" class="checkbox-tag rounded-tag">
-            <ion-label class="tag-label">{{entry.val}}</ion-label>
+          <ion-item *ngFor="let entry of pollTags" lines="none" class="checkbox-tag">
+            <ion-label class="new-tag-label">{{entry.val}}</ion-label>
             <ion-checkbox formControlName="pollTags" [(ngModel)]="entry.isChecked"></ion-checkbox>
           </ion-item>
         </ion-row>
       </ion-list>
+  
 
       <ion-button class="submit-btn" type="submit" expand="block" fill="outline" [disabled]="!pollForm.valid">Submit</ion-button>
 
     </form>
-</div>
+
 
 </ion-content>

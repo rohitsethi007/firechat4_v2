@@ -102,8 +102,6 @@
     </div>
   </div>
   </div> -->
-
-  
   <div *ngSwitchCase="'posts'">
     <!-- No Posts to show -->
      <div class="empty-list" *ngIf="posts && posts.length == 0">
@@ -162,7 +160,6 @@
     </div>
      </div>
     </div>
-
      <div *ngSwitchCase="'polls'">
     <!-- No polls to show -->
      <div class="empty-list" *ngIf="polls && polls.length == 0">
@@ -173,8 +170,8 @@
      <div *ngIf="polls && polls.length > 0">
       <div class="listing-item" *ngFor="let item of polls  | reverse">
      <ion-card>
-       <ion-card-header>
-            <ion-card-subtitle (click)="viewPoll(item)">
+       <ion-card-header (click)="viewPoll(item)">
+            <ion-card-subtitle>
              <img class="subtitle" src="{{item.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" /> {{item.addedByUser.addedByUsername}}, posted {{item.dateCreated | DateFormat}}
              <img *ngIf="item.showNewIcon" class="newIcon" src="./assets/icon/new.svg" /> 
            </ion-card-subtitle>
@@ -202,7 +199,6 @@
    </div>
       </div>
     </div>
-
     <div *ngSwitchCase="'resources'">
     <!-- No Resources to show -->
      <div class="empty-list" *ngIf="resources && resources.length == 0">
@@ -262,57 +258,58 @@
        </ion-card>
        </div>
        <div *ngIf="item?.type == 'weblink'">
-         <ion-row class="info-row">
-           <ion-col class="main-info-col">
-             <h3 class="item-name">
-                 <app-text-shell animation="bouncing" [data]="(item?.title && item?.type) ? (item.title + ' - ' + item.type) : (item.title)"></app-text-shell>
-             </h3>
-             <h3 class="item-name">
-               <app-text-shell animation="bouncing" [data]="item.metatitle"></app-text-shell>
-           </h3>
-           <p class="item-description">
-             <app-text-shell animation="bouncing" [data]="item.metadescription"></app-text-shell>
-           </p>
-           <p class="item-description">
-               <app-image-shell animation="bouncing" [src]="item.metaicon"></app-image-shell>
-             </p>
-             <p class="item-address">
-               <app-text-shell animation="bouncing" [data]="item.metasite"></app-text-shell>
-             </p>
-   
-             <p class="item-tags">
-               <app-text-shell animation="bouncing" [data]="'Tags: ' + item.resourceTagsString"></app-text-shell>
-             </p>
-           </ion-col>
-         </ion-row>
-         <ion-row class="stats-row">
-           <ion-col size="2" class="item-rating">
-             <span class="rating-value"> 
-               <app-text-shell [data]="item.dateCreated | DateFormat"></app-text-shell>
-             </span>
-           </ion-col>
-           <ion-col size="2" class="item-rating">
-             <span class="rating-value">
-               <app-text-shell [data]="2"></app-text-shell>
-             </span>
-             <ion-icon class="stats-icon" name="star-outline"></ion-icon>
-           </ion-col>
-           <ion-col size="2" class="item-reviews">
-             <span class="reviews-count">
-               <app-text-shell [data]="4"></app-text-shell>
-             </span>
-             <ion-icon class="stats-icon" name="chatbox-ellipses-outline"></ion-icon>
-           </ion-col>
-           <ion-col size="2" class="item-reviews">
-             <ion-icon size="medium" name="pin-outline" ></ion-icon>
-           </ion-col>
-         </ion-row>
-         </div>
+        <ion-card>
+            <ion-card-header>
+               <ion-card-subtitle (click)="viewResource(item)">
+                <img class="subtitle" src="{{item.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" /> {{item.addedByUser.addedByUsername}}, posted {{item.dateCreated | DateFormat}}
+                <img *ngIf="item.showNewIcon" class="newIcon" src="./assets/icon/new.svg" /> 
+              </ion-card-subtitle>
+              <ion-card-title>{{item.title}}</ion-card-title>
+            </ion-card-header>
+         <ion-card-content class="message" (click)="viewResource(item)">
+        <app-text-shell animation="bouncing" [data]="item.metatitle"></app-text-shell>
+        <app-text-shell animation="bouncing" [data]="item.metadescription"></app-text-shell>
+        <img [src]="item.metaicon"/>   
+        <app-text-shell animation="bouncing" [data]="item.metasite"></app-text-shell>
+           </ion-card-content>
+  
+                       <ion-row>
+           <ion-col class="reactions-col">
+                   <ion-buttons>
+                     <ion-button (click)="submitReactionResource(item, 'Bookmark')">
+                    <div *ngIf="item.showBookmark"><ion-icon size="small" class="icon" src="./assets/icon/bookmark-active.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
+                    <div *ngIf="!item.showBookmark"><ion-icon size="small" class="icon"  src="./assets/icon/bookmark.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
+                   </ion-button>
+                   </ion-buttons> 
+                 </ion-col>
+           <ion-col class="reactions-col">
+                   <ion-buttons>
+                     <ion-button (click)="submitReactionResource(item, 'Thanks')">
+                    <div *ngIf="item.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+                    <div *ngIf="!item.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+                   </ion-button>
+                   </ion-buttons> 
+                 </ion-col>
+            <ion-col class="reactions-col">
+                   <ion-buttons>
+                     <ion-button (click)="showResourceReactionsList(item)">
+                   <div><ion-icon size="small" src="./assets/icon/bookmark-active.svg" class="icon"></ion-icon><ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon><span class="text">{{item.totalReactionCount}}</span></div>
+                 </ion-button>
+               </ion-buttons> 
+                 </ion-col>
+                 <ion-col class="reactions-col">
+                   <ion-buttons>
+                     <ion-button>
+                      <div><ion-icon size="small" src="./assets/icon/chat.svg" class="icon"></ion-icon> <span class="text">{{item.totalReviewCount}}</span></div>
+                    </ion-button>
+               </ion-buttons> 
+                 </ion-col>
+                </ion-row>
+        </ion-card>
+           </div>
      </div>
       </div>
     </div>
-
-    
     <div *ngSwitchCase="'events'">
       <!-- No Events to show -->
        <div class="empty-list" *ngIf="events && events.length == 0">

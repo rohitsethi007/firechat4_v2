@@ -25,21 +25,19 @@ const routes: Routes = [
   { path: 'forgot', loadChildren: './forgot/forgot.module#ForgotPageModule', canActivate: [AuthGuardService] },
   { path: 'popover', loadChildren: './popover/popover.module#PopoverPageModule', canActivate: [AuthGuardService] },
   { path: 'tag-modal/:groupTags', loadChildren: './tag-modal/tag-modal.module#TagModalPageModule', canActivate: [AuthGuardService] },
-  { path: 'poll', loadChildren: './poll/poll.module#PollPageModule', canActivate: [AuthGuardService] },
+  { path: 'poll/:id', loadChildren: './poll/poll.module#PollPageModule', canActivate: [AuthGuardService] },
   { path: 'new-poll/:id', loadChildren: './new-poll/new-poll.module#NewPollPageModule', canActivate: [AuthGuardService] },
   { path: 'walkthrough', loadChildren: './walkthrough/walkthrough.module#WalkthroughPageModule' },
   { path: 'getting-started', loadChildren: './getting-started/getting-started.module#GettingStartedPageModule' },
-  { path: 'new-resource/:id', loadChildren: './new-resource/new-resource.module#NewResourcePageModule', canActivate: [AuthGuardService] },
+  // { path: 'new-resource/:id', loadChildren: './new-resource/new-resource.module#NewResourcePageModule', canActivate: [AuthGuardService] },
   { path: 'resource/:id', loadChildren: './resource/resource.module#ResourcePageModule', canActivate: [AuthGuardService] },
   { path: 'review-modal', loadChildren: './review-modal/review-modal.module#ReviewModalPageModule', canActivate: [AuthGuardService] },
   { path: 'event/:id', loadChildren: './event/event.module#EventPageModule', canActivate: [AuthGuardService] },
   { path: 'new-event/:id', loadChildren: './new-event/new-event.module#NewEventPageModule', canActivate: [AuthGuardService] },
   { path: 'new-post/:id', loadChildren: './new-post/new-post.module#NewPostPageModule', canActivate: [AuthGuardService] },
-  { path: 'post/:id', loadChildren: './post/post.module#PostPageModule', canActivate: [AuthGuardService] },  { path: 'reaction-list-modal', loadChildren: './reaction-list-modal/reaction-list-modal.module#ReactionListModalPageModule' }
-
-
-
-
+  { path: 'post/:id', loadChildren: './post/post.module#PostPageModule', canActivate: [AuthGuardService] },
+  { path: 'reaction-list-modal', loadChildren: './reaction-list-modal/reaction-list-modal.module#ReactionListModalPageModule' },
+  { path: 'new-resource/:id', loadChildren: './new-resources/new-resources.module#NewResourcesPageModule' },
 
 ];
 @NgModule({

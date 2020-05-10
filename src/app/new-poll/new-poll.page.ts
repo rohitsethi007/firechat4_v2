@@ -79,12 +79,6 @@ export class NewPollPage implements OnInit {
       pollOptions : [],
     };
      this.pollForm = new FormGroup({
-
-  name: new FormControl('', Validators.compose([
-    Validators.minLength(5),
-    Validators.maxLength(20),
-    Validators.required
-  ])),
   description: new FormControl('', Validators.compose([
     Validators.minLength(10),
     Validators.maxLength(50),
@@ -122,16 +116,9 @@ export class NewPollPage implements OnInit {
         const mm = today.getMonth(); // January is 0!
         const yyyy = today.getFullYear();
 
-        this.poll.addedByUser = {
-          addedByKey: this.dataProvider.getCurrentUserId(),
-          addedByUsername: account.payload.val().username,
-          addedByImg: account.payload.val().img
-        };
-
         const date: Date = new Date(yyyy, mm, dd + 2);
         this.poll.dateEnding = date.toString();
 
-        this.poll.name = this.pollForm.value['name'];
         this.poll.description = this.pollForm.value['description'];
 
         if (this.pollForm.value['pollOption1'] != null

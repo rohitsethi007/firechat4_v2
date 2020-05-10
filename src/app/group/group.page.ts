@@ -728,15 +728,7 @@ export class GroupPage implements OnInit {
   }
   // Open Poll
   viewPoll(poll) {
-    const navigationExtras: NavigationExtras = {
-      state: {
-        poll
-      }
-    };
-    this.router.navigate(['poll'], navigationExtras);
-
-    // this.router.navigate('/poll/' + poll);
-    //    this.app.getRootNav().push(PollPage, { poll: poll });
+    this.router.navigateByUrl('poll/' + poll.key);
   }
 
   // View Resource selected

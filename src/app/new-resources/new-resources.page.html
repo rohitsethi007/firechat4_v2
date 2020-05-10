@@ -7,14 +7,14 @@
   </ion-toolbar>
   <ion-segment color="primary" [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
     <ion-segment-button value="contact">
-      FRIENDS
+      Contact
     </ion-segment-button>
     <ion-segment-button value="upload">
-      REQUESTS
-      <span *ngIf="friendRequestCount != 0">({{friendRequestCount}})</span>
+      Upload
+      <span *ngIf="friendRequestCount != 0"></span>
     </ion-segment-button>
     <ion-segment-button value="link">
-      FIND NEW
+      Link
     </ion-segment-button>
   </ion-segment>
 </ion-header> 
@@ -109,8 +109,7 @@
       </form>
     </div>
     <div *ngSwitchCase="'upload'">
-      I'm upload
-      <!-- <form class="validations-form" [formGroup]="uploadForm" (ngSubmit)="submitUploadForm()">
+   <form class="validations-form" [formGroup]="uploadForm" (ngSubmit)="submitUploadForm()">
         <ion-list class="inputs-list" lines="full">
           <ion-list-header>
             <ion-label class="header-title">Enter the details of the Document ..</ion-label>
@@ -159,11 +158,10 @@
     <h3> {{file.name}}</h3>
     <button clear ion-button icon-only item-right><ion-icon name="download" color="danger"></ion-icon></button>
     </ion-item>
-    </div> -->
-      </div>
+    </div> 
+    </div>
     <div *ngSwitchCase="'link'">
-      I'm link
-      <!-- <form class="validations-form" [formGroup]="weblinkForm" (ngSubmit)="submitLinkForm()">
+      <form class="validations-form" [formGroup]="weblinkForm" (ngSubmit)="submitLinkForm()">
         <ion-list class="inputs-list" lines="full">
           <ion-list-header>
             <ion-label class="header-title">Enter the details of the link you want to share ..</ion-label>
@@ -222,7 +220,7 @@
   
         <ion-button class="submit-btn" type="submit" expand="block" fill="outline" >Submit</ion-button>
         </ion-list>
-      </form> -->
+      </form> 
     </div>
   </div>
 </ion-content>

@@ -2,9 +2,6 @@
   <ion-toolbar color="primary">
     <ion-title>{{title}}</ion-title>
   </ion-toolbar>
-</ion-header> 
-
-<ion-content>
   <ion-segment color="primary" [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
     <ion-segment-button value="friends">
       FRIENDS
@@ -17,6 +14,9 @@
       FIND NEW
     </ion-segment-button>
   </ion-segment>
+</ion-header> 
+
+<ion-content>
   <div [ngSwitch]="tab">
     <div *ngSwitchCase="'friends'">
       <!-- No friends to show -->
@@ -46,9 +46,6 @@
         </ion-item>
       </ion-list>
     </div>
-
-
-
     <div *ngSwitchCase="'requests'">
       <!-- No friend requests sent or received. -->
       <div class="empty-list"
@@ -99,7 +96,6 @@
         </ion-item>
       </ion-list>
     </div>
-
     <div *ngSwitchCase="'search'">
       <!-- No other users to send friend request right now. -->
       <div class="empty-list" *ngIf="accounts && (accounts.length == 0 || (accounts.length == excludedIds.length))">
