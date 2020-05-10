@@ -19,7 +19,7 @@
   </ion-segment>
 </ion-header> 
 
-<ion-content>
+<ion-content  class="forms-validations-content">
   <div [ngSwitch]="tab">
     <div *ngSwitchCase="'contact'">
       <form class="validations-form" [formGroup]="contactForm" (ngSubmit)="submitContactForm()">
@@ -133,8 +133,8 @@
           </ion-list-header>
   
           <ion-row class="checkbox-tags rounded-checkbox-tags">
-            <ion-item *ngFor="let entry of resourceTags" lines="none" class="checkbox-tag rounded-tag">
-              <ion-label class="tag-label">{{entry.val}}</ion-label>
+            <ion-item *ngFor="let entry of resourceTags" lines="none" class="checkbox-tag">
+              <ion-label class="new-tag-label">{{entry.val}}</ion-label>
               <ion-checkbox formControlName="resourceTags" [(ngModel)]="entry.isChecked"></ion-checkbox>
             </ion-item>
           </ion-row>
@@ -211,8 +211,8 @@
           </ion-list-header>
   
           <ion-row class="checkbox-tags rounded-checkbox-tags">
-            <ion-item *ngFor="let entry of resourceTags" lines="none" class="checkbox-tag rounded-tag">
-              <ion-label class="tag-label">{{entry.val}}</ion-label>
+            <ion-item *ngFor="let entry of resourceTags" lines="none" class="checkbox-tag">
+              <ion-label class="new-tag-label">{{entry.val}}</ion-label>
               <ion-checkbox formControlName="resourceTags" [(ngModel)]="entry.isChecked"></ion-checkbox>
             </ion-item>
           </ion-row>

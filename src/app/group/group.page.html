@@ -267,9 +267,9 @@
               <ion-card-title>{{item.title}}</ion-card-title>
             </ion-card-header>
          <ion-card-content class="message" (click)="viewResource(item)">
-        <app-text-shell animation="bouncing" [data]="item.metatitle"></app-text-shell>
+        <app-text-shell animation="bouncing" [data]="item.metatitle"></app-text-shell><br/>
+        <img [src]="item.metaicon"/> 
         <app-text-shell animation="bouncing" [data]="item.metadescription"></app-text-shell>
-        <img [src]="item.metaicon"/>   
         <app-text-shell animation="bouncing" [data]="item.metasite"></app-text-shell>
            </ion-card-content>
   

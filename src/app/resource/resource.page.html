@@ -122,10 +122,10 @@
         <ion-card-title class="title">{{resource.title}}</ion-card-title>
     </ion-card-header>
       <ion-card-content class="message">
-        <app-text-shell animation="bouncing" [data]="resource.metatitle"></app-text-shell>
-        <app-text-shell animation="bouncing" [data]="resource.metadescription"></app-text-shell>
-        <app-text-shell animation="bouncing" [data]="resource.metasite"></app-text-shell>
+        <app-text-shell animation="bouncing" [data]="resource.metatitle"></app-text-shell><br/>
         <img [src]="resource.metaicon"/>   
+        <app-text-shell animation="bouncing" [data]="resource.metadescription"></app-text-shell><br/>
+        <app-text-shell animation="bouncing" [data]="resource.metasite"></app-text-shell>
       </ion-card-content>
     </ion-row>
      <ion-row class="user-preferences-wrapper message">
