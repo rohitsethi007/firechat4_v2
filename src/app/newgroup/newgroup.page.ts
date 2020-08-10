@@ -2,13 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ImageService } from '../services/image.service';
 import { DataService } from '../services/data.service';
 import { AlertController } from '@ionic/angular';
-import { AngularFireDatabase } from '@angular/fire/database';
 import { LoadingService } from '../services/loading.service';
 import { Camera } from '@ionic-native/camera/ngx';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
-
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Validator } from 'src/environments/validator';
 
 @Component({
@@ -27,28 +26,46 @@ export class NewgroupPage implements OnInit {
   name: any;
   description: any;
   groupTags: any;
+  account: any;
 
   myForm: FormGroup;
   submitAttempt = false;
-  errorMessages: any = [];
+
+  errorMessages = {
+    groupName: [
+      { type: 'required', message: 'Name is a required field.' }
+    ],
+    groupDescription: [
+      { type: 'required', message: 'Description is a required field.' }
+    ],
+    groupTags: [
+      { type: 'required', message: 'GroupTags is a required field.' }
+    ]
+    };
 
   constructor(
     private router: Router,
     public imageProvider: ImageService,
     public dataProvider: DataService,
     public alertCtrl: AlertController,
-    public angularfire: AngularFireDatabase,
+    public firestore: AngularFirestore,
     private afAuth: AngularFireAuth,
     public loadingProvider: LoadingService,
     public camera: Camera,
     private formBuilder: FormBuilder
   ) {
-    this.errorMessages = Validator.errorMessages
-    this.myForm = this.formBuilder.group({
-      groupName: Validator.groupNameValidator,
-      groupDescription: Validator.groupDescriptionValidator,
-      groupTags: Validator.groupTagsValidator
-    })
+    this.myForm = new FormGroup(
+      {
+        groupName: new FormControl('', Validators.compose([
+          Validators.required
+        ])),
+        groupDescription: new FormControl('', Validators.compose([
+          Validators.required
+        ])),
+        groupTags: new FormControl('', Validators.compose([
+          Validators.required
+        ]))
+      });
   }
 
   ngOnInit() {
@@ -57,55 +74,29 @@ export class NewgroupPage implements OnInit {
   ionViewDidEnter() {
     // Initialize
     this.group = {
-      img: './assets/images/default-group.png'
+      img: './assets/images/default-group.png',
+      dateCreated: new Date().toString(),
+      messages: [],
+      members: [],
+      name: '',
+      description: '',
+      groupTags: []
     };
     this.searchFriend = '';
 
-    // Get user's friends to add to the group.
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accountRes: any) => {
-      let account = { $key: accountRes.key, ...accountRes.payload.val() };
+    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accounts: any) => {
+      this.account = accounts.payload.data();
       if (!this.groupMembers) {
-        this.groupMembers = [account];
-      }
-      if (account.friends) {
-        for (var i = 0; i < account.friends.length; i++) {
-          this.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe((friendRes: any) => {
-            if (friendRes.key != null) {
-              let friend = { $key: friendRes.key, ...friendRes.payload.val() };
-              this.addOrUpdateFriend(friend);
-            }
-          });
-        }
+        this.groupMembers = [this.account];
       } else {
         this.friends = [];
       }
     });
   }
 
-  // Add or update friend for real-time sync.
-  addOrUpdateFriend(friend) {
-    if (!this.friends) {
-      this.friends = [friend];
-    } else {
-      var index = -1;
-      for (var i = 0; i < this.friends.length; i++) {
-        if (this.friends[i].$key == friend.$key) {
-          index = i;
-        }
-      }
-      if (index > -1) {
-        this.friends[index] = friend;
-      } else {
-        this.friends.push(friend);
-      }
-    }
-  }
-
   // Proceed with group creation.
   done() {
     this.submitAttempt = true;
-    let polls = [];
-    let resources = [];
 
     if (this.myForm.valid) {
       this.loadingProvider.show();
@@ -119,76 +110,29 @@ export class NewgroupPage implements OnInit {
         icon: 'md-chatbubbles'
       });
 
-     // Add empty poll. 
-     //polls.push("system0000");
-     //resources.push("system0000");
-    
       // Add members of the group.
-      var members = [];
-      for (var i = 0; i < this.groupMembers.length; i++) {
-        members.push(this.groupMembers[i].$key);
+      let members = [];
+      for (let i = 0; i < this.groupMembers.length; i++) {
+        members.push(this.groupMembers[i].userId);
       }
       // Add group info and date.
       this.group.dateCreated = new Date().toString();
       this.group.messages = messages;
       this.group.members = members;
-      this.group.polls = polls;
-      this.group.resources = resources;
       this.group.name = this.name;
       this.group.description = this.description;
       this.group.groupTags = this.groupTags.split('\n');
-      console.log('Group Tags: ', this.group.groupTags);
+
       // Add group to database.
-      this.angularfire.list('groups').push(this.group).then((success) => {
-        let groupId = success.key;
-        // Add group reference to users.
-        this.angularfire.object('/accounts/' + this.groupMembers[0].$key + '/groups/' + groupId).update({
-          messagesRead: 1
-        });
-        for (var i = 1; i < this.groupMembers.length; i++) {
-          this.angularfire.object('/accounts/' + this.groupMembers[i].$key + '/groups/' + groupId).update({
-            messagesRead: 0
-          });
-        }
+
+      this.firestore.collection('groups').add(this.group).then((success) => {
+        let groupId = success.id;
         this.router.navigateByUrl('/group/' + groupId);
+        this.account.groups.push(groupId);
+        this.dataProvider.getCurrentUser().update({
+          groups: this.account.groups
+        });
       });
-    }
-  }
-
-  // Add friend to members of group.
-  addToGroup(friend) {
-    this.groupMembers.push(friend);
-  }
-
-  // Remove friend from members of group.
-  removeFromGroup(friend) {
-    var index = -1;
-    for (var i = 1; i < this.groupMembers.length; i++) {
-      if (this.groupMembers[i].$key == friend.$key) {
-        index = i;
-      }
-    }
-    if (index > -1) {
-      this.groupMembers.splice(index, 1);
-    }
-  }
-
-  // Check if friend is already added to the group or not.
-  inGroup(friend) {
-    for (var i = 0; i < this.groupMembers.length; i++) {
-      if (this.groupMembers[i].$key == friend.$key) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // Toggle to add/remove friend from the group.
-  addOrRemoveFromGroup(friend) {
-    if (this.inGroup(friend)) {
-      this.removeFromGroup(friend);
-    } else {
-      this.addToGroup(friend);
     }
   }
 

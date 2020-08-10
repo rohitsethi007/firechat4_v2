@@ -1,142 +1,83 @@
-@import "../../theme/mixins/inputs/select-alert";
-@import "../../theme/mixins/inputs/checkbox-tag";
-
-// Custom variables
-// Note:  These ones were added by us and have nothing to do with Ionic CSS Custom Properties
 :host {
-    --page-margin: var(--app-fair-margin);
-    --page-background: var(--app-background-shade);
-    --page-rating-5-color: #7ce198;
-    --page-rating-4-color: #a8e07c;
-    --page-rating-3-color: #cee07c;
-    --page-rating-2-color: #e0c77c;
-    --page-rating-1-color: #bbb2b2;
-  }
+  --page-margin: var(--app-fair-margin);
+  --page-background: var(--app-background-shade);
+}
 
-// Note:  All the CSS variables defined below are overrides of Ionic elements CSS Custom Properties
 .forms-validations-content {
-    --background: var(--page-background);
-  
-    .validations-form {
-      margin-bottom: calc(var(--page-margin) * 2);
-  
-      .inputs-list {
-        --ion-item-background: var(--page-background);
-  
-        padding: var(--page-margin) var(--page-margin) calc(var(--page-margin) * 2);
-  
-        ion-list-header {
-          padding-inline-start: 0px;
-  
-          .header-title {
-            font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
-            font-weight: 400;
-            font-size: 20px;
-            line-height: 19px;
-            -webkit-font-smoothing: subpixel-antialiased;
-            -moz-osx-font-smoothing: auto;
-            overflow: hidden; 
-            text-overflow: ellipsis;
-          }
-        }
-  
-        .input-item {
-          --padding-start: 0px;
-          --padding-end: 0px;
-          --inner-padding-end: 0px;
-          font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
-          font-weight: 400;
-          font-size: 20px;
-          -webkit-font-smoothing: subpixel-antialiased;
-          -moz-osx-font-smoothing: auto;
-          overflow: hidden; 
+  --background: var(--page-background);
+   .validations-form {
+    margin-bottom: calc(var(--page-margin) * 2);
+
+    .inputs-list {
+      --ion-item-background: var(--page-background);
+
+      padding: var(--page-margin) var(--page-margin) calc(var(--page-margin) * 2);
+
+      ion-list-header {
+        padding-inline-start: 0px;
+
+        .header-title {
+          font-family: "HelveticaNeue-Medium", "Helvetica Neue Medium", "Helvetica-Bold", "Roboto-Medium", "Segoe UI Semibold", "Arial-Bold", sans-serif;
+          font-weight: 500px;
+          font-size: 18px;
+          line-height: 23px;
+          margin: 1 0 4px;
+          overflow: hidden;
           text-overflow: ellipsis;
         }
-  
-        .terms-item {
-          --border-width: 0px;
-          --inner-padding-end: 0px;
-        }
-  
-        .error-container {
-          .error-message {
-            margin: calc(var(--page-margin) / 2) 0px;
-            display: flex;
-            align-items: center;
-            color: var(--ion-color-danger);
-            font-size: 14px;
-  
-            ion-icon {
-              padding-inline-end: calc(var(--page-margin) / 2);
-              flex-shrink: 0;
-            }
-          }
-          }
-  
-        .counter-item {
-          app-counter-input {
-            --counter-background: transparent;
-            --counter-color: var(--ion-color-primary);
-            --counter-border-color: var(--ion-color-primary);
-          }
-  
-          .counter-value {
-            text-align: center;
-          }
-        }
       }
-  
-      .submit-btn {
-        margin: var(--page-margin);
-      }
-    }
-  
-    .checkbox-tags {
-      padding: calc(var(--page-margin) / 2) calc(var(--page-margin) - var(--page-tags-gutter));
-  
-      @include checkbox-tag();
-  
-    .checkbox-tag {
-      padding-top: calc(var(--page-margin) / 3);
-            padding-bottom: calc(var(--page-margin) / 3);
-            padding-left: calc(var(--page-margin) / 2);
-            padding-right: calc(var(--page-margin) / 2);
-    }
-  // Add a deeper selector to override default colors
-  &.rounded-checkbox-tags {
-        background-color: var(--page-background);
-  
-    .checkbox-tag {
-      --checkbox-tag-color: var(--ion-color-light-contrast);
-      --checkbox-tag-background: #bbb2b2;
-      --checkbox-tag-active-color: var(--ion-color-lightest);
-      --checkbox-tag-active-background: #e0c77c;
-      border-radius: 25px;
 
-      .new-tag-label {
-        background-color: rgba(var(--page-color-rgb), .35);
-        color: var(--ion-color-lightest);
-        border-radius: 25px;
-        padding-top: calc(var(--page-margin) / 3);
-        padding-bottom: calc(var(--page-margin) / 3);
-        padding-left: calc(var(--page-margin) / 2);
-        padding-right: calc(var(--page-margin) / 2);
-        font-size: 12px;
-        font-weight: 600;
-        width: 100%;
-        display: block;
-        text-align: center;
-        &[ratingBase="0"] {
-        background-color: var(--page-rating-1-color);
+      .input-item {
+        --padding-start: 0px;
+        --padding-end: 0px;
+        --inner-padding-end: 0px;
+        font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+        font-weight: 400;
+        font-size: 20px;
+        -webkit-font-smoothing: subpixel-antialiased;
+        -moz-osx-font-smoothing: auto;
+        overflow: hidden; 
+        text-overflow: ellipsis;
+      }
+
+      .terms-item {
+        --border-width: 0px;
+        --inner-padding-end: 0px;
+      }
+
+      .error-container {
+        .error-message {
+          margin: calc(var(--page-margin) / 2) 0px;
+          display: flex;
+          align-items: center;
+          color: var(--ion-color-danger);
+          font-size: 14px;
+
+          ion-icon {
+            padding-inline-end: calc(var(--page-margin) / 2);
+            flex-shrink: 0;
+          }
         }
-        &[ratingBase="1"] {
-        background-color: var(--page-rating-2-color);
+        }
+
+      .counter-item {
+        app-counter-input {
+          --counter-background: transparent;
+          --counter-color: var(--ion-color-primary);
+          --counter-border-color: var(--ion-color-primary);
+        }
+
+        .counter-value {
+          text-align: center;
         }
       }
     }
-    
+
+    .submit-btn {
+      margin: var(--page-margin);
+    }
   }
-  }
+
   .tags {
     padding-right: 5px;
     padding-bottom: 5px;
@@ -155,26 +96,23 @@
             display: block;
             text-align: center;
             &[ratingBase="0"] {
-            background-color: var(--page-rating-1-color);
+              background-color: #bbb2b2;
             }
             &[ratingBase="1"] {
-            background-color: var(--page-rating-2-color);
+              background-color: #e0c77c;
             }
-  }}
   }
-
-  // Alerts and in general all overlays are attached to the body or ion-app directly
-// We need to use ::ng-deep to access it from here
-::ng-deep .select-alert {
-    @include select-alert();
-  
-    // Variables should be in a deeper selector or after the mixin include to override default values
-    --select-alert-color: var(--ion-color-lightest);
-    --select-alert-background: var(--ion-color-primary);
-    --select-alert-margin: 16px;
-  
-    .alert-message {
-      display: none;
-    }
+  ion-checkbox {
+    margin: 0px;
+    width: 50px;
+    align-content: center;
+    --border-width: 0px;
+    --color-checked: transparent;
+    margin-left: 9px;
+    margin-top: -20px;
+    display:block;
+    opacity: 0;
   }
   
+}
+}

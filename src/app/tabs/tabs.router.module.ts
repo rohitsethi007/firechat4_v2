@@ -14,13 +14,23 @@ const routes: Routes = [
           {
             path: '',
             loadChildren: () => 
+              import('../feed/feed.module').then(m => m.FeedPageModule)
+             // canActivate: [AuthGuardService]
+          }
+        ]
+      },{
+        path: 'tab2',
+        children: [
+          {
+            path: '',
+            loadChildren: () => 
               import('../groups/groups.module').then(m => m.GroupsPageModule)
              // canActivate: [AuthGuardService]
           }
         ]
       },
       {
-        path: 'tab2',
+        path: 'tab3',
         children: [
           {
             path: '',
@@ -31,7 +41,7 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'tab3',
+        path: 'tab4',
         children: [
           {
             path: '',
@@ -42,7 +52,7 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'tab4',
+        path: 'tab5',
         children: [
           {
             path: '',

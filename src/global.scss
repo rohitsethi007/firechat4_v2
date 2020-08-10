@@ -107,3 +107,9 @@ ion-button{
 ion-text p{
   color: #777;
 }
+
+.GroupAction {
+  .action-sheet-icon  {
+    color: var(--ion-color-secondary) !important;
+  }
+}

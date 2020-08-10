@@ -80,7 +80,7 @@ export class PollPage implements OnInit {
     this.pollId = this.route.snapshot.params.id;
     this.dataProvider.getPollDetails(this.pollId).snapshotChanges().subscribe((p: any) => {
       if (p.payload.exists()) {
-        let poll = p.payload.val();
+        let poll = p.payload.data();
         poll.key = p.payload.key;
         this.title = p.description;
 
@@ -187,7 +187,7 @@ export class PollPage implements OnInit {
   vote() {
   // Get user's friends to add to the group.
   this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accountRes: any) => {
-    const account = { $key: accountRes.key, ...accountRes.payload.val() };
+    const account = { $key: accountRes.payload.data().userId, ...accountRes.payload.data() };
     console.log('Current User Details: ' + account.username);
     const pollOptionIndex = this.pollOptionForm.value["selected_poll_option"];
     console.log('selected poll option: ' + pollOptionIndex);
@@ -199,7 +199,7 @@ export class PollPage implements OnInit {
       let currentUserName: any;
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
       if (account.payload.exists()) {
-        currentUserName = account.payload.val().username;
+        currentUserName = account.payload.data().username;
         // Update group data on the database.
         this.dataProvider.updatePollMembers(this.poll.key, pollOptionIndex, members);
         this.ngOnInit();
@@ -213,7 +213,7 @@ export class PollPage implements OnInit {
     let currentUserName: any;
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
       if (account.payload.exists()) {
-        currentUserName = account.payload.val().username;
+        currentUserName = account.payload.data().username;
 
         review = {
           dateCreated: new Date().toString(),

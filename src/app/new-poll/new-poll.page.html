@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content class="forms-validations-content">
-    <form class="validations-form" [formGroup]="pollForm" (ngSubmit)="done()">
+    <form class="validations-form" [formGroup]="pollForm" (ngSubmit)="submitPollForm()">
       <ion-list class="inputs-list" lines="full">
         <ion-list-header>
           <ion-label class="header-title">What would you like to ask the group?</ion-label>
@@ -64,21 +64,28 @@
  
       <ion-list class="inputs-list" lines="full">
         <ion-list-header>
-          <ion-label class="header-title">Select tags relevant for the post</ion-label>
+          <ion-label class="header-title">Select relevant tags</ion-label>
         </ion-list-header>
   
-        <ion-row class="checkbox-tags rounded-checkbox-tags">
-          <ion-item *ngFor="let entry of pollTags" lines="none" class="checkbox-tag">
-            <ion-label class="new-tag-label">{{entry.val}}</ion-label>
-            <ion-checkbox formControlName="pollTags" [(ngModel)]="entry.isChecked"></ion-checkbox>
-          </ion-item>
+        <div class="reviews-wrapper">
+        <ion-row>
+          <div class="tags" formArrayName="tags" *ngFor="let entry of pollForm.controls.tags.controls; let i = index">
+            <ion-label *ngIf="postTags[i] === undefined || !postTags[i].isChecked" class="item-rating" [attr.ratingBase]="0">{{postTags[i].val}}</ion-label>
+            <ion-label *ngIf="postTags[i] !== undefined && postTags[i].isChecked" class="item-rating" [attr.ratingBase]="1">{{postTags[i].val}}</ion-label>  
+            <ion-checkbox slot="start" [formControlName]="i" [(ngModel)]="postTags[i].isChecked"></ion-checkbox>
+          </div>
         </ion-row>
+
+        <div class="error-container">
+          <ng-container *ngFor="let validation of validations.tags">
+            <div class="error-message" *ngIf="pollForm.get('tags').hasError(validation.type) && (pollForm.get('tags').dirty || pollForm.get('tags').touched)">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              <span>{{ validation.message }}</span>
+            </div>
+          </ng-container>
+        </div>
+        </div>
       </ion-list>
-  
-
       <ion-button class="submit-btn" type="submit" expand="block" fill="outline" [disabled]="!pollForm.valid">Submit</ion-button>
-
-    </form>
-
-
+  </form>
 </ion-content>

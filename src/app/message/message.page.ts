@@ -3,7 +3,6 @@ import * as firebase from 'firebase';
 import { DataService } from '../services/data.service';
 import { Camera } from '@ionic-native/camera/ngx';
 import { ActionSheetController, AlertController, ModalController, IonContent } from '@ionic/angular';
-import { AngularFireDatabase } from '@angular/fire/database';
 import { LoadingService } from '../services/loading.service';
 import { ImageService } from '../services/image.service';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -11,6 +10,7 @@ import { Contacts } from '@ionic-native/contacts/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { ImagemodalPage } from '../imagemodal/imagemodal.page';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-message',
@@ -41,7 +41,7 @@ export class MessagePage implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     public dataProvider: DataService,
-    public angularfire: AngularFireDatabase,
+    public firestore: AngularFirestore,
     public loadingProvider: LoadingService,
     public alertCtrl: AlertController,
     public imageProvider: ImageService,
@@ -58,37 +58,34 @@ export class MessagePage implements OnInit {
   }
 
   ionViewDidEnter() {
-    
-
     this.userId = this.route.snapshot.params.id;
     this.loggedInUserId = firebase.auth().currentUser.uid;
     console.log(this.userId);
 
     // Get friend details.
     this.dataProvider.getUser(this.userId).snapshotChanges().subscribe((user: any) => {
-      this.title = user.payload.val().name;
+      this.title = user.payload.data().name;
     });
 
     // Get conversationInfo with friend.
-    this.angularfire.object('/accounts/' + this.loggedInUserId + '/conversations/' + this.userId).snapshotChanges().subscribe((conversation: any) => {
-      if (conversation.payload.exists()) {
+    // tslint:disable-next-line: max-line-length
+    this.firestore.doc('/accounts/' + this.loggedInUserId + '/conversations/' + this.userId).snapshotChanges().subscribe((conversation: any) => {
+      if (conversation.payload.data()) {
         // User already have conversation with this friend, get conversation
-        this.conversationId = conversation.payload.val().conversationId;
-
+        this.conversationId = conversation.payload.data().conversationId;
         // Get conversation
         this.dataProvider.getConversationMessages(this.conversationId).snapshotChanges().subscribe((messagesRes: any) => {
-
-          let messages = messagesRes.payload.val();
-          console.log(messages);
-          if (messages == null)
+          let messages = messagesRes.payload.data().messages;
+          if (messages == null) {
             messages = [];
+          }
           if (this.messages) {
             // Just append newly added messages to the bottom of the view.
             if (messages.length > this.messages.length) {
               let message = messages[messages.length - 1];
 
               this.dataProvider.getUser(message.sender).snapshotChanges().subscribe((user: any) => {
-                message.avatar = user.payload.val().img;
+                message.avatar = user.payload.data().img;
               });
               this.messages.push(message);
               this.messagesToShow.push(message);
@@ -98,12 +95,12 @@ export class MessagePage implements OnInit {
             this.messages = [];
             messages.forEach((message) => {
               this.dataProvider.getUser(message.sender).snapshotChanges().subscribe((user: any) => {
-                message.avatar = user.payload.val().img;
+                message.avatar = user.payload.data().img;
               });
               this.messages.push(message);
             });
             // Load messages in relation to numOfMessages.
-            if (this.startIndex == -1) {
+            if (this.startIndex === -1) {
               // Get initial index for numberOfMessages to show.
               if ((this.messages.length - this.numberOfMessages) > 0) {
                 this.startIndex = this.messages.length - this.numberOfMessages;
@@ -115,7 +112,7 @@ export class MessagePage implements OnInit {
               this.messagesToShow = [];
             }
             // Set messagesToShow
-            for (var i = this.startIndex; i < this.messages.length; i++) {
+            for (let i = this.startIndex; i < this.messages.length; i++) {
               this.messagesToShow.push(this.messages[i]);
             }
             this.loadingProvider.hide();
@@ -173,7 +170,7 @@ export class MessagePage implements OnInit {
       console.log(snap.val());
 
       if (snap.val() != null) {
-        this.angularfire.object('/accounts/' + this.loggedInUserId + '/conversations/' + this.userId).update({
+        this.firestore.doc('/accounts/' + this.loggedInUserId + '/conversations/' + this.userId).update({
           messagesRead: snap.val().length
         });
       }
@@ -244,20 +241,20 @@ export class MessagePage implements OnInit {
         users.push(this.loggedInUserId);
         users.push(this.userId);
         // Add conversation.
-        this.angularfire.list('conversations').push({
+        this.firestore.collection('conversations').add({
           dateCreated: new Date().toString(),
           messages: messages,
           users: users
         }).then((success) => {
-          let conversationId = success.key;
+          let conversationId = success.id;
           this.message = '';
           // Add conversation reference to the users.
-          this.angularfire.object('/accounts/' + this.loggedInUserId + '/conversations/' + this.userId).update({
-            conversationId: conversationId,
+          this.firestore.doc('/accounts/' + this.loggedInUserId + '/conversations/' + this.userId).set({
+            conversationId,
             messagesRead: 1
           });
-          this.angularfire.object('/accounts/' + this.userId + '/conversations/' + this.loggedInUserId).update({
-            conversationId: conversationId,
+          this.firestore.doc('/accounts/' + this.userId + '/conversations/' + this.loggedInUserId).set({
+            conversationId,
             messagesRead: 0
           });
         });

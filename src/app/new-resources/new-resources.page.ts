@@ -1,11 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ActionSheetController } from '@ionic/angular';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FirebaseService } from '../services/firebase.service';
+import { Camera } from '@ionic-native/camera/ngx';
+import { ImageService } from '../services/image.service';
+import { Contacts } from '@ionic-native/contacts/ngx';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { HttpClient } from '@angular/common/http';
+import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
 
 @Component({
   selector: 'app-new-resources',
@@ -17,25 +23,20 @@ export class NewResourcesPage implements OnInit {
   private contactForm: FormGroup;
   private uploadForm: FormGroup;
   private weblinkForm: FormGroup;
-  private resourceTags: any;
+  private postTags: any;
   private tab: any;
   private groupId: any;
-  private alert: any;
   private group: any;
   private resourceId: any;
-  private cordova: any;
-  private files: any;
-  private filesnum: any;
-  private title: any;
-  private sbaid: any;
-  private returnPath: any;
   private metaicon: any = null;
   private metadescription: any;
   private metatitle: any;
   private metasite: any;
   private segment: any;
+  require: any;
+  private addedByUser: any;
 
-  
+
   validations = {
     title: [
       { type: 'required', message: 'Title is a required field.' }
@@ -52,7 +53,7 @@ export class NewResourcesPage implements OnInit {
     email: [
       { type: 'pattern', message: 'Enter a valid email.' }
     ],
-    resourceTags: [
+    tags: [
       { type: 'required', message: 'Please select at least one tag.' }
     ],
     link: [
@@ -65,552 +66,304 @@ export class NewResourcesPage implements OnInit {
     private dataProvider: DataService,
     private loadingProvider: LoadingService,
     public alertCtrl: AlertController,
-    public firebaseProvider: FirebaseService,
     private afAuth: AngularFireAuth,
-    private router: Router
-  ) { 
-    
-    // Initialize
-    this.resource = {
-      dateCreated: '',
-      title: '',
-      name: '',
-      address: '',
-      phones: '',
-      email: '',
-      type: '',
-      resrouceTags : [],
-      reviews: []
-    };
-
+    private router: Router,
+    public camera: Camera,
+    public keyboard: Keyboard,
+    public actionSheet: ActionSheetController,
+    public contacts: Contacts,
+    public geolocation: Geolocation,
+    public imageProvider: ImageService,
+    private http: HttpClient
+  ) {
+    this.groupId = this.route.snapshot.params.id;
+    console.log('constructor', this.groupId);
     this.contactForm = new FormGroup(
       {
-        title: new FormControl('', Validators.compose([
-            Validators.minLength(5),
-            Validators.maxLength(20),
-            Validators.required
-          ])),
-        name: new FormControl('', Validators.compose([
-          Validators.minLength(5),
-          Validators.maxLength(20),
-          Validators.required
-        ])),
-        address: new FormControl('', Validators.compose([
-          Validators.minLength(10),
-          Validators.maxLength(50),
-          Validators.required
-        ])),
+        title: new FormControl('', Validators.required),
+        name: new FormControl('', Validators.required),
+        address: new FormControl('', Validators.required),
         phones: new FormControl(''),
         email: new FormControl('', Validators.compose([
           Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
         ])),
-        resourceTags: new FormControl('')
+        tags: new FormArray([], CheckboxCheckedValidator.tagsSelected(1))
     });
 
     this.uploadForm = new FormGroup(
-          {
-            title: new FormControl('', Validators.compose([
-                Validators.minLength(5),
-                Validators.maxLength(20),
-                Validators.required
-              ])),
-            resourceTags: new FormControl('')
+    {
+      title: new FormControl('', Validators.required),
+      tags: new FormArray([], CheckboxCheckedValidator.tagsSelected(1))
     });
 
     this.weblinkForm = new FormGroup(
-        {
-          title: new FormControl('', Validators.compose([
-              Validators.minLength(5),
-              Validators.maxLength(20),
-              Validators.required
-            ])),
-            link: new FormControl('', Validators.compose([
-              Validators.pattern('(?:(?:(?:ht|f)tp)s?://)?[\\w_-]+(?:\\.[\\w_-]+)+([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?'),
-              Validators.required
-            ])),
-          resourceTags: new FormControl('')
+    {
+      title: new FormControl('', Validators.required),
+      link: new FormControl('', Validators.compose([
+          Validators.pattern('(?:(?:(?:ht|f)tp)s?://)?[\\w_-]+(?:\\.[\\w_-]+)+([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?')
+        ])),
+        tags: new FormArray([], CheckboxCheckedValidator.tagsSelected(1))
     });
   }
 
-  ngOnInit() {
+  addContactTagControls() {
+    this.postTags.forEach((o, i) => {
+      const control = new FormControl(i === 0); // if first item set to true, else false
+      (this.contactForm.controls.tags as FormArray).push(control);
+    });
+  }
+
+  addLinkTagControls() {
+    this.postTags.forEach((o, i) => {
+      const control = new FormControl(i === 0); // if first item set to true, else false
+      (this.weblinkForm.controls.tags as FormArray).push(control);
+    });
+  }
+
+  addUploadTagControls() {
+    this.postTags.forEach((o, i) => {
+      const control = new FormControl(i === 0); // if first item set to true, else false
+      (this.uploadForm.controls.tags as FormArray).push(control);
+    });
+  }
+
+  ngOnInit() { 
+    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((value: any) => {
+      this.addedByUser = {
+      addedByKey: value.payload.data().userId,
+      addedByUsername: value.payload.data().username,
+      addedByImg: value.payload.data().img
+    };
+
+    // Initialize
+      this.resource = {
+      addedByUser: this.addedByUser,
+      date: '',
+      title: '',
+      postTags: [],
+      groupId: '',
+      type: 'resource',
+      data: {name: '', address: '', phones: '', email: '', type: ''},
+    };
+    });
   }
 
   ionViewDidEnter() {
-    this.tab = "contact";
-    this.title = "Contact";
-    this.groupId = this.route.snapshot.params.id;
-
+    this.tab = 'contact';
     // Get group information
+    this.groupId = this.route.snapshot.params.id;
+    console.log('this.route.snapshot.params.id', this.route.snapshot.params.id);
     this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-        this.group = group.payload.val();
-        console.log(this.group);
-        this.resourceTags = [];
+        this.group = group.payload.data();
+        this.postTags = [];
+        console.log('this.group', group.payload.data());
         this.group.groupTags.forEach((element: any) => {
-          this.resourceTags.push({val: element, isChecked: false});
+          this.postTags.push({val: element, isChecked: false});
         });
-
-        // this.eventsdata.getRequestFiles().on('value', snapshot => {
-        //   let rawList = [];
-        //   snapshot.forEach(snap => {
-        //     rawList.unshift({
-        //       id: snap.key,
-        //       file: snap.val().file,
-        //       name: snap.val().name,
-        //       ext: snap.val().ext,
-        //     })
-        //   })
-        //   this.files = rawList;
-        //   this.filesnum = rawList.length
-        // });
+        this.addContactTagControls();
+        this.addLinkTagControls();
+        this.addUploadTagControls();
     });
-
-
-
   }
 
   segmentChanged($event) {
-    if (this.tab == 'contact') {
-      this.title = "Contact"; this.getFriends();
-    }
-    else if (this.tab == 'upload') {
-      this.title = "Upload"; this.getFriendRequests();
-    }
-    else if (this.tab == 'link') {
-      this.title = "Link"; this.findNewFriends();
+    if (this.tab === 'contact') {
+      this.getDummyData();
+    } else if (this.tab === 'upload') {
+      this.getDummyData();
+    } else if (this.tab === 'link') {
+      this.getDummyData();
     }
   }
-  // openFilter() {
-  //   this.findNewFriends();
-  //   let friendModal = this.modalCtrl.create(FriendsFilterPage);
-  //   friendModal.present();
-  //   friendModal.onDidDismiss(data => {
-  //     console.log(data);
-  //     if (data != undefined) {
-  //       this.accounts = this.accounts.filter(acc => {
-  //         if ((acc.age >= data.ageStart) && (acc.age <= data.ageEnd) && acc.location == data.location)
-  //           return true;
-  //         return false;
-  //       })
-  //     }
-  //   });
 
-  // }
-  getFriends() {
-    this.loadingProvider.show();
-    this.friends = [];
-    // Get user data on database and get list of friends.
+  // This method is required in segmentChanged call else tabs won't load properly
+  getDummyData() {
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
       console.log(account);
-      this.loadingProvider.hide();
-      if (account.payload.val() != null && account.payload.val().friends != null) {
-        for (var i = 0; i < account.payload.val().friends.length; i++) {
-          this.dataProvider.getUser(account.payload.val().friends[i]).snapshotChanges().subscribe((friend) => {
-            if (friend.key != null) {
-              let friendData = { $key: friend.key, ...friend.payload.val() };
-              this.addOrUpdateFriend(friendData);
-            }
-          });
-        }
-      } else {
-        this.friends = [];
-      }
-
     });
-  }
-
-  // Add or update friend data for real-time sync.
-  addOrUpdateFriend(friend) {
-    console.log(friend)
-    if (!this.friends) {
-      this.friends = [friend];
-    } else {
-      var index = -1;
-      for (var i = 0; i < this.friends.length; i++) {
-        if (this.friends[i].$key == friend.$key) {
-          index = i;
-        }
-      }
-      if (index > -1) {
-        this.friends[index] = friend;
-      } else {
-        this.friends.push(friend);
-      }
-    }
-    console.log(this.friends);
   }
 
   // Proceed to userInfo page.
   viewUser(userId) {
-    console.log(userId);
     this.router.navigateByUrl('/userinfo/' + userId);
   }
 
-  // Proceed to chat page.
-  message(userId) {
-    this.router.navigateByUrl('/message/' + userId);
-  }
-
-
-  // Manageing Friend Requests
-
-  getFriendRequests() {
-    this.friendRequests = [];
-    this.requestsSent = [];
-
-    this.loadingProvider.show();
-    // Get user info
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account) => {
-      this.account = account.payload.val();
-      console.log(this.account);
-      // Get friendRequests and requestsSent of the user.
-      this.dataProvider.getRequests(this.account.userId).snapshotChanges().subscribe((requestsRes: any) => {
-        // friendRequests.
-        let requests = requestsRes.payload.val();
-        if (requests != null) {
-          if (requests.friendRequests != null && requests.friendRequests != undefined) {
-            this.friendRequests = [];
-            this.friendRequestCount = requests.friendRequests.length;
-            requests.friendRequests.forEach((userId) => {
-              this.dataProvider.getUser(userId).snapshotChanges().subscribe((sender: any) => {
-                sender = { $key: sender.key, ...sender.payload.val() };
-                this.addOrUpdateFriendRequest(sender);
-              });
-            });
-          } else {
-            this.friendRequests = [];
-          }
-          // requestsSent.
-          if (requests.requestsSent != null && requests.requestsSent != undefined) {
-            this.requestsSent = [];
-            requests.requestsSent.forEach((userId) => {
-              this.dataProvider.getUser(userId).snapshotChanges().subscribe((receiver: any) => {
-                receiver = { $key: receiver.key, ...receiver.payload.val() };
-                this.addOrUpdateRequestSent(receiver);
-              });
-            });
-          } else {
-            this.requestsSent = [];
-          }
-        }
-        this.loadingProvider.hide();
-      });
-    });
-  }
-
-
-
-  // Add or update friend request only if not yet friends.
-  addOrUpdateFriendRequest(sender) {
-    if (!this.friendRequests) {
-      this.friendRequests = [sender];
-    } else {
-      var index = -1;
-      for (var i = 0; i < this.friendRequests.length; i++) {
-        if (this.friendRequests[i].$key == sender.$key) {
-          index = i;
-        }
-      }
-      if (index > -1) {
-        if (!this.isFriends(sender.$key))
-          this.friendRequests[index] = sender;
-      } else {
-        if (!this.isFriends(sender.$key))
-          this.friendRequests.push(sender);
-      }
-    }
-  }
-
-  // Add or update requests sent only if the user is not yet a friend.
-  addOrUpdateRequestSent(receiver) {
-    if (!this.requestsSent) {
-      this.requestsSent = [receiver];
-    } else {
-      var index = -1;
-      for (var j = 0; j < this.requestsSent.length; j++) {
-        if (this.requestsSent[j].$key == receiver.$key) {
-          index = j;
-        }
-      }
-      if (index > -1) {
-        if (!this.isFriends(receiver.$key))
-          this.requestsSent[index] = receiver;
-      } else {
-        if (!this.isFriends(receiver.$key))
-          this.requestsSent.push(receiver);
-      }
-    }
-  }
-
-
-  findNewFriends() {
-    this.requestsSent = [];
-    this.friendRequests = [];
-    // Initialize
-    this.loadingProvider.show();
-    this.searchUser = '';
-    // Get all users.
-    this.dataProvider.getUsers().snapshotChanges().subscribe((accounts: any) => {
-      this.loadingProvider.hide();
-
-      // applying Filters
-
-      let acc = accounts.filter((c) => {
-        if (c.key == null && c.key == undefined && c.payload.val() == null) return false;
-        if (c.payload.val().name == '' || c.payload.val().name == ' ' || c.payload.val().name == undefined) return false;
-        if (c.payload.val().publicVisibility == false) return false;
-        return true;
-      });
-
-      this.accounts = acc.map(c => {
-        return { $key: c.key, ...c.payload.val() }
-      })
-
-
-      this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
-        // Add own userId as exludedIds.
-        // console.log(account.payload.val());
-        this.excludedIds = [];
-        this.account = account.payload.val();
-        if (this.excludedIds.indexOf(account.key) == -1) {
-          this.excludedIds.push(account.key);
-        }
-        // Get friends which will be filtered out from the list using searchFilter pipe pipes/search.ts.
-        if (account.payload.val() != null) {
-          // console.log(account.payload.val().friends);
-          if (account.payload.val().friends != null) {
-            account.payload.val().friends.forEach(friend => {
-              if (this.excludedIds.indexOf(friend) == -1) {
-                this.excludedIds.push(friend);
-              }
-            });
-          }
-        }
-        // Get requests of the currentUser.
-        this.dataProvider.getRequests(account.key).snapshotChanges().subscribe((requests: any) => {
-          if (requests.payload.val() != null) {
-            this.requestsSent = requests.payload.val().requestsSent;
-            this.friendRequests = requests.payload.val().friendRequests;
-          }
-        });
-      });
-
-    });
-  }
-
-  // Send friend request.
-  sendFriendRequest(user) {
-    this.alert = this.alertCtrl.create({
-      header: 'Send Friend Request',
-      message: 'Do you want to send friend request to <b>' + user.name + '</b>?',
-      buttons: [
-        {
-          text: 'Cancel',
-          handler: data => { }
-        },
-        {
-          text: 'Send',
-          handler: () => {
-            this.firebaseProvider.sendFriendRequest(user.$key);
-          }
-        }
-      ]
-    }).then(r => r.present());
-  }
-
-  // Accept Friend Request.
-  acceptFriendRequest(user) {
-    this.alert = this.alertCtrl.create({
-      header: 'Confirm Friend Request',
-      message: 'Do you want to accept <b>' + user.name + '</b> as your friend?',
-      buttons: [
-        {
-          text: 'Cancel',
-          handler: data => { }
-        },
-        {
-          text: 'Reject Request',
-          handler: () => {
-            this.firebaseProvider.deleteFriendRequest(user.$key);
-            this.getFriendRequests();
-          }
-        },
-        {
-          text: 'Accept Request',
-          handler: () => {
-            this.firebaseProvider.acceptFriendRequest(user.$key);
-            this.getFriendRequests();
-          }
-        }
-      ]
-    }).then(r => r.present());
-  }
-
-  // Cancel Friend Request sent.
-  cancelFriendRequest(user) {
-    this.alert = this.alertCtrl.create({
-      header: 'Friend Request Pending',
-      message: 'Do you want to delete your friend request to <b>' + user.name + '</b>?',
-      buttons: [
-        {
-          text: 'Cancel',
-          handler: data => { }
-        },
-        {
-          text: 'Delete',
-          handler: () => {
-            this.firebaseProvider.cancelFriendRequest(user.$key);
-            this.getFriendRequests();
-          }
-        }
-      ]
-    }).then(r => r.present());
-  }
-
-  // Checks if user is already friends with this user.
-  isFriends(userId) {
-    if (this.account.friends) {
-      if (this.account.friends.indexOf(userId) == -1) {
-        return false;
-      } else {
-        return true;
-      }
-    } else {
-      return false;
-    }
-  }
-
-  // Get the status of the user in relation to the logged in user.
-  getStatus(user) {
-    // Returns:
-    // 0 when user can be requested as friend.
-    // 1 when a friend request was already sent to this user.
-    // 2 when this user has a pending friend request.
-    if (this.requestsSent) {
-      for (var i = 0; i < this.requestsSent.length; i++) {
-        if (this.requestsSent[i] == user.$key) {
-          return 1;
-        }
-      }
-    }
-    if (this.friendRequests) {
-      for (var j = 0; j < this.friendRequests.length; j++) {
-        if (this.friendRequests[j] == user.$key) {
-          return 2;
-        }
-      }
-    }
-    return 0;
-  }
-  
-   // Proceed with group creation.
-   submitContactForm() {
+  // Proceed with group creation.
+  submitContactForm() {
     this.loadingProvider.show();
 
     // Add resource info and date.
-    this.resource.dateCreated = new Date().toString();
+    this.resource.date = new Date().toString();
     this.resource.title = this.contactForm.value.title;
-    this.resource.name = this.contactForm.value.name;
-    this.resource.address = this.contactForm.value.address;
-    this.resource.phones = this.contactForm.value.phones;
-    this.resource.email = this.contactForm.value.email;
-    this.resource.type = 'contact';
-    this.resource.resourceTags = [];
-    this.resource.resourceTags = this.resourceTags;
+    this.resource.postTags = [];
+    this.resource.postTags = this.postTags;
+    this.resource.groupId = this.groupId;
 
+    this.resource.data.type = 'contact';
+    this.resource.data.name = this.contactForm.value.name;
+    this.resource.data.address = this.contactForm.value.address;
+    this.resource.data.phones = this.contactForm.value.phones;
+    this.resource.data.email = this.contactForm.value.email;
 
-
-    // Add resource to database.
-    this.dataProvider.addResource(this.resource).then((success) => {
-        const resourceId = success.key;
-        // Add system message that group is created.
-        // Add group resource details
-        this.resourceId = resourceId;
-        if (this.group.resources === undefined) {
-          this.group.resources = [];
-        }
-        this.group.resources.push(this.resourceId);
-        const uid = this.dataProvider.getCurrentUserId();
-        // Add system message that the members are added to the group.
-        this.group.messages.push({
-            date: new Date().toString(),
-            sender: uid,
-            type: 'system',
-            message: 'A new Contact has been shared with the group : ' + this.resource.name,
-            icon: 'md-contacts'
-          });
-
-        // Update group data on the database.
-        this.dataProvider.getGroup(this.groupId).update({
-          resources: this.group.resources,
-          messages: this.group.messages
-        }).then(() => {
-          // Back.
-          this.loadingProvider.hide();
-          this.navCtrl.back();
-        });
-      });
-
+    this.addResourceToDatabase();
    }
 
    submitLinkForm() {
     this.loadingProvider.show();
 
     // Add resource info and date.
-    this.resource.dateCreated = new Date().toString();
-    this.resource.title = this.weblinkForm.value.title;
-    this.resource.metaicon = this.metaicon;
-    this.resource.metasite = this.weblinkForm.value.link;
-    this.resource.metatitle = this.metatitle;
-    this.resource.metadescription = this.metadescription;
-    this.resource.type = 'weblink';
+    this.resource.date = new Date().toString();
+    this.resource.title = this.contactForm.value.title;
+    this.resource.postTags = [];
+    this.resource.postTags = this.postTags;
+    this.resource.groupId = this.groupId;
 
-    this.resource.resourceTags = [];
-    this.resource.resourceTags = this.resourceTags;
+    this.resource.data.type = 'weblink';
+    this.resource.data.metaicon = this.metaicon;
+    this.resource.data.metasite = this.weblinkForm.value.link;
+    this.resource.data.metatitle = this.metatitle;
+    this.resource.data.metadescription = this.metadescription;
 
-
-    // Add resource to database.
-    this.dataProvider.addResource(this.resource).then((success) => {
-        const resourceId = success.key;
-        // Add system message that group is created.
-        // Add group resource details
-        this.resourceId = resourceId;
-        if (this.group.resources === undefined) {
-          this.group.resources = [];
-        }
-        this.group.resources.push(this.resourceId);
-        const uid = this.dataProvider.getCurrentUserId();
-        // Add system message that the members are added to the group.
-        this.group.messages.push({
-            date: new Date().toString(),
-            sender: uid,
-            type: 'system',
-            message: 'A new Contact has been shared with the group : ' + this.resource.name,
-            icon: 'md-contacts'
-          });
-
-        // Update group data on the database.
-        this.dataProvider.getGroup(this.groupId).update({
-          resources: this.group.resources,
-          messages: this.group.messages
-        }).then(() => {
-          // Back.
-          this.loadingProvider.hide();
-        });
-      });
+    this.addResourceToDatabase();
    }
 
-   
+   submitUploadForm() {
+    this.addResourceToDatabase();
+   }
+
    linkFocusOut() {
-    const urlMetadata = require('url-metadata');
-    urlMetadata('https://cors-anywhere.herokuapp.com/' + this.weblinkForm.value.link).then(
-      (metadata)  => { // success handler
-        console.log(metadata);
-        this.metaicon = metadata.image;
-        this.metadescription = metadata.description;
-        this.metatitle = metadata.title;
-        }).catch((error) => {
-          this.metaicon = null;
-          this.metadescription = 'The URL seems to be invalid. Please check the url';
-        });
+    this.loadingProvider.show();
+    const getMeta = require('lets-get-meta');
+    this.http.get(
+      this.weblinkForm.value.link,
+      {responseType: 'text'}
+      )
+    .subscribe(res => {
+      const o = getMeta(res);
+      this.metaicon = o['og:image'];
+      this.metadescription = o.description;
+      this.metatitle = o['og:title'];
+      this.loadingProvider.hide();
+    });
+  }
+
+  upload() {
+    // Add resource info and date.
+    this.resource.date = new Date().toString();
+    this.resource.title = this.contactForm.value.title;
+    this.resource.postTags = [];
+    this.resource.postTags = this.postTags;
+    this.resource.groupId = this.groupId;
+
+    const action = this.actionSheet.create({
+      header: 'Choose attachments',
+      backdropDismiss: true,
+      mode: 'md',
+      buttons: [{
+        text: 'Camera',
+        handler: () => {
+          this.imageProvider.uploadGroupPhotoResource(this.groupId, this.camera.PictureSourceType.CAMERA).then((url) => {
+            this.resource.data.type = 'upload';
+            this.resource.data.url = url;
+            this.resource.data.uploadtype = 'image';
+          });
+        }
+      }, {
+        text: 'Photo Library',
+        handler: () => {
+          this.imageProvider.uploadGroupPhotoResource(this.groupId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
+            this.resource.data.type = 'upload';
+            this.resource.data.url = url;
+            this.resource.data.uploadtype = 'image';
+          });
+        }
+      },
+      {
+        text: 'Video',
+        handler: () => {
+          this.imageProvider.uploadGroupVideoResource(this.groupId).then(url => {
+            this.resource.data.type = 'upload';
+            this.resource.data.uploadtype = 'video';
+            this.resource.data.url = url;
+          });
+        }
+      }
+        , {
+        text: 'Contact',
+        handler: () => {
+          this.contacts.pickContact().then(data => {
+            let name;
+            if (data.displayName !== null) { name = data.displayName; } else { name = data.name.givenName + '' + data.name.familyName; }
+            this.resource.data.type = 'upload';
+            this.resource.data.uploadtype = 'contact';
+            this.resource.data.name = name;
+            this.resource.data.address = data.addresses;
+            this.resource.data.phones = data.phoneNumbers;
+            this.resource.data.email = data.emails;
+          }, err => {
+            console.log(err);
+          });
+        }
+      }, {
+        text: 'Location',
+        handler: () => {
+          this.geolocation.getCurrentPosition({
+            timeout: 5000
+          }).then(res => {
+            const locationMessage = 'Location:<br> lat:' + res.coords.latitude + '<br> lng:' + res.coords.longitude;
+            // tslint:disable-next-line: max-line-length
+            const url = '<a href=\'https://www.google.com/maps/search/' + res.coords.latitude + ',' + res.coords.longitude + '\'>View on Map</a>';
+            const confirm = this.alertCtrl.create({
+              header: 'Your Location',
+              message: locationMessage,
+              buttons: [{
+                text: 'cancel',
+                handler: () => {
+                  console.log('canceled');
+                }
+              }, {
+                text: 'Share',
+                handler: () => {
+                  this.resource.data.type = 'upload';
+                  this.resource.data.url = url;
+                  this.resource.data.uploadtype = 'location';
+                }
+              }]
+            }).then(r => r.present());
+          }, locationErr => {
+            console.log('Location Error' + JSON.stringify(locationErr));
+          });
+        }
+      }, {
+        text: 'cancel',
+        role: 'cancel',
+        handler: () => {
+          console.log('cancelled');
+        }
+      }]
+    }).then(r => r.present());
+  }
+
+
+  addResourceToDatabase() {
+    // Add resource to database.
+    this.dataProvider.addPost(this.resource).then((success) => {
+      const postId = success.id;
+
+      this.resourceId = postId;
+      if (this.group.posts === undefined) {
+        this.group.posts = [];
+      }
+      this.group.posts.push(this.resourceId);
+
+      // Update group data on the database.
+      this.dataProvider.getGroup(this.groupId).update({
+        posts: this.group.posts
+      }).then(() => {
+        this.loadingProvider.hide();
+      });
+    });
+
+    this.router.navigateByUrl('tabs/tab4');
   }
 }

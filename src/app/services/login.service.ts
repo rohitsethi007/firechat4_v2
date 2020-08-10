@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFireDatabase } from '@angular/fire/database';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { auth } from 'firebase/app';
 
 import { DataService } from './data.service';
@@ -12,7 +12,6 @@ import { Facebook } from '@ionic-native/facebook/ngx';
 
 import { environment } from 'src/environments/environment.prod';
 import { Router } from '@angular/router';
-import { Storage } from '@ionic/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -21,14 +20,13 @@ export class LoginService {
 
   constructor(
     private afAuth: AngularFireAuth,
-    private afdb: AngularFireDatabase,
+    private firestore: AngularFirestore,
     private dataService: DataService,
     private loadingProvider: LoadingService,
     private platform: Platform,
     private gplus: GooglePlus,
     private facebook: Facebook,
-    private router: Router,
-    private storage: Storage
+    private router: Router
   ) { }
 
   login(email, password) {
@@ -166,7 +164,7 @@ export class LoginService {
 
   createNewUser(userId, name, username, email, description = "I'm available", provider, img = "./assets/images/default-dp.png") {
     let dateCreated = new Date();
-    this.afdb.object('/accounts/' + userId).update({
+    this.firestore.collection('accounts').doc(userId).set({
       dateCreated, username, name, userId, email, description, provider, img
     }).then(() => {
       this.router.navigateByUrl('tabs');
@@ -175,6 +173,5 @@ export class LoginService {
 
   logout() {
     this.afAuth.auth.signOut().then(() => this.router.navigateByUrl('/login', { replaceUrl: true }));
-    this.storage.clear();
   }
 }

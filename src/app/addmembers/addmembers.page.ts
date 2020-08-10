@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
-import { AngularFireDatabase } from '@angular/fire/database';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { AlertController } from '@ionic/angular';
 
 @Component({
@@ -27,7 +27,7 @@ export class AddmembersPage implements OnInit {
     private route: ActivatedRoute,
     public dataProvider: DataService,
     public loadingProvider: LoadingService,
-    public angularfire: AngularFireDatabase,
+    public firestore: AngularFirestore,
     public alertCtrl: AlertController,
   ) { }
 
@@ -43,32 +43,33 @@ export class AddmembersPage implements OnInit {
     this.loadingProvider.show();
 
     // Get user information for system message sent to the group when a member was added.
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user) => {
-      this.user = user.payload.val();
+    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
+        this.user = user.payload.data();
     });
 
     // Get group information
     this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group: any) => {
-      this.group = group.payload.val();
+      this.group = group.payload.data();
       this.groupMembers = null;
       // Get group members
-      if (group.payload.val().members) {
-        group.payload.val().members.forEach((memberId) => {
+      if (group.payload.data().members) {
+        group.payload.data().members.forEach((memberId) => {
           this.dataProvider.getUser(memberId).snapshotChanges().subscribe((member) => {
-            this.addOrUpdateMember(member);
-          });
+              this.addOrUpdateMember(member);
+            });
         });
         // Get user's friends to add
-        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
-
-          if (account.payload.val().friends) {
-            for (var i = 0; i < account.payload.val().friends.length; i++) {
-              this.dataProvider.getUser(account.payload.val().friends[i]).snapshotChanges().subscribe((friendRes: any) => {
+        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
+          let account = user.payload.data();
+          if (account.friends) {
+            for (var i = 0; i < account.friends.length; i++) {
+              this.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe((friendRes: any) => {
                 // Only friends that are not yet a member of this group can be added.
-                let friend = { $key: friendRes.key, ...friendRes.payload.val() };
+                let friend = { $key: friendRes.key, ...friendRes.payload.data() };
                 console.log(friend)
-                if (!this.isMember(friend))
+                if (!this.isMember(friend)) {
                   this.addOrUpdateFriend(friend);
+                }
               });
             }
             if (!this.friends) {
@@ -77,7 +78,7 @@ export class AddmembersPage implements OnInit {
           } else {
             this.friends = [];
           }
-        });
+      });
       }
       console.log(this.friends);
       this.loadingProvider.hide();
@@ -189,7 +190,7 @@ export class AddmembersPage implements OnInit {
             this.loadingProvider.show();
             this.toAdd.forEach((friend) => {
               // Add groupInfo to each friend added to the group.
-              this.angularfire.object('/accounts/' + friend.$key + '/groups/' + this.groupId).update({
+              this.firestore.doc('/accounts/' + friend.$key + '/groups/' + this.groupId).update({
                 messagesRead: 0
               });
               // Add friend as members of the group.

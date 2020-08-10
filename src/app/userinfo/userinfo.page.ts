@@ -44,23 +44,23 @@ export class UserinfoPage implements OnInit {
     this.loadingProvider.show();
     // Get user info.
     this.dataProvider.getUser(this.userId).snapshotChanges().subscribe((user: any) => {
-      this.user = { $key: user.key, ...user.payload.val() };
+      this.user = { $key: user.key, ...user.payload.data() };
       console.log(this.user);
       this.loadingProvider.hide();
     });
     // Get friends of current logged in user.
     this.dataProvider.getUser(firebase.auth().currentUser.uid).snapshotChanges().subscribe((user: any) => {
-      if (user.payload.val() != null)
-        this.friends = user.payload.val().friends;
+      if (user.payload.data() != null)
+        this.friends = user.payload.data().friends;
     });
     // Get requests of current logged in user.
-    this.dataProvider.getRequests(firebase.auth().currentUser.uid).snapshotChanges().subscribe((requests: any) => {
-      console.log(requests.payload.val())
-      if (requests.payload.val() != null) {
-        this.friendRequests = requests.payload.val().friendRequests;
-        this.requestsSent = requests.payload.val().requestsSent;
+    this.dataProvider.getRequests(firebase.auth().currentUser.uid).snapshotChanges().subscribe(((requests: any) => {
+      console.log(requests.payload.data())
+      if (requests.payload.data() != null) {
+        this.friendRequests = requests.payload.data().friendRequests;
+        this.requestsSent = requests.payload.data().requestsSent;
       }
-    });
+    }));
   }
 
   block() {

@@ -3,10 +3,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
 import { ModalController, AlertController } from '@ionic/angular';
-import { AngularFireDatabase } from '@angular/fire/database';
 import { ImageService } from '../services/image.service';
 import { Camera } from '@ionic-native/camera/ngx';
-import * as firebase from 'firebase';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-groupinfo',
@@ -27,10 +26,10 @@ export class GroupinfoPage implements OnInit {
     public router: Router,
     public route: ActivatedRoute,
     public dataProvider: DataService,
+    public firestore: AngularFirestore,
     public loadingProvider: LoadingService,
     public modalCtrl: ModalController,
     public alertCtrl: AlertController,
-    public angularfire: AngularFireDatabase,
     public imageProvider: ImageService,
     public camera: Camera
   ) { }
@@ -46,21 +45,20 @@ export class GroupinfoPage implements OnInit {
 
     // Get group details.
     this.subscription = this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((groupRes: any) => {
-      let group = { $key: groupRes.key, ...groupRes.payload.val() };
+      let group = { $key: groupRes.payload.id, ...groupRes.payload.data() };
       console.log(group);
       if (group != null) {
         this.loadingProvider.show();
         this.group = group;
-        if (group.members) {
-          group.members.forEach((memberId) => {
-            this.dataProvider.getUser(memberId).snapshotChanges().subscribe((member: any) => {
-              if (member.key != null) {
-                member = { $key: member.key, ...member.payload.val() };
-                this.addUpdateOrRemoveMember(member);
-              }
+        console.log('group.members', group.members);
+
+        group.members.forEach((memberId) => {
+            this.dataProvider.getUser(memberId).snapshotChanges().subscribe((memberRes: any) => {
+              let member = { $key: memberRes.payload.id, ...memberRes.payload.data() };
+              this.addUpdateOrRemoveMember(member);
             });
           });
-        }
+
         this.loadingProvider.hide();
       } else {
         this.router.navigateByUrl('/')
@@ -68,8 +66,9 @@ export class GroupinfoPage implements OnInit {
     });
 
     // Get user details.
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
-      this.user = { $key: user.key, ...user.payload.val() };
+    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accounts: any) => {
+      let account = accounts.payload.data();
+      this.user = { $key: account.userId, ...account };
     });
   }
 
@@ -90,6 +89,7 @@ export class GroupinfoPage implements OnInit {
           this.groupMembers = [member];
         } else {
           var index = -1;
+          console.log('this.groupMembers.length:', this.groupMembers);
           for (var i = 0; i < this.groupMembers.length; i++) {
             if (this.groupMembers[i].$key == member.$key) {
               index = i;
@@ -119,8 +119,9 @@ export class GroupinfoPage implements OnInit {
 
   // View user info.
   viewUser(userId) {
-    if (firebase.auth().currentUser.uid != userId)
+    if (this.dataProvider.getCurrentUserId !== userId) {
       this.router.navigateByUrl('/userinfo/' + userId);
+    }
   }
 
   // Enlarge group image.
@@ -133,7 +134,7 @@ export class GroupinfoPage implements OnInit {
   setName() {
     this.alert = this.alertCtrl.create({
       header: 'Change Group Name',
-      message: "Please enter a new group name.",
+      message: 'Please enter a new group name.',
       inputs: [
         {
           name: 'name',
@@ -149,7 +150,7 @@ export class GroupinfoPage implements OnInit {
         {
           text: 'Save',
           handler: data => {
-            let name = data["name"];
+            let name = data['name'];
             if (this.group.name != name) {
               this.loadingProvider.show();
               // Add system message.
@@ -166,10 +167,10 @@ export class GroupinfoPage implements OnInit {
                 messages: this.group.messages
               }).then((success) => {
                 this.loadingProvider.hide();
-                this.loadingProvider.showToast("Updated Succesfully");
+                this.loadingProvider.showToast('Updated Succesfully');
               }).catch((error) => {
                 this.loadingProvider.hide();
-                this.loadingProvider.showToast("Something went wrong");
+                this.loadingProvider.showToast('Something went wrong');
               });
             }
           }
@@ -329,7 +330,7 @@ export class GroupinfoPage implements OnInit {
               messages: this.group.messages
             }).then((success) => {
               // Remove group from user's group list.
-              this.angularfire.object('/accounts/' + firebase.auth().currentUser.uid + '/groups/' + this.groupId).remove().then(() => {
+              this.firestore.doc('/accounts/' + this.dataProvider.getCurrentUserId + '/groups/' + this.groupId).delete().then(() => {
                 // Pop this view because user already has left this group.
                 this.group = null;
                 setTimeout(() => {
@@ -369,8 +370,8 @@ export class GroupinfoPage implements OnInit {
               }
             });
 
-            this.angularfire.object('/accounts/' + firebase.auth().currentUser.uid + '/groups/' + group.$key).remove().then(() => {
-              this.dataProvider.getGroup(group.$key).remove();
+            this.firestore.doc('/accounts/' + this.dataProvider.getCurrentUserId + '/groups/' + group.$key).delete().then(() => {
+              this.dataProvider.getGroup(group.$key).delete();
             });
             // Delete group image.
             console.log("Delete: " + group.img);

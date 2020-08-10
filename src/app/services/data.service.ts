@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase, AngularFireAction } from '@angular/fire/database';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { Storage } from '@ionic/storage';
+// import * as firebase from 'firebase';
+import * as firebase from 'firebase/app'
 
 @Injectable({
   providedIn: 'root'
@@ -9,310 +11,325 @@ import { Storage } from '@ionic/storage';
 export class DataService {
   [x: string]: any;
   private addedByUser: any;
+  public loggedInUserId: 'nouser';
 
   constructor(
     private afAuth: AngularFireAuth,
-    private afdb: AngularFireDatabase,
     private storage: Storage,
+    private firestore: AngularFirestore,
+  ) { 
+  //   if (this.afAuth.auth.currentUser === null ) { return; }
+  //   this.firestore.doc('accounts/' + this.afAuth.auth.currentUser.uid).snapshotChanges().subscribe((value: any) => {
+  //   const addedByUser = {
+  //     addedByKey: value.payload.data().userId,
+  //     addedByUsername: value.payload.data().username,
+  //     addedByImg: value.payload.data().img
+  //   };
 
-  ) {
-    this.getFromStorageAsync('currentUser').then((element) => {
-      const addedByUser = {
-        addedByKey: element.userId,
-        addedByUsername: element.username,
-        addedByImg: element.img
-      };
-
-      this.addedByUser = addedByUser;
-   });
+  //   this.addedByUser = addedByUser;
+  //  });
   }
 
 
   // Get all users
   getUsers() {
-    return this.afdb.list('/accounts', ref => ref.orderByChild('name'));
+    return this.firestore.collection('accounts');
   }
 
   // Get user with username
   getUserWithUsername(username) {
-    return this.afdb.list('/accounts', ref => ref.orderByChild('username').equalTo(username));
+    return this.firestore.collection('accounts').ref.where('username', '==', username);
   }
 
   // Get logged in user data
   getCurrentUser() {
-    return this.afdb.object('/accounts/' + this.afAuth.auth.currentUser.uid);
+    return this.getUser(this.afAuth.auth.currentUser.uid);
   }
 
   getCurrentUserId() {
-    return this.afAuth.auth.currentUser.uid;
+   return this.afAuth.auth.currentUser.uid;
   }
 
   // Get user by their userId
   getUser(userId) {
-    return this.afdb.object('/accounts/' + userId);
+    return this.firestore.doc('accounts/' + userId);
   }
 
   // Get requests given the userId.
   getRequests(userId) {
-    return this.afdb.object('/requests/' + userId);
+    return this.firestore.doc('requests/' + userId);
+    // return this.afdb.object('/requests/' + userId);
   }
 
   // Get friend requests given the userId.
   getFriendRequests(userId) {
-    return this.afdb.list('/requests', ref => ref.orderByChild('receiver').equalTo(userId));
+    return this.firestore.doc('requests/' + userId);
+
+    // return this.afdb.list('/requests', ref => ref.orderByChild('receiver').equalTo(userId));
   }
 
   // Get conversation given the conversationId.
   getConversation(conversationId) {
-    return this.afdb.object('/conversations/' + conversationId);
+    return this.firestore.doc('conversations/' + conversationId);
+    // return this.afdb.object('/conversations/' + conversationId);
   }
 
   // Get conversations of the current logged in user.
   getConversations() {
-    return this.afdb.list('/accounts/' + this.afAuth.auth.currentUser.uid + '/conversations');
+    return this.firestore.doc('accounts/' + this.getCurrentUserId()).collection('conversations');
+    // return this.afdb.list('/accounts/' + this.afAuth.auth.currentUser.uid + '/conversations');
   }
 
   // Get messages of the conversation given the Id.
   getConversationMessages(conversationId) {
-    return this.afdb.object('/conversations/' + conversationId + '/messages');
+    return this.firestore.doc('conversations/' + conversationId);
+    // return this.afdb.object('/conversations/' + conversationId + '/messages');
   }
 
   // Get messages of the group given the Id.
   getGroupMessages(groupId) {
-    return this.afdb.object('/groups/' + groupId + '/messages');
-  }
-
-  // Get groups of the logged in user.
-  getGroups_original() {
-    return this.afdb.list('/accounts/' + this.afAuth.auth.currentUser.uid + '/groups');
+    return this.firestore.doc('groups/' + groupId).collection('messages');
+    // return this.afdb.object('/groups/' + groupId + '/messages');
   }
 
   // Get group info given the groupId.
   getGroup(groupId) {
-    return this.afdb.object('/groups/' + groupId);
+    return this.firestore.doc('groups/' + groupId);
+    // return this.afdb.object('/groups/' + groupId);
   }
 
   getBlockedLists() {
-    return this.afdb.list('/accounts/' + this.afAuth.auth.currentUser.uid +
-      '/conversations', ref => ref.orderByChild('blocked').equalTo(true));
+    return this.firestore.doc('accounts/' + this.afAuth.auth.currentUser.uid).collection('conversations').ref.where('blocked','==', true);
+    // return this.afdb.list('/accounts/' + this.afAuth.auth.currentUser.uid +
+    //   '/conversations', ref => ref.orderByChild('blocked').equalTo(true));
   }
-  
 
 
 // MY CODE **********************************
 
   // Get Polls of the logged in user.
   getPollDetails(pId) {
-    return this.afdb.object('/polls/' + pId);
+    return this.firestore.doc('polls/' + pId);
+    // return this.afdb.object('/polls/' + pId);
   }
 
   // Get Polls of the logged in user.
   getGroupPolls(groupId) {
-    return this.afdb.object('/groups/' + groupId + '/polls/');
+    return this.firestore.doc('groups/' + groupId).collection('polls');
+    // return this.afdb.object('/groups/' + groupId + '/polls/');
   }
 
   // Get Resources of the logged in user.
   getGroupResources(groupId) {
-    return this.afdb.object('/groups/' + groupId + '/resources/');
+    return this.firestore.doc('groups/' + groupId).collection('resources');
+    // return this.afdb.object('/groups/' + groupId + '/resources/');
   }
 
   // Get Events of the logged in user.
   getGroupEvents(groupId) {
-    return this.afdb.object('/groups/' + groupId + '/events/');
+    return this.firestore.doc('groups/' + groupId).collection('events');
+    // return this.afdb.object('/groups/' + groupId + '/events/');
   }
 
   // Get Resource details of the logged in user.
   getResourceDetails(rId) {
-    return this.afdb.object('/resources/' + rId);
+    return this.firestore.doc('resources/' + rId);
+    // return this.afdb.object('/resources/' + rId);
   }
 
   // Get Post details of the logged in user.
   getPostDetails(pId) {
-    return this.afdb.object('/posts/' + pId);
+    return this.firestore.doc('posts/' + pId);
+    // return this.afdb.object('/posts/' + pId);
   }
   
   // Get Events details of the logged in user.
   getEventDetails(eId) {
-    return this.afdb.object('/events/' + eId);
+    return this.firestore.doc('events/' + eId);
+    // return this.afdb.object('/events/' + eId);
   }
   // Get Polls of the logged in user.
   getGroupMembers(groupId) {
-    return this.afdb.object('/groups/' + groupId + '/members/');
+    return this.firestore.doc('groups/' + groupId).collection('members');
+    // return this.afdb.object('/groups/' + groupId + '/members/');
   }
 
   updatePollMembers(pollKey, pollOptionIndex, members) {
-    this.afdb.object('/polls/' + pollKey + '/pollOptions/' + pollOptionIndex).update( {
-      members: members
+    this.firestore.doc('polls/' + pollKey + '/pollOptions/' + pollOptionIndex).update ({
+      members
     });
+  //   this.afdb.object('/polls/' + pollKey + '/pollOptions/' + pollOptionIndex).update( {
+  //     members: members
+  //   });
+  // }
   }
-   
+
   updatePollComments(pollKey, comments) {
-    this.afdb.object('/polls/' + pollKey).update( {
-      comments: comments
+    this.firestore.doc('polls/' + pollKey).update ({
+      comments
     });
-    console.log('updatePollComments:' + pollKey, comments);
+    // this.afdb.object('/polls/' + pollKey).update( {
+    //   comments: comments
+    // });
   }
 
   addPoll(poll){
-    poll.addedByUser = this.addedByUser;
-    return this.afdb.list('polls').push(poll);
+    return this.firestore.collection('polls').add(poll);
+    // return this.afdb.list('polls').push(poll);
   }
 
     // Get all groups.
   getGroups() {
-      return this.afdb.list('/groups', ref => ref.orderByChild('name'));
+    return this.firestore.collection('groups');
+      // return this.afdb.list('/groups', ref => ref.orderByChild('name'));
   }
 
   addResource(resource) {
-    resource.addedByUser = this.addedByUser;
-    return this.afdb.list('resources').push(resource);
+    return this.firestore.collection('resources').add(resource);
+    // return this.afdb.list('resources').push(resource);
   }
 
-  
   addPost(post) {
-    post.addedByUser = this.addedByUser;
-    return this.afdb.list('posts').push(post);
+    return this.firestore.collection('posts').add(post);
   }
 
   addEvent(event) {
-    event.addedByUser = this.addedByUser;
-    return this.afdb.list('events').push(event);
+    return this.firestore.collection('events').add(event);
+    // return this.afdb.list('events').push(event);
   }
 
   updateResourceReviews(resourceKey, review) {
    // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
-   review.addedByUser = this.addedByUser;
-   this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
+   this.firestore.doc('resources/' + resourceKey).collection('reviews').add(review);
+   // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
   }
 
   addFirstResourceReview(resourceKey, review) {
     let r = [];
-    this.afdb.object('/resources/' + resourceKey).update( {
+
+    this.firestore.doc('resources/' + resourceKey).update({
       reviews: r
     });
+    // this.afdb.object('/resources/' + resourceKey).update( {
+    //   reviews: r
+    // });
     this.updateResourceReviews(resourceKey, review);
   }
 
   updatePostReviews(postKey, review) {
-    this.afdb.list('/posts/' + postKey + '/reviews/').push(review);
-   }
- 
-  addFirstPostReview(postKey, review) {
-    let r = [];
-    this.afdb.object('/posts/' + postKey).update( {
-      reviews: r
+    return this.firestore.collection('posts').doc(postKey).collection('reviews').add(review).then(() => {
+      const increment = firebase.firestore.FieldValue.increment(1);
+      this.firestore.collection('posts').doc(postKey).update({
+        totalReviewCount : increment
+      });
     });
-    this.updatePostReviews(postKey, review);
-  }
-
-  addPostReview(postId, topReviewKey, reviewKey, review) {
-    this.afdb.list('/posts/' + postId + '/reviews/' + reviewKey).push(review);
-  }
+   }
 
   updateEventReviews(eventKey, review) {
-    // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
-    review.addedByUser = this.addedByUser;
-    this.afdb.list('/events/' + eventKey + '/reviews/').push(review);
+    this.firestore.doc('events/' + eventKey).collection('reviews').add(review);
   }
  
   addFirstEventReview(eventKey, review) {
     let r = [];
-    this.afdb.object('/events/' + eventKey).update( {
+    this.firestore.doc('events/' + eventKey).update({
       reviews: r
     });
     this.updateEventReviews(eventKey, review);
   }
  
   updatePostReactions(postKey, reaction) {
-    // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
-    reaction.addedByUser = this.addedByUser;
-    var newRef = this.afdb.list('/posts/' + postKey + '/reactions/').push(reaction);
-    return newRef.key;
-  }
-
-  addFirstPostReactions(postKey, reaction) {
-    let r = [];
-    this.afdb.object('/posts/' + postKey).update( {
-      reactions: r
+    return this.firestore.collection('posts').doc(postKey).collection('reactions').add(reaction).then(() => {
+      const increment = firebase.firestore.FieldValue.increment(1);
+      this.firestore.collection('posts').doc(postKey).update({
+        totalReactionCount : increment
+      });
     });
-    return this.updatePostReactions(postKey, reaction);
   }
 
   removePostReaction(postKey, reactionKey) {
-    var adaRef = this.afdb.database.ref('/posts/' + postKey + '/reactions/' + reactionKey);
-    adaRef.remove()
-      .then(function() {
-        console.log("Remove succeeded.")
-      })
-      .catch(function(error) {
-        console.log("Remove failed: " + error.message)
-      });  
-    }
+    this.firestore.collection('posts').doc(postKey).collection('reactions').doc(reactionKey).delete().then(() => {
+      const decrement = firebase.firestore.FieldValue.increment(-1);
+      this.firestore.collection('posts').doc(postKey).update({
+        totalReactionCount : decrement
+      });
+    });
+  }
 
   updateResourceReactions(resourceKey, reaction) {
     // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
-    reaction.addedByUser = this.addedByUser;
-    var newRef = this.afdb.list('/resources/' + resourceKey + '/reactions/').push(reaction);
-    return newRef.key;
+    this.firestore.doc('/resources/' + resourceKey).collection('/reactions/').add(reaction);
+    // var newRef = this.afdb.list('/resources/' + resourceKey + '/reactions/').push(reaction);
+    // return newRef.key;
   }
 
   addFirstResourceReactions(resourceKey, reaction) {
     let r = [];
-    this.afdb.object('/resources/' + resourceKey).update( {
+    this.firestore.doc('resources/' + resourceKey).update({
       reactions: r
     });
+    // this.afdb.object('/resources/' + resourceKey).update( {
+    //   reactions: r
+    // });
     return this.updateResourceReactions(resourceKey, reaction);
   }
 
   
   removeEventReaction(eventKey, reactionKey) {
-    var adaRef = this.afdb.database.ref('/events/' + eventKey + '/reactions/' + reactionKey);
-    adaRef.remove()
-      .then(function() {
-        console.log("Remove succeeded.")
-      })
-      .catch(function(error) {
-        console.log("Remove failed: " + error.message)
-      });  
+    this.firestore.doc('/events/' + eventKey + '/reactions/' + reactionKey).delete();
+    // var adaRef = this.afdb.database.ref('/events/' + eventKey + '/reactions/' + reactionKey);
+    // adaRef.remove()
+    //   .then(function() {
+    //     console.log("Remove succeeded.")
+    //   })
+    //   .catch(function(error) {
+    //     console.log("Remove failed: " + error.message)
+    //   });  
     }
 
   updateEventReactions(eventKey, reaction) {
     // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
-    reaction.addedByUser = this.addedByUser;
-    var newRef = this.afdb.list('/events/' + eventKey + '/reactions/').push(reaction);
-    return newRef.key;
+    this.firestore.doc('/events/' + eventKey).collection('/reactions/').add(reaction);
+    // var newRef = this.afdb.list('/events/' + eventKey + '/reactions/').push(reaction);
+    // return newRef.key;
   }
 
   addFirstEventReactions(eventKey, reaction) {
     let r = [];
-    this.afdb.object('/events/' + eventKey).update( {
+    this.firestore.doc('events/' + eventKey).update({
       reactions: r
     });
+    // this.afdb.object('/events/' + eventKey).update( {
+    //   reactions: r
+    // });
     return this.updateEventReactions(eventKey, reaction);
   }
 
   removeResourceReaction(resourceKey, reactionKey) {
-    var adaRef = this.afdb.database.ref('/resources/' + resourceKey + '/reactions/' + reactionKey);
-    adaRef.remove()
-      .then(function() {
-        console.log("Remove succeeded.")
-      })
-      .catch(function(error) {
-        console.log("Remove failed: " + error.message)
-      });
+    this.firestore.doc('/resources/' + resourceKey + '/reactions/' + reactionKey).delete();
+    // var adaRef = this.afdb.database.ref('/resources/' + resourceKey + '/reactions/' + reactionKey);
+    // adaRef.remove()
+    //   .then(function() {
+    //     console.log("Remove succeeded.")
+    //   })
+    //   .catch(function(error) {
+    //     console.log("Remove failed: " + error.message)
+    //   });
     }
 
   updatePollReviews(pollId, review) {
     // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
-    review.addedByUser = this.addedByUser;
-    this.afdb.list('/polls/' + pollId + '/reviews/').push(review);
+    this.firestore.doc('/polls/' + pollId).collection('/reviews/').add(review);
+//    this.afdb.list('/polls/' + pollId + '/reviews/').push(review);
    }
  
    addFirstPollReview(pollId, review) {
      let r = [];
-     this.afdb.object('/polls/' + pollId).update( {
-       reviews: r
-     });
+     this.firestore.doc('polls/' + pollId).update({
+      reactions: r
+    });
+    //  this.afdb.object('/polls/' + pollId).update( {
+    //    reviews: r
+    //  });
      this.updatePollReviews(pollId, review);
    }
  
@@ -323,6 +340,7 @@ export class DataService {
   
    // Get messages of the group given the Id.
    getGroupPosts(groupId) {
-    return this.afdb.object('/groups/' + groupId + '/posts');
+     return this.firestore.doc('groups/' + groupId).collection('posts');
+    // return this.afdb.object('/groups/' + groupId + '/posts');
   }
 }

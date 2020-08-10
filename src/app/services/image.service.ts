@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import * as firebase from 'firebase';
-import { AngularFireDatabase } from '@angular/fire/database';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { MediaCapture } from '@ionic-native/media-capture/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { LoadingService } from './loading.service';
@@ -39,7 +39,7 @@ export class ImageService {
 
 
   constructor(
-    public angularfire: AngularFireDatabase,
+    public firestore: AngularFirestore,
     public loadingProvider: LoadingService,
     public camera: Camera,
     public mediaCapture: MediaCapture,
@@ -107,7 +107,7 @@ export class ImageService {
           firebase.auth().currentUser.updateProfile(profile)
             .then((success) => {
               // Update User Data on Database.
-              this.angularfire.object('/accounts/' + user.userId).update({
+              this.firestore.doc('/accounts/' + user.userId).update({
                 img: url
               }).then((success) => {
                 this.loadingProvider.hide();
@@ -348,6 +348,80 @@ export class ImageService {
         this.loadingProvider.hide();
         console.log("Media Err = " + err);
       });
+    });
+  }
+
+  
+  // Upload group photo message and return a promise as url.
+  uploadGroupPhotoResource(groupId, sourceType): Promise<any> {
+    return new Promise(resolve => {
+      this.photoMessageOptions.sourceType = sourceType;
+      this.loadingProvider.show();
+      // Get picture from camera or gallery.
+      this.camera.getPicture(this.photoMessageOptions).then((imageData) => {
+        // Process the returned imageURI.
+        let imgBlob = this.imgURItoBlob("data:image/jpeg;base64," + imageData);
+        let metadata = {
+          'contentType': imgBlob.type
+        };
+        // Generate filename and upload to Firebase Storage.
+        let ugpRef = firebase.storage().ref().child('images/' + groupId + '/' + this.generateFilename());
+        ugpRef.put(imgBlob, metadata).then((snapshot) => {
+          // URL of the uploaded image!
+          ugpRef.getDownloadURL().then(url => {
+            this.loadingProvider.hide();
+            resolve(url);
+          })
+
+        }).catch((error) => {
+          this.loadingProvider.hide();
+          this.loadingProvider.showToast("Something went wrong");
+        });
+      }).catch((error) => {
+        this.loadingProvider.hide();
+      });
+    });
+  }
+
+  uploadGroupVideoResource(groupId): Promise<any> {
+    return new Promise(resolve => {
+      this.loadingProvider.show();
+      this.mediaCapture.captureVideo().then(data => {
+        let videoUrl = data[0].fullPath;
+        console.log("video path: " + videoUrl);
+        let x = videoUrl.split("/");
+        let filepath = videoUrl.substring(0, videoUrl.lastIndexOf("/"));
+        let name = x[x.length - 1];
+        console.log(filepath + " - " + name);
+        this.file.readAsArrayBuffer(filepath, name).then(success => {
+          console.log(success);
+          let blob = new Blob([success], { type: "video/mp4" });
+          console.log(blob);
+          let upload = firebase.storage().ref().child('videos/' + groupId + "/" + name).put(blob);
+          upload.then(res => {
+            let process = res.bytesTransferred / res.totalBytes * 100;
+            console.log(process);
+            this.loadingProvider.hide();
+
+            resolve(res.downloadURL);
+          }, err => {
+            this.loadingProvider.hide();
+            console.log("Failed")
+          });
+
+        });
+      }, err => {
+        this.loadingProvider.hide();
+        console.log("Media Err = " + err);
+      });
+    });
+  }
+
+  async getGroupVideoResource(resourceurl) {
+   return await firebase.storage().ref().child(resourceurl).getDownloadURL().then(function(url) {
+    return url;  
+  }).catch(function(error) {
+      // Handle any errors
     });
   }
 }

@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AngularFireDatabase } from '@angular/fire/database';
 import { LoadingService } from '../services/loading.service';
 import { DataService } from '../services/data.service';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-messages',
@@ -19,7 +19,7 @@ export class MessagesPage implements OnInit {
   constructor(
     private router: Router,
     private afAuth: AngularFireAuth,
-    private angularfire: AngularFireDatabase,
+    private firestore: AngularFirestore,
     private loadingProvider: LoadingService,
     private dataProvider: DataService
   ) { }
@@ -32,31 +32,30 @@ export class MessagesPage implements OnInit {
 
     // Get info of conversations of current logged in user.
     this.dataProvider.getConversations().snapshotChanges().subscribe((conversationsInfoRes: any) => {
-
       let conversations = [];
-      conversations = conversationsInfoRes.map(c => ({ key: c.key, ...c.payload.val() }));
-
-      console.log(conversations);
-
+      console.log('conversationsInfoRes',conversationsInfoRes);
+      conversations = conversationsInfoRes.map(c => ({ key: c.payload.doc.id, ...c.payload.doc.data() }));
+      
+      console.log('conversations:', conversations);
       if (conversations.length > 0) {
         conversations.forEach((conversation) => {
-          console.log(conversation);
+          console.log('conversation',conversation);
           if (conversation) {
             // Get conversation partner info.
-            this.dataProvider.getUser(conversation.key).snapshotChanges().subscribe((user) => {
-              conversation.friend = user.payload.val();
+            this.dataProvider.getUser(conversation.key).get().subscribe((user) => {
+              conversation.friend = user.data();
               // Get conversation info.
 
               this.dataProvider.getConversation(conversation.conversationId).snapshotChanges().subscribe((obj: any) => {
                 // Get last message of conversation.
-                console.log(obj.payload.val());
-                if (obj.payload.val() != null) {
-                  let lastMessage = obj.payload.val().messages[obj.payload.val().messages.length - 1];
+                console.log(obj.payload.data());
+                if (obj.payload.data() != null) {
+                  let lastMessage = obj.payload.data().messages[obj.payload.data().messages.length - 1];
                   conversation.date = lastMessage.date;
                   conversation.sender = lastMessage.sender;
                   // Set unreadMessagesCount
-                  conversation.unreadMessagesCount = obj.payload.val().messages.length - conversation.messagesRead;
-                  console.log(obj.payload.val().messages.length + "-" + conversation.messagesRead);
+                  conversation.unreadMessagesCount = obj.payload.data().messages.length - conversation.messagesRead;
+                  console.log(obj.payload.data().messages.length + "-" + conversation.messagesRead);
                   console.log(conversation.unreadMessagesCount);
                   // Process last message depending on messageType.
                   if (lastMessage.type == 'text') {

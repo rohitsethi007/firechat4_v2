@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LoadingService } from './loading.service';
 import { DataService } from './data.service';
-import { AngularFireDatabase } from '@angular/fire/database';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { take } from 'rxjs/operators';
 
@@ -11,58 +11,63 @@ import { take } from 'rxjs/operators';
 export class FirebaseService {
 
   constructor(
-    public angularfire: AngularFireDatabase,
+    public firestore: AngularFirestore,
     public loadingProvider: LoadingService,
     private afAuth: AngularFireAuth,
-    private dataProvider: DataService) {
-    console.log("Initializing Firebase Provider");
-  }
+    private dataProvider: DataService) { }
 
   // Send friend request to userId.
   sendFriendRequest(userId) {
-    let loggedInUserId = this.afAuth.auth.currentUser.uid;
+    const loggedInUserId = this.afAuth.auth.currentUser.uid;
     this.loadingProvider.show();
 
-    var requestsSent;
+    let requestsSent;
     // Use take(1) so that subscription will only trigger once.
-    this.dataProvider.getRequests(loggedInUserId).snapshotChanges().pipe(take(1)).subscribe((requests: any) => {
-      console.log(requests.payload.val());
-      if (requests.payload.val() != null && requests.payload.val().requestsSent != null)
-        requestsSent = requests.payload.val().requestsSent;
+    this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests: any) => {
+      if (requests.data() != null
+        && requests.data().requestsSent != null) {
+        requestsSent = requests.data().requestsSent;
+      }
 
-      if (requestsSent == null || requestsSent == undefined) {
+      if (requestsSent == null || requestsSent === undefined) {
         requestsSent = [userId];
       } else {
-        if (requestsSent.indexOf(userId) == -1)
+        if (requestsSent.indexOf(userId) === -1) {
           requestsSent.push(userId);
+        }
       }
+
       // Add requestsSent information.
-      this.angularfire.object('/requests/' + loggedInUserId).update({
-        requestsSent: requestsSent
+      this.firestore.collection('requests').doc(loggedInUserId).set({
+        requestsSent
       }).then((success) => {
-        var friendRequests;
-        this.dataProvider.getRequests(userId).snapshotChanges().pipe(take(1)).subscribe((requests: any) => {
-          if (requests.payload.val() != null && requests.payload.val().friendRequests != null)
-            friendRequests = requests.payload.val().friendRequests;
+        let friendRequests;
+        // tslint:disable-next-line: no-shadowed-variable
+        this.dataProvider.getRequests(userId).get().subscribe((requests: any) => {
+          if (requests.data() != null
+            && requests.data().friendRequests != null) {
+            friendRequests = requests.data().friendRequests;
+          }
 
           if (friendRequests == null) {
             friendRequests = [loggedInUserId];
           } else {
-            if (friendRequests.indexOf(userId) == -1)
+            if (friendRequests.indexOf(userId) === -1) {
               friendRequests.push(loggedInUserId);
+            }
           }
           // Add friendRequest information.
-          this.angularfire.object('/requests/' + userId).update({
-            friendRequests: friendRequests
-          }).then((success) => {
+          this.firestore.collection('requests').doc(userId).set({
+            friendRequests
+          }).then((succ) => {
             this.loadingProvider.hide();
-            this.loadingProvider.showToast("Friend Request Sent")
-            // this.alertProvider.showFriendRequestSent();
+            this.loadingProvider.showToast('Friend Request Sent');
           }).catch((error) => {
             this.loadingProvider.hide();
           });
         });
       }).catch((error) => {
+        console.log('error', error);
         this.loadingProvider.hide();
       });
     });
@@ -70,34 +75,36 @@ export class FirebaseService {
 
   // Cancel friend request sent to userId.
   cancelFriendRequest(userId) {
-    let loggedInUserId = this.afAuth.auth.currentUser.uid;
+    const loggedInUserId = this.afAuth.auth.currentUser.uid;
     this.loadingProvider.show();
 
-    var requestsSent;
-    this.dataProvider.getRequests(loggedInUserId).snapshotChanges().pipe(take(1)).subscribe((requests: any) => {
-      requestsSent = requests.payload.val().requestsSent;
+    let requestsSent = [];
+    this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests: any) => {
+      requestsSent = requests.data().requestsSent;
       requestsSent.splice(requestsSent.indexOf(userId), 1);
       // Update requestSent information.
-      this.angularfire.object('/requests/' + loggedInUserId).update({
-        requestsSent: requestsSent
+      this.firestore.collection('requests').doc(loggedInUserId).set({
+        requestsSent
       }).then((success) => {
-        var friendRequests;
-        this.dataProvider.getRequests(userId).snapshotChanges().pipe(take(1)).subscribe((requests: any) => {
-          friendRequests = requests.payload.val().friendRequests;
+        let friendRequests;
+        this.dataProvider.getRequests(userId).get().subscribe((req: any) => {
+          friendRequests = req.data().friendRequests;
           console.log(friendRequests);
           friendRequests.splice(friendRequests.indexOf(loggedInUserId), 1);
           // Update friendRequests information.
-          this.angularfire.object('/requests/' + userId).update({
-            friendRequests: friendRequests
-          }).then((success) => {
+          this.firestore.collection('requests').doc(userId).set({
+            friendRequests
+          }).then((succ) => {
+            console.log(succ);
             this.loadingProvider.hide();
-            this.loadingProvider.showToast("Removed Friend Request");
-            // this.alertProvider.showFriendRequestRemoved();
+            this.loadingProvider.showToast('Removed Friend Request');
           }).catch((error) => {
+            console.log(error);
             this.loadingProvider.hide();
           });
         });
       }).catch((error) => {
+        console.log(error);
         this.loadingProvider.hide();
       });
     });
@@ -105,48 +112,50 @@ export class FirebaseService {
 
   // Delete friend request.
   deleteFriendRequest(userId) {
-    let loggedInUserId = this.afAuth.auth.currentUser.uid;
+    const loggedInUserId = this.afAuth.auth.currentUser.uid;
     this.loadingProvider.show();
 
-    var friendRequests;
-    this.dataProvider.getRequests(loggedInUserId).snapshotChanges().pipe(take(1)).subscribe((requests: any) => {
-      friendRequests = requests.payload.val().friendRequests;
-      console.log(friendRequests);
-      friendRequests.splice(friendRequests.indexOf(userId), 1);
+    let friendRequests = [];
+    this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests: any) => {
+      friendRequests = requests.data().friendRequests;
+      friendRequests = friendRequests.filter(u => u !== userId);
       // Update friendRequests information.
-      this.angularfire.object('/requests/' + loggedInUserId).update({
-        friendRequests: friendRequests
+      this.firestore.collection('requests').doc(loggedInUserId).set({
+        friendRequests
       }).then((success) => {
-        var requestsSent;
-        this.dataProvider.getRequests(userId).snapshotChanges().pipe(take(1)).subscribe((requests: any) => {
-          requestsSent = requests.payload.val().requestsSent;
+        let requestsSent;
+        this.dataProvider.getRequests(userId).get().subscribe((req: any) => {
+          requestsSent = req.data().requestsSent;
           requestsSent.splice(requestsSent.indexOf(loggedInUserId), 1);
+          console.log('requestsSent:', requestsSent, loggedInUserId, requestsSent.indexOf(userId), 1);
           // Update requestsSent information.
-          this.angularfire.object('/requests/' + userId).update({
-            requestsSent: requestsSent
-          }).then((success) => {
+          this.firestore.collection('requests').doc(userId).set({
+            requestsSent
+          }).then((succ) => {
+            console.log(succ);
             this.loadingProvider.hide();
 
           }).catch((error) => {
+            console.log(error);
             this.loadingProvider.hide();
           });
         });
-      }).catch((error) => {
+      }).catch((err) => {
+        console.log(err);
         this.loadingProvider.hide();
-        //TODO ERROR
       });
     });
   }
 
   // Accept friend request.
   acceptFriendRequest(userId) {
-    let loggedInUserId = this.afAuth.auth.currentUser.uid;
+    const loggedInUserId = this.afAuth.auth.currentUser.uid;
     // Delete friend request.
     this.deleteFriendRequest(userId);
 
     this.loadingProvider.show();
-    this.dataProvider.getUser(loggedInUserId).snapshotChanges().pipe(take(1)).subscribe((account: any) => {
-      var friends = account.payload.val().friends;
+    this.dataProvider.getUser(loggedInUserId).get().subscribe((account: any) => {
+      let friends = account.data().friends;
       if (!friends) {
         friends = [userId];
       } else {
@@ -154,18 +163,18 @@ export class FirebaseService {
       }
       // Add both users as friends.
       this.dataProvider.getUser(loggedInUserId).update({
-        friends: friends
+        friends
       }).then((success) => {
-        this.dataProvider.getUser(userId).snapshotChanges().pipe(take(1)).subscribe((account: any) => {
-          var friends = account.payload.val().friends;
+        this.dataProvider.getUser(userId).get().subscribe((acc: any) => {
+          let friends = acc.data().friends;
           if (!friends) {
             friends = [loggedInUserId];
           } else {
             friends.push(loggedInUserId);
           }
           this.dataProvider.getUser(userId).update({
-            friends: friends
-          }).then((success) => {
+            friends
+          }).then((succ) => {
             this.loadingProvider.hide();
           }).catch((error) => {
             this.loadingProvider.hide();

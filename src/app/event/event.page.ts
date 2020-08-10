@@ -5,7 +5,6 @@ import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
 import { ReviewModalPage } from '../review-modal/review-modal.page';
 import * as firebase from 'firebase';
-import { AngularFireDatabase } from '@angular/fire/database';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
 
 @Component({
@@ -28,8 +27,7 @@ export class EventPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private navCtrl: NavController,
-    private modalCtrl: ModalController,
-    private angularfire: AngularFireDatabase
+    private modalCtrl: ModalController
   ) {
     this.event = {showSmiley: false, showCheckin: false, addedByUser: {}}; 
     this.getEventDetails();
@@ -52,27 +50,28 @@ export class EventPage implements OnInit {
       if (data !== null) {
         let review: any;
         let currentUserName: any;
-        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
-          if (account.payload.exists()) {
-            currentUserName = account.payload.val().username; 
+        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
+          let account = user.payload.data();
 
-            review = {
-              dateCreated: new Date().toString(),
-              addedBy: this.dataProvider.getCurrentUserId(),
-              addedByUsername: currentUserName,
-              review: data.data.review,
-              rating: data.data.rating
-            };
+          currentUserName = account.username;
 
-            if (this.event.reviews === undefined) {
-              let reviews = [];
-              reviews.push(review);
-              this.dataProvider.addFirstEventReview(this.eventId, review);
-            } else {
-              this.dataProvider.updateEventReviews(this.eventId, review);
-            }
-            //this.ngOnInit();
-          }});
+          review = {
+            dateCreated: new Date().toString(),
+            addedBy: this.dataProvider.getCurrentUserId(),
+            addedByUsername: currentUserName,
+            review: data.data.review,
+            rating: data.data.rating
+          };
+
+          if (this.event.reviews === undefined) {
+            let reviews = [];
+            reviews.push(review);
+            this.dataProvider.addFirstEventReview(this.eventId, review);
+          } else {
+            this.dataProvider.updateEventReviews(this.eventId, review);
+          }
+
+        });
       }
     });
  
@@ -85,10 +84,10 @@ export class EventPage implements OnInit {
     this.eventId = this.route.snapshot.params.id;
     this.dataProvider.getEventDetails(this.eventId).snapshotChanges().subscribe((event: any) => {
       if (event.payload.exists()) {
-        let p = event.payload.val();
+        let p = event.payload.data();
         p.key = event.payload.key;
-        this.title = event.payload.val().title;
-        console.log("oye" + p);
+        this.title = event.payload.data().title;
+
    // Check for Thanks
         let totalReactionCount = 0;
         let totalReviewCount = 0;
@@ -224,7 +223,7 @@ submitReply() {
   let currentUserName: any;
   this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
     if (account.payload.exists()) {
-      currentUserName = account.payload.val().username;
+      currentUserName = account.payload.data().username;
 
       review = {
         dateCreated: new Date().toString(),

@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
-
+import { SharedModule } from '../services/share.module';
 import { NewPostPage } from './new-post.page';
 
 const routes: Routes = [
@@ -19,6 +19,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    SharedModule,
     IonicModule,
     RouterModule.forChild(routes)
   ],

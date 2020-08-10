@@ -7,106 +7,53 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="food-listing-content">
-  <ng-container *ngIf="groups && groups.length > 0">
-    <div class="listing-item" *ngFor="let group of groups | groupFilter: searchGroup" (click)="viewGroup(group.key)">
-      <div class="cover-wrapper">
-          <app-image-shell class="cover-image add-overlay" animation="spinner" [mode]="'cover'" [src]="group.img">
-            <app-aspect-ratio [ratio]="{w:35, h:15}">
-              <div class="cover-icon-wrapper">
-                <app-aspect-ratio [ratio]="{w: 20, h: 7}">
-                  <app-image-shell class="group-icon" [src]="group.icon"></app-image-shell>
-                </app-aspect-ratio>
-              </div>
-            </app-aspect-ratio>
-          </app-image-shell>
-
+<ion-content>
+  <div *ngIf="groups && groups.length > 0">
+    <div class="listing-item" *ngFor="let group of groups">
+      <ion-card (click)="viewGroup(group.key)">
+      <div>
+        <img src="{{group.img}}">
       </div>
-      <ion-row class="info-row">
-        <ion-col class="description-col">
-          <ion-row class="description-wrapper">
-            <h3 class="item-name">
-                <app-text-shell [data]="group.name"></app-text-shell>
-            </h3>
-            <p class="item-address">
-              <app-text-shell [data]="group.description"></app-text-shell>
-            </p>
-         
-            <ion-row class="accommodations-wrapper">
-              <ion-col class="item-accommodation">
-                <ion-icon size="medium" name="people-outline"></ion-icon>
-                <span class="accommodation-property">Members</span>
-                <span class="accommodation-value">
-                  <app-text-shell [data]="group.membersCount"></app-text-shell>
-                </span>
-              </ion-col>
-              <ion-col class="item-accommodation">
-                <ion-icon size="medium" name="albums-outline"></ion-icon>
-                <span class="accommodation-property">Resources</span>
-                <span class="accommodation-value">
-                  <app-text-shell [data]="group.resourcesCount"></app-text-shell>
-                </span>
-              </ion-col>
-              <ion-col class="item-accommodation">
-                <ion-icon  size="medium"  name="pie-chart-outline"></ion-icon>
-                <span class="accommodation-property">Polls</span>
-                <span class="accommodation-value">
-                  <app-text-shell [data]="group.pollsCount"></app-text-shell>
-                </span>
-              </ion-col>
-              <ion-col class="item-accommodation">
-                <ion-icon size="medium" name="chatbubbles-outline"></ion-icon>
-                <span class="accommodation-property">Posts</span>
-                <span class="accommodation-value">
-                  <app-text-shell [data]="group.postsCount"></app-text-shell>
-                </span>
-              </ion-col>
-            </ion-row>
-          </ion-row>
-
-          
-        </ion-col>
-        <ion-col class="stats-col" size="2">
-          <span class="item-rating" [attr.ratingBase]="group.members.length">
-           <!-- <app-text-shell [data]="group.members.length">Peek</app-text-shell>-->
-           Peek
+      <ion-card-header>
+       <ion-card-title>{{group.name}}</ion-card-title>
+     </ion-card-header>
+      <ion-card-content>
+        {{group.description}}
+      </ion-card-content>
+      <ion-row class="summary-row">
+        <ion-col>
+          <ion-icon class="icon" size="small" name="people"></ion-icon>
+          <span class="text">
+            {{group.membersCount}} 
           </span>
-
+        </ion-col>
+        <ion-col>
+          <ion-icon class="icon" size="small" name="chatbubbles"></ion-icon>
+          <span class="text">
+            {{group.postsCount}}
+          </span>
+        </ion-col>
+        <ion-col>
+          <ion-icon class="icon" size="small" name="library"></ion-icon>
+          <span class="text">
+            {{group.resourcesCount}}
+          </span>
+        </ion-col>
+        <ion-col>
+          <ion-icon class="icon" size="small"  name="pie-chart"></ion-icon>
+          <span class="text">
+            {{group.pollsCount}}
+          </span>
+        </ion-col>
+        <ion-col>
+          <ion-icon class="icon" size="small"  name="calendar"></ion-icon>
+          <span class="text">
+            {{group.eventsCount}}
+          </span>
         </ion-col>
       </ion-row>
-
+    </ion-card>
     </div>
 
-  </ng-container>
+  </div>
 </ion-content>
-<!--
-<ion-content > 
-
-  <div class="empty-list" *ngIf="groups && groups.length <= 0">
-    <h1>
-      <ion-icon name="md-chatbubbles"></ion-icon>
-    </h1>
-    <p>No new groups yet.</p>
-  </div>
-
-  <div *ngIf="groups && groups.length > 0">
-    <ion-searchbar [(ngModel)]="searchGroup" placeholder="search"></ion-searchbar>
-    <ion-list lines="none">
-      <ion-item *ngFor="let group of groups | groupFilter: searchGroup" (click)="viewGroup(group.key)">
-        <ion-thumbnail slot="start">
-          <img src="{{group.img}}" onError="this.src='./assets/images/default-group.png'">
-        </ion-thumbnail>
-        <ion-label>
-          <ion-text>
-            <h2>{{group.name}}</h2>
-          </ion-text>
-          <ion-text>
-            <p>{{group.date | DateFormat}}</p>
-          </ion-text>
-        </ion-label>
-        <ion-badge slot="end" color="danger" *ngIf="group.unreadMessagesCount > 0">{{group.unreadMessagesCount}}
-        </ion-badge>
-      </ion-item>
-    </ion-list>
-  </div>
-</ion-content>-->

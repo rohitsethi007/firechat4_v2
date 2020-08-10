@@ -5,9 +5,8 @@ import { NavController, ModalController } from '@ionic/angular';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
 import { ReviewModalPage } from '../review-modal/review-modal.page';
-import * as firebase from 'firebase';
-import { AngularFireDatabase } from '@angular/fire/database';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-resource',
@@ -33,7 +32,7 @@ export class ResourcePage implements OnInit {
     private router: Router,
     private navCtrl: NavController,
     private modalCtrl: ModalController,
-    private angularfire: AngularFireDatabase
+    private firestore: AngularFirestore
   ) {
     this.resource = {showSmiley: false, showBookmark: false, addedByUser: {}, type: ''}; 
     this.getResourceDetails();
@@ -57,7 +56,7 @@ export class ResourcePage implements OnInit {
         let currentUserName: any;
         this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
           if (account.payload.exists()) {
-            currentUserName = account.payload.val().username; 
+            currentUserName = account.payload.data().username;
 
             review = {
               dateCreated: new Date().toString(),
@@ -89,9 +88,9 @@ export class ResourcePage implements OnInit {
     this.resourceId = this.route.snapshot.params.id;
     this.subscription = this.dataProvider.getResourceDetails(this.resourceId).snapshotChanges().subscribe((resource: any) => {
       if (resource.payload.exists()) {
-        let p = resource.payload.val();
+        let p = resource.payload.data();
         p.key = resource.payload.key;
-        this.title = resource.payload.val().title;
+        this.title = resource.payload.data().title;
        // Check for Thanks
         let totalReactionCount = 0;
         let totalReviewCount = 0;
@@ -235,7 +234,7 @@ export class ResourcePage implements OnInit {
     let currentUserName: any;
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
       if (account.payload.exists()) {
-        currentUserName = account.payload.val().username;
+        currentUserName = account.payload.data().username;
   
         review = {
           dateCreated: new Date().toString(),

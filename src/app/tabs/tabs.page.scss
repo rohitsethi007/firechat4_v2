@@ -1,1 +1,16 @@
+.tabs {
+  border-top: black;
+}
+        .filters-btn {
+            --padding-start: 0px;
+            --padding-end: 0px;
+    
+            margin: 0px;
+            font-size: 18px;
+            // override Ionic fixed height
+            height: initial;
+          }
 
+          ion-tab-button {
+            --color-selected: var(--ion-color-secondary);
+          }

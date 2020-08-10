@@ -8,92 +8,110 @@
 </ion-header> 
 
 <ion-content  class="forms-validations-content">
-  <div>
-    <div>
-      <form class="validations-form" [formGroup]="eventForm" (ngSubmit)="submitEventForm()">
-        <ion-list class="inputs-list" lines="full">
-          <ion-list-header>
-            <ion-label class="header-title">Enter the details of the Event..</ion-label>
-          </ion-list-header>
-          <ion-item class="input-item">
-            <ion-label position="floating">Title</ion-label>
-            <ion-input type="text" formControlName="title" clearInput placeholder="Enter a short description"></ion-input>
-          </ion-item>
-          <div class="error-container">
-            <ng-container *ngFor="let validation of validations.title">
-              <div class="error-message" *ngIf="eventForm.get('title').hasError(validation.type) && (eventForm.get('title').dirty || eventForm.get('title').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <span>{{ validation.message }}</span>
-              </div>
-            </ng-container>
+  <form class="validations-form" [formGroup]="eventForm" (ngSubmit)="submitEventForm()">
+    <ion-list class="inputs-list" lines="full">
+      <ion-list-header>
+        <ion-label class="header-title">Enter the details of the Event..</ion-label>
+      </ion-list-header>
+      <ion-item class="input-item">
+        <ion-label position="floating">Title</ion-label>
+        <ion-input type="text" formControlName="title" clearInput placeholder="Enter a short description"></ion-input>
+      </ion-item>
+      <div class="error-container">
+        <ng-container *ngFor="let validation of validations.title">
+          <div class="error-message" *ngIf="eventForm.get('title').hasError(validation.type) && (eventForm.get('title').dirty || eventForm.get('title').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <span>{{ validation.message }}</span>
           </div>
-          <ion-item class="input-item">
-            <ion-label position="floating">Event Date:</ion-label>
-            <ion-datetime formControlName="eventDate" value="{minEventYear}-{minEventMonth}-{minEventDay}" [min]="minDate" [max]="maxEventYear"
-            [dayShortNames]="customDayShortNames"
-            displayFormat="DDD. MMM DD, YYYY"
-            monthShortNames="January, February, March, April, May, June, July, August, September, October, November, December"></ion-datetime>
-            </ion-item>
-          <div class="error-container">
-            <ng-container *ngFor="let validation of validations.eventForm">
-              <div class="error-message" *ngIf="eventForm.get('eventDate').hasError(validation.type) && (eventForm.get('eventDate').dirty)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <span>{{ validation.message }}</span>
-              </div>
-            </ng-container>
+        </ng-container>
+      </div>
+      <ion-item class="input-item">
+        <ion-label position="floating">Event Date:</ion-label>
+        <ion-datetime formControlName="eventDate" value="{minEventYear}-{minEventMonth}-{minEventDay}" [min]="minDate" [max]="maxEventYear"
+        [dayShortNames]="customDayShortNames"
+        displayFormat="DDD. MMM DD, YYYY"
+        monthShortNames="January, February, March, April, May, June, July, August, September, October, November, December"></ion-datetime>
+        </ion-item>
+        <div class="error-container">
+          <ng-container *ngFor="let validation of validations.eventDate">
+            <div class="error-message" *ngIf="eventForm.get('eventDate').hasError(validation.type) && (eventForm.get('eventDate').dirty || eventForm.get('eventDate').touched)">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              <span>{{ validation.message }}</span>
+            </div>
+          </ng-container>
+        </div>
+      <ion-item class="input-item">
+        <ion-label position="floating">Event Time:</ion-label>
+        <ion-datetime  formControlName="eventTime" displayFormat="h:mm A" minuteValues="0,15,30,45"></ion-datetime>
+      </ion-item>
+      <div class="error-container">
+        <ng-container *ngFor="let validation of validations.eventTime">
+          <div class="error-message" *ngIf="eventForm.get('eventTime').hasError(validation.type) && (eventForm.get('eventTime').dirty || eventForm.get('eventTime').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <span>{{ validation.message }}</span>
           </div>
-          <ion-item class="input-item">
-            <ion-label position="floating">Event Time:</ion-label>
-            <ion-datetime  formControlName="eventTime" displayFormat="h:mm A" minuteValues="0,15,30,45"></ion-datetime>
-          </ion-item>
-          <div class="error-container">
-            <ng-container *ngFor="let validation of validations.eventForm">
-              <div class="error-message" *ngIf="eventForm.get('eventTime').hasError(validation.type) && (eventForm.get('eventTime').dirty)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <span>{{ validation.message }}</span>
-              </div>
-            </ng-container>
+        </ng-container>
+      </div>
+      <ion-item class="input-item">
+        <ion-label position="floating">Address:</ion-label>
+        <ion-textarea rows="6"  formControlName="address" clearInput placeholder="Enter the full address of the event"></ion-textarea>
+      </ion-item>
+      <div class="error-container">
+        <ng-container *ngFor="let validation of validations.address">
+          <div class="error-message" *ngIf="eventForm.get('address').hasError(validation.type) && (eventForm.get('address').dirty || eventForm.get('address').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <span>{{ validation.message }}</span>
           </div>
-          <ion-item class="input-item">
-            <ion-label position="floating">Address:</ion-label>
-            <ion-textarea rows="6"  formControlName="address" clearInput placeholder="Enter the full address of the event"></ion-textarea>
-          </ion-item>
-          <ion-item class="input-item">
-            <ion-label position="floating">Weblink:</ion-label>
-            <ion-input type="text" formControlName="weblink" clearInput placeholder="Paste or type the link" (focusout)="linkFocusOut()"></ion-input>
-          </ion-item> 
-          <ion-item class="input-item">
-            <ion-label position="floating">Description:</ion-label>
-            <ion-textarea rows="6"   [(ngModel)]="linkDescription" name="linkDescription" formControlName="description" clearInput placeholder="Enter the details of the event"></ion-textarea>
-          </ion-item>
-          <div class="error-container">
-            <ng-container *ngFor="let validation of validations.description">
-              <div class="error-message" *ngIf="eventForm.get('description').hasError(validation.type) && (eventForm.get('description').dirty || eventForm.get('description').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <span>{{ validation.message }}</span>
-              </div>
-            </ng-container>
+        </ng-container>
+      </div>
+      <ion-item class="input-item">
+        <ion-label position="floating">Weblink:</ion-label>
+        <ion-input type="text" formControlName="weblink" clearInput placeholder="Paste or type the link" (focusout)="linkFocusOut()"></ion-input>
+      </ion-item> 
+      <ion-item class="input-item">
+        <ion-label position="floating">Description:</ion-label>
+        <ion-textarea rows="6"   [(ngModel)]="linkDescription" name="linkDescription" formControlName="description" clearInput placeholder="Enter the details of the event"></ion-textarea>
+      </ion-item>
+      <div class="error-container">
+        <ng-container *ngFor="let validation of validations.description">
+          <div class="error-message" *ngIf="eventForm.get('description').hasError(validation.type) && (eventForm.get('description').dirty || eventForm.get('description').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <span>{{ validation.message }}</span>
           </div>
-          <ion-item>
-            <ion-label>I'll be attending the Event.</ion-label>
-            <ion-checkbox formControlName="eventAttending" checked="false"  color="primary"></ion-checkbox>
-          </ion-item>
+        </ng-container>
+      </div>
+      <ion-item>
+        <ion-label>I'll be attending the Event.</ion-label>
+        <ion-checkbox formControlName="eventAttending" checked="false"  color="primary"></ion-checkbox>
+      </ion-item>
+    </ion-list>
+    <ion-list class="inputs-list" lines="full">
+      <ion-list-header>
+        <ion-label class="header-title">Select relevant tags</ion-label>
+      </ion-list-header>
+ 
+      <div class="reviews-wrapper">
+      <ion-row>
+        <div class="tags" formArrayName="tags" *ngFor="let entry of eventForm.controls.tags.controls; let i = index">
+          <ion-label *ngIf="postTags[i] === undefined || !postTags[i].isChecked" class="item-rating" [attr.ratingBase]="0">{{postTags[i].val}}</ion-label>
+          <ion-label *ngIf="postTags[i] !== undefined && postTags[i].isChecked" class="item-rating" [attr.ratingBase]="1">{{postTags[i].val}}</ion-label>  
+          <ion-checkbox slot="start" [formControlName]="i" [(ngModel)]="postTags[i].isChecked"></ion-checkbox>
+        </div>
+      </ion-row>
 
-        <ion-list class="inputs-list" lines="full">
-          <ion-list-header>
-            <ion-label class="header-title">Select tags relevant to the contact</ion-label>
-          </ion-list-header>
-  
-          <ion-row class="checkbox-tags rounded-checkbox-tags">
-            <ion-item *ngFor="let entry of eventTags" lines="none" class="checkbox-tag rounded-tag">
-              <ion-label class="tag-label">{{entry.val}}</ion-label>
-              <ion-checkbox formControlName="eventTags" [(ngModel)]="entry.isChecked"></ion-checkbox>
-            </ion-item>
-          </ion-row>
-        </ion-list>
-        <ion-button class="submit-btn" type="submit" expand="block" fill="outline" >Submit</ion-button>
-        </ion-list>
-      </form>
-    </div>
-  </div>
+      <div class="error-container">
+        <ng-container *ngFor="let validation of validations.tags">
+          <div class="error-message" *ngIf="eventForm.get('tags').hasError(validation.type) && (eventForm.get('tags').dirty || eventForm.get('tags').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <span>{{ validation.message }}</span>
+          </div>
+        </ng-container>
+      </div>
+      </div>
+    </ion-list>
+
+    <ion-button class="submit-btn" type="submit" expand="block" fill="outline" [disabled]="!eventForm.valid">Submit</ion-button>
+
+  </form>
+
 </ion-content>

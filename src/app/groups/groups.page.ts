@@ -31,57 +31,25 @@ export class GroupsPage implements OnInit {
     // Initialize
     this.searchGroup = '';
     this.loadingProvider.show();
-
     // Get groups
-    this.dataProvider.getGroups().snapshotChanges().subscribe((groupIdsRes: any) => {
-      let groupIds = [];
-      groupIds = groupIdsRes.map(c => ({ key: c.key, ...c.payload.val() }));
-      console.log(groupIds);
-      if (groupIds.length > 0) {
-        if (this.groups && this.groups.length > groupIds.length) {
-          // User left/deleted a group, clear the list and add or update each group again.
-          this.groups = [];
-        }
-        groupIds.forEach((groupId) => {
-          console.log(groupId);
-          this.dataProvider.getGroup(groupId.key).snapshotChanges().subscribe((groupRes: any) => {
-            const group = { key: groupRes.key, ...groupRes.payload.val() };
-            console.log(group);
+    this.dataProvider.getGroups().snapshotChanges().subscribe((data: any) => {
 
-            if (group.key != null) {
-              // Get group's unreadMessagesCount
-              group.unreadMessagesCount = group.messages.length; // - groupId.messagesRead;
-              // Get group's last active date
-              group.date = group.messages[group.messages.length - 1].date;
+    this.groups = data.map(c => {
+        return { $key: c.payload.doc.data().groupId, ...c.payload.doc.data() };
+      });
+      // this.groups = data.map(e => {
+      //   return {
+      //     id: e.payload.doc.id,
+      //     dateCreated: e.payload.doc.data()['dateCreated'],
+      //     description: e.payload.doc.data()['description'],
+      //     groupTags: e.payload.doc.data()['groupTags'],
+      //     img: e.payload.doc.data()['img'],
+      //     members: e.payload.doc.data()['members'],
+      //     messages: e.payload.doc.data()['messages'],
+      //     name: e.payload.doc.data()['name']
+      //   };
+      // })
 
-              group.membersCount = 0;
-              group.pollsCount = 0;
-              group.resourcesCount = 0;
-
-              if (group.members) {
-                group.membersCount = group.members.length;
-              }
-              if (group.polls) {
-                group.pollsCount = group.polls.length;
-              }
-              if (group.resources ) {
-                group.resourcesCount = group.resources.length;
-              }
-              if (group.posts === undefined) {
-                group.postsCount = 0;
-              } else {
-                group.postsCount = group.posts.length ;
-              }
-              this.addOrUpdateGroup(group);
-            }
-
-          });
-        });
-        this.loadingProvider.hide();
-      } else {
-        this.groups = [];
-        this.loadingProvider.hide();
-      }
     });
 
     // Update groups' last active date time elapsed every minute based on Moment.js.

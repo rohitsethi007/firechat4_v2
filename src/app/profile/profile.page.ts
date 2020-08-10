@@ -2,13 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../services/login.service';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
-import { AngularFireDatabase } from '@angular/fire/database';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AlertController, Platform } from '@ionic/angular';
 import { ImageService } from '../services/image.service';
 import { Camera } from '@ionic-native/camera/ngx';
 import { FirebaseX } from '@ionic-native/firebase-x/ngx';
-
+import { AngularFirestore } from '@angular/fire/firestore';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Validator } from 'src/environments/validator';
 
@@ -32,7 +31,7 @@ export class ProfilePage implements OnInit {
     private loginService: LoginService,
     private dataProvider: DataService,
     private loadingProvider: LoadingService,
-    private afdb: AngularFireDatabase,
+    private firestore: AngularFirestore,
     private afAuth: AngularFireAuth,
     private alertCtrl: AlertController,
     private imageProvider: ImageService,
@@ -57,26 +56,28 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user) => {
+    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
+      let account = user.payload.data(); 
       this.loadingProvider.hide();
-      if (user != null)
-        this.user = user.payload.val();
+      if (account != null) {
+        this.user = account;
+      }
       console.log(this.user);
     });
   }
 
   changeStatus() {
-    this.afdb.object('accounts/' + this.user.userId).update({ showOnline: this.user.showOnline });
+    this.firestore.doc('accounts/' + this.user.userId).update({ showOnline: this.user.showOnline });
   }
   changeVisibility() {
-    this.afdb.object('accounts/' + this.user.userId).update({ publicVisibility: this.user.publicVisibility });
+    this.firestore.doc('accounts/' + this.user.userId).update({ publicVisibility: this.user.publicVisibility });
   }
 
   save() {
     this.submitAttempt = true;
     if (this.myForm.valid) {
       this.loadingProvider.show();
-      this.afdb.object('accounts/' + this.user.userId).update(this.user).then(() => {
+      this.firestore.doc('accounts/' + this.user.userId).update(this.user).then(() => {
         this.loadingProvider.hide();
         this.loadingProvider.showToast("Updated Successfully")
       }).catch(err => {
@@ -103,14 +104,14 @@ export class ProfilePage implements OnInit {
           else {
             this.fcm.getToken().then(token => {
               console.log(token);
-              this.afdb.object('/accounts/' + this.afAuth.auth.currentUser.uid).update({ isPushEnabled: true, pushToken: token });
+              this.firestore.doc('/accounts/' + this.afAuth.auth.currentUser.uid).update({ isPushEnabled: true, pushToken: token });
               this.user.isPushEnabled = true;
             }).catch(err => {
               console.log(err);
             });
             this.fcm.onTokenRefresh().subscribe(token => {
               console.log(token);
-              this.afdb.object('/accounts/' + this.afAuth.auth.currentUser.uid).update({ isPushEnabled: true, pushToken: token });
+              this.firestore.doc('/accounts/' + this.afAuth.auth.currentUser.uid).update({ isPushEnabled: true, pushToken: token });
             });
           }
         });
@@ -120,7 +121,7 @@ export class ProfilePage implements OnInit {
       }
       else {
         this.user.isPushEnabled == false;
-        this.afdb.object('/accounts/' + this.afAuth.auth.currentUser.uid).update({ isPushEnabled: false, pushToken: '' });
+        this.firestore.doc('/accounts/' + this.afAuth.auth.currentUser.uid).update({ isPushEnabled: false, pushToken: '' });
       }
     }
   }
@@ -181,7 +182,7 @@ export class ProfilePage implements OnInit {
                 // Delete profilePic of user on Firebase storage
                 this.imageProvider.deleteUserImageFile(this.user);
                 // Delete user data on Database
-                this.afdb.object('/accounts/' + this.user.userId).remove().then(() => {
+                this.firestore.doc('/accounts/' + this.user.userId).delete().then(() => {
                   this.loadingProvider.hide();
                   this.loadingProvider.showToast("Your Account Deleted Successfully");
                   this.loginService.logout();

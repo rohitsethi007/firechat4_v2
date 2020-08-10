@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase } from '@angular/fire/database';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { DataService } from '../services/data.service';
 
 @Component({
@@ -14,33 +14,35 @@ export class BlockedlistPage implements OnInit {
 
   constructor(
     private afAuth: AngularFireAuth,
-    private afdb: AngularFireDatabase,
-    private dataProvider: DataService
+    private dataProvider: DataService,
+    private firestore: AngularFirestore
   ) { }
 
   ngOnInit() {
   }
 
   ionViewDidEnter() {
-    this.dataProvider.getBlockedLists().snapshotChanges().subscribe(conversations => {
+    this.dataProvider.getBlockedLists().get().then((conversations => {
       let tmp = [];
       conversations.forEach(conversation => {
         // fetch blocked conversation & user info
-        this.dataProvider.getUser(conversation.key).snapshotChanges().subscribe((data: any) => {
-          tmp.push({ key: conversation.key, name: data.payload.val().name, img: data.payload.val().img });
+        this.dataProvider.getUser(conversation.id).snapshotChanges().subscribe((data: any) => {
+          tmp.push({ key: conversation.id, name: data.name, img: data.img });
         });
-
       })
       console.log(tmp);
       this.blockedList = tmp;
-    });
+    }));
   }
 
   unblock(uid) {
     console.log(uid);
-    this.afdb.object('accounts/' + this.afAuth.auth.currentUser.uid + '/conversations/' + uid).update({
+    this.firestore.doc('accounts/' + this.afAuth.auth.currentUser.uid + '/conversations/' + uid).update({
       blocked: false
-    })
+    });
+    // this.afdb.object('accounts/' + this.afAuth.auth.currentUser.uid + '/conversations/' + uid).update({
+    //   blocked: false
+    // })
   }
 
 }
