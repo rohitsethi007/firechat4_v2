@@ -242,7 +242,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             if (user.payload.data() != null) _this.friends = user.payload.data().friends;
           }); // Get requests of current logged in user.
 
-          this.dataProvider.getRequests(firebase__WEBPACK_IMPORTED_MODULE_7__["auth"]().currentUser.uid).get().then(function (requests) {
+          this.dataProvider.getRequests(firebase__WEBPACK_IMPORTED_MODULE_7__["auth"]().currentUser.uid).snapshotChanges().subscribe(function (requests) {
             console.log(requests.payload.data());
 
             if (requests.payload.data() != null) {

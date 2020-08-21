@@ -52,9 +52,9 @@
             </div>
           </ion-row>
           </div>
-
+          <div class="reactions">
           <ion-row >
-            <ion-col>
+            <ion-col size=3>
               <ion-buttons>
                 <ion-button (click)="submitReactionPost(item, 'Thanks')">
                <div *ngIf="item.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
@@ -62,7 +62,7 @@
               </ion-button>
               </ion-buttons> 
             </ion-col>
-            <ion-col>
+            <ion-col size=3>
               <ion-buttons>
                 <ion-button (click)="submitReactionPost(item, 'Hug')">
                <div *ngIf="item.showHug"><ion-icon size="small" class="icon" src="./assets/icon/hug-active.svg" ></ion-icon> <span class="text">Hug</span></div> 
@@ -70,14 +70,15 @@
               </ion-button>
               </ion-buttons> 
             </ion-col>
-            <ion-col>
+            <ion-col size=2></ion-col>
+            <ion-col size=2>
               <ion-buttons>
                 <ion-button (click)="showReactionsList(item)">
               <div><ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon><ion-icon size="small" src="./assets/icon/hug-active.svg" class="icon"></ion-icon> <span class="text">{{item.totalReactionCount}}</span></div>
             </ion-button>
           </ion-buttons> 
             </ion-col>
-            <ion-col>
+            <ion-col size=2>
               <ion-buttons>
                 <ion-button>
               <div><ion-icon size="small" src="./assets/icon/chat.svg" class="icon"></ion-icon> <span class="text">{{item.totalReviewCount}}</span></div>
@@ -85,44 +86,58 @@
           </ion-buttons> 
             </ion-col>
           </ion-row>
+          </div>
         </ion-card-content>
 
-        <ion-card-content class="message" *ngIf="item.type === 'event'" (click)="viewEvent(item)">
-          <b>{{item.title}}.</b> <br/>{{item.data.eventDate.toDate()}} at {{item.data.eventTime}}<br/><br/>
+        <ion-card-content class="message" *ngIf="item.type === 'event'">
+          <div (click)="viewEvent(item)">
+          <b>{{item.title}}.</b> <br/>{{item.data.eventDate}} at {{item.data.eventTime}}<br/><br/>
             {{item.data.address}}<br/><br/>
             {{item.data.link}}
+          </div>
+          <div class="reviews-wrapper">
             <ion-row>
-              <ion-col>
-                      <ion-buttons>
-                        <ion-button (click)="submitReactionEvent(item, 'Checkin')">
-                        <div *ngIf="item.showCheckin"><ion-icon size="small" class="icon" src="./assets/icon/checkin-active.svg" ></ion-icon> <span class="text">Checkin</span></div> 
-                        <div *ngIf="!item.showCheckin"><ion-icon size="small" class="icon"  src="./assets/icon/checkin.svg" ></ion-icon> <span class="text">Checkin</span></div> 
-                      </ion-button>
-                      </ion-buttons> 
-                    </ion-col>
-              <ion-col>
-                      <ion-buttons>
-                        <ion-button (click)="submitReactionEvent(item, 'Thanks')">
-                        <div *ngIf="item.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
-                        <div *ngIf="!item.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> <span class="text">Thanks</span></div> 
-                      </ion-button>
-                      </ion-buttons> 
-                    </ion-col>
-                    <ion-col>
+              <div class="tags" *ngFor="let tag of item.postTags">
+                <span *ngIf="tag.isChecked" class="item-rating" [attr.ratingBase]="1">#{{tag.val}}</span>
+                <span *ngIf="!tag.isChecked" class="item-rating" [attr.ratingBase]="0">#{{tag.val}}</span>
+              </div>
+            </ion-row>
+          </div>
+          <div class="reactions">
+            <ion-row>
+              <ion-col size=3>
+                <ion-buttons>
+                  <ion-button (click)="submitReactionPost(item, 'Thanks')">
+                  <div *ngIf="item.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+                  <div *ngIf="!item.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+                </ion-button>
+                </ion-buttons> 
+              </ion-col>
+              <ion-col size=3>
+                <ion-buttons>
+                  <ion-button (click)="submitReactionPost(item, 'Checkin')">
+                  <div *ngIf="item.showCheckin"><ion-icon size="small" class="icon" src="./assets/icon/checkin-active.svg" ></ion-icon> <span class="text">Checkin</span></div> 
+                  <div *ngIf="!item.showCheckin"><ion-icon size="small" class="icon"  src="./assets/icon/checkin.svg" ></ion-icon> <span class="text">Checkin</span></div> 
+                </ion-button>
+                </ion-buttons> 
+              </ion-col>
+              <ion-col size=2></ion-col>
+              <ion-col size=2>
                       <ion-buttons>
                         <ion-button (click)="showEventReactionsList(item)">
-                      <div><ion-icon size="small" src="./assets/icon/checkin-active.svg" class="icon"></ion-icon><ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon><span class="text">{{item.totalReactionCount}}</span></div>
+                      <div><ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon><ion-icon size="small" src="./assets/icon/checkin-active.svg" class="icon"></ion-icon><span class="text">{{item.totalReactionCount}}</span></div>
                     </ion-button>
                   </ion-buttons> 
-                    </ion-col>
-                    <ion-col>
+              </ion-col>
+              <ion-col size=2>
                       <ion-buttons>
                         <ion-button>
                           <div><ion-icon size="small" src="./assets/icon/chat.svg" class="icon"></ion-icon> <span class="text">{{item.totalReviewCount}}</span></div>
                         </ion-button>
                   </ion-buttons> 
-                    </ion-col>
+              </ion-col>
              </ion-row>
+         </div>
         </ion-card-content>
 
         <ion-card-content class="message" *ngIf="item.type === 'poll'" (click)="viewPoll(item)">
@@ -135,6 +150,15 @@
             <!--</button>-->
             </ion-col>
           </ion-row>
+          <div class="reviews-wrapper">
+            <ion-row>
+              <div class="tags" *ngFor="let tag of item.postTags">
+                <span *ngIf="tag.isChecked" class="item-rating" [attr.ratingBase]="1">#{{tag.val}}</span>
+                <span *ngIf="!tag.isChecked" class="item-rating" [attr.ratingBase]="0">#{{tag.val}}</span>
+              </div>
+            </ion-row>
+            </div>
+
                 <ion-row class="info-row" >
            <ion-col size="8">
                      <span class="text">Poll ends {{item.data.dateEnding.toDate() | date:'fullDate'}}</span> 

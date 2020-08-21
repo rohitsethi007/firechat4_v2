@@ -9,7 +9,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-tabs>\r\n\r\n  <ion-tab-bar slot=\"bottom\">\r\n    <ion-tab-button tab=\"tab1\">\r\n      <ion-icon size=\"large\" name=\"newspaper-outline\"></ion-icon>\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button  class=\"filters-btn\" tab=\"tab2\">\r\n      <ion-icon size=\"large\" name=\"people-outline\"></ion-icon>\r\n      <ion-badge *ngIf=\"getUnreadGroupMessagesCount() != null\">{{getUnreadGroupMessagesCount()}}</ion-badge>\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button class=\"filters-btn\" tab=\"tab3\">\r\n      <ion-icon name=\"chatbubbles-outline\"></ion-icon>\r\n      <ion-badge size=\"large\" *ngIf=\"getUnreadMessagesCount() != null\">{{getUnreadMessagesCount()}}</ion-badge>\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button  class=\"filters-btn\" tab=\"tab4\">\r\n      <ion-icon size=\"large\" name=\"list-outline\"></ion-icon>\r\n      <ion-badge *ngIf=\"friendRequestCount != null\">{{friendRequestCount}}</ion-badge>\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button class=\"filters-btn\" tab=\"tab5\">\r\n      <ion-icon size=\"large\" name=\"contact-outline\"></ion-icon>\r\n    </ion-tab-button>\r\n  </ion-tab-bar>\r\n\r\n</ion-tabs>");
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-tabs class=\"tabs\">\r\n\r\n  <ion-tab-bar slot=\"bottom\">\r\n    <ion-tab-button tab=\"tab1\">\r\n      <ion-icon size=\"large\" name=\"newspaper-outline\"></ion-icon>\r\n    </ion-tab-button>\r\n\r\n    <!-- <ion-tab-button class=\"filters-btn\" tab=\"tab3\">\r\n      <ion-icon name=\"chatbubbles-outline\"></ion-icon>\r\n    </ion-tab-button> -->\r\n\r\n    <ion-tab-button  class=\"filters-btn\" tab=\"tab2\">\r\n      <ion-icon size=\"large\" name=\"list-outline\"></ion-icon>\r\n      <ion-badge *ngIf=\"friendRequestCount != null\">{{friendRequestCount}}</ion-badge>\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button  class=\"filters-btn\" tab=\"tab3\">\r\n      <ion-icon size=\"large\" name=\"people-outline\"></ion-icon>\r\n      <!-- <ion-badge *ngIf=\"getUnreadGroupMessagesCount() != null\">{{getUnreadGroupMessagesCount()}}</ion-badge> -->\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button  class=\"filters-btn\" tab=\"tab4\">\r\n      <ion-icon size=\"large\" name=\"bookmark-outline\"></ion-icon>\r\n      <!-- <ion-badge *ngIf=\"getUnreadGroupMessagesCount() != null\">{{getUnreadGroupMessagesCount()}}</ion-badge> -->\r\n    </ion-tab-button>\r\n\r\n    <ion-tab-button class=\"filters-btn\" tab=\"tab5\">\r\n      <ion-icon size=\"large\" name=\"information-circle-outline\"></ion-icon>\r\n    </ion-tab-button>\r\n  </ion-tab-bar>\r\n\r\n</ion-tabs>");
 
 /***/ }),
 
@@ -64,7 +64,7 @@ TabsPageModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = (".filters-btn {\n  --padding-start: 0px;\n  --padding-end: 0px;\n  margin: 0px;\n  font-size: 18px;\n  height: initial;\n}\n\nion-tab-button {\n  --color-selected: var(--ion-color-secondary);\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvdGFicy9DOlxcVXNlcnNcXHJvaGlzZXRoaVxcRG9jdW1lbnRzXFxpb25pY1xcZmlyZWNoYXQ0X3YyL3NyY1xcYXBwXFx0YWJzXFx0YWJzLnBhZ2Uuc2NzcyIsInNyYy9hcHAvdGFicy90YWJzLnBhZ2Uuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFDUTtFQUNJLG9CQUFBO0VBQ0Esa0JBQUE7RUFFQSxXQUFBO0VBQ0EsZUFBQTtFQUVBLGVBQUE7QUNGWjs7QURLVTtFQUNFLDRDQUFBO0FDRloiLCJmaWxlIjoic3JjL2FwcC90YWJzL3RhYnMucGFnZS5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiXHJcbiAgICAgICAgLmZpbHRlcnMtYnRuIHtcclxuICAgICAgICAgICAgLS1wYWRkaW5nLXN0YXJ0OiAwcHg7XHJcbiAgICAgICAgICAgIC0tcGFkZGluZy1lbmQ6IDBweDtcclxuICAgIFxyXG4gICAgICAgICAgICBtYXJnaW46IDBweDtcclxuICAgICAgICAgICAgZm9udC1zaXplOiAxOHB4O1xyXG4gICAgICAgICAgICAvLyBvdmVycmlkZSBJb25pYyBmaXhlZCBoZWlnaHRcclxuICAgICAgICAgICAgaGVpZ2h0OiBpbml0aWFsO1xyXG4gICAgICAgICAgfVxyXG5cclxuICAgICAgICAgIGlvbi10YWItYnV0dG9uIHtcclxuICAgICAgICAgICAgLS1jb2xvci1zZWxlY3RlZDogdmFyKC0taW9uLWNvbG9yLXNlY29uZGFyeSk7XHJcbiAgICAgICAgICB9IiwiLmZpbHRlcnMtYnRuIHtcbiAgLS1wYWRkaW5nLXN0YXJ0OiAwcHg7XG4gIC0tcGFkZGluZy1lbmQ6IDBweDtcbiAgbWFyZ2luOiAwcHg7XG4gIGZvbnQtc2l6ZTogMThweDtcbiAgaGVpZ2h0OiBpbml0aWFsO1xufVxuXG5pb24tdGFiLWJ1dHRvbiB7XG4gIC0tY29sb3Itc2VsZWN0ZWQ6IHZhcigtLWlvbi1jb2xvci1zZWNvbmRhcnkpO1xufSJdfQ== */");
+/* harmony default export */ __webpack_exports__["default"] = (".tabs {\n  border-top: black;\n}\n\n.filters-btn {\n  --padding-start: 0px;\n  --padding-end: 0px;\n  margin: 0px;\n  font-size: 18px;\n  height: initial;\n}\n\nion-tab-button {\n  --color-selected: var(--ion-color-secondary);\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvdGFicy9DOlxcVXNlcnNcXHNldGhpXFxmaXJlY2hhdDRfdjJcXGZpcmVjaGF0NC9zcmNcXGFwcFxcdGFic1xcdGFicy5wYWdlLnNjc3MiLCJzcmMvYXBwL3RhYnMvdGFicy5wYWdlLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxpQkFBQTtBQ0NGOztBRENRO0VBQ0ksb0JBQUE7RUFDQSxrQkFBQTtFQUVBLFdBQUE7RUFDQSxlQUFBO0VBRUEsZUFBQTtBQ0FaOztBREdVO0VBQ0UsNENBQUE7QUNBWiIsImZpbGUiOiJzcmMvYXBwL3RhYnMvdGFicy5wYWdlLnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIudGFicyB7XHJcbiAgYm9yZGVyLXRvcDogYmxhY2s7XHJcbn1cclxuICAgICAgICAuZmlsdGVycy1idG4ge1xyXG4gICAgICAgICAgICAtLXBhZGRpbmctc3RhcnQ6IDBweDtcclxuICAgICAgICAgICAgLS1wYWRkaW5nLWVuZDogMHB4O1xyXG4gICAgXHJcbiAgICAgICAgICAgIG1hcmdpbjogMHB4O1xyXG4gICAgICAgICAgICBmb250LXNpemU6IDE4cHg7XHJcbiAgICAgICAgICAgIC8vIG92ZXJyaWRlIElvbmljIGZpeGVkIGhlaWdodFxyXG4gICAgICAgICAgICBoZWlnaHQ6IGluaXRpYWw7XHJcbiAgICAgICAgICB9XHJcblxyXG4gICAgICAgICAgaW9uLXRhYi1idXR0b24ge1xyXG4gICAgICAgICAgICAtLWNvbG9yLXNlbGVjdGVkOiB2YXIoLS1pb24tY29sb3Itc2Vjb25kYXJ5KTtcclxuICAgICAgICAgIH0iLCIudGFicyB7XG4gIGJvcmRlci10b3A6IGJsYWNrO1xufVxuXG4uZmlsdGVycy1idG4ge1xuICAtLXBhZGRpbmctc3RhcnQ6IDBweDtcbiAgLS1wYWRkaW5nLWVuZDogMHB4O1xuICBtYXJnaW46IDBweDtcbiAgZm9udC1zaXplOiAxOHB4O1xuICBoZWlnaHQ6IGluaXRpYWw7XG59XG5cbmlvbi10YWItYnV0dG9uIHtcbiAgLS1jb2xvci1zZWxlY3RlZDogdmFyKC0taW9uLWNvbG9yLXNlY29uZGFyeSk7XG59Il19 */");
 
 /***/ }),
 
@@ -95,164 +95,15 @@ let TabsPage = class TabsPage {
     }
     ionViewDidEnter() {
         // Get friend requests count.
-        this.dataProvider.getRequests(this.dataProvider.getCurrentUserId()).get().then((requestsRes) => {
-            console.log('requestsRes:', requestsRes);
-            requestsRes.forEach(element => {
-                if (element.friendRequests != null) {
-                    this.friendRequestCount = element.friendRequests.length;
-                }
-                else {
-                    this.friendRequestCount = null;
-                }
-            });
-        });
-        // Get conversations and add/update if the conversation exists, otherwise delete from list.
-        this.dataProvider.getConversations().snapshotChanges().subscribe((conversationsInfoRes) => {
-            conversationsInfoRes.forEach((conversationInfo) => {
-                if (conversationInfo.blocked != true) {
-                    this.dataProvider.getConversation(conversationInfo.conversationId).snapshotChanges().subscribe((conversationRes) => {
-                        if (conversationRes.payload.exists) {
-                            let conversation = Object.assign({ $key: conversationRes.payload.id }, conversationRes.payload.data);
-                            if (conversation.blocked != true) {
-                                this.addOrUpdateConversation(conversation);
-                            }
-                        }
-                    });
-                }
-            });
-        });
-        this.dataProvider.getGroups().snapshotChanges().subscribe((groupIdsRes) => {
-            let groupIds = [];
-            groupIds = (Object.assign({ $key: groupIdsRes.key }, groupIdsRes.payload.data()));
-            if (groupIds.length > 0) {
-                this.groupsInfo = groupIds;
-                if (this.groupList && this.groupList.length > groupIds.length) {
-                    // User left/deleted a group, clear the list and add or update each group again.
-                    this.groupList = null;
-                }
-                groupIds.forEach((groupId) => {
-                    this.dataProvider.getGroup(groupId.$key).snapshotChanges().subscribe((groupRes) => {
-                        let group = Object.assign({ $key: groupRes.key }, groupRes.payload.data());
-                        if (group.$key != null) {
-                            this.addOrUpdateGroup(group);
-                        }
-                    });
-                });
+        this.dataProvider.getRequests(this.dataProvider.getCurrentUserId()).snapshotChanges().subscribe((requestsRes) => {
+            if (requestsRes.payload.exists
+                && requestsRes.payload.data().friendRequests !== null) {
+                this.friendRequestCount = requestsRes.payload.data().friendRequests.length;
             }
             else {
-                this.unreadGroupMessagesCount = null;
-                this.groupsInfo = null;
-                this.groupList = null;
+                this.friendRequestCount = null;
             }
         });
-    }
-    // Add or update conversaion for real-time sync of unreadMessagesCount.
-    addOrUpdateConversation(conversation) {
-        if (!this.conversationList) {
-            this.conversationList = [conversation];
-        }
-        else {
-            var index = -1;
-            for (var i = 0; i < this.conversationList.length; i++) {
-                if (this.conversationList[i].$key == conversation.$key) {
-                    index = i;
-                }
-            }
-            if (index > -1) {
-                this.conversationList[index] = conversation;
-            }
-            else {
-                this.conversationList.push(conversation);
-            }
-        }
-        this.computeUnreadMessagesCount();
-    }
-    // Compute all conversation's unreadMessages.
-    computeUnreadMessagesCount() {
-        this.unreadMessagesCount = 0;
-        if (this.conversationList) {
-            for (var i = 0; i < this.conversationList.length; i++) {
-                this.unreadMessagesCount += this.conversationList[i].messages.length - this.conversationsInfo[i].messagesRead;
-                if (this.unreadMessagesCount == 0) {
-                    this.unreadMessagesCount = null;
-                }
-            }
-        }
-    }
-    getUnreadMessagesCount() {
-        if (this.unreadMessagesCount) {
-            if (this.unreadMessagesCount > 0) {
-                return this.unreadMessagesCount;
-            }
-        }
-        return null;
-    }
-    // Add or update group
-    addOrUpdateGroup(group) {
-        if (!this.groupList) {
-            this.groupList = [group];
-        }
-        else {
-            var index = -1;
-            for (var i = 0; i < this.groupList.length; i++) {
-                if (this.groupList[i].$key == group.$key) {
-                    index = i;
-                }
-            }
-            if (index > -1) {
-                this.groupList[index] = group;
-            }
-            else {
-                this.groupList.push(group);
-            }
-        }
-        this.computeUnreadGroupMessagesCount();
-    }
-    // Remove group from list if group is already deleted.
-    removeGroup(groupId) {
-        if (this.groupList) {
-            var index = -1;
-            for (var i = 0; i < this.groupList.length; i++) {
-                if (this.groupList[i].$key == groupId) {
-                    index = i;
-                }
-            }
-            if (index > -1) {
-                this.groupList.splice(index, 1);
-            }
-            index = -1;
-            for (var j = 0; j < this.groupsInfo.length; j++) {
-                if (this.groupsInfo[i].$key == groupId) {
-                    index = j;
-                }
-            }
-            if (index > -1) {
-                this.groupsInfo.splice(index, 1);
-            }
-            this.computeUnreadGroupMessagesCount();
-        }
-    }
-    // Compute all group's unreadMessages.
-    computeUnreadGroupMessagesCount() {
-        this.unreadGroupMessagesCount = 0;
-        if (this.groupList) {
-            for (var i = 0; i < this.groupList.length; i++) {
-                if (this.groupList[i].messages) {
-                    this.unreadGroupMessagesCount += this.groupList[i].messages.length - this.groupsInfo[i].messagesRead;
-                }
-                if (this.unreadGroupMessagesCount == 0) {
-                    this.unreadGroupMessagesCount = null;
-                }
-            }
-        }
-    }
-    getUnreadGroupMessagesCount() {
-        if (this.unreadGroupMessagesCount) {
-            if (this.unreadGroupMessagesCount > 0) {
-                return this.unreadGroupMessagesCount;
-            }
-        }
-        return null;
     }
 };
 TabsPage.ctorParameters = () => [
@@ -342,7 +193,7 @@ const routes = [
                 children: [
                     {
                         path: '',
-                        loadChildren: () => Promise.all(/*! import() | profile-profile-module */[__webpack_require__.e("default~group-group-module~groupinfo-groupinfo-module~message-message-module~new-post-new-post-modul~659261fa"), __webpack_require__.e("default~group-group-module~groupinfo-groupinfo-module~message-message-module~new-post-new-post-modul~b8c7a92d"), __webpack_require__.e("default~forgot-forgot-module~login-login-module~profile-profile-module~register-register-module"), __webpack_require__.e("profile-profile-module")]).then(__webpack_require__.bind(null, /*! ../profile/profile.module */ "./src/app/profile/profile.module.ts")).then(m => m.ProfilePageModule),
+                        loadChildren: () => Promise.all(/*! import() | profile-profile-module */[__webpack_require__.e("default~event-event-module~group-group-module~groupinfo-groupinfo-module~message-message-module~new-~bfe8752e"), __webpack_require__.e("default~event-event-module~group-group-module~groupinfo-groupinfo-module~message-message-module~new-~0c7fe536"), __webpack_require__.e("default~forgot-forgot-module~login-login-module~profile-profile-module~register-register-module"), __webpack_require__.e("profile-profile-module")]).then(__webpack_require__.bind(null, /*! ../profile/profile.module */ "./src/app/profile/profile.module.ts")).then(m => m.ProfilePageModule),
                         canActivate: [_services_auth_guard_service__WEBPACK_IMPORTED_MODULE_4__["AuthGuardService"]]
                     }
                 ]

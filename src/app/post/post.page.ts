@@ -11,6 +11,7 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { ImagemodalPage } from '../imagemodal/imagemodal.page';
+import * as firebase from 'firebase/app'
 
 @Component({
   selector: 'app-post',
@@ -28,6 +29,7 @@ export class PostPage implements OnInit {
     private dataProvider: DataService,
     private loadingProvider: LoadingService,
     private route: ActivatedRoute,
+    private router: Router,
     public firestore: AngularFirestore,
     public actionSheet: ActionSheetController,
     private modalCtrl: ModalController,
@@ -38,7 +40,7 @@ export class PostPage implements OnInit {
     public geolocation: Geolocation,
     public alertCtrl: AlertController
   ) {
-    this.post = {showSmiley: false, showHug: false, addedByUser: {}, data: {}};
+    this.post = {showSmiley: false, showHug: false, addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now()};
     this.getPostDetails();
   }
 
@@ -56,7 +58,7 @@ export class PostPage implements OnInit {
     this.post.reviews = [];
     this.dataProvider.getPostDetails(this.postId).get().subscribe((post: any) => {
       if (post) {
-        let p = post.data();
+        let p = post.data(); 
         p.reactions = [];
         p.key = post.id;
         this.title = post.data().title;
@@ -113,9 +115,9 @@ export class PostPage implements OnInit {
             review.key = element.id;
             p.reviews.push(review);
           });
-          console.log('p.reviews', p.reviews);
           totalReviewCount = p.reviews.length;
           p.totalReviewCount = totalReviewCount;
+          this.postReviews = p.reviews;
 
           if (p.reviews !== undefined) {
               this.postReviews = [];
@@ -212,6 +214,7 @@ export class PostPage implements OnInit {
   }
 
   submitReply() {
+    this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');;
      let review: any;
      let currentUserName: any;
      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
@@ -317,12 +320,17 @@ export class PostPage implements OnInit {
   // }
   }
 
-  doRefresh(event) {
-    console.log('Begin async operation');
+  viewUser(userId) {
+    let loggedInUserId = this.dataProvider.getCurrentUserId();
+    console.log(loggedInUserId, userId);
+    if (loggedInUserId === userId) {
+      this.router.navigateByUrl('/profile');
+    } else {
+      this.router.navigateByUrl('/userinfo/' + userId);
+    }
+  }
 
-    setTimeout(() => {
-      console.log('Async operation has ended');
-      event.target.complete();
-    }, 2000);
+  viewGroup(groupId) {
+    this.router.navigateByUrl('/group/' + groupId);
   }
 }

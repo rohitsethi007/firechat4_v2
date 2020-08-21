@@ -15,9 +15,10 @@ import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validat
   styleUrls: ['./new-event.page.scss'],
 })
 export class NewEventPage implements OnInit {
+  private title: any;
   private event: any;
   private eventForm: FormGroup;
-  private postTags: any;
+  private postTags: any = [];
   private groupId: any;
   private group: any;
   private eventId: any;
@@ -29,6 +30,8 @@ export class NewEventPage implements OnInit {
   private linkDescription: any;
   require: any;
   private addedByUser: any;
+  private step: any = 1;
+  groups: any;
 
   validations = {
     title: [
@@ -58,15 +61,12 @@ export class NewEventPage implements OnInit {
   ) {
     this.groupId = this.route.snapshot.params.id;
 
-    this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-        this.group = group.payload.data();
-        this.postTags = [];
-        this.group.groupTags.forEach((element: any) => {
-          this.postTags.push({val: element, isChecked: false});
-        });
-        this.addTagControls();
-        this.loadingProvider.hide();
-    });
+    this.group = {name:''}
+    if (this.groupId === 'undefined') {
+      this.step = 1;
+    } else {
+      this.step = 2;
+    }
 
     this.eventForm = new FormGroup({
         title: new FormControl('', Validators.required),
@@ -88,6 +88,28 @@ export class NewEventPage implements OnInit {
     this.minDate = new Date().toISOString();
    }
 
+   ionViewDidEnter() {
+    if (this.step === 1) {
+    this.title = 'Select a group ...';
+    this.dataProvider.getGroups().snapshotChanges().subscribe((data: any) => {
+
+    this.groups = data.map(c => {
+          return { $key: c.payload.doc.id, ...c.payload.doc.data() };
+        });
+      });
+    } else {
+      this.title = 'Create a Post in ...';
+
+      this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+        this.group = group.payload.data();
+        this.group.groupTags.forEach((element: any) => {
+          this.postTags.push({val: element, isChecked: false});
+        });
+        this.addTagControls();
+      });   
+    }
+  }
+
    ngOnInit() {
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((value: any) => {
       this.addedByUser = {
@@ -103,8 +125,11 @@ export class NewEventPage implements OnInit {
         title: '',
         postTags : [],
         groupId: '',
+        groupName: '',
         type: 'event',
         data: {},
+        totalReactionCount: 0,
+        totalReviewCount: 0
     };
     });
 
@@ -122,7 +147,8 @@ export class NewEventPage implements OnInit {
 
     // Add event info and date.
     this.event.groupId = this.groupId;
-    this.event.date = new Date().toString();
+    this.event.groupName = this.group.name;
+    this.event.date = new Date();
     this.event.title = this.eventForm.value.title;
     this.event.postTags = [];
     this.event.postTags = this.postTags;
@@ -153,10 +179,10 @@ export class NewEventPage implements OnInit {
         if ( this.eventForm.value.eventAttending === true) {
           const reaction = {
             addedByUser: this.addedByUser,
-            dateCreated: new Date().toString(),
+            dateCreated: new Date(),
             reactionType: 'Checkin'
           };
-          this.dataProvider.addFirstPostReactions(eventId, reaction);
+          this.dataProvider.updatePostReactions(eventId, reaction);
         }
 
         this.loadingProvider.hide();
@@ -177,5 +203,25 @@ export class NewEventPage implements OnInit {
       this.linkDescription = o.description;
       this.loadingProvider.hide();
     });
+
+    const o = getMeta("<meta name='page' content='index'><meta property='description' content='This is the index page'>")
+    this.linkDescription = o.description;
     }
+
+    selectGroup(groupId) {
+      this.groupId = groupId;
+      console.log('groupId', groupId);
+      this.step = 2;
+      this.title = 'Create an Event in ...';
+  
+      this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+        this.group = group.payload.data();
+        this.group.groupTags.forEach((element: any) => {
+          this.postTags.push({val: element, isChecked: false});
+        });
+        this.addTagControls();
+  
+    });
+  
+     }
 }

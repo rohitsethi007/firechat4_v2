@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { LoadingService } from '../services/loading.service';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { DataService } from '../services/data.service';
 import { ChartDataSets } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
+import * as firebase from 'firebase/app'
 
 @Component({
   selector: 'app-poll',
@@ -65,10 +67,12 @@ export class PollPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public loadingProvider: LoadingService,
-    public dataProvider: DataService
+    public dataProvider: DataService,
+    public firestore: AngularFirestore
   ) {
-      this.poll = { pollTags: [], pollOptions: [{name: ''}, {name: ''}, {name: ''}, {name: ''}], addedByUser: {} };
-      this.pollOptionForm = new FormGroup({
+    this.poll = { pollTags: [], data: { pollOptions: [{name: ''}, {name: ''}, {name: ''}, {name: ''}]}, addedByUser: {}, date: firebase.firestore.Timestamp.now() };
+
+    this.pollOptionForm = new FormGroup({
         selected_poll_option: new FormControl('', Validators.compose([
           Validators.required
         ]))
@@ -79,10 +83,15 @@ export class PollPage implements OnInit {
   getPollDetails() {
     this.pollId = this.route.snapshot.params.id;
     this.dataProvider.getPollDetails(this.pollId).snapshotChanges().subscribe((p: any) => {
-      if (p.payload.exists()) {
-        let poll = p.payload.data();
-        poll.key = p.payload.key;
-        this.title = p.description;
+      if (p) {
+        console.log('p:', p);
+        let poll = p.payload.data();;
+        poll.reactions = [];
+        poll.key = p.key;
+        this.title = p.payload.data().description;
+        let totalReactionCount = 0;
+        let totalReviewCount = 0;
+        poll.postTags = p.payload.data().postTags.filter(x => x.isChecked !== false);
 
         let pollOption0Votes;
         let pollOption1Votes;
@@ -94,38 +103,38 @@ export class PollPage implements OnInit {
         let pollOption2Name: string;
         let pollOption3Name: string;
 
-        pollOption0Name = poll.pollOptions[0].name;
-        pollOption1Name = poll.pollOptions[1].name;
+        pollOption0Name = poll.data.pollOptions[0].name;
+        pollOption1Name = poll.data.pollOptions[1].name;
 
-        if (poll.pollOptions[2] != null) {
-          pollOption2Name = poll.pollOptions[2].name;
+        if (poll.data.pollOptions[2] != null) {
+          pollOption2Name = poll.data.pollOptions[2].name;
         }
-        if (poll.pollOptions[3] != null) {
-          pollOption3Name = poll.pollOptions[3].name;
+        if (poll.data.pollOptions[3] != null) {
+          pollOption3Name = poll.data.pollOptions[3].name;
         }
 
-        if (poll.pollOptions[0].members == null) {
+        if (poll.data.pollOptions[0].members == null) {
           pollOption0Votes = 0;
         } else {
-          pollOption0Votes = poll.pollOptions[0].members.length;
+          pollOption0Votes = poll.data.pollOptions[0].members.length;
         }
 
-        if (poll.pollOptions[1].members == null) {
+        if (poll.data.pollOptions[1].members == null) {
           pollOption1Votes = 0;
         } else {
-          pollOption1Votes = poll.pollOptions[1].members.length;
+          pollOption1Votes = poll.data.pollOptions[1].members.length;
         }
 
-        if (poll.pollOptions[2] == null || poll.pollOptions[2].members == null) {
+        if (poll.data.pollOptions[2] == null || poll.data.pollOptions[2].members == null) {
           pollOption2Votes = 0;
         } else {
-          pollOption2Votes = poll.pollOptions[2].members.length;
+          pollOption2Votes = poll.data.pollOptions[2].members.length;
         }
 
-        if (poll.pollOptions[3] == null || poll.pollOptions[3].members == null) {
+        if (poll.data.pollOptions[3] == null || poll.data.pollOptions[3].members == null) {
           pollOption3Votes = 0;
         } else {
-          pollOption3Votes = poll.pollOptions[3].members.length;
+          pollOption3Votes = poll.data.pollOptions[3].members.length;
         }
 
        // this.optionsArray = [pollOption0Name, pollOption1Name, pollOption2Name, pollOption3Name];
@@ -138,11 +147,11 @@ export class PollPage implements OnInit {
         this.chartLabels.push(pollOption0Name);
         this.chartLabels.push(pollOption1Name);
 
-        if (poll.pollOptions[2] != null) {
+        if (poll.data.pollOptions[2] != null) {
           this.chartData[0].data.push(pollOption2Votes);
           this.chartLabels.push(pollOption2Name);
         }
-        if (poll.pollOptions[3] != null) {
+        if (poll.data.pollOptions[3] != null) {
           this.chartData[0].data.push(pollOption3Votes);
           this.chartLabels.push(pollOption3Name);
         }
@@ -158,7 +167,7 @@ export class PollPage implements OnInit {
           this.pollClosed = false;
         }
 
-        poll.pollOptions.forEach(pollOption => {
+        poll.data.pollOptions.forEach(pollOption => {
           if (pollOption.members != null) {
             pollOption.members.forEach(member => {
               if (member === this.dataProvider.getCurrentUserId()) {
@@ -168,15 +177,30 @@ export class PollPage implements OnInit {
           }
         });
 
-        if (poll.reviews !== undefined) {
-          this.pollReviews = [];
-          let values = Object.keys(poll.reviews).map(function(e) {
-            poll.reviews[e].key = e;
-            return poll.reviews[e];
-           });
-          this.pollReviews = values;
-          this.pollReviews.sort((a, b) => (a.dateCreated < b.dateCreated) ? 1 : -1);
-        }
+      // get reviews list
+      this.firestore.collection('posts').doc(this.pollId).collection('reviews')
+      .ref.orderBy("dateCreated", "desc").onSnapshot((reviews: any) => {
+        this.poll.reviews = [];
+        p.reviews = [];
+        reviews.forEach(element => {
+          let review = element.data();
+          review.key = element.id;
+          p.reviews.push(review);
+        });
+        totalReviewCount = p.reviews.length;
+        p.totalReviewCount = totalReviewCount;
+        this.pollReviews = p.reviews;
+        // if (p.reviews !== undefined) {
+        //     this.postReviews = [];
+        //     let values = Object.keys(p.reviews).map(function(e) {
+        //       p.reviews[e].key = e;
+        //       return p.reviews[e];
+        //     });
+        //     this.postReviews = values;
+        //     this.postReviews.sort((a, b) => (a.dateCreated < b.dateCreated) ? 1 : -1);
+        //   }
+
+      });
 
         this.poll = poll;
     }});
@@ -185,27 +209,14 @@ export class PollPage implements OnInit {
   ngOnInit() { }
 
   vote() {
-  // Get user's friends to add to the group.
-  this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accountRes: any) => {
-    const account = { $key: accountRes.payload.data().userId, ...accountRes.payload.data() };
-    console.log('Current User Details: ' + account.username);
     const pollOptionIndex = this.pollOptionForm.value["selected_poll_option"];
-    console.log('selected poll option: ' + pollOptionIndex);
-    this.loadingProvider.show();
+
     const members = [];
     members.push(this.dataProvider.getCurrentUserId());
-    this.poll.pollOptions[pollOptionIndex].members = members;
+    this.poll.data.pollOptions[pollOptionIndex].members = members;
     this.voted = true;
-      let currentUserName: any;
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
-      if (account.payload.exists()) {
-        currentUserName = account.payload.data().username;
-        // Update group data on the database.
-        this.dataProvider.updatePollMembers(this.poll.key, pollOptionIndex, members);
-        this.ngOnInit();
-        this.loadingProvider.hide();
-      }});
-  });
+    this.dataProvider.updatePollMembers(this.poll.key, this.poll.data);
+    this.ngOnInit();
   }
 
   submitReply() {

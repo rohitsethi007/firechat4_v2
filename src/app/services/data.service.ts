@@ -109,8 +109,7 @@ export class DataService {
 
   // Get Polls of the logged in user.
   getPollDetails(pId) {
-    return this.firestore.doc('polls/' + pId);
-    // return this.afdb.object('/polls/' + pId);
+    return this.firestore.doc('posts/' + pId);
   }
 
   // Get Polls of the logged in user.
@@ -133,20 +132,17 @@ export class DataService {
 
   // Get Resource details of the logged in user.
   getResourceDetails(rId) {
-    return this.firestore.doc('resources/' + rId);
-    // return this.afdb.object('/resources/' + rId);
+    return this.firestore.doc('posts/' + rId);
   }
 
   // Get Post details of the logged in user.
   getPostDetails(pId) {
     return this.firestore.doc('posts/' + pId);
-    // return this.afdb.object('/posts/' + pId);
   }
   
   // Get Events details of the logged in user.
   getEventDetails(eId) {
-    return this.firestore.doc('events/' + eId);
-    // return this.afdb.object('/events/' + eId);
+    return this.firestore.doc('posts/' + eId);
   }
   // Get Polls of the logged in user.
   getGroupMembers(groupId) {
@@ -154,14 +150,10 @@ export class DataService {
     // return this.afdb.object('/groups/' + groupId + '/members/');
   }
 
-  updatePollMembers(pollKey, pollOptionIndex, members) {
-    this.firestore.doc('polls/' + pollKey + '/pollOptions/' + pollOptionIndex).update ({
-      members
+  updatePollMembers(pollKey, pollData) {
+    this.firestore.doc('posts/' + pollKey).update ({
+      data: pollData
     });
-  //   this.afdb.object('/polls/' + pollKey + '/pollOptions/' + pollOptionIndex).update( {
-  //     members: members
-  //   });
-  // }
   }
 
   updatePollComments(pollKey, comments) {

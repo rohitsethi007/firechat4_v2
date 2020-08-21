@@ -1094,12 +1094,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
     /*! @angular/fire/auth */
     "./node_modules/@angular/fire/auth/es2015/index.js");
-    /* harmony import */
-
-
-    var rxjs_operators__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
-    /*! rxjs/operators */
-    "./node_modules/rxjs/_esm2015/operators/index.js");
 
     var FirebaseService =
     /*#__PURE__*/
@@ -1111,7 +1105,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.loadingProvider = loadingProvider;
         this.afAuth = afAuth;
         this.dataProvider = dataProvider;
-        console.log("Initializing Firebase Provider");
       } // Send friend request to userId.
 
 
@@ -1124,44 +1117,52 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           this.loadingProvider.show();
           var requestsSent; // Use take(1) so that subscription will only trigger once.
 
-          this.dataProvider.getRequests(loggedInUserId).limit(1).get().then(function (requests) {
-            console.log(requests.payload.val());
-            if (requests.payload.val() != null && requests.payload.val().requestsSent != null) requestsSent = requests.payload.val().requestsSent;
+          this.dataProvider.getRequests(loggedInUserId).get().subscribe(function (requests) {
+            if (requests.data() != null && requests.data().requestsSent != null) {
+              requestsSent = requests.data().requestsSent;
+            }
 
-            if (requestsSent == null || requestsSent == undefined) {
+            if (requestsSent == null || requestsSent === undefined) {
               requestsSent = [userId];
             } else {
-              if (requestsSent.indexOf(userId) == -1) requestsSent.push(userId);
+              if (requestsSent.indexOf(userId) === -1) {
+                requestsSent.push(userId);
+              }
             } // Add requestsSent information.
 
 
-            _this.firestore.doc('/requests/' + loggedInUserId).update({
+            _this.firestore.collection('requests').doc(loggedInUserId).set({
               requestsSent: requestsSent
             }).then(function (success) {
-              var friendRequests;
+              var friendRequests; // tslint:disable-next-line: no-shadowed-variable
 
-              _this.dataProvider.getRequests(userId).limit(1).get().then(function (requests) {
-                if (requests.payload.val() != null && requests.payload.val().friendRequests != null) friendRequests = requests.payload.val().friendRequests;
+              _this.dataProvider.getRequests(userId).get().subscribe(function (requests) {
+                if (requests.data() != null && requests.data().friendRequests != null) {
+                  friendRequests = requests.data().friendRequests;
+                }
 
                 if (friendRequests == null) {
                   friendRequests = [loggedInUserId];
                 } else {
-                  if (friendRequests.indexOf(userId) == -1) friendRequests.push(loggedInUserId);
+                  if (friendRequests.indexOf(userId) === -1) {
+                    friendRequests.push(loggedInUserId);
+                  }
                 } // Add friendRequest information.
 
 
-                _this.firestore.doc('/requests/' + userId).update({
+                _this.firestore.collection('requests').doc(userId).set({
                   friendRequests: friendRequests
-                }).then(function (success) {
+                }).then(function (succ) {
                   _this.loadingProvider.hide();
 
-                  _this.loadingProvider.showToast("Friend Request Sent"); // this.alertProvider.showFriendRequestSent();
-
+                  _this.loadingProvider.showToast('Friend Request Sent');
                 }).catch(function (error) {
                   _this.loadingProvider.hide();
                 });
               });
             }).catch(function (error) {
+              console.log('error', error);
+
               _this.loadingProvider.hide();
             });
           });
@@ -1174,33 +1175,38 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           var loggedInUserId = this.afAuth.auth.currentUser.uid;
           this.loadingProvider.show();
-          var requestsSent;
-          this.dataProvider.getRequests(loggedInUserId).limit(1).get().then(function (requests) {
-            requestsSent = requests.payload.val().requestsSent;
+          var requestsSent = [];
+          this.dataProvider.getRequests(loggedInUserId).get().subscribe(function (requests) {
+            requestsSent = requests.data().requestsSent;
             requestsSent.splice(requestsSent.indexOf(userId), 1); // Update requestSent information.
 
-            _this2.firestore.doc('/requests/' + loggedInUserId).update({
+            _this2.firestore.collection('requests').doc(loggedInUserId).set({
               requestsSent: requestsSent
             }).then(function (success) {
               var friendRequests;
 
-              _this2.dataProvider.getRequests(userId).limit(1).get().then(function (requests) {
-                friendRequests = requests.payload.val().friendRequests;
+              _this2.dataProvider.getRequests(userId).get().subscribe(function (req) {
+                friendRequests = req.data().friendRequests;
                 console.log(friendRequests);
                 friendRequests.splice(friendRequests.indexOf(loggedInUserId), 1); // Update friendRequests information.
 
-                _this2.firestore.doc('/requests/' + userId).update({
+                _this2.firestore.collection('requests').doc(userId).set({
                   friendRequests: friendRequests
-                }).then(function (success) {
+                }).then(function (succ) {
+                  console.log(succ);
+
                   _this2.loadingProvider.hide();
 
-                  _this2.loadingProvider.showToast("Removed Friend Request"); // this.alertProvider.showFriendRequestRemoved();
-
+                  _this2.loadingProvider.showToast('Removed Friend Request');
                 }).catch(function (error) {
+                  console.log(error);
+
                   _this2.loadingProvider.hide();
                 });
               });
             }).catch(function (error) {
+              console.log(error);
+
               _this2.loadingProvider.hide();
             });
           });
@@ -1213,32 +1219,39 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           var loggedInUserId = this.afAuth.auth.currentUser.uid;
           this.loadingProvider.show();
-          var friendRequests;
-          this.dataProvider.getRequests(loggedInUserId).limit(1).get().then(function (requests) {
-            friendRequests = requests.payload.val().friendRequests;
-            console.log(friendRequests);
-            friendRequests.splice(friendRequests.indexOf(userId), 1); // Update friendRequests information.
+          var friendRequests = [];
+          this.dataProvider.getRequests(loggedInUserId).get().subscribe(function (requests) {
+            friendRequests = requests.data().friendRequests;
+            friendRequests = friendRequests.filter(function (u) {
+              return u !== userId;
+            }); // Update friendRequests information.
 
-            _this3.firestore.doc('/requests/' + loggedInUserId).update({
+            _this3.firestore.collection('requests').doc(loggedInUserId).set({
               friendRequests: friendRequests
             }).then(function (success) {
               var requestsSent;
 
-              _this3.dataProvider.getRequests(userId).limit(1).get().then(function (requests) {
-                requestsSent = requests.payload.val().requestsSent;
-                requestsSent.splice(requestsSent.indexOf(loggedInUserId), 1); // Update requestsSent information.
+              _this3.dataProvider.getRequests(userId).get().subscribe(function (req) {
+                requestsSent = req.data().requestsSent;
+                requestsSent.splice(requestsSent.indexOf(loggedInUserId), 1);
+                console.log('requestsSent:', requestsSent, loggedInUserId, requestsSent.indexOf(userId), 1); // Update requestsSent information.
 
-                _this3.firestore.doc('/requests/' + userId).update({
+                _this3.firestore.collection('requests').doc(userId).set({
                   requestsSent: requestsSent
-                }).then(function (success) {
+                }).then(function (succ) {
+                  console.log(succ);
+
                   _this3.loadingProvider.hide();
                 }).catch(function (error) {
+                  console.log(error);
+
                   _this3.loadingProvider.hide();
                 });
               });
-            }).catch(function (error) {
-              _this3.loadingProvider.hide(); //TODO ERROR
+            }).catch(function (err) {
+              console.log(err);
 
+              _this3.loadingProvider.hide();
             });
           });
         } // Accept friend request.
@@ -1252,8 +1265,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           this.deleteFriendRequest(userId);
           this.loadingProvider.show();
-          this.dataProvider.getUser(loggedInUserId).snapshotChanges().pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_6__["take"])(1)).subscribe(function (account) {
-            var friends = account.payload.val().friends;
+          this.dataProvider.getUser(loggedInUserId).get().subscribe(function (account) {
+            var friends = account.data().friends;
 
             if (!friends) {
               friends = [userId];
@@ -1265,8 +1278,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             _this4.dataProvider.getUser(loggedInUserId).update({
               friends: friends
             }).then(function (success) {
-              _this4.dataProvider.getUser(userId).snapshotChanges().pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_6__["take"])(1)).subscribe(function (account) {
-                var friends = account.payload.val().friends;
+              _this4.dataProvider.getUser(userId).get().subscribe(function (acc) {
+                var friends = acc.data().friends;
 
                 if (!friends) {
                   friends = [loggedInUserId];
@@ -1276,7 +1289,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
                 _this4.dataProvider.getUser(userId).update({
                   friends: friends
-                }).then(function (success) {
+                }).then(function (succ) {
                   _this4.loadingProvider.hide();
                 }).catch(function (error) {
                   _this4.loadingProvider.hide();
@@ -1308,6 +1321,63 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       providedIn: 'root'
     }), tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__["AngularFirestore"], _loading_service__WEBPACK_IMPORTED_MODULE_2__["LoadingService"], _angular_fire_auth__WEBPACK_IMPORTED_MODULE_5__["AngularFireAuth"], _data_service__WEBPACK_IMPORTED_MODULE_3__["DataService"]])], FirebaseService);
     /***/
+  },
+
+  /***/
+  "./src/app/validators/checkbox-checked.validator.ts":
+  /*!**********************************************************!*\
+    !*** ./src/app/validators/checkbox-checked.validator.ts ***!
+    \**********************************************************/
+
+  /*! exports provided: CheckboxCheckedValidator */
+
+  /***/
+  function srcAppValidatorsCheckboxCheckedValidatorTs(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+
+    __webpack_require__.r(__webpack_exports__);
+    /* harmony export (binding) */
+
+
+    __webpack_require__.d(__webpack_exports__, "CheckboxCheckedValidator", function () {
+      return CheckboxCheckedValidator;
+    });
+    /* harmony import */
+
+
+    var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
+    /*! tslib */
+    "./node_modules/tslib/tslib.es6.js");
+
+    var CheckboxCheckedValidator =
+    /*#__PURE__*/
+    function () {
+      function CheckboxCheckedValidator() {
+        _classCallCheck(this, CheckboxCheckedValidator);
+      }
+
+      _createClass(CheckboxCheckedValidator, null, [{
+        key: "tagsSelected",
+        value: function tagsSelected(min) {
+          var validator = function validator(formArray) {
+            var totalSelected = formArray.controls.map(function (control) {
+              return control.value;
+            }).reduce(function (prev, next) {
+              return next ? prev + next : prev;
+            }, 0);
+            return totalSelected >= min ? null : {
+              required: true
+            };
+          };
+
+          return validator;
+        }
+      }]);
+
+      return CheckboxCheckedValidator;
+    }();
+    /***/
+
   }
 }]);
 //# sourceMappingURL=common-es5.js.map

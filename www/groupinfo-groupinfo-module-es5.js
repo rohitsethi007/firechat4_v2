@@ -264,7 +264,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (accounts) {
             var account = accounts.payload.data();
             _this.user = Object.assign({
-              $key: account.key
+              $key: account.userId
             }, account);
           });
         } // Delete subscription.

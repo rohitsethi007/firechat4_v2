@@ -21,7 +21,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "<ion-header>\r\n  <ion-toolbar color=\"primary\">\r\n    <ion-buttons slot=\"start\">\r\n      <ion-back-button></ion-back-button>\r\n    </ion-buttons>\r\n    <ion-title>Create New Group</ion-title>\r\n    <ion-buttons slot=\"end\">\r\n      <ion-button fill=\"outline\" (click)=\"done()\">Create</ion-button>\r\n    </ion-buttons>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n  <div *ngIf=\"group\">\r\n    <ion-row>\r\n      <ion-col size=\"3\" style=\"text-align:center; margin-top: 4rem;\">\r\n        <img src=\"{{group.img}}\" *ngIf=\"group.img != ''\" tappable (click)=\"setGroupPhoto()\"\r\n          onError=\"this.src='./assets/images/default-group.png'\" />\r\n        <img style=\"border-radius: 100%; width: 100px; height: 100px;\" src=\"{{group.img}}\"\r\n          onError=\"this.src='./assets/images/default-group.png'\" *ngIf=\"group.img == ''\" tappable\r\n          (click)=\"setGroupPhoto()\" />\r\n      </ion-col>\r\n      <ion-col size=\"9\">\r\n        <form [formGroup]=\"myForm\">\r\n          <ion-list style=\"margin:0;\" lines=\"none\">\r\n            <ion-item>\r\n              <ion-label position=\"stacked\">Group Name</ion-label>\r\n              <ion-input formControlName=\"groupName\" type=\"text\" [(ngModel)]=\"name\" placeholder=\"Name of Group\">\r\n              </ion-input>\r\n              <div *ngFor=\"let validation of errorMessages.groupName\">\r\n                <p class=\"error\"\r\n                  *ngIf=\"myForm.get('groupName').hasError(validation.type) && (myForm.get('groupName').dirty || myForm.get('groupName').touched || submitAttempt) \">\r\n                  {{validation.message}}\r\n                </p>\r\n              </div>\r\n            </ion-item>\r\n            <ion-item>\r\n              <ion-label position=\"stacked\">Description</ion-label>\r\n              <ion-textarea formControlName=\"groupDescription\" rows=\"3\" [(ngModel)]=\"description\"\r\n                placeholder=\"Describe this Group\"></ion-textarea>\r\n              <div *ngFor=\"let validation of errorMessages.groupDescription\">\r\n                <p class=\"error\"\r\n                  *ngIf=\"myForm.get('groupDescription').hasError(validation.type) && (myForm.get('groupDescription').dirty || myForm.get('groupDescription').touched || submitAttempt) \">\r\n                  {{validation.message}}\r\n                </p>\r\n              </div>\r\n            </ion-item>\r\n            <ion-item>\r\n              <ion-label position=\"stacked\">Group Tags</ion-label>\r\n              <ion-textarea formControlName=\"groupTags\" rows=\"3\" [(ngModel)]=\"groupTags\"\r\n                placeholder=\"Add Group Tags in each line.\"></ion-textarea>\r\n              <div *ngFor=\"let validation of errorMessages.groupTags\">\r\n                <p class=\"error\"\r\n                  *ngIf=\"myForm.get('groupTags').hasError(validation.type) && (myForm.get('groupTags').dirty || myForm.get('groupTags').touched || submitAttempt) \">\r\n                  {{validation.message}}\r\n                </p>\r\n              </div>\r\n            </ion-item>\r\n          </ion-list>\r\n        </form>\r\n      </ion-col>\r\n    </ion-row>\r\n    <div *ngIf=\"groupMembers\">\r\n      <ion-list-header>\r\n        Group Members ({{groupMembers.length}})\r\n      </ion-list-header>\r\n      <ion-list lines=\"none\">\r\n        <ion-item  *ngFor=\"let member of groupMembers\">\r\n          <ion-avatar slot=\"start\">\r\n            <img src=\"{{member.img}}\" onError=\"this.src='./assets/images/default-dp.png'\" />\r\n          </ion-avatar>\r\n          <ion-label>\r\n            <ion-text>\r\n              <h2>{{member.name}}</h2>\r\n            </ion-text>\r\n            <ion-text>\r\n              <p>{{member.username}}</p>\r\n            </ion-text>\r\n          </ion-label>\r\n          <ion-button slot=\"end\" fill=\"outline\" (click)=\"removeFromGroup(member)\">Remove</ion-button>\r\n        </ion-item>\r\n      </ion-list>\r\n    </div>\r\n\r\n  \r\n    <ion-list-header>\r\n      Add New Members\r\n    </ion-list-header>\r\n    <div class=\"form\">\r\n      <!-- No friends to create a group. -->\r\n      <div class=\"empty\" *ngIf=\"friends && friends.length == 0\">\r\n        <p>You have no friends right now to start a group conversation.</p>\r\n      </div>\r\n      <!-- Show friends to add/remove to group. -->\r\n      <ion-list lines=\"none\" *ngIf=\"friends && friends.length > 0\">\r\n        <ion-searchbar [(ngModel)]=\"searchFriend\" placeholder=\"Search for friend or username\" showCancelButton=\"true\"\r\n          cancelButtonText=\"Done\"></ion-searchbar>\r\n        <ion-item *ngFor=\"let friend of friends | friendFilter:searchFriend\" (click)=\"addOrRemoveFromGroup(friend)\">\r\n          <ion-avatar slot=\"start\">\r\n            <img src=\"{{friend.img}}\" onError=\"this.src='./assets/images/default-dp.png'\">\r\n          </ion-avatar>\r\n          <ion-label>\r\n            <ion-text>\r\n              <h2>{{friend.name}}</h2>\r\n            </ion-text>\r\n            <ion-text>\r\n              <p>@{{friend.username}}</p>\r\n            </ion-text>\r\n          </ion-label>\r\n          <ion-button slot=\"end\" fill=\"outline\" color=\"primary\" (click)=\"addToGroup(friend); $event.stopPropagation();\"\r\n            *ngIf=\"!inGroup(friend)\">Add</ion-button>\r\n          <ion-button slot=\"end\" fill=\"outline\" color=\"primary\"\r\n            (click)=\"removeFromGroup(friend); $event.stopPropagation();\" *ngIf=\"inGroup(friend)\">Remove</ion-button>\r\n        </ion-item>\r\n      </ion-list>\r\n    </div>\r\n  </div>\r\n</ion-content>";
+    __webpack_exports__["default"] = "<ion-header>\r\n  <ion-toolbar color=\"primary\">\r\n    <ion-buttons slot=\"start\">\r\n      <ion-back-button></ion-back-button>\r\n    </ion-buttons>\r\n    <ion-title>Create New Group</ion-title>\r\n    <ion-buttons slot=\"end\">\r\n      <ion-button fill=\"outline\" (click)=\"done()\">Create</ion-button>\r\n    </ion-buttons>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n  <div *ngIf=\"group\">\r\n      <ion-row>\r\n        <ion-col>\r\n          <div class=\"cover-wrapper\">\r\n            <img src=\"{{group.img}}\" *ngIf=\"group.img != ''\" tappable (click)=\"setGroupPhoto()\"\r\n          onError=\"this.src='./assets/images/default-group.png'\" />\r\n        <img src=\"{{group.img}}\"\r\n          onError=\"this.src='./assets/images/default-group.png'\" *ngIf=\"group.img == ''\" tappable\r\n          (click)=\"setGroupPhoto()\" />\r\n            </div>\r\n        </ion-col>\r\n        </ion-row>\r\n      <ion-row>\r\n        <ion-col>\r\n        <form [formGroup]=\"myForm\">\r\n          <ion-list style=\"margin:0;\" lines=\"none\">\r\n            <ion-item class=\"input-item\">\r\n              <ion-label position=\"stacked\">Title:</ion-label>\r\n              <ion-input formControlName=\"groupName\" type=\"text\" [(ngModel)]=\"name\" placeholder=\"Name of Group\">\r\n              </ion-input>\r\n              <div *ngFor=\"let validation of errorMessages.groupName\">\r\n                <p class=\"error\"\r\n                  *ngIf=\"myForm.get('groupName').hasError(validation.type) && (myForm.get('groupName').dirty || myForm.get('groupName').touched || submitAttempt) \">\r\n                  {{validation.message}}\r\n                </p>\r\n              </div>\r\n            </ion-item>\r\n            <ion-item>\r\n              <ion-label position=\"stacked\">Description</ion-label>\r\n              <ion-textarea formControlName=\"groupDescription\" rows=\"3\" [(ngModel)]=\"description\"\r\n                placeholder=\"Describe this Group\"></ion-textarea>\r\n              <div *ngFor=\"let validation of errorMessages.groupDescription\">\r\n                <p class=\"error\"\r\n                  *ngIf=\"myForm.get('groupDescription').hasError(validation.type) && (myForm.get('groupDescription').dirty || myForm.get('groupDescription').touched || submitAttempt) \">\r\n                  {{validation.message}}\r\n                </p>\r\n              </div>\r\n            </ion-item>\r\n            <ion-item>\r\n              <ion-label position=\"stacked\">Group Tags</ion-label>\r\n              <ion-textarea formControlName=\"groupTags\" rows=\"3\" [(ngModel)]=\"groupTags\"\r\n                placeholder=\"Add Group Tags in each line.\"></ion-textarea>\r\n              <div *ngFor=\"let validation of errorMessages.groupTags\">\r\n                <p class=\"error\"\r\n                  *ngIf=\"myForm.get('groupTags').hasError(validation.type) && (myForm.get('groupTags').dirty || myForm.get('groupTags').touched || submitAttempt) \">\r\n                  {{validation.message}}\r\n                </p>\r\n              </div>\r\n            </ion-item>\r\n          </ion-list>\r\n        </form>\r\n      </ion-col>\r\n    </ion-row>\r\n  </div>\r\n</ion-content>";
     /***/
   },
 
@@ -125,7 +125,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL25ld2dyb3VwL25ld2dyb3VwLnBhZ2Uuc2NzcyJ9 */";
+    __webpack_exports__["default"] = ".cover-wrapper {\n  margin-bottom: var(--page-margin);\n  text-align: center;\n  padding-top: 5px;\n}\n.cover-wrapper .cover-anchor {\n  display: block;\n}\n.cover-wrapper .cover-icon-wrapper {\n  margin: 0px 20%;\n  display: -webkit-box;\n  display: flex;\n  height: 100%;\n  -webkit-box-pack: center;\n          justify-content: center;\n  -webkit-box-align: center;\n          align-items: center;\n}\n.cover-wrapper .input-item {\n  --padding-start: 0px;\n  --padding-end: 0px;\n  --inner-padding-end: 0px;\n  font-family: \"HelveticaNeue\", \"Helvetica Neue\", Helvetica, \"Roboto\", \"Segoe UI\", Arial, sans-serif;\n  font-weight: 400;\n  font-size: 20px;\n  -webkit-font-smoothing: subpixel-antialiased;\n  -moz-osx-font-smoothing: auto;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbmV3Z3JvdXAvQzpcXFVzZXJzXFxzZXRoaVxcZmlyZWNoYXQ0X3YyXFxmaXJlY2hhdDQvc3JjXFxhcHBcXG5ld2dyb3VwXFxuZXdncm91cC5wYWdlLnNjc3MiLCJzcmMvYXBwL25ld2dyb3VwL25ld2dyb3VwLnBhZ2Uuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLGlDQUFBO0VBQ0Esa0JBQUE7RUFDQSxnQkFBQTtBQ0NKO0FEQUk7RUFDRSxjQUFBO0FDRU47QURDSTtFQUNFLGVBQUE7RUFDQSxvQkFBQTtFQUFBLGFBQUE7RUFDQSxZQUFBO0VBQ0Esd0JBQUE7VUFBQSx1QkFBQTtFQUNBLHlCQUFBO1VBQUEsbUJBQUE7QUNDTjtBREVJO0VBQ0ksb0JBQUE7RUFDQSxrQkFBQTtFQUNBLHdCQUFBO0VBQ0Esa0dBQUE7RUFDQSxnQkFBQTtFQUNBLGVBQUE7RUFDQSw0Q0FBQTtFQUNBLDZCQUFBO0VBQ0EsZ0JBQUE7RUFDQSx1QkFBQTtBQ0FSIiwiZmlsZSI6InNyYy9hcHAvbmV3Z3JvdXAvbmV3Z3JvdXAucGFnZS5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmNvdmVyLXdyYXBwZXIge1xyXG4gICAgbWFyZ2luLWJvdHRvbTogdmFyKC0tcGFnZS1tYXJnaW4pO1xyXG4gICAgdGV4dC1hbGlnbjogY2VudGVyO1xyXG4gICAgcGFkZGluZy10b3A6IDVweDtcclxuICAgIC5jb3Zlci1hbmNob3Ige1xyXG4gICAgICBkaXNwbGF5OiBibG9jaztcclxuICAgIH1cclxuXHJcbiAgICAuY292ZXItaWNvbi13cmFwcGVyIHtcclxuICAgICAgbWFyZ2luOiAwcHggMjAlO1xyXG4gICAgICBkaXNwbGF5OiBmbGV4O1xyXG4gICAgICBoZWlnaHQ6IDEwMCU7XHJcbiAgICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xyXG4gICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xyXG4gICAgfVxyXG5cclxuICAgIC5pbnB1dC1pdGVtIHtcclxuICAgICAgICAtLXBhZGRpbmctc3RhcnQ6IDBweDtcclxuICAgICAgICAtLXBhZGRpbmctZW5kOiAwcHg7XHJcbiAgICAgICAgLS1pbm5lci1wYWRkaW5nLWVuZDogMHB4O1xyXG4gICAgICAgIGZvbnQtZmFtaWx5OiAnSGVsdmV0aWNhTmV1ZScsICdIZWx2ZXRpY2EgTmV1ZScsIEhlbHZldGljYSwgJ1JvYm90bycsICdTZWdvZSBVSScsIEFyaWFsLCBzYW5zLXNlcmlmO1xyXG4gICAgICAgIGZvbnQtd2VpZ2h0OiA0MDA7XHJcbiAgICAgICAgZm9udC1zaXplOiAyMHB4O1xyXG4gICAgICAgIC13ZWJraXQtZm9udC1zbW9vdGhpbmc6IHN1YnBpeGVsLWFudGlhbGlhc2VkO1xyXG4gICAgICAgIC1tb3otb3N4LWZvbnQtc21vb3RoaW5nOiBhdXRvO1xyXG4gICAgICAgIG92ZXJmbG93OiBoaWRkZW47IFxyXG4gICAgICAgIHRleHQtb3ZlcmZsb3c6IGVsbGlwc2lzO1xyXG4gICAgICB9XHJcbiAgfSIsIi5jb3Zlci13cmFwcGVyIHtcbiAgbWFyZ2luLWJvdHRvbTogdmFyKC0tcGFnZS1tYXJnaW4pO1xuICB0ZXh0LWFsaWduOiBjZW50ZXI7XG4gIHBhZGRpbmctdG9wOiA1cHg7XG59XG4uY292ZXItd3JhcHBlciAuY292ZXItYW5jaG9yIHtcbiAgZGlzcGxheTogYmxvY2s7XG59XG4uY292ZXItd3JhcHBlciAuY292ZXItaWNvbi13cmFwcGVyIHtcbiAgbWFyZ2luOiAwcHggMjAlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBoZWlnaHQ6IDEwMCU7XG4gIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xufVxuLmNvdmVyLXdyYXBwZXIgLmlucHV0LWl0ZW0ge1xuICAtLXBhZGRpbmctc3RhcnQ6IDBweDtcbiAgLS1wYWRkaW5nLWVuZDogMHB4O1xuICAtLWlubmVyLXBhZGRpbmctZW5kOiAwcHg7XG4gIGZvbnQtZmFtaWx5OiBcIkhlbHZldGljYU5ldWVcIiwgXCJIZWx2ZXRpY2EgTmV1ZVwiLCBIZWx2ZXRpY2EsIFwiUm9ib3RvXCIsIFwiU2Vnb2UgVUlcIiwgQXJpYWwsIHNhbnMtc2VyaWY7XG4gIGZvbnQtd2VpZ2h0OiA0MDA7XG4gIGZvbnQtc2l6ZTogMjBweDtcbiAgLXdlYmtpdC1mb250LXNtb290aGluZzogc3VicGl4ZWwtYW50aWFsaWFzZWQ7XG4gIC1tb3otb3N4LWZvbnQtc21vb3RoaW5nOiBhdXRvO1xuICBvdmVyZmxvdzogaGlkZGVuO1xuICB0ZXh0LW92ZXJmbG93OiBlbGxpcHNpcztcbn0iXX0= */";
     /***/
   },
 
@@ -214,12 +214,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     var _angular_forms__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(
     /*! @angular/forms */
     "./node_modules/@angular/forms/fesm2015/forms.js");
-    /* harmony import */
-
-
-    var src_environments_validator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(
-    /*! src/environments/validator */
-    "./src/environments/validator.ts");
 
     var NewgroupPage =
     /*#__PURE__*/
@@ -237,12 +231,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.camera = camera;
         this.formBuilder = formBuilder;
         this.submitAttempt = false;
-        this.errorMessages = [];
-        this.errorMessages = src_environments_validator__WEBPACK_IMPORTED_MODULE_11__["Validator"].errorMessages;
-        this.myForm = this.formBuilder.group({
-          groupName: src_environments_validator__WEBPACK_IMPORTED_MODULE_11__["Validator"].groupNameValidator,
-          groupDescription: src_environments_validator__WEBPACK_IMPORTED_MODULE_11__["Validator"].groupDescriptionValidator,
-          groupTags: src_environments_validator__WEBPACK_IMPORTED_MODULE_11__["Validator"].groupTagsValidator
+        this.errorMessages = {
+          groupName: [{
+            type: 'required',
+            message: 'Name is a required field.'
+          }],
+          groupDescription: [{
+            type: 'required',
+            message: 'Description is a required field.'
+          }],
+          groupTags: [{
+            type: 'required',
+            message: 'GroupTags is a required field.'
+          }]
+        };
+        this.myForm = new _angular_forms__WEBPACK_IMPORTED_MODULE_10__["FormGroup"]({
+          groupName: new _angular_forms__WEBPACK_IMPORTED_MODULE_10__["FormControl"]('', _angular_forms__WEBPACK_IMPORTED_MODULE_10__["Validators"].compose([_angular_forms__WEBPACK_IMPORTED_MODULE_10__["Validators"].required])),
+          groupDescription: new _angular_forms__WEBPACK_IMPORTED_MODULE_10__["FormControl"]('', _angular_forms__WEBPACK_IMPORTED_MODULE_10__["Validators"].compose([_angular_forms__WEBPACK_IMPORTED_MODULE_10__["Validators"].required])),
+          groupTags: new _angular_forms__WEBPACK_IMPORTED_MODULE_10__["FormControl"]('', _angular_forms__WEBPACK_IMPORTED_MODULE_10__["Validators"].compose([_angular_forms__WEBPACK_IMPORTED_MODULE_10__["Validators"].required]))
         });
       }
 
@@ -264,53 +270,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             description: '',
             groupTags: []
           };
-          this.searchFriend = ''; // Get user's friends to add to the group.
-
-          this.dataProvider.getCurrentUser().get().subscribe(function (accounts) {
-            var account = accounts.data();
+          this.searchFriend = '';
+          this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (accounts) {
+            _this.account = accounts.payload.data();
 
             if (!_this.groupMembers) {
-              _this.groupMembers = [account];
-            }
-
-            if (account.friends) {
-              for (var i = 0; i < account.friends.length; i++) {
-                _this.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe(function (friendRes) {
-                  if (friendRes.key != null) {
-                    var friend = Object.assign({
-                      $key: friendRes.key
-                    }, friendRes.payload.data());
-
-                    _this.addOrUpdateFriend(friend);
-                  }
-                });
-              }
+              _this.groupMembers = [_this.account];
             } else {
               _this.friends = [];
             }
           });
-        } // Add or update friend for real-time sync.
-
-      }, {
-        key: "addOrUpdateFriend",
-        value: function addOrUpdateFriend(friend) {
-          if (!this.friends) {
-            this.friends = [friend];
-          } else {
-            var index = -1;
-
-            for (var i = 0; i < this.friends.length; i++) {
-              if (this.friends[i].$key == friend.$key) {
-                index = i;
-              }
-            }
-
-            if (index > -1) {
-              this.friends[index] = friend;
-            } else {
-              this.friends.push(friend);
-            }
-          }
         } // Proceed with group creation.
 
       }, {
@@ -333,7 +302,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }); // Add members of the group.
 
             var members = [];
-            console.log('this.groupMembers:', this.groupMembers);
 
             for (var i = 0; i < this.groupMembers.length; i++) {
               members.push(this.groupMembers[i].userId);
@@ -345,69 +313,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             this.group.members = members;
             this.group.name = this.name;
             this.group.description = this.description;
-            this.group.groupTags = this.groupTags.split('\n');
-            console.log('Group Tags: ', this.group.groupTags); // Add group to database.
+            this.group.groupTags = this.groupTags.split('\n'); // Add group to database.
 
-            console.log('this.group:', this.group);
             this.firestore.collection('groups').add(this.group).then(function (success) {
-              var groupId = success.id; // Add group reference to users.
-
-              _this2.firestore.doc('/accounts/' + _this2.groupMembers[0].$key + '/groups/' + groupId).update({
-                messagesRead: 1
-              });
-
-              for (var i = 1; i < _this2.groupMembers.length; i++) {
-                _this2.firestore.doc('/accounts/' + _this2.groupMembers[i].$key + '/groups/' + groupId).update({
-                  messagesRead: 0
-                });
-              }
+              var groupId = success.id;
 
               _this2.router.navigateByUrl('/group/' + groupId);
+
+              _this2.account.groups.push(groupId);
+
+              _this2.dataProvider.getCurrentUser().update({
+                groups: _this2.account.groups
+              });
             });
-          }
-        } // Add friend to members of group.
-
-      }, {
-        key: "addToGroup",
-        value: function addToGroup(friend) {
-          this.groupMembers.push(friend);
-        } // Remove friend from members of group.
-
-      }, {
-        key: "removeFromGroup",
-        value: function removeFromGroup(friend) {
-          var index = -1;
-
-          for (var i = 1; i < this.groupMembers.length; i++) {
-            if (this.groupMembers[i].$key == friend.$key) {
-              index = i;
-            }
-          }
-
-          if (index > -1) {
-            this.groupMembers.splice(index, 1);
-          }
-        } // Check if friend is already added to the group or not.
-
-      }, {
-        key: "inGroup",
-        value: function inGroup(friend) {
-          for (var i = 0; i < this.groupMembers.length; i++) {
-            if (this.groupMembers[i].$key == friend.$key) {
-              return true;
-            }
-          }
-
-          return false;
-        } // Toggle to add/remove friend from the group.
-
-      }, {
-        key: "addOrRemoveFromGroup",
-        value: function addOrRemoveFromGroup(friend) {
-          if (this.inGroup(friend)) {
-            this.removeFromGroup(friend);
-          } else {
-            this.addToGroup(friend);
           }
         } // Set group photo.
 
@@ -474,98 +392,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       "./src/app/newgroup/newgroup.page.scss")).default]
     }), tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_7__["Router"], _services_image_service__WEBPACK_IMPORTED_MODULE_2__["ImageService"], _services_data_service__WEBPACK_IMPORTED_MODULE_3__["DataService"], _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["AlertController"], _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_9__["AngularFirestore"], _angular_fire_auth__WEBPACK_IMPORTED_MODULE_8__["AngularFireAuth"], _services_loading_service__WEBPACK_IMPORTED_MODULE_5__["LoadingService"], _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_6__["Camera"], _angular_forms__WEBPACK_IMPORTED_MODULE_10__["FormBuilder"]])], NewgroupPage);
     /***/
-  },
-
-  /***/
-  "./src/environments/validator.ts":
-  /*!***************************************!*\
-    !*** ./src/environments/validator.ts ***!
-    \***************************************/
-
-  /*! exports provided: Validator */
-
-  /***/
-  function srcEnvironmentsValidatorTs(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-
-    __webpack_require__.r(__webpack_exports__);
-    /* harmony export (binding) */
-
-
-    __webpack_require__.d(__webpack_exports__, "Validator", function () {
-      return Validator;
-    });
-    /* harmony import */
-
-
-    var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
-    /*! tslib */
-    "./node_modules/tslib/tslib.es6.js");
-    /* harmony import */
-
-
-    var _angular_forms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
-    /*! @angular/forms */
-    "./node_modules/@angular/forms/fesm2015/forms.js");
-
-    var Validator;
-
-    (function (Validator) {
-      Validator.emailValidator = ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].pattern('^[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})$')]];
-      Validator.passwordValidator = ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].minLength(6)]];
-      Validator.nameValidator = ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required]];
-      Validator.usernameValidator = ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].minLength(5)]];
-      Validator.bioValidator = ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required]];
-      Validator.groupNameValidator = ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required]];
-      Validator.groupDescriptionValidator = ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required]];
-      Validator.groupTagsValidator = ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required]];
-      Validator.errorMessages = {
-        email: [{
-          type: 'required',
-          message: 'Email is required'
-        }, {
-          type: 'pattern',
-          message: 'Email looks like invalid'
-        }],
-        password: [{
-          type: 'required',
-          message: 'Password is required'
-        }, {
-          type: 'minlength',
-          message: 'Password must be 6 char'
-        }],
-        name: [{
-          type: 'required',
-          message: 'Name is required'
-        }],
-        username: [{
-          type: 'required',
-          message: 'Username is required'
-        }, {
-          type: 'minlength',
-          message: 'Username must be 5 char'
-        }],
-        bio: [{
-          type: 'required',
-          message: 'Bio is required'
-        }],
-        groupName: [{
-          type: 'required',
-          message: 'Group Name is required'
-        }],
-        groupDescription: [{
-          type: 'required',
-          message: 'Group Description is required'
-        }]
-      }; // Poll Form Validators
-
-      Validator.pollNameValidator = ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].minLength(1)]];
-      Validator.pollDescriptionValidator = ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].minLength(1)]];
-      Validator.pollOption1Validator = ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].minLength(1)]];
-      Validator.pollOption2Validator = ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].minLength(1)]];
-    })(Validator || (Validator = {}));
-    /***/
-
   }
 }]);
 //# sourceMappingURL=newgroup-newgroup-module-es5.js.map

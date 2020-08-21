@@ -91,9 +91,13 @@
     overflow: hidden; 
     text-overflow: ellipsis;
 
+    .reactions {
+      margin-left: -10px;
+    } 
     .reviews-wrapper {
       padding-top: calc(var(--page-margin) / 1);
       padding-bottom: calc(var(--page-margin) / 3);
+     
       .tags {
         padding-right: 5px;
 

@@ -1,42 +1,44 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="secondary">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>{{title}}</ion-title>
-    <ion-buttons slot="end"> 
-		<ion-button *ngIf="loggedInUserIsMember == true" (click)="newPoll()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
-	</ion-buttons>
-  </ion-toolbar>
+  </ion-toolbar> 
 </ion-header>
 
 <ion-content class="contact-card-content">
   <div>
       <ion-card>
           <ion-row class="user-preferences-wrapper">
-              <ion-card-header class="subtitle">
-                  <img src="{{poll.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" /> {{poll.addedByUser.addedByUsername}}, posted {{poll.dateCreated | DateFormat}}
-                  <ion-card-title class="title">{{poll.description}}</ion-card-title>
-              </ion-card-header>
+            <ion-card-header class="header">
+              <ion-card-subtitle class="addedBy">
+                <img class="addedByImg" src="{{poll.avatar}}" onError="this.src='./assets/images/default-dp.png'" /> 
+                 <p><a class="addedByTitle" (click)="viewUser(poll.addedByUser.addedByKey)" ><b>{{poll.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf="item.showNewIcon" class="newIcon" src="./assets/icon/new.svg" />  -->
+                  <br/>
+                 <span class="addedByDate">posted {{poll.date.toDate() | DateFormat}}</span><br/>
+                <a (click)="viewGroup(poll.groupId)" class="addedByTitle">in <b>{{poll.groupName}}</b></a></p>
+              </ion-card-subtitle>
+            </ion-card-header>
               <ion-card-content class="message">
 			      <p class="sub-header" *ngIf="!voted && !pollClosed">* Please vote to see results</p>
   					<form [formGroup]="pollOptionForm">
 					  <ion-list class="radio-list" lines="full" *ngIf="!voted && !pollClosed">
 						<ion-radio-group class="radio-group" formControlName="selected_poll_option">
 						  <ion-item class="radio-item">
-							<ion-label class="radio-label">{{poll.pollOptions[0].name}}</ion-label>
+							<ion-label class="radio-label">{{poll.data.pollOptions[0].name}}</ion-label>
 							<ion-radio slot="start" color="secondary" value="0"></ion-radio>
 						  </ion-item>
 						  <ion-item class="radio-item">
-							<ion-label class="radio-label">{{poll.pollOptions[1].name}}</ion-label>
+							<ion-label class="radio-label">{{poll.data.pollOptions[1].name}}</ion-label>
 							<ion-radio slot="start" color="secondary" value="1"></ion-radio>
 						  </ion-item>
-						  <ion-item class="radio-item" *ngIf="poll.pollOptions[2] != null">
-							<ion-label class="radio-label">{{poll.pollOptions[2].name}}</ion-label>
+						  <ion-item class="radio-item" *ngIf="poll.data.pollOptions[2] != null">
+							<ion-label class="radio-label">{{poll.data.pollOptions[2].name}}</ion-label>
 							<ion-radio slot="start" color="secondary" value="2"></ion-radio>
 						  </ion-item>
-						  <ion-item class="radio-item" *ngIf="poll.pollOptions[3] != null">
-							<ion-label class="radio-label">{{poll.pollOptions[3].name}}</ion-label>
+						  <ion-item class="radio-item" *ngIf="poll.data.pollOptions[3] != null">
+							<ion-label class="radio-label">{{poll.data.pollOptions[3].name}}</ion-label>
 							<ion-radio slot="start" color="secondary" value="3"></ion-radio>
 						  </ion-item>
 						</ion-radio-group>
@@ -57,19 +59,15 @@
         </canvas>			  
         <div id="legend"></div>
       </div>
+      <ion-row class="tags-wrapper">
+        <div class="tags" *ngFor="let tag of poll.postTags">
+          <span class="item-rating">#{{tag.val}}</span>
+        </div>
+      </ion-row>
         </ion-card-content>
           </ion-row>
 
-          <hr class="details-divider">
-          <div class="reviews-wrapper">
-              <h3 class="detail-title">Selected Tags</h3>
-              <ion-row>
-                  <div class="tags" *ngFor="let tag of poll.pollTags">
-                      <span *ngIf="tag.isChecked" class="item-rating" [attr.ratingBase]="1">{{tag.val}}</span>
-                      <span *ngIf="!tag.isChecked" class="item-rating" [attr.ratingBase]="0">{{tag.val}}</span>
-                  </div>
-              </ion-row>
-          </div>
+
           <hr class="details-divider">
           <div class="reviews-wrapper">
               <h3 class="detail-title-reply">Replies</h3>

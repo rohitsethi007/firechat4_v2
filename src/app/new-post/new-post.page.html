@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="secondary">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -8,7 +8,7 @@
 </ion-header>  
 
 <ion-content class="forms-validations-content">
-  <div *ngIf="step==1">
+  <div *ngIf="step==1"> 
     <div *ngIf="groups && groups.length > 0">
       <ion-list lines="none">
         <ion-item *ngFor="let group of groups" (click)="selectGroup(group.$key)">

@@ -6,18 +6,21 @@ import { LoadingService } from '../services/loading.service';
 import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
 
 @Component({
-  selector: 'app-new-poll',
+  selector: 'app-new-poll', 
   templateUrl: './new-poll.page.html',
   styleUrls: ['./new-poll.page.scss'],
 })
 export class NewPollPage implements OnInit {
   private poll: any;
+  private title: any;
   private pollForm: FormGroup;
   private groupId: any;
   private group: any;
   private pollId: any;
-  private postTags: any;
+  private postTags: any = [];
   private addedByUser: any;
+  private step: any = 1;
+  groups: any;
 
   validations = {
     name: [
@@ -52,15 +55,14 @@ export class NewPollPage implements OnInit {
     private router: Router
   ) {
     this.groupId = this.route.snapshot.params.id;
-    this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-      this.group = group.payload.data();
-      this.postTags = [];
-      this.group.groupTags.forEach(element => {
-        this.postTags.push({val: element, isChecked: false});
-      });
-      this.addTagControls();
-      this.loadingProvider.hide();
-    });
+
+    this.group = {name:''}
+    if (this.groupId === 'undefined') {
+      this.step = 1;
+    } else {
+      this.step = 2;
+    }
+
     this.pollForm = new FormGroup({
       description: new FormControl('', Validators.compose([
         Validators.minLength(10),
@@ -83,6 +85,28 @@ export class NewPollPage implements OnInit {
       });
    }
 
+   ionViewDidEnter() {
+    if (this.step === 1) {
+    this.title = 'Select a group ...';
+    this.dataProvider.getGroups().snapshotChanges().subscribe((data: any) => {
+
+    this.groups = data.map(c => {
+          return { $key: c.payload.doc.id, ...c.payload.doc.data() };
+        });
+      });
+    } else {
+      this.title = 'Create a Poll in ...';
+
+      this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+        this.group = group.payload.data();
+        this.group.groupTags.forEach((element: any) => {
+          this.postTags.push({val: element, isChecked: false});
+        });
+        this.addTagControls();
+      });   
+    }
+  }
+
   ngOnInit() {
      // Initialize
 
@@ -99,8 +123,11 @@ export class NewPollPage implements OnInit {
       title: '',
       postTags: [],
       groupId: '',
+      groupName: '',
       type: 'poll',
-      data: {}
+      data: {},
+      totalReactionCount: 0,
+      totalReviewCount: 0
     };
   });
 
@@ -118,7 +145,8 @@ export class NewPollPage implements OnInit {
 
     // Add poll info and date.
     this.poll.groupId = this.groupId;
-    this.poll.date = new Date().toString();
+    this.poll.groupName = this.group.name;
+    this.poll.date = new Date();
     this.poll.title = this.pollForm.value.description;
     this.poll.postTags = [];
     this.poll.postTags = this.postTags;
@@ -129,10 +157,10 @@ export class NewPollPage implements OnInit {
     const yyyy = today.getFullYear();
 
     const date: Date = new Date(yyyy, mm, dd + 2);
-    const dateEnding = date.toString();
+    const dateEnding = date;
 
     this.poll.data = {
-      dateCreated: new Date().toString(),
+      dateCreated: new Date(),
       dateEnding,
       pollOptions: []
     };
@@ -177,6 +205,23 @@ export class NewPollPage implements OnInit {
           this.router.navigateByUrl('tabs/tab2');
           });
       });
+    }
+
+  selectGroup(groupId) {
+    this.groupId = groupId;
+    console.log('groupId', groupId);
+    this.step = 2;
+    this.title = 'Create an Event in ...';
+
+    this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+      this.group = group.payload.data();
+      this.group.groupTags.forEach((element: any) => {
+        this.postTags.push({val: element, isChecked: false});
+      });
+      this.addTagControls();
+
+  });
+
     }
 
 }

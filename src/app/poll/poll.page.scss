@@ -1,62 +1,66 @@
-@import "../../theme/mixins/inputs/checkbox-tag";
-@import "../../theme/mixins/inputs/radio-tag";
-@import "../../theme/mixins/inputs/color-radio";
-  
-// Custom variables
-// Note:  These ones were added by us and have nothing to do with Ionic CSS Custom Properties
 :host {
-  --page-margin: var(--app-broad-margin);
-  --page-background: var(--app-background-shade);
-
-  --page-rating-5-color: #7ce198;
-  --page-rating-4-color: #a8e07c;
-  --page-rating-3-color: #cee07c;
-  --page-rating-2-color: #e0c77c;
-  --page-rating-1-color: #bbb2b2;
-
-
+  --page-margin: var(--app-fair-margin);
+  --page-background: var(--app-background);
   --page-highlighted-background: var(--ion-color-secondary-tint);
 }
 
-  // Note:  All the CSS variables defined below are overrides of Ionic elements CSS Custom Properties
-  ion-header {
-    ion-toolbar {
-      --background: var(--page-highlighted-background);
-    }
-  }
-
-.canvas{
-  position: relative; 
-  margin-left: -35px;
-  width:400px
-}
 .contact-card-content {
   --background: var(--page-background);
-  // To fix half pixel line between ion-header and  ion-content
-  transform: translateZ(0);
 
   .user-preferences-wrapper {
-    --ion-grid-column-padding: 0px;
+    .header {
+      width: 100%;
+    }
 
     .message {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
-      font-weight: 400;
+      font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+      font-weight: 400px;
       font-size: 14px;
       line-height: 19px;
-//        margin: var(--page-margin) 0px 0px;
+
+         
+  .tags-wrapper {
+    padding-top: calc(var(--page-margin) / 1);
+    padding-bottom: calc(var(--page-margin) / 3);
+    .tags {
+    padding-right: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    .item-rating {
+      // Default background
+      background-color: rgba(var(--page-color-rgb), .35);
+      // color: var(--ion-color-lightest);
+      // border-radius: var(--app-narrow-radius);
+      // padding-top: calc(var(--page-margin) / 1);
+      //padding-bottom: calc(var(--page-margin) / 3);
+      // padding-left: calc(var(--page-margin) / 2);
+      padding-right: calc(var(--page-margin) / 2);
+      font-size: 14px;
+      font-weight: bold;
+      width: 100%;
+      display: block;
+      text-align: center;
+      color: #aa6c39;
     }
+    }
+  }
+ }
+
     .title {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'HelveticaNeue-Medium', 'Helvetica Neue Medium', Helvetica-Bold, 'Roboto-Medium', 'Segoe UI Semibold', Arial-Bold, sans-serif;
+      font-family: 'HelveticaNeue-Medium', 'Helvetica Neue Medium','Roboto-Medium', 'Segoe UI Semibold', sans-serif;
       font-weight: 500px;
       font-size: 18px;
       line-height: 23px;
-    
+      margin: 1 0 4px;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .subtitle{
       line-height: 20px;
+      width: 100%;
     }
+
     .subtitle img {
       height: 30px;
       width: 30px;
@@ -64,197 +68,132 @@
       display: inline-block;
 
     }
+
     .icon {
       display: inline-block;
       vertical-align: middle;
-     }
+    }
      
-     .text{
-       display: inline-block;
-       vertical-align: middle;
-       padding-left: 3px;
-       text-transform: capitalize !important;
-       font-family: system-ui, -apple-system, BlinkMacSystemFont, "HelveticaNeue", "Helvetica Neue", Helvetica, "Roboto", "Segoe UI", Arial, sans-serif;
-       font-weight: 400;
-       font-size: 14px;
+    .text{
+      display: inline-block;
+      vertical-align: middle;
+      padding-left: 3px;
+      text-transform: capitalize !important;
+    }
+
+    .reviews {
+      margin-bottom: 15px;
+    }
+    .addedByTitle {
+      margin-left: 10px;
+      line-height: 1;    
+      margin-right:5px;  
+    }
+    .addedByDate {
+      margin-left: 10px;
+      font-style: italic;
      }
-    .preference-name {
-      margin: 0px 0px 5px;
-      font-size: 16px;
+    .addedByDateReview {
+      font-style: italic;
+     }
+   .addedByImg {
+       width: 50px;
+       float: left;
+       vertical-align: middle;
+     }
+    .addedByImgReview {
+      width: 50px;
+      margin-left: 10px;
+      float: left;
+      vertical-align: middle;
     }
-
-    .bookmark {
-      font-size: 12px;
-      text-align: right; 
-    }
-
-  }
-
-  .checkbox-tags {
-     // padding: calc(var(--page-margin) / 2) calc(var(--page-margin) - var(--page-tags-gutter));
-  
-      @include checkbox-tag();
-  
-  .checkbox-tag {
-    padding: 0px var(--page-tags-gutter);
-    margin: var(--page-tags-gutter) 0px;
-  }
-  
-  // Add a deeper selector to override default colors
-  &.square-checkbox-tags {
-    //background-color: var(--page-background);
-  
-    .checkbox-tag {
-      --checkbox-tag-color: var(--ion-color-medium);
-      --checkbox-tag-background: var(--ion-color-lightest); 
-      --checkbox-tag-active-color: var(--ion-color-lightest);
-      --checkbox-tag-active-background: var(--ion-color-secondary);
-    }
-  }
-  
-  // Add a deeper selector to override default colors
-  &.rounded-checkbox-tags {
-        background-color: var(--page-background);
-  
-    .checkbox-tag {
-      --checkbox-tag-color: var(--ion-color-light-contrast);
-      --checkbox-tag-background: var(--ion-color-light-shade);
-      --checkbox-tag-active-color: var(--ion-color-lightest);
-      --checkbox-tag-active-background: var(--ion-color-secondary);
-    }
-  }
+     .review {
+       width:90%;
+     }
   }
 
 
   .details-divider {
-    // margin: 0px var(--page-margin) calc(var(--page-margin) * 2);
-   // margin: 3px var(--page-margin) 3px;
+    margin: 3px var(--page-margin) 3px;
     border-top: 2px solid rgba(var(--ion-color-light-shade-rgb), .4);
   }
 
-  .tags {
-    padding-right: 5px;
-    padding-bottom: 5px;
-  .item-rating {
-    // Default background
-    background-color: rgba(var(--page-color-rgb), .35);
-            color: var(--ion-color-lightest);
-            border-radius: var(--app-narrow-radius);
-            padding-top: calc(var(--page-margin) / 3);
-            padding-bottom: calc(var(--page-margin) / 3);
-            padding-left: calc(var(--page-margin) / 2);
-            padding-right: calc(var(--page-margin) / 2);
-            font-size: 12px;
-            font-weight: 600;
-            width: 100%;
-            display: block;
-            text-align: center;
-            &[ratingBase="0"] {
-            background-color: var(--page-rating-1-color);
-            }
-            &[ratingBase="1"] {
-            background-color: var(--page-rating-2-color);
-            }
-  }
-}
   .reviews-wrapper {
     padding: 0px var(--page-margin) var(--page-margin);
-
     .reviews-list {
       margin-bottom: calc(var(--page-margin) / 2);
-
       .review-item {
-        box-sizing: border-box;
+        // box-sizing: border-box;
         margin-block-start: 0px;
         margin-block-end: 0px;
         text-rendering: optimizelegibility;
         -webkit-font-smoothing: antialiased;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, HelveticaNeue, "Helvetica Neue", Helvetica, Roboto, "Segoe UI", Arial, sans-serif;
+        font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
         font-size: 14px;
         font-weight: 400;
         line-height: 20px;
         background-color: rgb(249, 249, 250);
         max-width: 100%;
-        padding-left: 8px;
-        padding-right: 8px;
-        padding-top: 4px;
-        padding-bottom: 4px;
+        // padding-left: 8px;
+        // padding-right: 8px;
         vertical-align: bottom;
-        border-color: rgb(239, 241, 243);
-        border-radius: 6px;
-        border-style: solid;
-        border-width: 1px;
+        // border-color: rgb(239, 241, 243);
+        // border-radius: 6px;
+        // border-style: solid;
+        // border-width: 1px;
       
-        .comment-detail-author-name {
-          color: #333333;
-          font-weight: 400;
-          font-size: 14px;
-        }
-        .icon {
-          display: inline-block;
-          vertical-align: middle;
-         }
-         
-         .text{
-           display: inline-block;
-           vertical-align: middle;
-           padding-left: 3px;
-           text-transform: capitalize !important;
-           font-family: system-ui, -apple-system, BlinkMacSystemFont, "HelveticaNeue", "Helvetica Neue", Helvetica, "Roboto", "Segoe UI", Arial, sans-serif;
-           font-weight: 400;
-           font-size: 14px;
-         }
-         .review-date{
-           padding-top: 3px;
-          font-family: system-ui, -apple-system, BlinkMacSystemFont, "HelveticaNeue", "Helvetica Neue", Helvetica, "Roboto", "Segoe UI", Arial, sans-serif;
-          font-weight: 400;
-          font-size: 14px;
-         }
-        .review img {
-          height: 25px;
-          width: 25px;
-          vertical-align: middle;
-          display: inline-block;
-        }
+      .icon {
+        display: inline-block;
+        vertical-align: middle;
       }
-    }
+         
+      .text{
+        display: inline-block;
+        vertical-align: middle;
+        padding-left: 3px;
+        text-transform: capitalize !important;
+        font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, "Roboto", "Segoe UI", Arial, sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+      }
 
-    .details-divider {
-      margin: 5px 0px;
-    }
+      .review-date{
+        padding-top: 3px;
+        font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, "Roboto", "Segoe UI", Arial, sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+      }
 
-    .all-reviews-btn {
-      margin: 5px 0px;
-    }
-
-    .write-reviews-btn {
-      margin: var(--page-margin) 0px 0px;
     }
   }
 
-  .detail-title {
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--ion-color-dark-tint);
-    margin: 0px;
-    margin-bottom: var(--page-margin);
-  }
-  .detail-title-reply {
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--ion-color-dark-tint);
-    margin: 0px;
-  }
-  .placeholder {
-    box-sizing: border-box;
-  margin-block-start: 0px;
-  margin-block-end: 0px;
-  text-rendering: optimizelegibility;
-  -webkit-font-smoothing: antialiased;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, HelveticaNeue, "Helvetica Neue", Helvetica, Roboto, "Segoe UI", Arial, sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  -webkit-box-flex: 1;
-  flex-grow: 1;
-  }
+    .detail-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--ion-color-dark-tint);
+      margin: 0px;
+      margin-bottom: var(--page-margin);
+    }
+
+    .detail-title-reply {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--ion-color-dark-tint);
+      margin: 0px;
+    }
+
+    .placeholder {
+      box-sizing: border-box;
+      margin-block-start: 0px;
+      margin-block-end: 0px;
+      text-rendering: optimizelegibility;
+      -webkit-font-smoothing: antialiased;
+      font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      -webkit-box-flex: 1;
+      flex-grow: 1;
+    }
+
+}
 }

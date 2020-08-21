@@ -75,7 +75,7 @@ FriendsPageModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("input {\n  border: 1px solid #eee !important;\n  background: #eee !important;\n}\n\n.searchbar-search-icon {\n  display: none !important;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvZnJpZW5kcy9DOlxcVXNlcnNcXHJvaGlzZXRoaVxcRG9jdW1lbnRzXFxpb25pY1xcZmlyZWNoYXQ0X3YyL3NyY1xcYXBwXFxmcmllbmRzXFxmcmllbmRzLnBhZ2Uuc2NzcyIsInNyYy9hcHAvZnJpZW5kcy9mcmllbmRzLnBhZ2Uuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLGlDQUFBO0VBQ0EsMkJBQUE7QUNDSjs7QURDQTtFQUNJLHdCQUFBO0FDRUoiLCJmaWxlIjoic3JjL2FwcC9mcmllbmRzL2ZyaWVuZHMucGFnZS5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiaW5wdXR7XHJcbiAgICBib3JkZXI6IDFweCBzb2xpZCAjZWVlICFpbXBvcnRhbnQ7XHJcbiAgICBiYWNrZ3JvdW5kOiAjZWVlICFpbXBvcnRhbnQ7XHJcbn1cclxuLnNlYXJjaGJhci1zZWFyY2gtaWNvbntcclxuICAgIGRpc3BsYXk6IG5vbmUgIWltcG9ydGFudDtcclxufSIsImlucHV0IHtcbiAgYm9yZGVyOiAxcHggc29saWQgI2VlZSAhaW1wb3J0YW50O1xuICBiYWNrZ3JvdW5kOiAjZWVlICFpbXBvcnRhbnQ7XG59XG5cbi5zZWFyY2hiYXItc2VhcmNoLWljb24ge1xuICBkaXNwbGF5OiBub25lICFpbXBvcnRhbnQ7XG59Il19 */");
+/* harmony default export */ __webpack_exports__["default"] = ("input {\n  border: 1px solid #eee !important;\n  background: #eee !important;\n}\n\n.searchbar-search-icon {\n  display: none !important;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvZnJpZW5kcy9DOlxcVXNlcnNcXHNldGhpXFxmaXJlY2hhdDRfdjJcXGZpcmVjaGF0NC9zcmNcXGFwcFxcZnJpZW5kc1xcZnJpZW5kcy5wYWdlLnNjc3MiLCJzcmMvYXBwL2ZyaWVuZHMvZnJpZW5kcy5wYWdlLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxpQ0FBQTtFQUNBLDJCQUFBO0FDQ0o7O0FEQ0E7RUFDSSx3QkFBQTtBQ0VKIiwiZmlsZSI6InNyYy9hcHAvZnJpZW5kcy9mcmllbmRzLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImlucHV0e1xyXG4gICAgYm9yZGVyOiAxcHggc29saWQgI2VlZSAhaW1wb3J0YW50O1xyXG4gICAgYmFja2dyb3VuZDogI2VlZSAhaW1wb3J0YW50O1xyXG59XHJcbi5zZWFyY2hiYXItc2VhcmNoLWljb257XHJcbiAgICBkaXNwbGF5OiBub25lICFpbXBvcnRhbnQ7XHJcbn0iLCJpbnB1dCB7XG4gIGJvcmRlcjogMXB4IHNvbGlkICNlZWUgIWltcG9ydGFudDtcbiAgYmFja2dyb3VuZDogI2VlZSAhaW1wb3J0YW50O1xufVxuXG4uc2VhcmNoYmFyLXNlYXJjaC1pY29uIHtcbiAgZGlzcGxheTogbm9uZSAhaW1wb3J0YW50O1xufSJdfQ== */");
 
 /***/ }),
 
@@ -121,19 +121,17 @@ let FriendsPage = class FriendsPage {
         this.accounts = [];
         this.excludedIds = [];
     }
-    ngOnInit() {
-    }
+    ngOnInit() { }
     ionViewDidEnter() {
         this.tab = 'friends';
         this.title = 'Friends';
         this.searchFriend = '';
         if (this.afAuth.auth.currentUser != null) {
-            this.dataProvider.getRequests(this.dataProvider.getCurrentUserId()).get().then((requestsRes) => {
+            this.dataProvider.getRequests(this.dataProvider.getCurrentUserId()).snapshotChanges().subscribe((requestsRes) => {
                 if (requestsRes.payload != null) {
-                    let requests = requestsRes.payload.data();
-                    console.log(requests);
+                    const requests = requestsRes.payload.data();
                     if (requests != null) {
-                        if (requests.friendRequests != null && requests.friendRequests != undefined) {
+                        if (requests.friendRequests != null && requests.friendRequests !== undefined) {
                             this.friendRequestCount = requests.friendRequests.length;
                         }
                         else {
@@ -143,23 +141,21 @@ let FriendsPage = class FriendsPage {
                     else {
                         this.friendRequestCount = 0;
                     }
-                    console.log(this.friendRequestCount);
                 }
             });
-            this.getFriends();
         }
     }
     segmentChanged($event) {
-        if (this.tab == 'friends') {
-            this.title = "Friends";
+        if (this.tab === 'friends') {
+            this.title = 'Friends';
             this.getFriends();
         }
-        else if (this.tab == 'requests') {
-            this.title = "Friend Requests";
+        else if (this.tab === 'requests') {
+            this.title = 'Friend Requests';
             this.getFriendRequests();
         }
-        else if (this.tab == 'search') {
-            this.title = "Find New Friends";
+        else if (this.tab === 'search') {
+            this.title = 'Find New Friends';
             this.findNewFriends();
         }
     }
@@ -183,14 +179,14 @@ let FriendsPage = class FriendsPage {
         this.friends = [];
         // Get user data on database and get list of friends.
         this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user) => {
-            let account = user.payload.data();
-            console.log(account);
+            const account = user.payload.data();
             this.loadingProvider.hide();
             if (account != null && account.friends != null) {
-                for (var i = 0; i < account.friends.length; i++) {
-                    this.dataProvider.getUser(account.payload.data().friends[i]).snapshotChanges().subscribe((friend) => {
+                for (let i = 0; i < account.friends.length; i++) {
+                    console.log('friends:', account.friends[i]);
+                    this.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe((friend) => {
                         if (friend.payload != null) {
-                            let friendData = Object.assign({ $key: friend.payload.id }, friend.payload.data);
+                            const friendData = Object.assign({ $key: friend.payload.data().userId }, friend.payload.data());
                             this.addOrUpdateFriend(friendData);
                         }
                     });
@@ -203,14 +199,13 @@ let FriendsPage = class FriendsPage {
     }
     // Add or update friend data for real-time sync.
     addOrUpdateFriend(friend) {
-        console.log(friend);
         if (!this.friends) {
             this.friends = [friend];
         }
         else {
             var index = -1;
-            for (var i = 0; i < this.friends.length; i++) {
-                if (this.friends[i].$key == friend.$key) {
+            for (let i = 0; i < this.friends.length; i++) {
+                if (this.friends[i].$key === friend.$key) {
                     index = i;
                 }
             }
@@ -221,11 +216,9 @@ let FriendsPage = class FriendsPage {
                 this.friends.push(friend);
             }
         }
-        console.log(this.friends);
     }
     // Proceed to userInfo page.
     viewUser(userId) {
-        console.log(userId);
         this.router.navigateByUrl('/userinfo/' + userId);
     }
     // Proceed to chat page.
@@ -240,18 +233,17 @@ let FriendsPage = class FriendsPage {
         // Get user info
         this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accountRes) => {
             this.account = accountRes.payload.data();
-            console.log(this.account);
             // Get friendRequests and requestsSent of the user.
-            this.dataProvider.getRequests(this.account.userId).get().then((requestsRes) => {
+            this.dataProvider.getRequests(this.account.userId).snapshotChanges().subscribe((requestsRes) => {
                 // friendRequests.
                 let requests = requestsRes.payload.data();
                 if (requests != null) {
-                    if (requests.friendRequests != null && requests.friendRequests != undefined) {
+                    if (requests.friendRequests != null && requests.friendRequests !== undefined) {
                         this.friendRequests = [];
                         this.friendRequestCount = requests.friendRequests.length;
                         requests.friendRequests.forEach((userId) => {
                             this.dataProvider.getUser(userId).snapshotChanges().subscribe((sender) => {
-                                sender = Object.assign({ $key: sender.key }, sender.payload.data());
+                                sender = Object.assign({ $key: sender.payload.data().userId }, sender.payload.data());
                                 this.addOrUpdateFriendRequest(sender);
                             });
                         });
@@ -264,7 +256,7 @@ let FriendsPage = class FriendsPage {
                         this.requestsSent = [];
                         requests.requestsSent.forEach((userId) => {
                             this.dataProvider.getUser(userId).snapshotChanges().subscribe((receiver) => {
-                                receiver = Object.assign({ $key: receiver.key }, receiver.payload.data());
+                                receiver = Object.assign({ $key: receiver.payload.data().userId }, receiver.payload.data());
                                 this.addOrUpdateRequestSent(receiver);
                             });
                         });
@@ -285,7 +277,7 @@ let FriendsPage = class FriendsPage {
         else {
             var index = -1;
             for (var i = 0; i < this.friendRequests.length; i++) {
-                if (this.friendRequests[i].$key == sender.$key) {
+                if (this.friendRequests[i].$key === sender.$key) {
                     index = i;
                 }
             }
@@ -333,44 +325,45 @@ let FriendsPage = class FriendsPage {
         this.searchUser = '';
         // Get all users.
         this.dataProvider.getUsers().snapshotChanges().subscribe((accounts) => {
+            // TODO : why is this being called twice??????????????
             this.loadingProvider.hide();
             // applying Filters
-            let acc = accounts.filter((c) => {
-                if (c.key == null && c.key == undefined && c.payload.doc.data() == null) {
+            const acc = accounts.filter((c) => {
+                if (c.key == null && c.key === undefined && c.payload.doc.data() == null) {
                     return false;
                 }
-                if (c.payload.doc.data().name == '' || c.payload.doc.data().name == ' ' || c.payload.doc.data().name == undefined) {
+                if (c.payload.doc.data().name === ''
+                    || c.payload.doc.data().name === ' '
+                    || c.payload.doc.data().name === undefined) {
                     return false;
                 }
-                if (c.payload.doc.data().publicVisibility == false) {
+                if (c.payload.doc.data().publicVisibility === false) {
                     return false;
                 }
                 return true;
             });
             this.accounts = acc.map(c => {
-                return Object.assign({ $key: c.key }, c.payload.doc.data());
+                return Object.assign({ $key: c.payload.doc.data().userId }, c.payload.doc.data());
             });
             this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accountRes) => {
-                let account = accountRes.payload.data();
+                const account = accountRes.payload.data();
                 // Add own userId as exludedIds.
-                // console.log(account.payload.data());
                 this.excludedIds = [];
-                if (this.excludedIds.indexOf(account.userId) == -1) {
+                if (this.excludedIds.indexOf(account.userId) === -1) {
                     this.excludedIds.push(account.userId);
                 }
                 // Get friends which will be filtered out from the list using searchFilter pipe pipes/search.ts.
                 if (account != null) {
-                    // console.log(account.payload.data().friends);
                     if (account.friends != null) {
                         account.friends.forEach(friend => {
-                            if (this.excludedIds.indexOf(friend) == -1) {
+                            if (this.excludedIds.indexOf(friend) === -1) {
                                 this.excludedIds.push(friend);
                             }
                         });
                     }
                 }
                 // Get requests of the currentUser.
-                this.dataProvider.getRequests(account.userId).get().then((requests) => {
+                this.dataProvider.getRequests(account.userId).get().subscribe((requests) => {
                     if (requests.payload != null) {
                         this.requestsSent = requests.payload.data().requestsSent;
                         this.friendRequests = requests.payload.data().friendRequests;
@@ -466,15 +459,15 @@ let FriendsPage = class FriendsPage {
         // 1 when a friend request was already sent to this user.
         // 2 when this user has a pending friend request.
         if (this.requestsSent) {
-            for (var i = 0; i < this.requestsSent.length; i++) {
-                if (this.requestsSent[i] == user.$key) {
+            for (let i = 0; i < this.requestsSent.length; i++) {
+                if (this.requestsSent[i] === user.$key) {
                     return 1;
                 }
             }
         }
         if (this.friendRequests) {
-            for (var j = 0; j < this.friendRequests.length; j++) {
-                if (this.friendRequests[j] == user.$key) {
+            for (let j = 0; j < this.friendRequests.length; j++) {
+                if (this.friendRequests[j] === user.$key) {
                     return 2;
                 }
             }

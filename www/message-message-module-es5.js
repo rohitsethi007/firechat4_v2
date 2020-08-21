@@ -125,7 +125,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "ion-textarea {\n  font-size: 12px;\n  resize: both;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbWVzc2FnZS9DOlxcVXNlcnNcXHJvaGlzZXRoaVxcRG9jdW1lbnRzXFxpb25pY1xcZmlyZWNoYXQ0X3YyL3NyY1xcYXBwXFxtZXNzYWdlXFxtZXNzYWdlLnBhZ2Uuc2NzcyIsInNyYy9hcHAvbWVzc2FnZS9tZXNzYWdlLnBhZ2Uuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLGVBQUE7RUFDQSxZQUFBO0FDQ0oiLCJmaWxlIjoic3JjL2FwcC9tZXNzYWdlL21lc3NhZ2UucGFnZS5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiaW9uLXRleHRhcmVhe1xyXG4gICAgZm9udC1zaXplOiAxMnB4O1xyXG4gICAgcmVzaXplOiBib3RoO1xyXG59IiwiaW9uLXRleHRhcmVhIHtcbiAgZm9udC1zaXplOiAxMnB4O1xuICByZXNpemU6IGJvdGg7XG59Il19 */";
+    __webpack_exports__["default"] = "ion-textarea {\n  font-size: 12px;\n  resize: both;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbWVzc2FnZS9DOlxcVXNlcnNcXHNldGhpXFxmaXJlY2hhdDRfdjJcXGZpcmVjaGF0NC9zcmNcXGFwcFxcbWVzc2FnZVxcbWVzc2FnZS5wYWdlLnNjc3MiLCJzcmMvYXBwL21lc3NhZ2UvbWVzc2FnZS5wYWdlLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxlQUFBO0VBQ0EsWUFBQTtBQ0NKIiwiZmlsZSI6InNyYy9hcHAvbWVzc2FnZS9tZXNzYWdlLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImlvbi10ZXh0YXJlYXtcclxuICAgIGZvbnQtc2l6ZTogMTJweDtcclxuICAgIHJlc2l6ZTogYm90aDtcclxufSIsImlvbi10ZXh0YXJlYSB7XG4gIGZvbnQtc2l6ZTogMTJweDtcbiAgcmVzaXplOiBib3RoO1xufSJdfQ== */";
     /***/
   },
 
@@ -287,14 +287,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           // tslint:disable-next-line: max-line-length
 
           this.firestore.doc('/accounts/' + this.loggedInUserId + '/conversations/' + this.userId).snapshotChanges().subscribe(function (conversation) {
-            if (conversation.payload.exists()) {
+            if (conversation.payload.data()) {
               // User already have conversation with this friend, get conversation
               _this.conversationId = conversation.payload.data().conversationId; // Get conversation
 
               _this.dataProvider.getConversationMessages(_this.conversationId).snapshotChanges().subscribe(function (messagesRes) {
-                var messages = messagesRes.payload.data();
-                console.log(messages);
-                if (messages == null) messages = [];
+                var messages = messagesRes.payload.data().messages;
+
+                if (messages == null) {
+                  messages = [];
+                }
 
                 if (_this.messages) {
                   // Just append newly added messages to the bottom of the view.
@@ -320,7 +322,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     _this.messages.push(message);
                   }); // Load messages in relation to numOfMessages.
 
-                  if (_this.startIndex == -1) {
+                  if (_this.startIndex === -1) {
                     // Get initial index for numberOfMessages to show.
                     if (_this.messages.length - _this.numberOfMessages > 0) {
                       _this.startIndex = _this.messages.length - _this.numberOfMessages;
@@ -485,12 +487,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var conversationId = success.id;
                 _this5.message = ''; // Add conversation reference to the users.
 
-                _this5.firestore.doc('/accounts/' + _this5.loggedInUserId + '/conversations/' + _this5.userId).update({
+                _this5.firestore.doc('/accounts/' + _this5.loggedInUserId + '/conversations/' + _this5.userId).set({
                   conversationId: conversationId,
                   messagesRead: 1
                 });
 
-                _this5.firestore.doc('/accounts/' + _this5.userId + '/conversations/' + _this5.loggedInUserId).update({
+                _this5.firestore.doc('/accounts/' + _this5.userId + '/conversations/' + _this5.loggedInUserId).set({
                   conversationId: conversationId,
                   messagesRead: 0
                 });

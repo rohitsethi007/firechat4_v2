@@ -652,8 +652,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _data_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./data.service */ "./src/app/services/data.service.ts");
 /* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/fire/firestore */ "./node_modules/@angular/fire/firestore/es2015/index.js");
 /* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/fire/auth */ "./node_modules/@angular/fire/auth/es2015/index.js");
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm2015/operators/index.js");
-
 
 
 
@@ -666,129 +664,138 @@ let FirebaseService = class FirebaseService {
         this.loadingProvider = loadingProvider;
         this.afAuth = afAuth;
         this.dataProvider = dataProvider;
-        console.log("Initializing Firebase Provider");
     }
     // Send friend request to userId.
     sendFriendRequest(userId) {
-        let loggedInUserId = this.afAuth.auth.currentUser.uid;
+        const loggedInUserId = this.afAuth.auth.currentUser.uid;
         this.loadingProvider.show();
-        var requestsSent;
+        let requestsSent;
         // Use take(1) so that subscription will only trigger once.
-        this.dataProvider.getRequests(loggedInUserId).limit(1).get().then((requests) => {
-            console.log(requests.payload.val());
-            if (requests.payload.val() != null && requests.payload.val().requestsSent != null)
-                requestsSent = requests.payload.val().requestsSent;
-            if (requestsSent == null || requestsSent == undefined) {
+        this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests) => {
+            if (requests.data() != null
+                && requests.data().requestsSent != null) {
+                requestsSent = requests.data().requestsSent;
+            }
+            if (requestsSent == null || requestsSent === undefined) {
                 requestsSent = [userId];
             }
             else {
-                if (requestsSent.indexOf(userId) == -1)
+                if (requestsSent.indexOf(userId) === -1) {
                     requestsSent.push(userId);
+                }
             }
             // Add requestsSent information.
-            this.firestore.doc('/requests/' + loggedInUserId).update({
-                requestsSent: requestsSent
+            this.firestore.collection('requests').doc(loggedInUserId).set({
+                requestsSent
             }).then((success) => {
-                var friendRequests;
-                this.dataProvider.getRequests(userId).limit(1).get().then((requests) => {
-                    if (requests.payload.val() != null && requests.payload.val().friendRequests != null)
-                        friendRequests = requests.payload.val().friendRequests;
+                let friendRequests;
+                // tslint:disable-next-line: no-shadowed-variable
+                this.dataProvider.getRequests(userId).get().subscribe((requests) => {
+                    if (requests.data() != null
+                        && requests.data().friendRequests != null) {
+                        friendRequests = requests.data().friendRequests;
+                    }
                     if (friendRequests == null) {
                         friendRequests = [loggedInUserId];
                     }
                     else {
-                        if (friendRequests.indexOf(userId) == -1)
+                        if (friendRequests.indexOf(userId) === -1) {
                             friendRequests.push(loggedInUserId);
+                        }
                     }
                     // Add friendRequest information.
-                    this.firestore.doc('/requests/' + userId).update({
-                        friendRequests: friendRequests
-                    }).then((success) => {
+                    this.firestore.collection('requests').doc(userId).set({
+                        friendRequests
+                    }).then((succ) => {
                         this.loadingProvider.hide();
-                        this.loadingProvider.showToast("Friend Request Sent");
-                        // this.alertProvider.showFriendRequestSent();
+                        this.loadingProvider.showToast('Friend Request Sent');
                     }).catch((error) => {
                         this.loadingProvider.hide();
                     });
                 });
             }).catch((error) => {
+                console.log('error', error);
                 this.loadingProvider.hide();
             });
         });
     }
     // Cancel friend request sent to userId.
     cancelFriendRequest(userId) {
-        let loggedInUserId = this.afAuth.auth.currentUser.uid;
+        const loggedInUserId = this.afAuth.auth.currentUser.uid;
         this.loadingProvider.show();
-        var requestsSent;
-        this.dataProvider.getRequests(loggedInUserId).limit(1).get().then((requests) => {
-            requestsSent = requests.payload.val().requestsSent;
+        let requestsSent = [];
+        this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests) => {
+            requestsSent = requests.data().requestsSent;
             requestsSent.splice(requestsSent.indexOf(userId), 1);
             // Update requestSent information.
-            this.firestore.doc('/requests/' + loggedInUserId).update({
-                requestsSent: requestsSent
+            this.firestore.collection('requests').doc(loggedInUserId).set({
+                requestsSent
             }).then((success) => {
-                var friendRequests;
-                this.dataProvider.getRequests(userId).limit(1).get().then((requests) => {
-                    friendRequests = requests.payload.val().friendRequests;
+                let friendRequests;
+                this.dataProvider.getRequests(userId).get().subscribe((req) => {
+                    friendRequests = req.data().friendRequests;
                     console.log(friendRequests);
                     friendRequests.splice(friendRequests.indexOf(loggedInUserId), 1);
                     // Update friendRequests information.
-                    this.firestore.doc('/requests/' + userId).update({
-                        friendRequests: friendRequests
-                    }).then((success) => {
+                    this.firestore.collection('requests').doc(userId).set({
+                        friendRequests
+                    }).then((succ) => {
+                        console.log(succ);
                         this.loadingProvider.hide();
-                        this.loadingProvider.showToast("Removed Friend Request");
-                        // this.alertProvider.showFriendRequestRemoved();
+                        this.loadingProvider.showToast('Removed Friend Request');
                     }).catch((error) => {
+                        console.log(error);
                         this.loadingProvider.hide();
                     });
                 });
             }).catch((error) => {
+                console.log(error);
                 this.loadingProvider.hide();
             });
         });
     }
     // Delete friend request.
     deleteFriendRequest(userId) {
-        let loggedInUserId = this.afAuth.auth.currentUser.uid;
+        const loggedInUserId = this.afAuth.auth.currentUser.uid;
         this.loadingProvider.show();
-        var friendRequests;
-        this.dataProvider.getRequests(loggedInUserId).limit(1).get().then((requests) => {
-            friendRequests = requests.payload.val().friendRequests;
-            console.log(friendRequests);
-            friendRequests.splice(friendRequests.indexOf(userId), 1);
+        let friendRequests = [];
+        this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests) => {
+            friendRequests = requests.data().friendRequests;
+            friendRequests = friendRequests.filter(u => u !== userId);
             // Update friendRequests information.
-            this.firestore.doc('/requests/' + loggedInUserId).update({
-                friendRequests: friendRequests
+            this.firestore.collection('requests').doc(loggedInUserId).set({
+                friendRequests
             }).then((success) => {
-                var requestsSent;
-                this.dataProvider.getRequests(userId).limit(1).get().then((requests) => {
-                    requestsSent = requests.payload.val().requestsSent;
+                let requestsSent;
+                this.dataProvider.getRequests(userId).get().subscribe((req) => {
+                    requestsSent = req.data().requestsSent;
                     requestsSent.splice(requestsSent.indexOf(loggedInUserId), 1);
+                    console.log('requestsSent:', requestsSent, loggedInUserId, requestsSent.indexOf(userId), 1);
                     // Update requestsSent information.
-                    this.firestore.doc('/requests/' + userId).update({
-                        requestsSent: requestsSent
-                    }).then((success) => {
+                    this.firestore.collection('requests').doc(userId).set({
+                        requestsSent
+                    }).then((succ) => {
+                        console.log(succ);
                         this.loadingProvider.hide();
                     }).catch((error) => {
+                        console.log(error);
                         this.loadingProvider.hide();
                     });
                 });
-            }).catch((error) => {
+            }).catch((err) => {
+                console.log(err);
                 this.loadingProvider.hide();
-                //TODO ERROR
             });
         });
     }
     // Accept friend request.
     acceptFriendRequest(userId) {
-        let loggedInUserId = this.afAuth.auth.currentUser.uid;
+        const loggedInUserId = this.afAuth.auth.currentUser.uid;
         // Delete friend request.
         this.deleteFriendRequest(userId);
         this.loadingProvider.show();
-        this.dataProvider.getUser(loggedInUserId).snapshotChanges().pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_6__["take"])(1)).subscribe((account) => {
-            var friends = account.payload.val().friends;
+        this.dataProvider.getUser(loggedInUserId).get().subscribe((account) => {
+            let friends = account.data().friends;
             if (!friends) {
                 friends = [userId];
             }
@@ -797,10 +804,10 @@ let FirebaseService = class FirebaseService {
             }
             // Add both users as friends.
             this.dataProvider.getUser(loggedInUserId).update({
-                friends: friends
+                friends
             }).then((success) => {
-                this.dataProvider.getUser(userId).snapshotChanges().pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_6__["take"])(1)).subscribe((account) => {
-                    var friends = account.payload.val().friends;
+                this.dataProvider.getUser(userId).get().subscribe((acc) => {
+                    let friends = acc.data().friends;
                     if (!friends) {
                         friends = [loggedInUserId];
                     }
@@ -808,8 +815,8 @@ let FirebaseService = class FirebaseService {
                         friends.push(loggedInUserId);
                     }
                     this.dataProvider.getUser(userId).update({
-                        friends: friends
-                    }).then((success) => {
+                        friends
+                    }).then((succ) => {
                         this.loadingProvider.hide();
                     }).catch((error) => {
                         this.loadingProvider.hide();
@@ -837,6 +844,33 @@ FirebaseService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         _data_service__WEBPACK_IMPORTED_MODULE_3__["DataService"]])
 ], FirebaseService);
 
+
+
+/***/ }),
+
+/***/ "./src/app/validators/checkbox-checked.validator.ts":
+/*!**********************************************************!*\
+  !*** ./src/app/validators/checkbox-checked.validator.ts ***!
+  \**********************************************************/
+/*! exports provided: CheckboxCheckedValidator */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckboxCheckedValidator", function() { return CheckboxCheckedValidator; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+
+class CheckboxCheckedValidator {
+    static tagsSelected(min) {
+        const validator = (formArray) => {
+            const totalSelected = formArray.controls
+                .map(control => control.value)
+                .reduce((prev, next) => next ? prev + next : prev, 0);
+            return totalSelected >= min ? null : { required: true };
+        };
+        return validator;
+    }
+}
 
 
 /***/ })

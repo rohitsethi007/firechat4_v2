@@ -73,7 +73,7 @@ MessagePageModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("ion-textarea {\n  font-size: 12px;\n  resize: both;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbWVzc2FnZS9DOlxcVXNlcnNcXHJvaGlzZXRoaVxcRG9jdW1lbnRzXFxpb25pY1xcZmlyZWNoYXQ0X3YyL3NyY1xcYXBwXFxtZXNzYWdlXFxtZXNzYWdlLnBhZ2Uuc2NzcyIsInNyYy9hcHAvbWVzc2FnZS9tZXNzYWdlLnBhZ2Uuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLGVBQUE7RUFDQSxZQUFBO0FDQ0oiLCJmaWxlIjoic3JjL2FwcC9tZXNzYWdlL21lc3NhZ2UucGFnZS5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiaW9uLXRleHRhcmVhe1xyXG4gICAgZm9udC1zaXplOiAxMnB4O1xyXG4gICAgcmVzaXplOiBib3RoO1xyXG59IiwiaW9uLXRleHRhcmVhIHtcbiAgZm9udC1zaXplOiAxMnB4O1xuICByZXNpemU6IGJvdGg7XG59Il19 */");
+/* harmony default export */ __webpack_exports__["default"] = ("ion-textarea {\n  font-size: 12px;\n  resize: both;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbWVzc2FnZS9DOlxcVXNlcnNcXHNldGhpXFxmaXJlY2hhdDRfdjJcXGZpcmVjaGF0NC9zcmNcXGFwcFxcbWVzc2FnZVxcbWVzc2FnZS5wYWdlLnNjc3MiLCJzcmMvYXBwL21lc3NhZ2UvbWVzc2FnZS5wYWdlLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxlQUFBO0VBQ0EsWUFBQTtBQ0NKIiwiZmlsZSI6InNyYy9hcHAvbWVzc2FnZS9tZXNzYWdlLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImlvbi10ZXh0YXJlYXtcclxuICAgIGZvbnQtc2l6ZTogMTJweDtcclxuICAgIHJlc2l6ZTogYm90aDtcclxufSIsImlvbi10ZXh0YXJlYSB7XG4gIGZvbnQtc2l6ZTogMTJweDtcbiAgcmVzaXplOiBib3RoO1xufSJdfQ== */");
 
 /***/ }),
 
@@ -154,15 +154,15 @@ let MessagePage = class MessagePage {
         // Get conversationInfo with friend.
         // tslint:disable-next-line: max-line-length
         this.firestore.doc('/accounts/' + this.loggedInUserId + '/conversations/' + this.userId).snapshotChanges().subscribe((conversation) => {
-            if (conversation.payload.exists()) {
+            if (conversation.payload.data()) {
                 // User already have conversation with this friend, get conversation
                 this.conversationId = conversation.payload.data().conversationId;
                 // Get conversation
                 this.dataProvider.getConversationMessages(this.conversationId).snapshotChanges().subscribe((messagesRes) => {
-                    let messages = messagesRes.payload.data();
-                    console.log(messages);
-                    if (messages == null)
+                    let messages = messagesRes.payload.data().messages;
+                    if (messages == null) {
                         messages = [];
+                    }
                     if (this.messages) {
                         // Just append newly added messages to the bottom of the view.
                         if (messages.length > this.messages.length) {
@@ -184,7 +184,7 @@ let MessagePage = class MessagePage {
                             this.messages.push(message);
                         });
                         // Load messages in relation to numOfMessages.
-                        if (this.startIndex == -1) {
+                        if (this.startIndex === -1) {
                             // Get initial index for numberOfMessages to show.
                             if ((this.messages.length - this.numberOfMessages) > 0) {
                                 this.startIndex = this.messages.length - this.numberOfMessages;
@@ -197,7 +197,7 @@ let MessagePage = class MessagePage {
                             this.messagesToShow = [];
                         }
                         // Set messagesToShow
-                        for (var i = this.startIndex; i < this.messages.length; i++) {
+                        for (let i = this.startIndex; i < this.messages.length; i++) {
                             this.messagesToShow.push(this.messages[i]);
                         }
                         this.loadingProvider.hide();
@@ -323,12 +323,12 @@ let MessagePage = class MessagePage {
                     let conversationId = success.id;
                     this.message = '';
                     // Add conversation reference to the users.
-                    this.firestore.doc('/accounts/' + this.loggedInUserId + '/conversations/' + this.userId).update({
-                        conversationId: conversationId,
+                    this.firestore.doc('/accounts/' + this.loggedInUserId + '/conversations/' + this.userId).set({
+                        conversationId,
                         messagesRead: 1
                     });
-                    this.firestore.doc('/accounts/' + this.userId + '/conversations/' + this.loggedInUserId).update({
-                        conversationId: conversationId,
+                    this.firestore.doc('/accounts/' + this.userId + '/conversations/' + this.loggedInUserId).set({
+                        conversationId,
                         messagesRead: 0
                     });
                 });

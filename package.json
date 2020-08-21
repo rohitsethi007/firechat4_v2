@@ -66,6 +66,7 @@
     "fs": "0.0.1-security",
     "hammerjs": "^2.0.8",
     "ionic-native": "^2.9.0",
+    "lets-get-meta": "^2.1.1",
     "moment": "^2.24.0",
     "net": "^1.0.2",
     "ng2-charts": "^2.3.0",

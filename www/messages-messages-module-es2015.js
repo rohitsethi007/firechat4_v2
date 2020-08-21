@@ -9,7 +9,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-header>\r\n  <ion-toolbar color=\"primary\">\r\n    <ion-title>Messages</ion-title>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n  <div class=\"empty-list\" *ngIf=\"conversations && conversations.length <= 0\">\r\n    <h1>\r\n      <ion-icon name=\"text\"></ion-icon>\r\n    </h1>\r\n    <p>No new conversation yet.</p>\r\n  </div>\r\n  <!-- Show conversations -->\r\n  <ion-list lines=\"none\" *ngIf=\"conversations && conversations.length > 0\">\r\n    <ion-searchbar [(ngModel)]=\"searchFriend\" placeholder=\"Search for friend or username\" showCancelButton=\"true\"\r\n      cancelButtonText=\"Done\"></ion-searchbar>\r\n    <div *ngFor=\"let conversation of conversations | conversationFilter:searchFriend\">\r\n      <ion-item *ngIf=\"conversation.blocked != true\" (click)=\"message(conversation.key)\">\r\n\r\n        <ion-avatar slot=\"start\" *ngIf=\"conversation.friend\">\r\n          <img src=\"{{conversation.friend.img}}\" onError=\"this.src='./assets/images/default-dp.png'\">\r\n        </ion-avatar>\r\n        <div [ngClass]=hasUnreadMessages(conversation)>\r\n          <ion-label>\r\n            <ion-text>\r\n              <h2 *ngIf=\"conversation.friend\">{{conversation.friend.name}}</h2>\r\n            </ion-text>\r\n            <ion-text>\r\n              <p>{{conversation.message}}</p>\r\n            </ion-text>\r\n          </ion-label>\r\n        </div>\r\n        <div slot=\"end\" style=\"display: flex;flex-direction: column;align-items: flex-end;\">\r\n          <ion-badge color=\"danger\" *ngIf=\"conversation.unreadMessagesCount > 0\">\r\n            {{conversation.unreadMessagesCount}}\r\n          </ion-badge>\r\n          <ion-text style=\"color: #777;font-size: 12px;\">{{conversation.date | DateFormat}}</ion-text>\r\n        </div>\r\n      </ion-item>\r\n    </div>\r\n  </ion-list>\r\n\r\n</ion-content>");
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-header>\r\n  <ion-toolbar color=\"secondary\">\r\n    <ion-buttons slot=\"start\">\r\n      <ion-back-button></ion-back-button>\r\n    </ion-buttons>\r\n    <ion-title>Messages</ion-title>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n  <div class=\"empty-list\" *ngIf=\"conversations && conversations.length <= 0\">\r\n    <h1>\r\n      <ion-icon name=\"text\"></ion-icon>\r\n    </h1>\r\n    <p>No new conversation yet.</p>\r\n  </div>\r\n  <!-- Show conversations -->\r\n  <ion-list lines=\"none\" *ngIf=\"conversations && conversations.length > 0\">\r\n    <ion-searchbar [(ngModel)]=\"searchFriend\" placeholder=\"Search for friend or username\" showCancelButton=\"true\"\r\n      cancelButtonText=\"Done\"></ion-searchbar>\r\n    <div *ngFor=\"let conversation of conversations | conversationFilter:searchFriend\">\r\n      <ion-item *ngIf=\"conversation.blocked != true\" (click)=\"message(conversation.key)\">\r\n\r\n        <ion-avatar slot=\"start\" *ngIf=\"conversation.friend\">\r\n          <img src=\"{{conversation.friend.img}}\" onError=\"this.src='./assets/images/default-dp.png'\">\r\n        </ion-avatar>\r\n        <div [ngClass]=hasUnreadMessages(conversation)>\r\n          <ion-label>\r\n            <ion-text>\r\n              <h2 *ngIf=\"conversation.friend\">{{conversation.friend.name}}</h2>\r\n            </ion-text>\r\n            <ion-text>\r\n              <p>{{conversation.message}}</p>\r\n            </ion-text>\r\n          </ion-label>\r\n        </div>\r\n        <div slot=\"end\" style=\"display: flex;flex-direction: column;align-items: flex-end;\">\r\n          <ion-badge color=\"danger\" *ngIf=\"conversation.unreadMessagesCount > 0\">\r\n            {{conversation.unreadMessagesCount}}\r\n          </ion-badge>\r\n          <ion-text style=\"color: #777;font-size: 12px;\">{{conversation.date | DateFormat}}</ion-text>\r\n        </div>\r\n      </ion-item>\r\n    </div>\r\n  </ion-list>\r\n\r\n</ion-content>");
 
 /***/ }),
 
@@ -119,15 +119,16 @@ let MessagesPage = class MessagesPage {
         // Get info of conversations of current logged in user.
         this.dataProvider.getConversations().snapshotChanges().subscribe((conversationsInfoRes) => {
             let conversations = [];
-            conversations = conversationsInfoRes.map(c => (Object.assign({ key: c.key }, c.payload.data())));
-            console.log(conversations);
+            console.log('conversationsInfoRes', conversationsInfoRes);
+            conversations = conversationsInfoRes.map(c => (Object.assign({ key: c.payload.doc.id }, c.payload.doc.data())));
+            console.log('conversations:', conversations);
             if (conversations.length > 0) {
                 conversations.forEach((conversation) => {
-                    console.log(conversation);
+                    console.log('conversation', conversation);
                     if (conversation) {
                         // Get conversation partner info.
                         this.dataProvider.getUser(conversation.key).get().subscribe((user) => {
-                            conversation.friend = user.data;
+                            conversation.friend = user.data();
                             // Get conversation info.
                             this.dataProvider.getConversation(conversation.conversationId).snapshotChanges().subscribe((obj) => {
                                 // Get last message of conversation.

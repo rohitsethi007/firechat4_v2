@@ -82,17 +82,34 @@
        font-size: 14px;
     }
 
+    .reviews {
+      margin-bottom: 15px;
+    }
     .addedByTitle {
       margin-left: 10px;
-      line-height: 9px;      
+      line-height: 1;    
+      margin-right:5px;  
     }
     .addedByDate {
+      margin-left: 10px;
+      font-style: italic;
+     }
+    .addedByDateReview {
       font-style: italic;
      }
    .addedByImg {
        width: 50px;
        float: left;
        vertical-align: middle;
+     }
+    .addedByImgReview {
+      width: 50px;
+      margin-left: 10px;
+      float: left;
+      vertical-align: middle;
+    }
+     .review {
+       width:90%;
      }
   }
 

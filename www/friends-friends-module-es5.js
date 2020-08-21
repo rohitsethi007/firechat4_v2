@@ -125,7 +125,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "input {\n  border: 1px solid #eee !important;\n  background: #eee !important;\n}\n\n.searchbar-search-icon {\n  display: none !important;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvZnJpZW5kcy9DOlxcVXNlcnNcXHJvaGlzZXRoaVxcRG9jdW1lbnRzXFxpb25pY1xcZmlyZWNoYXQ0X3YyL3NyY1xcYXBwXFxmcmllbmRzXFxmcmllbmRzLnBhZ2Uuc2NzcyIsInNyYy9hcHAvZnJpZW5kcy9mcmllbmRzLnBhZ2Uuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLGlDQUFBO0VBQ0EsMkJBQUE7QUNDSjs7QURDQTtFQUNJLHdCQUFBO0FDRUoiLCJmaWxlIjoic3JjL2FwcC9mcmllbmRzL2ZyaWVuZHMucGFnZS5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiaW5wdXR7XHJcbiAgICBib3JkZXI6IDFweCBzb2xpZCAjZWVlICFpbXBvcnRhbnQ7XHJcbiAgICBiYWNrZ3JvdW5kOiAjZWVlICFpbXBvcnRhbnQ7XHJcbn1cclxuLnNlYXJjaGJhci1zZWFyY2gtaWNvbntcclxuICAgIGRpc3BsYXk6IG5vbmUgIWltcG9ydGFudDtcclxufSIsImlucHV0IHtcbiAgYm9yZGVyOiAxcHggc29saWQgI2VlZSAhaW1wb3J0YW50O1xuICBiYWNrZ3JvdW5kOiAjZWVlICFpbXBvcnRhbnQ7XG59XG5cbi5zZWFyY2hiYXItc2VhcmNoLWljb24ge1xuICBkaXNwbGF5OiBub25lICFpbXBvcnRhbnQ7XG59Il19 */";
+    __webpack_exports__["default"] = "input {\n  border: 1px solid #eee !important;\n  background: #eee !important;\n}\n\n.searchbar-search-icon {\n  display: none !important;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvZnJpZW5kcy9DOlxcVXNlcnNcXHNldGhpXFxmaXJlY2hhdDRfdjJcXGZpcmVjaGF0NC9zcmNcXGFwcFxcZnJpZW5kc1xcZnJpZW5kcy5wYWdlLnNjc3MiLCJzcmMvYXBwL2ZyaWVuZHMvZnJpZW5kcy5wYWdlLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxpQ0FBQTtFQUNBLDJCQUFBO0FDQ0o7O0FEQ0E7RUFDSSx3QkFBQTtBQ0VKIiwiZmlsZSI6InNyYy9hcHAvZnJpZW5kcy9mcmllbmRzLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImlucHV0e1xyXG4gICAgYm9yZGVyOiAxcHggc29saWQgI2VlZSAhaW1wb3J0YW50O1xyXG4gICAgYmFja2dyb3VuZDogI2VlZSAhaW1wb3J0YW50O1xyXG59XHJcbi5zZWFyY2hiYXItc2VhcmNoLWljb257XHJcbiAgICBkaXNwbGF5OiBub25lICFpbXBvcnRhbnQ7XHJcbn0iLCJpbnB1dCB7XG4gIGJvcmRlcjogMXB4IHNvbGlkICNlZWUgIWltcG9ydGFudDtcbiAgYmFja2dyb3VuZDogI2VlZSAhaW1wb3J0YW50O1xufVxuXG4uc2VhcmNoYmFyLXNlYXJjaC1pY29uIHtcbiAgZGlzcGxheTogbm9uZSAhaW1wb3J0YW50O1xufSJdfQ== */";
     /***/
   },
 
@@ -231,13 +231,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.searchFriend = '';
 
           if (this.afAuth.auth.currentUser != null) {
-            this.dataProvider.getRequests(this.dataProvider.getCurrentUserId()).get().then(function (requestsRes) {
+            this.dataProvider.getRequests(this.dataProvider.getCurrentUserId()).snapshotChanges().subscribe(function (requestsRes) {
               if (requestsRes.payload != null) {
                 var requests = requestsRes.payload.data();
-                console.log(requests);
 
                 if (requests != null) {
-                  if (requests.friendRequests != null && requests.friendRequests != undefined) {
+                  if (requests.friendRequests != null && requests.friendRequests !== undefined) {
                     _this.friendRequestCount = requests.friendRequests.length;
                   } else {
                     _this.friendRequestCount = 0;
@@ -245,24 +244,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 } else {
                   _this.friendRequestCount = 0;
                 }
-
-                console.log(_this.friendRequestCount);
               }
             });
-            this.getFriends();
           }
         }
       }, {
         key: "segmentChanged",
         value: function segmentChanged($event) {
-          if (this.tab == 'friends') {
-            this.title = "Friends";
+          if (this.tab === 'friends') {
+            this.title = 'Friends';
             this.getFriends();
-          } else if (this.tab == 'requests') {
-            this.title = "Friend Requests";
+          } else if (this.tab === 'requests') {
+            this.title = 'Friend Requests';
             this.getFriendRequests();
-          } else if (this.tab == 'search') {
-            this.title = "Find New Friends";
+          } else if (this.tab === 'search') {
+            this.title = 'Find New Friends';
             this.findNewFriends();
           }
         } // openFilter() {
@@ -291,17 +287,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (user) {
             var account = user.payload.data();
-            console.log(account);
 
             _this2.loadingProvider.hide();
 
             if (account != null && account.friends != null) {
               for (var i = 0; i < account.friends.length; i++) {
-                _this2.dataProvider.getUser(account.payload.data().friends[i]).snapshotChanges().subscribe(function (friend) {
+                console.log('friends:', account.friends[i]);
+
+                _this2.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe(function (friend) {
                   if (friend.payload != null) {
                     var friendData = Object.assign({
-                      $key: friend.payload.id
-                    }, friend.payload.data);
+                      $key: friend.payload.data().userId
+                    }, friend.payload.data());
 
                     _this2.addOrUpdateFriend(friendData);
                   }
@@ -316,15 +313,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "addOrUpdateFriend",
         value: function addOrUpdateFriend(friend) {
-          console.log(friend);
-
           if (!this.friends) {
             this.friends = [friend];
           } else {
             var index = -1;
 
             for (var i = 0; i < this.friends.length; i++) {
-              if (this.friends[i].$key == friend.$key) {
+              if (this.friends[i].$key === friend.$key) {
                 index = i;
               }
             }
@@ -335,14 +330,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               this.friends.push(friend);
             }
           }
-
-          console.log(this.friends);
         } // Proceed to userInfo page.
 
       }, {
         key: "viewUser",
         value: function viewUser(userId) {
-          console.log(userId);
           this.router.navigateByUrl('/userinfo/' + userId);
         } // Proceed to chat page.
 
@@ -362,21 +354,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.loadingProvider.show(); // Get user info
 
           this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (accountRes) {
-            _this3.account = accountRes.payload.data();
-            console.log(_this3.account); // Get friendRequests and requestsSent of the user.
+            _this3.account = accountRes.payload.data(); // Get friendRequests and requestsSent of the user.
 
-            _this3.dataProvider.getRequests(_this3.account.userId).get().then(function (requestsRes) {
+            _this3.dataProvider.getRequests(_this3.account.userId).snapshotChanges().subscribe(function (requestsRes) {
               // friendRequests.
               var requests = requestsRes.payload.data();
 
               if (requests != null) {
-                if (requests.friendRequests != null && requests.friendRequests != undefined) {
+                if (requests.friendRequests != null && requests.friendRequests !== undefined) {
                   _this3.friendRequests = [];
                   _this3.friendRequestCount = requests.friendRequests.length;
                   requests.friendRequests.forEach(function (userId) {
                     _this3.dataProvider.getUser(userId).snapshotChanges().subscribe(function (sender) {
                       sender = Object.assign({
-                        $key: sender.key
+                        $key: sender.payload.data().userId
                       }, sender.payload.data());
 
                       _this3.addOrUpdateFriendRequest(sender);
@@ -392,7 +383,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                   requests.requestsSent.forEach(function (userId) {
                     _this3.dataProvider.getUser(userId).snapshotChanges().subscribe(function (receiver) {
                       receiver = Object.assign({
-                        $key: receiver.key
+                        $key: receiver.payload.data().userId
                       }, receiver.payload.data());
 
                       _this3.addOrUpdateRequestSent(receiver);
@@ -417,7 +408,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             var index = -1;
 
             for (var i = 0; i < this.friendRequests.length; i++) {
-              if (this.friendRequests[i].$key == sender.$key) {
+              if (this.friendRequests[i].$key === sender.$key) {
                 index = i;
               }
             }
@@ -471,19 +462,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.searchUser = ''; // Get all users.
 
           this.dataProvider.getUsers().snapshotChanges().subscribe(function (accounts) {
+            // TODO : why is this being called twice??????????????
             _this4.loadingProvider.hide(); // applying Filters
 
 
             var acc = accounts.filter(function (c) {
-              if (c.key == null && c.key == undefined && c.payload.doc.data() == null) {
+              if (c.key == null && c.key === undefined && c.payload.doc.data() == null) {
                 return false;
               }
 
-              if (c.payload.doc.data().name == '' || c.payload.doc.data().name == ' ' || c.payload.doc.data().name == undefined) {
+              if (c.payload.doc.data().name === '' || c.payload.doc.data().name === ' ' || c.payload.doc.data().name === undefined) {
                 return false;
               }
 
-              if (c.payload.doc.data().publicVisibility == false) {
+              if (c.payload.doc.data().publicVisibility === false) {
                 return false;
               }
 
@@ -491,26 +483,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             });
             _this4.accounts = acc.map(function (c) {
               return Object.assign({
-                $key: c.key
+                $key: c.payload.doc.data().userId
               }, c.payload.doc.data());
             });
 
             _this4.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (accountRes) {
               var account = accountRes.payload.data(); // Add own userId as exludedIds.
-              // console.log(account.payload.data());
 
               _this4.excludedIds = [];
 
-              if (_this4.excludedIds.indexOf(account.userId) == -1) {
+              if (_this4.excludedIds.indexOf(account.userId) === -1) {
                 _this4.excludedIds.push(account.userId);
               } // Get friends which will be filtered out from the list using searchFilter pipe pipes/search.ts.
 
 
               if (account != null) {
-                // console.log(account.payload.data().friends);
                 if (account.friends != null) {
                   account.friends.forEach(function (friend) {
-                    if (_this4.excludedIds.indexOf(friend) == -1) {
+                    if (_this4.excludedIds.indexOf(friend) === -1) {
                       _this4.excludedIds.push(friend);
                     }
                   });
@@ -518,7 +508,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               } // Get requests of the currentUser.
 
 
-              _this4.dataProvider.getRequests(account.userId).get().then(function (requests) {
+              _this4.dataProvider.getRequests(account.userId).get().subscribe(function (requests) {
                 if (requests.payload != null) {
                   _this4.requestsSent = requests.payload.data().requestsSent;
                   _this4.friendRequests = requests.payload.data().friendRequests;
@@ -628,7 +618,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           // 2 when this user has a pending friend request.
           if (this.requestsSent) {
             for (var i = 0; i < this.requestsSent.length; i++) {
-              if (this.requestsSent[i] == user.$key) {
+              if (this.requestsSent[i] === user.$key) {
                 return 1;
               }
             }
@@ -636,7 +626,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           if (this.friendRequests) {
             for (var j = 0; j < this.friendRequests.length; j++) {
-              if (this.friendRequests[j] == user.$key) {
+              if (this.friendRequests[j] === user.$key) {
                 return 2;
               }
             }

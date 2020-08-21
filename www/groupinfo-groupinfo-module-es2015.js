@@ -148,7 +148,7 @@ let GroupinfoPage = class GroupinfoPage {
         // Get user details.
         this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accounts) => {
             let account = accounts.payload.data();
-            this.user = Object.assign({ $key: account.key }, account);
+            this.user = Object.assign({ $key: account.userId }, account);
         });
     }
     // Delete subscription.

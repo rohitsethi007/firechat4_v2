@@ -8,19 +8,17 @@
 </ion-header>
 
 <ion-content class="contact-card-content"> 
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
 <div>
     <ion-card>
       <ion-row class="user-preferences-wrapper">
         <ion-card-header class="header">
           <ion-card-subtitle class="addedBy">
-           <img class="addedByImg" src="{{post.avatar}}" onError="this.src='./assets/images/default-dp.png'" /> 
-           <p><span class="addedByTitle">{{post.addedByUser.addedByUsername}}</span>, <span class="addedByDate">posted {{post.date | DateFormat}}</span><br/>
-           <span class="addedByTitle">in <b>Guitar Posts</b></span></p>
-           <img *ngIf="post.showNewIcon" class="newIcon" src="./assets/icon/new.svg" /> 
-         </ion-card-subtitle>
+            <img class="addedByImg" src="{{post.avatar}}" onError="this.src='./assets/images/default-dp.png'" /> 
+             <p><a class="addedByTitle" (click)="viewUser(post.addedByUser.addedByKey)" ><b>{{post.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf="item.showNewIcon" class="newIcon" src="./assets/icon/new.svg" />  -->
+              <br/>
+             <span class="addedByDate">posted {{post.date.toDate() | DateFormat}}</span><br/>
+            <a (click)="viewGroup(post.groupId)" class="addedByTitle">in <b>{{post.groupName}}</b></a></p>
+          </ion-card-subtitle>
         </ion-card-header>
       <ion-card-content class="message">
         {{post.data.message}}<br/>
@@ -34,7 +32,7 @@
     </ion-row>
     
   <ion-row class="user-preferences-wrapper message">
-    <ion-col>
+    <ion-col size=3>
       <ion-buttons>
         <ion-button (click)="submitReactionSmile()">
        <div *ngIf="post.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
@@ -42,7 +40,7 @@
       </ion-button>
       </ion-buttons> 
     </ion-col>
-    <ion-col>
+    <ion-col size=3>
       <ion-buttons>
         <ion-button (click)="submitReactionHug()">
        <div *ngIf="post.showHug"><ion-icon size="small" class="icon" src="./assets/icon/hug-active.svg" ></ion-icon> <span class="text">Hug</span></div> 
@@ -50,14 +48,15 @@
       </ion-button>
       </ion-buttons> 
     </ion-col>
-    <ion-col>
+    <ion-col size=2></ion-col>
+    <ion-col size=2>
       <ion-buttons>
         <ion-button (click)="showReactionsList()">
       <div><ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon><ion-icon size="small" src="./assets/icon/hug-active.svg" class="icon"></ion-icon> <span class="text">{{post.totalReactionCount}}</span></div>
     </ion-button>
   </ion-buttons> 
     </ion-col>
-    <ion-col>
+    <ion-col size=2>
       <ion-buttons>
         <ion-button>
       <div><ion-icon size="small" src="./assets/icon/chat.svg" class="icon"></ion-icon> <span class="text">{{post.totalReviewCount}}</span></div>
@@ -72,16 +71,20 @@
   
   <hr class="details-divider">
   <div class="user-preferences-wrapper">
-    <div>
-      <div class="addedBy" *ngFor="let r of postReviews">
+    <div  >
+      <div class="reviews" *ngFor="let r of postReviews">
         <ion-row>
-          <ion-col size="2" class="review">
-              <img class="addedByImg" src="{{r.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" />
+          <ion-col size="2">
+              <img class="addedByImgReview" src="{{r.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" />
           </ion-col>
-          <ion-col size="10">
-            <p><span class="addedByTitle"><b>{{r.addedByUser.addedByUsername}}</b></span>, <span class="addedByDate">posted {{r.dateCreated.toDate() | DateFormat}}</span><br/>
-              {{r.review}}</p>
-          </ion-col>
+          <ion-col class="review" size="9">
+              <span class="addedByTitle"><a (click)="viewUser(r.addedByUser.addedByKey)" >
+                <b>{{post.addedByUser.addedByUsername}}</b></a>, <span class="addedByDateReview">{{post.date.toDate() | DateFormat}}</span>
+              </span>
+                  <br/>
+                  <br/>
+                  <div class="addedByTitle" [innerHTML]="r.review"></div>
+            </ion-col>
       </ion-row>
      </div>
     </div>
@@ -96,8 +99,8 @@
       <ion-button fill="clear" (click)="attach()">
         <ion-icon size="large" name="camera-outline"></ion-icon>
       </ion-button>
+      <ion-textarea rows="0" style="width:100%" placeholder="Type your message" [(ngModel)]="message"></ion-textarea>
       <ion-buttons slot="end" style="margin-left:4px;">
-        <ion-input placeholder="Type your message" [(ngModel)]="message"></ion-input>
         <ion-button color="primary" fill="clear" (click)="submitReply()" [disabled]="!message">
           send
         </ion-button>
@@ -105,3 +108,4 @@
     </ion-item>
   </ion-toolbar>
 </ion-footer>
+

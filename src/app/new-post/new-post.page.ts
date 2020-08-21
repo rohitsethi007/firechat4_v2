@@ -47,7 +47,14 @@ export class NewPostPage implements OnInit {
     public loadingProvider: LoadingService
   ) {
     this.postTags = [];
-    // this.groupId = this.route.snapshot.params.id;
+    this.groupId = this.route.snapshot.params.id;
+    this.group = {name:''}
+    if (this.groupId === 'undefined') {
+      this.step = 1;
+    } else {
+      this.step = 2;
+    }
+
     this.postForm = new FormGroup(
       {
         title: new FormControl('', Validators.compose([
@@ -64,6 +71,7 @@ export class NewPostPage implements OnInit {
     });
    }
   ionViewDidEnter() {
+    if (this.step === 1) {
     this.title = 'Select a group ...';
     this.dataProvider.getGroups().snapshotChanges().subscribe((data: any) => {
 
@@ -71,7 +79,19 @@ export class NewPostPage implements OnInit {
           return { $key: c.payload.doc.id, ...c.payload.doc.data() };
         });
       });
+    } else {
+      this.title = 'Create a Post in ...';
+
+      this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+        this.group = group.payload.data();
+        this.group.groupTags.forEach((element: any) => {
+          this.postTags.push({val: element, isChecked: false});
+        });
+        this.addTagControls();
+      });   
+    }
   }
+
   addTagControls() {
     this.postTags.forEach((o, i) => {
       const control = new FormControl(i === 0); // if first item set to true, else false
@@ -93,8 +113,11 @@ export class NewPostPage implements OnInit {
           title: '',
           postTags : [],
           groupId: '',
+          groupName: '',
           type: 'general',
           data: {},
+          totalReactionCount: 0,
+          totalReviewCount: 0
         };
       });
 
@@ -111,9 +134,6 @@ export class NewPostPage implements OnInit {
     this.post.postTags = this.postTags;
     this.post.groupId = this.groupId;
     this.post.groupName = this.group.name;
-    this.post.type = 'general';
-    this.post.totalReviewCount = 0;
-    this.post.totalReactionCount = 0;
 
     // get specific data for type post
     this.post.data = {
@@ -153,7 +173,7 @@ export class NewPostPage implements OnInit {
         this.postTags.push({val: element, isChecked: false});
       });
       this.addTagControls();
-      this.loadingProvider.hide();
+
   });
 
    }

@@ -97,6 +97,18 @@ export class FeedPage implements OnInit {
             } else {
               post.showHug = false;
             }
+
+          // Check for Hugs
+          let foundCheckin = false;
+          if (post.reactions !== undefined) {
+            foundCheckin = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                          && el.reactionType === 'Checkin');
+            }
+          if (foundCheckin) {
+              post.showCheckin = true;
+            } else {
+              post.showCheckin = false;
+            }
         }
 
         });
@@ -313,6 +325,14 @@ export class FeedPage implements OnInit {
 
   viewPost(post) {
     this.router.navigateByUrl('post/' + post.key);
+  }
+
+  viewEvent(post) {
+    this.router.navigateByUrl('event/' + post.key);
+  }
+
+  viewPoll(post) {
+    this.router.navigateByUrl('poll/' + post.key);
   }
 
   viewUser(userId) {

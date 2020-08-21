@@ -232,19 +232,19 @@ export class NewResourcesPage implements OnInit {
    }
 
    linkFocusOut() {
-    this.loadingProvider.show();
-    const getMeta = require('lets-get-meta');
-    this.http.get(
-      this.weblinkForm.value.link,
-      {responseType: 'text'}
-      )
-    .subscribe(res => {
-      const o = getMeta(res);
-      this.metaicon = o['og:image'];
-      this.metadescription = o.description;
-      this.metatitle = o['og:title'];
-      this.loadingProvider.hide();
-    });
+    // this.loadingProvider.show();
+    // const getMeta = require('lets-get-meta');
+    // this.http.get(
+    //   this.weblinkForm.value.link,
+    //   {responseType: 'text'}
+    //   )
+    // .subscribe(res => {
+    //   const o = getMeta(res);
+    //   this.metaicon = o['og:image'];
+    //   this.metadescription = o.description;
+    //   this.metatitle = o['og:title'];
+    //   this.loadingProvider.hide();
+    // });
   }
 
   upload() {

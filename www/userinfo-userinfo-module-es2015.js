@@ -136,7 +136,7 @@ let UserinfoPage = class UserinfoPage {
                 this.friends = user.payload.data().friends;
         });
         // Get requests of current logged in user.
-        this.dataProvider.getRequests(firebase__WEBPACK_IMPORTED_MODULE_7__["auth"]().currentUser.uid).get().then(((requests) => {
+        this.dataProvider.getRequests(firebase__WEBPACK_IMPORTED_MODULE_7__["auth"]().currentUser.uid).snapshotChanges().subscribe(((requests) => {
             console.log(requests.payload.data());
             if (requests.payload.data() != null) {
                 this.friendRequests = requests.payload.data().friendRequests;

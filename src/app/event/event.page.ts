@@ -1,11 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NavController, ModalController } from '@ionic/angular';
+import { ActionSheetController, AlertController, ModalController } from '@ionic/angular';
 import { DataService } from '../services/data.service';
+import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
-import { ReviewModalPage } from '../review-modal/review-modal.page';
-import * as firebase from 'firebase';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { Contacts } from '@ionic-native/contacts/ngx';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Camera } from '@ionic-native/camera/ngx';
+import { ImagemodalPage } from '../imagemodal/imagemodal.page';
+import * as firebase from 'firebase/app'
 
 @Component({
   selector: 'app-event',
@@ -13,25 +19,30 @@ import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-moda
   styleUrls: ['./event.page.scss'],
 })
 export class EventPage implements OnInit {
-  private eventId: any;
-  private event: any;
+  private postId: any;
+  private post: any;
   private title: any;
-  private review: any;
-  private eventReviews: any;
+  private postReviews: any;
   private message: any;
-  private loggedInUserIsMember: any = 'true';
-  
+
   constructor(
     private dataProvider: DataService,
     private loadingProvider: LoadingService,
     private route: ActivatedRoute,
     private router: Router,
-    private navCtrl: NavController,
-    private modalCtrl: ModalController
+    public firestore: AngularFirestore,
+    public actionSheet: ActionSheetController,
+    private modalCtrl: ModalController,
+    public imageProvider: ImageService,
+    public camera: Camera,
+    public keyboard: Keyboard,
+    public contacts: Contacts,
+    public geolocation: Geolocation,
+    public alertCtrl: AlertController
   ) {
-    this.event = {showSmiley: false, showCheckin: false, addedByUser: {}}; 
-    this.getEventDetails();
-    }
+    this.post = {showSmiley: false, showCheckin: false, addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now()  };
+    this.getPostDetails();
+  }
 
   ionViewDidEnter() {
 
@@ -40,203 +51,286 @@ export class EventPage implements OnInit {
   ngOnInit() {
   }
 
-  async openReviewModal() {
-    const modal = await this.modalCtrl.create({
-      component: ReviewModalPage,
-      componentProps: { data: this.event }
-    });
- 
-    modal.onDidDismiss().then((data) => {
-      if (data !== null) {
-        let review: any;
-        let currentUserName: any;
-        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
-          let account = user.payload.data();
-
-          currentUserName = account.username;
-
-          review = {
-            dateCreated: new Date().toString(),
-            addedBy: this.dataProvider.getCurrentUserId(),
-            addedByUsername: currentUserName,
-            review: data.data.review,
-            rating: data.data.rating
-          };
-
-          if (this.event.reviews === undefined) {
-            let reviews = [];
-            reviews.push(review);
-            this.dataProvider.addFirstEventReview(this.eventId, review);
-          } else {
-            this.dataProvider.updateEventReviews(this.eventId, review);
-          }
-
-        });
-      }
-    });
- 
-    return await modal.present();
-  }
-  
-  getEventDetails() {
+  getPostDetails() {
     this.loadingProvider.show();
-    // Get group details
-    this.eventId = this.route.snapshot.params.id;
-    this.dataProvider.getEventDetails(this.eventId).snapshotChanges().subscribe((event: any) => {
-      if (event.payload.exists()) {
-        let p = event.payload.data();
-        p.key = event.payload.key;
-        this.title = event.payload.data().title;
-
-   // Check for Thanks
+    this.postId = this.route.snapshot.params.id;
+    this.post.reactions = [];
+    this.post.reviews = [];
+    this.dataProvider.getPostDetails(this.postId).get().subscribe((post: any) => {
+      if (post) {
+        let p = post.data(); 
+        p.reactions = [];
+        p.key = post.id;
+        this.title = post.data().title;
         let totalReactionCount = 0;
         let totalReviewCount = 0;
+        p.postTags = p.postTags.filter(x => x.isChecked !== false);
 
-        if (p.reviews !== undefined) {
-          let rev = Object.keys(p.reviews).map(function(e) {
-          totalReviewCount += 1;
+        // get reactions list
+        this.firestore.collection('posts').doc(post.id).collection('reactions').snapshotChanges().subscribe((reactions: any) => {
+          this.post.reactions = [];
+          reactions.forEach(element => {
+          let reaction = element.payload.doc.data();
+          reaction.key = element.payload.doc.id;
+          p.reactions.push(reaction);
+        });
+
+          // Check for Thanks
+          if (reactions) {
+          totalReactionCount = p.reactions.length;
+          let foundSmiley = false;
+          if (p.reactions !== undefined) {
+              foundSmiley = p.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                            && el.reactionType === 'Thanks');
+            }
+          if (foundSmiley) {
+              p.showSmiley = true;
+            } else {
+              p.showSmiley = false;
+            }
+            // Check for Checkin
+          let foundCheckin = false;
+          if (p.reactions !== undefined) {
+              foundCheckin = p.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                          && el.reactionType === 'Checkin');
+            }
+          if (foundCheckin) {
+              p.showCheckin = true;
+            } else {
+              p.showCheckin = false;
+            }
+
+          p.totalReactionCount = totalReactionCount;
+        }
+
+        });
+
+        // get reviews list
+        this.firestore.collection('posts').doc(post.id).collection('reviews')
+        .ref.orderBy("dateCreated", "desc").onSnapshot((reviews: any) => {
+          this.post.reviews = [];
+          p.reviews = [];
+          reviews.forEach(element => {
+            let review = element.data();
+            review.key = element.id;
+            p.reviews.push(review);
           });
-        }
+          totalReviewCount = p.reviews.length;
+          p.totalReviewCount = totalReviewCount;
+          this.postReviews = p.reviews;
+          // if (p.reviews !== undefined) {
+          //     this.postReviews = [];
+          //     let values = Object.keys(p.reviews).map(function(e) {
+          //       p.reviews[e].key = e;
+          //       return p.reviews[e];
+          //     });
+          //     this.postReviews = values;
+          //     this.postReviews.sort((a, b) => (a.dateCreated < b.dateCreated) ? 1 : -1);
+          //   }
 
-        let foundSmiley = false;
-        if (p.reactions !== undefined) {
-           let values = Object.keys(p.reactions).map(function(e) {
-            p.reactions[e].key = e;
-            totalReactionCount += 1;
-            return p.reactions[e];
-           });
-           // tslint:disable-next-line: max-line-length
-           foundSmiley = values.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks');
-         }
-        if (foundSmiley) {
-          p.showSmiley = true;
-         } else {
-          p.showSmiley = false;
-         }
-        // Check for Checkin
-        let foundCheckin = false;
-        if (p.reactions !== undefined) {
-           let values = Object.keys(p.reactions).map(function(e) {
-            p.reactions[e].key = e;
-            return p.reactions[e];
-           });
-           foundCheckin = values.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
-                                            && el.reactionType === 'Checkin');
-         }
-        if (foundCheckin) {
-          p.showCheckin = true;
-         } else {
-          p.showCheckin = false;
-         }
-         
-        p.totalReactionCount = totalReactionCount;
-        p.totalReviewCount = totalReviewCount;
+        });
 
-        if (p.reviews !== undefined) {
-          this.eventReviews = [];
-          let values = Object.keys(p.reviews).map(function(e) {
-            p.reviews[e].key = e;
-            return p.reviews[e];
-           });
-          this.eventReviews = values;
-          this.eventReviews.sort((a, b) => (a.dateCreated < b.dateCreated) ? 1 : -1);
-        }
-        this.event = p;
+        this.post = p;
       }
-
       this.loadingProvider.hide();
     });
   }
 
-  submitReactionEvent(event, reactionType) {
-    switch (reactionType) {
-      case 'Checkin': {
-        if (!event.showCheckin) {
-          this.addEventReaction(event, reactionType);
-          event.showCheckin = true;
-          event.totalReactionCount += 1;
-        } else {
-          this.removeEventReaction(event, reactionType);
-          event.showCheckin = false;
-          event.totalReactionCount -= 1;
-        }
-        break;
+  submitReactionSmile() {
+    const reaction = this.post.reactions.find(
+      el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+      && el.reactionType === 'Thanks');
+    if (reaction === undefined) {
+      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
+        if (account) {
+          const currentUserName = account.data().username;
+          let reaction = {
+            key: '',
+            dateCreated: new Date(),
+            addedByUser: {
+                          addedByKey: this.dataProvider.getCurrentUserId(),
+                          addedByUsername: account.data().username,
+                          addedByImg: account.data().img
+                        },
+            reactionType: 'Thanks'
+          };
+
+          this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+            this.post.showSmiley = true;
+          });
+
       }
-
-      case 'Thanks': {
-        if (!event.showSmiley) {
-          this.addEventReaction(event, reactionType);
-          event.showSmiley = true;
-          event.totalReactionCount += 1;
-        } else {
-          this.removeEventReaction(event, reactionType);
-          event.showSmiley = false;
-          event.totalReactionCount -= 1;
-        }
-        break;
-      }
-    }
-  }
-
-  addEventReaction(event, reactionType) {
-    const reaction = {
-      dateCreated: new Date().toString(),
-      reactionType
-    };
-
-    if (event.reactions === undefined) {
-        this.dataProvider.addFirstEventReactions(event.key, reaction);
-      } else {
-        this.dataProvider.updateEventReactions(event.key, reaction);
-      }
-
-  }
-
-  removeEventReaction(event,reactionType) {
-      let values = Object.keys(event.reactions).map(function(e) {
-        return event.reactions[e];
-      });
-      const reactionIndex = values.find(
-                                el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
-                                && el.reactionType === reactionType);
-      this.dataProvider.removeEventReaction(event.key, reactionIndex.key);
-  }
-
-  
-async showEventReactionsList(event) {
-  if (event.totalReactionCount === 0) {
-    return;
-  }
-  const modal = await this.modalCtrl.create({
-    component: ReactionListModalPage,
-    componentProps: {
-      reactions: event.reactions
-    }
   });
-  return await modal.present();
+    } else {
+      this.post.showSmiley = false;
+      this.dataProvider.removePostReaction(this.post.key, reaction.key);
+    }
+  }
 
-}
+  submitReactionCheckin() {
+    const reaction = this.post.reactions.find(
+      el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+      && el.reactionType === 'Checkin');
+    if (reaction === undefined) {
+      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
+        if (account) {
+          const currentUserName = account.data().username;
+          let reaction = {
+            key: '',
+            dateCreated: new Date(),
+            addedByUser: {
+                          addedByKey: this.dataProvider.getCurrentUserId(),
+                          addedByUsername: account.data().username,
+                          addedByImg: account.data().img
+                        },
+            reactionType: 'Checkin'
+          };
 
+          this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+            this.post.showCheckin = true;
+          });
 
-submitReply() {
-  let review: any;
-  let currentUserName: any;
-  this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
-    if (account.payload.exists()) {
-      currentUserName = account.payload.data().username;
-
-      review = {
-        dateCreated: new Date().toString(),
-        review: this.message
-      };
-
-      if (this.event.reviews === undefined) {
-       this.dataProvider.addFirstEventReview(this.eventId, review);
-      } else {
-        this.dataProvider.updateEventReviews(this.eventId, review);
       }
+  });
+    } else {
+      this.post.showHug = false;
+      this.dataProvider.removePostReaction(this.post.key, reaction.key);
+    }
+  }
 
-      this.message = '';
-     }});
-}
+  async showReactionsList() {
+    if (this.post.totalReactionCount === 0) {
+      return;
+    }
+    const p = this.post;
+    const modal = await this.modalCtrl.create({
+       component: ReactionListModalPage,
+       componentProps: {
+         reactions: p.reactions
+       }
+     });
+    return await modal.present();
+  }
+
+  submitReply() {
+    this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');;
+    console.log('this.message', JSON.stringify(this.message));
+     let review: any;
+     let currentUserName: any;
+     this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
+       if (account) {
+         currentUserName = account.data().username;
+ 
+         review = {
+           dateCreated: new Date(),
+           addedByUser: {
+              addedByKey: this.dataProvider.getCurrentUserId(),
+              addedByUsername: account.data().username,
+              addedByImg: account.data().img
+            },
+           review: this.message
+         };
+
+         this.dataProvider.updatePostReviews(this.postId, review);
+         this.message = '';
+        }});
+  }
+
+  attach() {
+  //   this.actionSheet.create({
+  //     header: 'Choose attachments',
+  //     buttons: [{
+  //       text: 'Camera',
+  //       handler: () => {
+  //         this.imageProvider.uploadPhotoMessage(this.conversationId, this.camera.PictureSourceType.CAMERA).then((url) => {
+  //           this.message = url;
+  //           this.submitReply('image');
+  //         });
+  //       }
+  //     }, {
+  //       text: 'Photo Library',
+  //       handler: () => {
+  //         this.imageProvider.uploadPhotoMessage(this.conversationId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
+  //           this.message = url;
+  //           this.submitReply('image');
+  //         });
+  //       }
+  //     },
+  //     {
+  //       text: 'Video',
+  //       handler: () => {
+  //         this.imageProvider.uploadVideoMessage(this.conversationId).then(url => {
+  //           this.message = url;
+  //           this.submitReply('video');
+  //         });
+  //       }
+  //     }
+  //       , {
+  //       text: 'Location',
+  //       handler: () => {
+  //         this.geolocation.getCurrentPosition({
+  //           timeout: 5000
+  //         }).then(res => {
+  //           let locationMessage = 'Location:<br> lat:' + res.coords.latitude + '<br> lng:' + res.coords.longitude;
+  //           let mapUrl = '<a href=\'https://www.google.com/maps/search/' 
+  //           + res.coords.latitude + ',' + res.coords.longitude + '\'>View on Map</a>';
+
+  //           let confirm = this.alertCtrl.create({
+  //             header: 'Your Location',
+  //             message: locationMessage,
+  //             buttons: [{
+  //               text: 'cancel',
+  //               handler: () => {
+  //                 console.log('canceled');
+  //               }
+  //             }, {
+  //               text: 'Share',
+  //               handler: () => {
+  //                 this.message = locationMessage + '<br>' + mapUrl;
+  //                 this.submitReply('location');
+  //               }
+  //             }]
+  //           }).then(r => r.present());
+  //         }, locationErr => {
+  //           console.log('Location Error' + JSON.stringify(locationErr));
+  //         });
+  //       }
+  //     }, {
+  //       text: 'Contact',
+  //       handler: () => {
+  //         this.contacts.pickContact().then(data => {
+  //           let name;
+  //           if (data.displayName !== null) { name = data.displayName; }
+  //           else { name = data.name.givenName + ' ' + data.name.familyName; }
+  //           this.message = '<b>Name:</b> ' + name + '<br><b>Mobile:</b> <a href=\'tel:'
+  //               + data.phoneNumbers[0].value + '\'>' + data.phoneNumbers[0].value + '</a>';
+  //           this.submitReply('contact');
+  //         }, err => {
+  //           console.log(err);
+  //         })
+  //       }
+  //     }, {
+  //       text: 'cancel',
+  //       role: 'cancel',
+  //       handler: () => {
+  //         console.log('cancelled');
+  //       }
+  //     }]
+  //   }).then(r => r.present());
+  // }
+  }
+
+  viewUser(userId) {
+    let loggedInUserId = this.dataProvider.getCurrentUserId();
+    console.log(loggedInUserId, userId);
+    if (loggedInUserId === userId) {
+      this.router.navigateByUrl('/profile');
+    } else {
+      this.router.navigateByUrl('/userinfo/' + userId);
+    }
+  }
+
+  viewGroup(groupId) {
+    this.router.navigateByUrl('/group/' + groupId);
+  }
 }

@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package SocialShare.com;
 
 import android.os.Bundle;
 
