@@ -160,9 +160,6 @@ export class DataService {
     this.firestore.doc('polls/' + pollKey).update ({
       comments
     });
-    // this.afdb.object('/polls/' + pollKey).update( {
-    //   comments: comments
-    // });
   }
 
   addPoll(poll){

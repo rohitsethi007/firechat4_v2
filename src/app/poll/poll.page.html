@@ -21,6 +21,7 @@
               </ion-card-subtitle>
             </ion-card-header>
               <ion-card-content class="message">
+                <b>{{poll.title}}.</b>
 			      <p class="sub-header" *ngIf="!voted && !pollClosed">* Please vote to see results</p>
   					<form [formGroup]="pollOptionForm">
 					  <ion-list class="radio-list" lines="full" *ngIf="!voted && !pollClosed">
@@ -88,23 +89,25 @@
                       </ion-buttons>
                   </ion-col>
               </ion-row>
-              <div class="reviews-list">
-                  <div class="review-item" *ngFor="let r of pollReviews">
-                      <ion-row>
-                          <ion-col size="2" class="review">
-                              <img src="{{r.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" />
-                          </ion-col>
-                          <ion-col size="10">
-                              <app-text-shell class="comment-detail-author-name" [data]="r.addedByUser.addedByUsername"></app-text-shell>
-                              <app-text-shell [data]="r.review"></app-text-shell>
-                          </ion-col>
-                      </ion-row>
-                      <ion-row>
-                          <ion-col>
-                              <app-text-shell class="review-date" [data]="r.dateCreated | DateFormat"></app-text-shell>
-                          </ion-col>
-                      </ion-row>
-                  </div>
+              <hr class="details-divider">
+              <div class="user-preferences-wrapper">
+                <div  >
+                  <div class="reviews" *ngFor="let r of pollReviews">
+                    <ion-row>
+                      <ion-col size="2">
+                          <img class="addedByImgReview" src="{{r.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" />
+                      </ion-col>
+                      <ion-col class="review" size="9">
+                          <span class="addedByTitle"><a (click)="viewUser(r.addedByUser.addedByKey)" >
+                            <b>{{r.addedByUser.addedByUsername}}</b></a>, <span class="addedByDateReview">{{poll.date.toDate() | DateFormat}}</span>
+                          </span>
+                              <br/>
+                              <br/>
+                              <div class="addedByTitle" [innerHTML]="r.review"></div>
+                        </ion-col>
+                  </ion-row>
+                 </div>
+                </div>
               </div>
           </div>
 

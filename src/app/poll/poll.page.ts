@@ -77,7 +77,7 @@ export class PollPage implements OnInit {
           Validators.required
         ]))
       });
-      this.getPollDetails();
+    this.getPollDetails();
     }
 
   getPollDetails() {
@@ -160,13 +160,12 @@ export class PollPage implements OnInit {
         this.voted = false;
 
         const today = new Date();
-        const de = new Date(poll.dateEnding);
+        const de = poll.data.dateEnding.toDate();
         if (de < today) {
           this.pollClosed = true;
         } else {
           this.pollClosed = false;
         }
-
         poll.data.pollOptions.forEach(pollOption => {
           if (pollOption.members != null) {
             pollOption.members.forEach(member => {
@@ -178,7 +177,7 @@ export class PollPage implements OnInit {
         });
 
       // get reviews list
-      this.firestore.collection('posts').doc(this.pollId).collection('reviews')
+        this.firestore.collection('posts').doc(this.pollId).collection('reviews')
       .ref.orderBy("dateCreated", "desc").onSnapshot((reviews: any) => {
         this.poll.reviews = [];
         p.reviews = [];
@@ -203,6 +202,7 @@ export class PollPage implements OnInit {
       });
 
         this.poll = poll;
+        this.title = this.poll.title;
     }});
 
   }
@@ -215,29 +215,128 @@ export class PollPage implements OnInit {
     members.push(this.dataProvider.getCurrentUserId());
     this.poll.data.pollOptions[pollOptionIndex].members = members;
     this.voted = true;
-    this.dataProvider.updatePollMembers(this.poll.key, this.poll.data);
+    this.dataProvider.updatePollMembers(this.pollId, this.poll.data);
     this.ngOnInit();
   }
 
   submitReply() {
+    this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
     let review: any;
     let currentUserName: any;
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
-      if (account.payload.exists()) {
-        currentUserName = account.payload.data().username;
+    this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
+       if (account) {
+         currentUserName = account.data().username;
+         review = {
+           dateCreated: new Date(),
+           addedByUser: {
+              addedByKey: this.dataProvider.getCurrentUserId(),
+              addedByUsername: account.data().username,
+              addedByImg: account.data().img
+            },
+           review: this.message
+         };
 
-        review = {
-          dateCreated: new Date().toString(),
-          review: this.message
-        };
-
-        if (this.poll.reviews === undefined) {
-         this.dataProvider.addFirstPollReview(this.pollId, review);
-        } else {
-          this.dataProvider.updatePollReviews(this.pollId, review);
-        }
-
-        this.message = '';
-       }});
+         this.dataProvider.updatePostReviews(this.pollId, review);
+         this.message = '';
+        }});
   }
+
+  
+  attach() {
+    //   this.actionSheet.create({
+    //     header: 'Choose attachments',
+    //     buttons: [{
+    //       text: 'Camera',
+    //       handler: () => {
+    //         this.imageProvider.uploadPhotoMessage(this.conversationId, this.camera.PictureSourceType.CAMERA).then((url) => {
+    //           this.message = url;
+    //           this.submitReply('image');
+    //         });
+    //       }
+    //     }, {
+    //       text: 'Photo Library',
+    //       handler: () => {
+    //         this.imageProvider.uploadPhotoMessage(this.conversationId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
+    //           this.message = url;
+    //           this.submitReply('image');
+    //         });
+    //       }
+    //     },
+    //     {
+    //       text: 'Video',
+    //       handler: () => {
+    //         this.imageProvider.uploadVideoMessage(this.conversationId).then(url => {
+    //           this.message = url;
+    //           this.submitReply('video');
+    //         });
+    //       }
+    //     }
+    //       , {
+    //       text: 'Location',
+    //       handler: () => {
+    //         this.geolocation.getCurrentPosition({
+    //           timeout: 5000
+    //         }).then(res => {
+    //           let locationMessage = 'Location:<br> lat:' + res.coords.latitude + '<br> lng:' + res.coords.longitude;
+    //           let mapUrl = '<a href=\'https://www.google.com/maps/search/' 
+    //           + res.coords.latitude + ',' + res.coords.longitude + '\'>View on Map</a>';
+  
+    //           let confirm = this.alertCtrl.create({
+    //             header: 'Your Location',
+    //             message: locationMessage,
+    //             buttons: [{
+    //               text: 'cancel',
+    //               handler: () => {
+    //                 console.log('canceled');
+    //               }
+    //             }, {
+    //               text: 'Share',
+    //               handler: () => {
+    //                 this.message = locationMessage + '<br>' + mapUrl;
+    //                 this.submitReply('location');
+    //               }
+    //             }]
+    //           }).then(r => r.present());
+    //         }, locationErr => {
+    //           console.log('Location Error' + JSON.stringify(locationErr));
+    //         });
+    //       }
+    //     }, {
+    //       text: 'Contact',
+    //       handler: () => {
+    //         this.contacts.pickContact().then(data => {
+    //           let name;
+    //           if (data.displayName !== null) { name = data.displayName; }
+    //           else { name = data.name.givenName + ' ' + data.name.familyName; }
+    //           this.message = '<b>Name:</b> ' + name + '<br><b>Mobile:</b> <a href=\'tel:'
+    //               + data.phoneNumbers[0].value + '\'>' + data.phoneNumbers[0].value + '</a>';
+    //           this.submitReply('contact');
+    //         }, err => {
+    //           console.log(err);
+    //         })
+    //       }
+    //     }, {
+    //       text: 'cancel',
+    //       role: 'cancel',
+    //       handler: () => {
+    //         console.log('cancelled');
+    //       }
+    //     }]
+    //   }).then(r => r.present());
+    // }
+    }
+  
+    viewUser(userId) {
+      let loggedInUserId = this.dataProvider.getCurrentUserId();
+      console.log(loggedInUserId, userId);
+      if (loggedInUserId === userId) {
+        this.router.navigateByUrl('/profile');
+      } else {
+        this.router.navigateByUrl('/userinfo/' + userId);
+      }
+    }
+  
+    viewGroup(groupId) {
+      this.router.navigateByUrl('/group/' + groupId);
+    }
 }
