@@ -1,11 +1,11 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="secondary">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Add a Resource</ion-title>
+    <ion-title>{{title}}</ion-title>
   </ion-toolbar>
-  <ion-segment color="primary" [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
+  <ion-segment *ngIf="step==2" color="secondary" [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
     <ion-segment-button value="contact">
       Contact
     </ion-segment-button>
@@ -19,12 +19,34 @@
 </ion-header> 
 
 <ion-content  class="forms-validations-content">
+  <div *ngIf="step==1"> 
+    <div *ngIf="groups && groups.length > 0">
+      <ion-list lines="none">
+        <ion-item *ngFor="let group of groups" (click)="selectGroup(group.$key)">
+          <ion-thumbnail slot="start">
+            <img src="{{group.img}}" onError="this.src='./assets/images/default-group.png'">
+          </ion-thumbnail>
+          <ion-label>
+            <ion-text>
+              <h2>{{group.name}}</h2>
+            </ion-text>
+            <ion-text>
+              <p>created {{group.dateCreated.toDate() | DateFormat}}</p>
+            </ion-text>
+          </ion-label>
+          <ion-badge slot="end" color="danger" *ngIf="group.unreadMessagesCount > 0">{{group.unreadMessagesCount}}
+          </ion-badge>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+  <div *ngIf="step==2">
   <div [ngSwitch]="tab">
     <div *ngSwitchCase="'contact'">
       <form class="validations-form" [formGroup]="contactForm" (ngSubmit)="submitContactForm()">
         <ion-list class="inputs-list" lines="full">
           <ion-list-header>
-            <ion-label class="header-title">Enter the details of the Contact</ion-label>
+            <ion-label class="header-title">{{group.name}}</ion-label>
           </ion-list-header>
           <ion-item class="input-item">
             <ion-label position="floating">Title</ion-label>
@@ -120,7 +142,7 @@
    <form class="validations-form" [formGroup]="uploadForm" (ngSubmit)="submitUploadForm()">
         <ion-list class="inputs-list" lines="full">
           <ion-list-header>
-            <ion-label class="header-title">Enter the details of the Document</ion-label>
+            <ion-label class="header-title">{{group.name}}</ion-label>
           </ion-list-header>
           <ion-item class="input-item">
             <ion-label position="floating">Title</ion-label>
@@ -173,7 +195,7 @@
       <form class="validations-form" [formGroup]="weblinkForm" (ngSubmit)="submitLinkForm()">
         <ion-list class="inputs-list" lines="full">
           <ion-list-header>
-            <ion-label class="header-title">Enter the details of the link</ion-label>
+            <ion-label class="header-title">{{group.name}}</ion-label>
           </ion-list-header>
           <ion-item class="input-item">
             <ion-label position="floating">Title</ion-label>
@@ -244,4 +266,5 @@
       </form> 
     </div>
   </div>
+</div>
 </ion-content>

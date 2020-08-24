@@ -200,32 +200,41 @@
           {{item.data.metadescription}}<br/><br/>
           <a href="{{item.data.metasite}}">{{item.data.metasite}}</a>
           </div>
-          <div>
+          <div class="reviews-wrapper">
+            <ion-row>
+              <div class="tags" *ngFor="let tag of item.postTags">
+                <span *ngIf="tag.isChecked" class="item-rating" [attr.ratingBase]="1">#{{tag.val}}</span>
+                <span *ngIf="!tag.isChecked" class="item-rating" [attr.ratingBase]="0">#{{tag.val}}</span>
+              </div>
+            </ion-row>
+          </div>
+          <div class="reactions">
              <ion-row>
-               <ion-col class="reactions-col">
+              <ion-col size=3>
+                <ion-buttons>
+                <ion-button (click)="submitReactionResource(item, 'Thanks')">
+               <div *ngIf="item.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+               <div *ngIf="!item.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+                </ion-button>
+                </ion-buttons> 
+              </ion-col>
+              <ion-col size=3>
                    <ion-buttons>
                    <ion-button (click)="submitReactionResource(item, 'Bookmark')">
                   <div *ngIf="item.showBookmark"><ion-icon size="small" class="icon" src="./assets/icon/bookmark-active.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
                   <div *ngIf="!item.showBookmark"><ion-icon size="small" class="icon"  src="./assets/icon/bookmark.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
                    </ion-button>
                    </ion-buttons> 
-                 </ion-col>
-               <ion-col class="reactions-col">
-                   <ion-buttons>
-                   <ion-button (click)="submitReactionResource(item, 'Thanks')">
-                  <div *ngIf="item.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
-                  <div *ngIf="!item.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> <span class="text">Thanks</span></div> 
-                   </ion-button>
-                   </ion-buttons> 
-                 </ion-col>
-              <ion-col class="reactions-col">
+              </ion-col>
+            <ion-col size=2></ion-col>
+            <ion-col size=2>
                    <ion-buttons>
                    <ion-button (click)="showResourceReactionsList(item)">
                    <div><ion-icon size="small" src="./assets/icon/bookmark-active.svg" class="icon"></ion-icon><ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon><span class="text">{{item.totalReactionCount}}</span></div>
                  </ion-button>
                  </ion-buttons> 
                  </ion-col>
-                 <ion-col class="reactions-col">
+                 <ion-col size=2>
                    <ion-buttons>
                    <ion-button>
                     <div><ion-icon size="small" src="./assets/icon/chat.svg" class="icon"></ion-icon> <span class="text">{{item.totalReviewCount}}</span></div>

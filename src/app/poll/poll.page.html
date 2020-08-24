@@ -99,7 +99,7 @@
                       </ion-col>
                       <ion-col class="review" size="9">
                           <span class="addedByTitle"><a (click)="viewUser(r.addedByUser.addedByKey)" >
-                            <b>{{r.addedByUser.addedByUsername}}</b></a>, <span class="addedByDateReview">{{poll.date.toDate() | DateFormat}}</span>
+                            <b>{{r.addedByUser.addedByUsername}}</b></a>, <span class="addedByDateReview">{{r.dateCreated.toDate() | DateFormat}}</span>
                           </span>
                               <br/>
                               <br/>

@@ -1,55 +1,85 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="secondary">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>{{title}}</ion-title>
-    <ion-buttons slot="end"> 
-		<ion-button *ngIf="loggedInUserIsMember == true" (click)="newResource()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
-	</ion-buttons>
-  </ion-toolbar>
+  </ion-toolbar> 
 </ion-header>
 
 <ion-content class="contact-card-content"> 
-  <div *ngIf="resource.type == 'contact'" >
     <ion-card>
       <ion-row class="user-preferences-wrapper">
-        <ion-card-header class="subtitle">
-          <img src="{{resource.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" /> {{resource.addedByUser.addedByUsername}}, posted {{resource.dateCreated | DateFormat}}
-          <ion-card-title class="title">{{resource.title}}</ion-card-title>
-      </ion-card-header>
+        <ion-card-header class="header">
+          <ion-card-subtitle class="addedBy">
+              <img class="addedByImg" src="{{resource.avatar}}" onError="this.src='./assets/images/default-dp.png'" /> 
+               <p><a class="addedByTitle" (click)="viewUser(resource.addedByUser.addedByKey)" ><b>{{resource.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf="item.showNewIcon" class="newIcon" src="./assets/icon/new.svg" />  -->
+                <br/>
+               <span class="addedByDate">posted {{resource.date.toDate() | DateFormat}}</span><br/>
+              <a (click)="viewGroup(resource.groupId)" class="addedByTitle">in <b>{{resource.groupName}}</b></a></p>
+            </ion-card-subtitle>
+        </ion-card-header>
         <ion-card-content class="message">
-        {{resource.name}}<br/>
-        {{resource.address}}<br/><br/>
-        {{resource.email}}<br/>
-        {{resource.phones}}<br/>
+          <div *ngIf="resource.data.type == 'contact'" >
+            {{resource.data.name}}<br/>
+            {{resource.data.address}}<br/><br/>
+            {{resource.data.email}}<br/>
+            {{resource.data.phones}}<br/>
+        </div>
+        <div *ngIf="resource.data.type == 'weblink'" >
+          {{resource.metatitle}}<br/>
+          <img [src]="resource.metaicon"/>   
+           {{resource.metadescription}}<br/><br/>
+           <a href="{{resource.metasite}}">{{resource.metasite}}</a>
+        </div>
+        <div *ngIf="resource.data.type == 'upload'" >
+          <div *ngIf="resource.uploadtype == 'location'" [innerHtml]="resource.url"></div>
+          <div *ngIf="resource.uploadtype == 'contact'">
+            {{resource.name}}<br/>
+            {{resource.address}}<br/>
+            {{resource.phones}}<br/>
+            {{resource.email}}<br/>
+          </div>
+          <div *ngIf="resource.uploadtype == 'image'">
+            <img src="{{resource.resolvedurl}}" />
+          </div>
+          <div *ngIf="resource.uploadtype == 'video'">
+            <video controls width="100%" src="{{resource.resolvedurl}}" ></video>
+          </div>
+        </div>
+        <ion-row class="tags-wrapper">
+          <div class="tags" *ngFor="let tag of resource.postTags">
+            <span class="item-rating">#{{tag.val}}</span>
+          </div>
+        </ion-row>
         </ion-card-content>
       </ion-row>
-       <ion-row class="user-preferences-wrapper message">
-        <ion-col>
+      <ion-row class="user-preferences-wrapper message">
+              <ion-col size=3>
                 <ion-buttons>
-                  <ion-button (click)="submitReactionResource(resource, 'Bookmark')">
-                 <div *ngIf="resource.showBookmark"><ion-icon size="small" class="icon" src="./assets/icon/bookmark-active.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
-                 <div *ngIf="!resource.showBookmark"><ion-icon size="small" class="icon"  src="./assets/icon/bookmark.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
-                </ion-button>
-                </ion-buttons> 
-              </ion-col>
-        <ion-col class="reactions-col">
-                <ion-buttons>
-                  <ion-button (click)="submitReactionResource(resource, 'Thanks')">
+                  <ion-button (click)="submitReactionSmile()">
                  <div *ngIf="resource.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
                  <div *ngIf="!resource.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> <span class="text">Thanks</span></div> 
                 </ion-button>
                 </ion-buttons> 
               </ion-col>
-         <ion-col class="reactions-col">
+              <ion-col size=3>
                 <ion-buttons>
-                  <ion-button (click)="showResourceReactionsList(resource)">
+                  <ion-button (click)="submitReactionBookmark()">
+                 <div *ngIf="resource.showBookmark"><ion-icon size="small" class="icon" src="./assets/icon/bookmark-active.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
+                 <div *ngIf="!resource.showBookmark"><ion-icon size="small" class="icon"  src="./assets/icon/bookmark.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
+                </ion-button>
+                </ion-buttons> 
+              </ion-col>
+              <ion-col size=2></ion-col>
+              <ion-col size=2>
+                <ion-buttons>
+                  <ion-button (click)="showReactionsList()">
                 <div><ion-icon size="small" src="./assets/icon/bookmark-active.svg" class="icon"></ion-icon><ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon><span class="text">{{resource.totalReactionCount}}</span></div>
               </ion-button>
             </ion-buttons> 
               </ion-col>
-              <ion-col class="reactions-col">
+              <ion-col size=2>
                 <ion-buttons>
                   <ion-button>
                    <div><ion-icon size="small" src="./assets/icon/chat.svg" class="icon"></ion-icon> <span class="text">{{resource.totalReviewCount}}</span></div>
@@ -58,157 +88,39 @@
               </ion-col>
        </ion-row>
          <hr class="details-divider">
-         <div class="reviews-wrapper">
-             <h3 class="detail-title">Selected Tags</h3>
-             <ion-row>
-                 <div class="tags" *ngFor="let tag of resource.resourceTags">
-                     <span *ngIf="tag.isChecked" class="item-rating" [attr.ratingBase]="1">{{tag.val}}</span>
-                     <span *ngIf="!tag.isChecked" class="item-rating" [attr.ratingBase]="0">{{tag.val}}</span>
-                 </div>
-             </ion-row>
-         </div>
-         <hr class="details-divider">
-         <div class="reviews-wrapper">
-             <h3 class="detail-title-reply">Replies</h3>
-             <ion-row nowrap>
-                 <ion-col size="9">
-                     <ion-textarea class="placeholder" rows="0" placeholder="Type your message" [(ngModel)]="message">
-                     </ion-textarea>
-                 </ion-col>
-                 <ion-col size="3">
-                     <ion-buttons>
-                         <ion-button (click)="attach()">
-                             <ion-icon name="attach"></ion-icon>
-                         </ion-button>
-                         <ion-button color="primary" fill="clear" (click)="submitReply()">
-                             <!-- [disabled]="!message">-->
-                             <ion-icon name="send-sharp"></ion-icon>
-                         </ion-button>
-                     </ion-buttons>
-                 </ion-col>
-             </ion-row>
-             <div class="reviews-list">
-                 <div class="review-item" *ngFor="let r of resourceReviews">
-                     <ion-row>
-                         <ion-col size="2" class="review">
-                             <img src="{{r.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" />
-                         </ion-col>
-                         <ion-col size="10">
-                             <app-text-shell class="comment-detail-author-name" [data]="r.addedByUser.addedByUsername"></app-text-shell>
-                             <app-text-shell [data]="r.review"></app-text-shell>
-                         </ion-col>
-                     </ion-row>
-                     <ion-row>
-                         <ion-col>
-                             <app-text-shell class="review-date" [data]="r.dateCreated | DateFormat"></app-text-shell>
-                         </ion-col>
-                     </ion-row>
-                 </div>
-             </div>
-         </div>
-     
-
-   </ion-card>
-    
-
-
-</div>
-
-<div *ngIf="resource.type == 'weblink'" >
-  <ion-card>
-      <ion-row class="user-preferences-wrapper">
-      <ion-card-header class="subtitle">
-        <img src="{{resource.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" /> {{resource.addedByUser.addedByUsername}}, posted {{resource.dateCreated | DateFormat}}
-        <ion-card-title class="title">{{resource.title}}</ion-card-title>
-    </ion-card-header>
-      <ion-card-content class="message">
-        <app-text-shell animation="bouncing" [data]="resource.metatitle"></app-text-shell><br/>
-        <img [src]="resource.metaicon"/>   
-        <app-text-shell animation="bouncing" [data]="resource.metadescription"></app-text-shell><br/>
-        <app-text-shell animation="bouncing" [data]="resource.metasite"></app-text-shell>
-      </ion-card-content>
-    </ion-row>
-     <ion-row class="user-preferences-wrapper message">
-      <ion-col>
-              <ion-buttons>
-                <ion-button (click)="submitReactionResource(resource, 'Bookmark')">
-               <div *ngIf="resource.showBookmark"><ion-icon size="small" class="icon" src="./assets/icon/bookmark-active.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
-               <div *ngIf="!resource.showBookmark"><ion-icon size="small" class="icon"  src="./assets/icon/bookmark.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
-              </ion-button>
-              </ion-buttons> 
-            </ion-col>
-      <ion-col class="reactions-col">
-              <ion-buttons>
-                <ion-button (click)="submitReactionResource(resource, 'Thanks')">
-               <div *ngIf="resource.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
-               <div *ngIf="!resource.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> <span class="text">Thanks</span></div> 
-              </ion-button>
-              </ion-buttons> 
-            </ion-col>
-       <ion-col class="reactions-col">
-              <ion-buttons>
-                <ion-button (click)="showResourceReactionsList(resource)">
-              <div><ion-icon size="small" src="./assets/icon/bookmark-active.svg" class="icon"></ion-icon><ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon><span class="text">{{resource.totalReactionCount}}</span></div>
-            </ion-button>
-          </ion-buttons> 
-            </ion-col>
-            <ion-col class="reactions-col">
-              <ion-buttons>
-                <ion-button>
-                 <div><ion-icon size="small" src="./assets/icon/chat.svg" class="icon"></ion-icon> <span class="text">{{resource.totalReviewCount}}</span></div>
-               </ion-button>
-          </ion-buttons> 
-            </ion-col>
-     </ion-row>
-       <hr class="details-divider">
-       <div class="reviews-wrapper">
-           <h3 class="detail-title">Selected Tags</h3>
-           <ion-row>
-               <div class="tags" *ngFor="let tag of resource.resourceTags">
-                   <span *ngIf="tag.isChecked" class="item-rating" [attr.ratingBase]="1">{{tag.val}}</span>
-                   <span *ngIf="!tag.isChecked" class="item-rating" [attr.ratingBase]="0">{{tag.val}}</span>
-               </div>
-           </ion-row>
-       </div>
-       <hr class="details-divider">
-       <div class="reviews-wrapper">
-           <h3 class="detail-title-reply">Replies</h3>
-           <ion-row nowrap>
-               <ion-col size="9">
-                   <ion-textarea class="placeholder" rows="0" placeholder="Type your message" [(ngModel)]="message">
-                   </ion-textarea>
-               </ion-col>
-               <ion-col size="3">
-                   <ion-buttons>
-                       <ion-button (click)="attach()">
-                           <ion-icon name="attach"></ion-icon>
-                       </ion-button>
-                       <ion-button color="primary" fill="clear" (click)="submitReply()">
-                           <!-- [disabled]="!message">-->
-                           <ion-icon name="send-sharp"></ion-icon>
-                       </ion-button>
-                   </ion-buttons>
-               </ion-col>
-           </ion-row>
-           <div class="reviews-list">
-               <div class="review-item" *ngFor="let r of resourceReviews">
-                   <ion-row>
-                       <ion-col size="2" class="review">
-                           <img src="{{r.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" />
-                       </ion-col>
-                       <ion-col size="10">
-                           <app-text-shell class="comment-detail-author-name" [data]="r.addedByUser.addedByUsername"></app-text-shell>
-                           <app-text-shell [data]="r.review"></app-text-shell>
-                       </ion-col>
-                   </ion-row>
-                   <ion-row>
-                       <ion-col>
-                           <app-text-shell class="review-date" [data]="r.dateCreated | DateFormat"></app-text-shell>
-                       </ion-col>
-                   </ion-row>
-               </div>
+         <div class="user-preferences-wrapper">
+          <div  >
+            <div class="reviews" *ngFor="let r of postReviews">
+              <ion-row>
+                <ion-col size="2">
+                    <img class="addedByImgReview" src="{{r.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" />
+                </ion-col>
+                <ion-col class="review" size="9">
+                    <span class="addedByTitle"><a (click)="viewUser(r.addedByUser.addedByKey)" >
+                      <b>{{r.addedByUser.addedByUsername}}</b></a>, <span class="addedByDateReview">{{r.dateCreated.toDate() | DateFormat}}</span>
+                    </span>
+                        <br/>
+                        <br/>
+                        <div class="addedByTitle" [innerHTML]="r.review"></div>
+                  </ion-col>
+            </ion-row>
            </div>
-       </div>
- </ion-card>
-</div>
+          </div>
+        </div>
+   </ion-card>
 </ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-item class="bottom_bar">
+      <ion-button fill="clear" (click)="attach()">
+        <ion-icon size="large" name="camera-outline"></ion-icon>
+      </ion-button>
+      <ion-textarea rows="0" style="width:100%" placeholder="Type your message" [(ngModel)]="message"></ion-textarea>
+      <ion-buttons slot="end" style="margin-left:4px;">
+        <ion-button color="primary" fill="clear" (click)="submitReply()" [disabled]="!message">
+          send
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

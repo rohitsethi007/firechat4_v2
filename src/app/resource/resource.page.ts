@@ -7,6 +7,7 @@ import { LoadingService } from '../services/loading.service';
 import { ReviewModalPage } from '../review-modal/review-modal.page';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
 import { AngularFirestore } from '@angular/fire/firestore';
+import * as firebase from 'firebase/app'
 
 @Component({
   selector: 'app-resource',
@@ -19,11 +20,9 @@ export class ResourcePage implements OnInit {
   private title: any;
   private review: any;
   private resourceReviews: any;
-  private reviews: any;
+  private postReviews: any;
   subscription: any;
   private message: any;
-  
-  private loggedInUserIsMember: any = 'true';
 
   constructor(
     private dataProvider: DataService,
@@ -34,7 +33,7 @@ export class ResourcePage implements OnInit {
     private modalCtrl: ModalController,
     private firestore: AngularFirestore
   ) {
-    this.resource = {showSmiley: false, showBookmark: false, addedByUser: {}, type: ''}; 
+    this.resource = {showSmiley: false, showBookmark: false, addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now()  };
     this.getResourceDetails();
   }
 
@@ -86,64 +85,71 @@ export class ResourcePage implements OnInit {
     this.loadingProvider.show();
     // Get group details
     this.resourceId = this.route.snapshot.params.id;
-    this.subscription = this.dataProvider.getResourceDetails(this.resourceId).snapshotChanges().subscribe((resource: any) => {
-      if (resource.payload.exists()) {
-        let p = resource.payload.data();
-        p.key = resource.payload.key;
-        this.title = resource.payload.data().title;
-       // Check for Thanks
+    this.resource.reactions = [];
+    this.resource.reviews = [];
+    this.subscription = this.dataProvider.getResourceDetails(this.resourceId).get().subscribe((resource: any) => {
+      if (resource) {
+        let p = resource.data();
+        p.reactions = [];
+        p.key = resource.id;
+        this.title = resource.data().title;
         let totalReactionCount = 0;
         let totalReviewCount = 0;
+        p.postTags = p.postTags.filter(x => x.isChecked !== false);
 
-        if (p.reviews !== undefined) {
-          let rev = Object.keys(p.reviews).map(function(e) {
-          totalReviewCount += 1;
+        // get reactions list
+        this.firestore.collection('posts').doc(resource.id).collection('reactions').snapshotChanges().subscribe((reactions: any) => {
+          this.resource.reactions = [];
+          reactions.forEach(element => {
+          let reaction = element.payload.doc.data();
+          reaction.key = element.payload.doc.id;
+          p.reactions.push(reaction);
+        });
+
+          // Check for Thanks
+          if (reactions) {
+          totalReactionCount = p.reactions.length;
+          let foundSmiley = false;
+          if (p.reactions !== undefined) {
+              foundSmiley = p.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                            && el.reactionType === 'Thanks');
+            }
+          if (foundSmiley) {
+              p.showSmiley = true;
+            } else {
+              p.showSmiley = false;
+            }
+            // Check for Bookmark
+          let foundBookmark = false;
+          if (p.reactions !== undefined) {
+            foundBookmark = p.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                          && el.reactionType === 'Bookmark');
+            }
+          if (foundBookmark) {
+              p.showBookmark = true;
+            } else {
+              p.showBookmark = false;
+            }
+
+          p.totalReactionCount = totalReactionCount;
+        }
+
+        });
+
+        // get reviews list
+        this.firestore.collection('posts').doc(resource.id).collection('reviews')
+        .ref.orderBy("dateCreated", "desc").onSnapshot((reviews: any) => {
+          this.resource.reviews = [];
+          p.reviews = [];
+          reviews.forEach(element => {
+            let review = element.data();
+            review.key = element.id;
+            p.reviews.push(review);
           });
-        }
-
-        let foundSmiley = false;
-        if (p.reactions !== undefined) {
-           let values = Object.keys(p.reactions).map(function(e) {
-            p.reactions[e].key = e;
-            totalReactionCount += 1;
-            return p.reactions[e];
-           });
-           // tslint:disable-next-line: max-line-length
-           foundSmiley = values.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks');
-         }
-        if (foundSmiley) {
-          p.showSmiley = true;
-         } else {
-          p.showSmiley = false;
-         }
-        // Check for Bookmark
-        let foundBookmark = false;
-        if (p.reactions !== undefined) {
-           let values = Object.keys(p.reactions).map(function(e) {
-            p.reactions[e].key = e;
-            return p.reactions[e];
-           });
-           foundBookmark = values.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
-                                            && el.reactionType === 'Bookmark');
-         }
-        if (foundBookmark) {
-          p.showBookmark = true;
-         } else {
-          p.showBookmark = false;
-         }
-
-        p.totalReactionCount = totalReactionCount;
-        p.totalReviewCount = totalReviewCount;
-
-        if (p.reviews !== undefined) {
-          this.resourceReviews = [];
-          let values = Object.keys(p.reviews).map(function(e) {
-            p.reviews[e].key = e;
-            return p.reviews[e];
-           });
-          this.resourceReviews = values;
-          this.resourceReviews.sort((a, b) => (a.dateCreated < b.dateCreated) ? 1 : -1);
-        }
+          totalReviewCount = p.reviews.length;
+          p.totalReviewCount = totalReviewCount;
+          this.postReviews = p.reviews;
+        });
         this.resource = p;
       }
 
@@ -151,103 +157,201 @@ export class ResourcePage implements OnInit {
     });
   }
 
-  submitReactionResource(resource, reactionType) {
-    switch (reactionType) {
-      case 'Bookmark': {
-        if (!resource.showBookmark) {
-          this.addResourceReaction(resource, reactionType);
-          resource.showBookmark = true;
-          resource.totalReactionCount += 1;
-        } else {
-          this.removeResourceReaction(resource, reactionType);
-          resource.showBookmark = false;
-          resource.totalReactionCount -= 1;
-        }
-        break;
+  submitReactionSmile() {
+    const reaction = this.resource.reactions.find(
+      el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+      && el.reactionType === 'Thanks');
+    if (reaction === undefined) {
+      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
+        if (account) {
+          const currentUserName = account.data().username;
+          let reaction = {
+            key: '',
+            dateCreated: new Date(),
+            addedByUser: {
+                          addedByKey: this.dataProvider.getCurrentUserId(),
+                          addedByUsername: account.data().username,
+                          addedByImg: account.data().img
+                        },
+            reactionType: 'Thanks'
+          };
+
+          this.dataProvider.updatePostReactions(this.resource.key, reaction).then(() => {
+            this.resource.showSmiley = true;
+          });
+
       }
-  
-      case 'Thanks': {
-        if (!resource.showSmiley) {
-          this.addResourceReaction(resource, reactionType);
-          resource.showSmiley = true;
-          resource.totalReactionCount += 1;
-        } else {
-          this.removeResourceReaction(resource, reactionType);
-          resource.showSmiley = false;
-          resource.totalReactionCount -= 1;
-        }
-        break;
-      }
+  });
+    } else {
+      this.resource.showSmiley = false;
+      this.dataProvider.removePostReaction(this.resource.key, reaction.key);
     }
-  
   }
-  
-  addResourceReaction(resource, reactionType) {
-    const reaction = {
-      dateCreated: new Date().toString(),
-      reactionType
-    };
 
-    if (resource.reactions === undefined) {
-        this.dataProvider.addFirstResourceReactions(resource.key, reaction);
-      } else {
-        this.dataProvider.updateResourceReactions(resource.key, reaction);
-      }
+  submitReactionBookmark() {
+    const reaction = this.resource.reactions.find(
+      el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+      && el.reactionType === 'Bookamrk');
+    if (reaction === undefined) {
+      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
+        if (account) {
+          const currentUserName = account.data().username;
+          let reaction = {
+            key: '',
+            dateCreated: new Date(),
+            addedByUser: {
+                          addedByKey: this.dataProvider.getCurrentUserId(),
+                          addedByUsername: account.data().username,
+                          addedByImg: account.data().img
+                        },
+            reactionType: 'Bookmark'
+          };
 
-  }
-  
-  removeResourceReaction(resource, reactionType) {
-    if (resource.reactions !== undefined) {
-      let values = Object.keys(resource.reactions).map(function(e) {
-        return resource.reactions[e];
-      });
-  
-      const reactionIndex = values.find(
-                                el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
-                                && el.reactionType === reactionType);
-      if (reactionIndex === undefined) {
-        // this shouldn't have happened, so set the smiley to false for now
-        // post.showSmiley = false;
-      } else {
-        console.log('remove reaction now : ' + resource.key + ' : ' + reactionIndex.key);
-        this.dataProvider.removeResourceReaction(resource.key, reactionIndex.key);
+          this.dataProvider.updatePostReactions(this.resource.key, reaction).then(() => {
+            this.resource.showBookark = true;
+          });
+
       }
+  });
+    } else {
+      this.resource.showBookmark = false;
+      this.dataProvider.removePostReaction(this.resource.key, reaction.key);
+    }
   }
-  }
-  
-  async showResourceReactionsList(resource) {
-    if (resource.totalReactionCount === 0) {
+
+  async showReactionsList() {
+    if (this.resource.totalReactionCount === 0) {
       return;
     }
+    const p = this.resource;
     const modal = await this.modalCtrl.create({
-      component: ReactionListModalPage,
-      componentProps: {
-        reactions: resource.reactions
-      }
-    });
+       component: ReactionListModalPage,
+       componentProps: {
+         reactions: p.reactions
+       }
+     });
     return await modal.present();
-  
   }
 
   submitReply() {
+    this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');;
+    console.log('this.message', JSON.stringify(this.message));
     let review: any;
     let currentUserName: any;
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
-      if (account.payload.exists()) {
-        currentUserName = account.payload.data().username;
-  
-        review = {
-          dateCreated: new Date().toString(),
-          review: this.message
-        };
-  
-        if (this.resource.reviews === undefined) {
-         this.dataProvider.addFirstResourceReview(this.resourceId, review);
-        } else {
-          this.dataProvider.updateResourceReviews(this.resourceId, review);
-        }
-  
-        this.message = '';
-       }});
+    this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
+       if (account) {
+         currentUserName = account.data().username;
+ 
+         review = {
+           dateCreated: new Date(),
+           addedByUser: {
+              addedByKey: this.dataProvider.getCurrentUserId(),
+              addedByUsername: account.data().username,
+              addedByImg: account.data().img
+            },
+           review: this.message
+         };
+
+         this.dataProvider.updatePostReviews(this.resourceId, review);
+         this.message = '';
+        }});
+  }
+
+  attach() {
+  //   this.actionSheet.create({
+  //     header: 'Choose attachments',
+  //     buttons: [{
+  //       text: 'Camera',
+  //       handler: () => {
+  //         this.imageProvider.uploadPhotoMessage(this.conversationId, this.camera.PictureSourceType.CAMERA).then((url) => {
+  //           this.message = url;
+  //           this.submitReply('image');
+  //         });
+  //       }
+  //     }, {
+  //       text: 'Photo Library',
+  //       handler: () => {
+  //         this.imageProvider.uploadPhotoMessage(this.conversationId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
+  //           this.message = url;
+  //           this.submitReply('image');
+  //         });
+  //       }
+  //     },
+  //     {
+  //       text: 'Video',
+  //       handler: () => {
+  //         this.imageProvider.uploadVideoMessage(this.conversationId).then(url => {
+  //           this.message = url;
+  //           this.submitReply('video');
+  //         });
+  //       }
+  //     }
+  //       , {
+  //       text: 'Location',
+  //       handler: () => {
+  //         this.geolocation.getCurrentPosition({
+  //           timeout: 5000
+  //         }).then(res => {
+  //           let locationMessage = 'Location:<br> lat:' + res.coords.latitude + '<br> lng:' + res.coords.longitude;
+  //           let mapUrl = '<a href=\'https://www.google.com/maps/search/' 
+  //           + res.coords.latitude + ',' + res.coords.longitude + '\'>View on Map</a>';
+
+  //           let confirm = this.alertCtrl.create({
+  //             header: 'Your Location',
+  //             message: locationMessage,
+  //             buttons: [{
+  //               text: 'cancel',
+  //               handler: () => {
+  //                 console.log('canceled');
+  //               }
+  //             }, {
+  //               text: 'Share',
+  //               handler: () => {
+  //                 this.message = locationMessage + '<br>' + mapUrl;
+  //                 this.submitReply('location');
+  //               }
+  //             }]
+  //           }).then(r => r.present());
+  //         }, locationErr => {
+  //           console.log('Location Error' + JSON.stringify(locationErr));
+  //         });
+  //       }
+  //     }, {
+  //       text: 'Contact',
+  //       handler: () => {
+  //         this.contacts.pickContact().then(data => {
+  //           let name;
+  //           if (data.displayName !== null) { name = data.displayName; }
+  //           else { name = data.name.givenName + ' ' + data.name.familyName; }
+  //           this.message = '<b>Name:</b> ' + name + '<br><b>Mobile:</b> <a href=\'tel:'
+  //               + data.phoneNumbers[0].value + '\'>' + data.phoneNumbers[0].value + '</a>';
+  //           this.submitReply('contact');
+  //         }, err => {
+  //           console.log(err);
+  //         })
+  //       }
+  //     }, {
+  //       text: 'cancel',
+  //       role: 'cancel',
+  //       handler: () => {
+  //         console.log('cancelled');
+  //       }
+  //     }]
+  //   }).then(r => r.present());
+  // }
+  }
+
+  viewUser(userId) {
+    let loggedInUserId = this.dataProvider.getCurrentUserId();
+    console.log(loggedInUserId, userId);
+    if (loggedInUserId === userId) {
+      this.router.navigateByUrl('/profile');
+    } else {
+      this.router.navigateByUrl('/userinfo/' + userId);
+    }
+  }
+
+  viewGroup(groupId) {
+    this.router.navigateByUrl('/group/' + groupId);
   }
 }

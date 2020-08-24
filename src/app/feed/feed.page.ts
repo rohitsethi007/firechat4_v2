@@ -334,6 +334,10 @@ export class FeedPage implements OnInit {
   viewPoll(post) {
     this.router.navigateByUrl('poll/' + post.key);
   }
+  
+  viewResource(post) {
+    this.router.navigateByUrl('resource/' + post.key);
+  }
 
   viewUser(userId) {
     let loggedInUserId = this.dataProvider.getCurrentUserId();

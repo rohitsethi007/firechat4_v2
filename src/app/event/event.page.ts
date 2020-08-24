@@ -11,7 +11,7 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { ImagemodalPage } from '../imagemodal/imagemodal.page';
-import * as firebase from 'firebase/app'
+import * as firebase from 'firebase/app';
 
 @Component({
   selector: 'app-event',
@@ -193,7 +193,7 @@ export class EventPage implements OnInit {
       }
   });
     } else {
-      this.post.showHug = false;
+      this.post.showCheckin = false;
       this.dataProvider.removePostReaction(this.post.key, reaction.key);
     }
   }

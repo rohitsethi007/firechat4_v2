@@ -20,10 +20,11 @@ import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validat
 })
 export class NewResourcesPage implements OnInit {
   private resource: any;
+  private title: any;
   private contactForm: FormGroup;
   private uploadForm: FormGroup;
   private weblinkForm: FormGroup;
-  private postTags: any;
+  private postTags: any = [];
   private tab: any;
   private groupId: any;
   private group: any;
@@ -35,6 +36,8 @@ export class NewResourcesPage implements OnInit {
   private segment: any;
   require: any;
   private addedByUser: any;
+  private step: any = 1;
+  groups: any;
 
 
   validations = {
@@ -77,7 +80,14 @@ export class NewResourcesPage implements OnInit {
     private http: HttpClient
   ) {
     this.groupId = this.route.snapshot.params.id;
-    console.log('constructor', this.groupId);
+
+    this.group = {name: ''}
+    if (this.groupId === 'undefined') {
+      this.step = 1;
+    } else {
+      this.step = 2;
+    }
+
     this.contactForm = new FormGroup(
       {
         title: new FormControl('', Validators.required),
@@ -104,6 +114,34 @@ export class NewResourcesPage implements OnInit {
         ])),
         tags: new FormArray([], CheckboxCheckedValidator.tagsSelected(1))
     });
+  }
+
+  ionViewDidEnter() {
+    if (this.step === 1) {
+    this.title = 'Select a group ...';
+    this.dataProvider.getGroups().snapshotChanges().subscribe((data: any) => {
+
+    this.groups = data.map(c => {
+          return { $key: c.payload.doc.id, ...c.payload.doc.data() };
+        });
+      });
+    } else {
+      this.tab = 'contact';
+      // Get group information
+      this.groupId = this.route.snapshot.params.id;
+      console.log('this.route.snapshot.params.id', this.route.snapshot.params.id);
+      this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+          this.group = group.payload.data();
+          this.postTags = [];
+          console.log('this.group', group.payload.data());
+          this.group.groupTags.forEach((element: any) => {
+            this.postTags.push({val: element, isChecked: false});
+          });
+          this.addContactTagControls();
+          this.addLinkTagControls();
+          this.addUploadTagControls();
+      });
+    }
   }
 
   addContactTagControls() {
@@ -142,27 +180,12 @@ export class NewResourcesPage implements OnInit {
       title: '',
       postTags: [],
       groupId: '',
+      groupName: '',
       type: 'resource',
       data: {name: '', address: '', phones: '', email: '', type: ''},
+      totalReactionCount: 0,
+      totalReviewCount: 0
     };
-    });
-  }
-
-  ionViewDidEnter() {
-    this.tab = 'contact';
-    // Get group information
-    this.groupId = this.route.snapshot.params.id;
-    console.log('this.route.snapshot.params.id', this.route.snapshot.params.id);
-    this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-        this.group = group.payload.data();
-        this.postTags = [];
-        console.log('this.group', group.payload.data());
-        this.group.groupTags.forEach((element: any) => {
-          this.postTags.push({val: element, isChecked: false});
-        });
-        this.addContactTagControls();
-        this.addLinkTagControls();
-        this.addUploadTagControls();
     });
   }
 
@@ -193,11 +216,12 @@ export class NewResourcesPage implements OnInit {
     this.loadingProvider.show();
 
     // Add resource info and date.
-    this.resource.date = new Date().toString();
+    this.resource.date = new Date();
     this.resource.title = this.contactForm.value.title;
     this.resource.postTags = [];
     this.resource.postTags = this.postTags;
     this.resource.groupId = this.groupId;
+    this.resource.groupName = this.group.name;
 
     this.resource.data.type = 'contact';
     this.resource.data.name = this.contactForm.value.name;
@@ -217,6 +241,7 @@ export class NewResourcesPage implements OnInit {
     this.resource.postTags = [];
     this.resource.postTags = this.postTags;
     this.resource.groupId = this.groupId;
+    this.resource.groupName = this.group.name;
 
     this.resource.data.type = 'weblink';
     this.resource.data.metaicon = this.metaicon;
@@ -254,6 +279,7 @@ export class NewResourcesPage implements OnInit {
     this.resource.postTags = [];
     this.resource.postTags = this.postTags;
     this.resource.groupId = this.groupId;
+    this.resource.groupName = this.group.name;
 
     const action = this.actionSheet.create({
       header: 'Choose attachments',
@@ -366,4 +392,22 @@ export class NewResourcesPage implements OnInit {
 
     this.router.navigateByUrl('tabs/tab4');
   }
+
+  
+  selectGroup(groupId) {
+    this.groupId = groupId;
+    console.log('groupId', groupId);
+    this.step = 2;
+    this.title = 'Add a Resource in ...';
+    this.tab = 'contact';
+    this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+      this.group = group.payload.data();
+      this.group.groupTags.forEach((element: any) => {
+        this.postTags.push({val: element, isChecked: false});
+      });
+      this.addContactTagControls();
+      this.addLinkTagControls();
+      this.addUploadTagControls();
+  });
+}
 }
