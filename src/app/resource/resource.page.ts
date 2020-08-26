@@ -179,7 +179,6 @@ export class ResourcePage implements OnInit {
           this.dataProvider.updatePostReactions(this.resource.key, reaction).then(() => {
             this.resource.showSmiley = true;
           });
-
       }
   });
     } else {
@@ -191,7 +190,8 @@ export class ResourcePage implements OnInit {
   submitReactionBookmark() {
     const reaction = this.resource.reactions.find(
       el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
-      && el.reactionType === 'Bookamrk');
+      && el.reactionType === 'Bookmark');
+      console.log('reaction:', reaction);
     if (reaction === undefined) {
       this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
         if (account) {
@@ -214,6 +214,7 @@ export class ResourcePage implements OnInit {
       }
   });
     } else {
+      console.log('i exist:', this.resource.key, reaction.key);
       this.resource.showBookmark = false;
       this.dataProvider.removePostReaction(this.resource.key, reaction.key);
     }
@@ -234,7 +235,7 @@ export class ResourcePage implements OnInit {
   }
 
   submitReply() {
-    this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');;
+    this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
     console.log('this.message', JSON.stringify(this.message));
     let review: any;
     let currentUserName: any;

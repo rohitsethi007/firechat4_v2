@@ -48,10 +48,8 @@ export class FeedPage implements OnInit {
 
    // Get Posts
    this.dataProvider.getCurrentUser().get().subscribe((groups) => {
-     console.log('groups:', groups.data().groups);
      this.firestore.collection('posts').ref.where('groupId', 'in', groups.data().groups).orderBy("date","desc").onSnapshot((po: any) => {
       this.posts = [];
-      console.log('refresh posts list');
       po.forEach(p => {
         let post: any;
         post = p.data();
@@ -98,7 +96,7 @@ export class FeedPage implements OnInit {
               post.showHug = false;
             }
 
-          // Check for Hugs
+          // Check for Checkin
           let foundCheckin = false;
           if (post.reactions !== undefined) {
             foundCheckin = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
@@ -108,6 +106,29 @@ export class FeedPage implements OnInit {
               post.showCheckin = true;
             } else {
               post.showCheckin = false;
+            }
+
+          // Check for Bookmark
+          let foundBookmark = false;
+          if (post.reactions !== undefined) {
+            foundBookmark = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                          && el.reactionType === 'Bookmark');
+            }
+          if (foundBookmark) {
+              post.showBookmark = true;
+            } else {
+              post.showBookmark = false;
+            }
+
+          // totalPollCount
+          if (post.reactions !== undefined) {
+            foundBookmark = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                          && el.reactionType === 'Bookmark');
+            }
+          if (foundBookmark) {
+              post.showBookmark = true;
+            } else {
+              post.showBookmark = false;
             }
         }
 
@@ -255,6 +276,32 @@ export class FeedPage implements OnInit {
           } else {
             this.removePostReaction(post, reactionType);
             post.showHug = false;
+            post.totalReactionCount -= 1;
+          }
+          break;
+        }
+
+        case 'Checkin': {
+          if (!post.showCheckin) {
+            this.addPostReaction(post, reactionType);
+            post.showCheckin = true;
+            post.totalReactionCount += 1;
+          } else {
+            this.removePostReaction(post, reactionType);
+            post.showCheckin = false;
+            post.totalReactionCount -= 1;
+          }
+          break;
+        }
+
+        case 'Bookmark': {
+          if (!post.showBookmark) {
+            this.addPostReaction(post, reactionType);
+            post.showBookmark = true;
+            post.totalReactionCount += 1;
+          } else {
+            this.removePostReaction(post, reactionType);
+            post.showBookmark = false;
             post.totalReactionCount -= 1;
           }
           break;

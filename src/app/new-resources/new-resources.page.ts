@@ -225,7 +225,7 @@ export class NewResourcesPage implements OnInit {
 
     this.resource.data.type = 'contact';
     this.resource.data.name = this.contactForm.value.name;
-    this.resource.data.address = this.contactForm.value.address;
+    this.resource.data.address = this.contactForm.value.address.replace(/(?:\r\n|\r|\n)/g, '<br>');
     this.resource.data.phones = this.contactForm.value.phones;
     this.resource.data.email = this.contactForm.value.email;
 
@@ -257,19 +257,19 @@ export class NewResourcesPage implements OnInit {
    }
 
    linkFocusOut() {
-    // this.loadingProvider.show();
-    // const getMeta = require('lets-get-meta');
-    // this.http.get(
-    //   this.weblinkForm.value.link,
-    //   {responseType: 'text'}
-    //   )
-    // .subscribe(res => {
-    //   const o = getMeta(res);
-    //   this.metaicon = o['og:image'];
-    //   this.metadescription = o.description;
-    //   this.metatitle = o['og:title'];
-    //   this.loadingProvider.hide();
-    // });
+    this.loadingProvider.show();
+    const getMeta = require('lets-get-meta');
+    this.http.get(
+      this.weblinkForm.value.link,
+      {responseType: 'text'}
+      )
+    .subscribe(res => {
+      const o = getMeta(res);
+      this.metaicon = o['og:image'];
+      this.metadescription = o.description;
+      this.metatitle = o['og:title'];
+      this.loadingProvider.hide();
+    });
   }
 
   upload() {
