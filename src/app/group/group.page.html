@@ -15,10 +15,13 @@
 
   </ion-toolbar>
 
-  <ion-segment scrollable value="posts" color="secondary" [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
+  <ion-segment scrollable value="groupInfo" color="secondary" [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
 		<!-- <ion-segment-button value="group">
   			<ion-icon name="chatbubbles"></ion-icon>
     </ion-segment-button> -->
+		<ion-segment-button value="groupInfo">
+      <ion-icon name="ellipsis-vertical"></ion-icon>
+		</ion-segment-button>
     <ion-segment-button value="posts">
       <ion-icon size="medium" name="chatbubbles"></ion-icon>
       <!-- <span class="tab-title">Posts</span> -->
@@ -35,9 +38,6 @@
       <ion-icon size="medium" name="calendar"></ion-icon>
       <!-- <span class="tab-title">Events</span> -->
     </ion-segment-button>
-		<ion-segment-button value="groupInfo">
-      <ion-icon layout="icon-end" name="ellipsis-vertical"></ion-icon>
-		</ion-segment-button>
 </ion-segment>
 </ion-header>
 
@@ -342,22 +342,32 @@
        </div>
       </div>
       <!-- Group Info -->
- <div *ngSwitchCase="'groupInfo'">
-  <div class="listing-item">
-  <ion-card (click)="viewGroup(group.key)">
-    <div>
+ <div  class="group-info" *ngSwitchCase="'groupInfo'">
+  <div>
+
+    <div class="group-img">
       <img src="{{group.img}}">
     </div>
-    <ion-card-header>
-     <ion-card-title>{{group.name}}</ion-card-title>
-   </ion-card-header>
-    <ion-card-content>
+    <div class="group-name">    
+      {{group.name}}
+    </div>
+    <div class="group-desc">
       {{group.description}}
-    </ion-card-content>
-  </ion-card>
+    </div>
 </div>
+<div class="group-name"> 
+Group Tags
+</div>
+<div class="group-tags">
+  <ion-row>
+    <div class="tags" *ngFor="let tag of group.groupTags">
+      <span class="item-rating" [attr.ratingBase]="1">#{{tag}}</span>
+    </div>
+  </ion-row>
+</div>
+
    <ion-list *ngIf="groupMembers">
-     <ion-list-header>
+     <ion-list-header class="group-name">
      Group Members ({{groupMembers.length}})
      </ion-list-header>
     <!-- <ion-item (click)="addMembers()">
@@ -368,7 +378,7 @@
      <ion-avatar item-left>
        <img src="{{member.img}}" onError="this.src='./assets/images/default-dp.png'"/>
      </ion-avatar>
-     <h2>{{member.name}}</h2>
+     <ion-label>{{member.name}}</ion-label>
      <p>{{member.description}}</p>
      </ion-item>
    </ion-list>

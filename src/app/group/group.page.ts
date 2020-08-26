@@ -543,13 +543,14 @@ export class GroupPage implements OnInit {
 
     this.group = group.payload.data();
     this.title = group.payload.data().name;
-
+      console.log('this.group', this.group);
     // Get Group Members
     if (this.group.members) {
       this.group.members.forEach((memberId) => {
         this.dataProvider.getUser(memberId).snapshotChanges().subscribe((member: any) => {
-          if (member.key != null) {
-            member = { $key: member.key, ...member.payload.data() };
+          console.log('member',member.payload);
+          if (member.payload.exists) {
+            member = { $key: member.payload.id, ...member.payload.data() };
             this.addUpdateOrRemoveMember(member);
           }
         });
@@ -632,7 +633,7 @@ export class GroupPage implements OnInit {
   // Check if user exists in the group then add/update user.
   // If the user has already left the group, remove user from the list.
   addUpdateOrRemoveMember(member) {
-    console.log(member);
+    console.log('member',member);
     if (this.group) {
       if (this.group.members.indexOf(member.$key) > -1) {
         // User exists in the group.

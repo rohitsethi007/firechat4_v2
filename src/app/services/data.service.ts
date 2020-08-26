@@ -92,10 +92,8 @@ export class DataService {
     // return this.afdb.object('/groups/' + groupId + '/messages');
   }
 
-  // Get group info given the groupId.
   getGroup(groupId) {
     return this.firestore.doc('groups/' + groupId);
-    // return this.afdb.object('/groups/' + groupId);
   }
 
   getBlockedLists() {
