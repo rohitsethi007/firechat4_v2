@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="secondary">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -8,28 +8,36 @@
 </ion-header>
 
 <ion-content>
-  <div *ngIf="group">
-    <ion-row style="background:#f3f3f3" padding>
-      <ion-col size="8">
-        <h4 tappable (click)="setName()">{{group.name}} <ion-icon name="create"></ion-icon>
-        </h4>
-        <p tappable style="color:#aaa" (click)="setDescription()">{{group.description}} <ion-icon name="create">
-          </ion-icon>
-        </p>
-        <p style="color:#aaa;margin:0">Started {{group.dateCreated | DateFormat}}</p>
-        <div>
-          <ion-button size="small" (click)="leaveGroup()" *ngIf="groupMembers && groupMembers.length > 1">Leave
-          </ion-button>
-          <ion-button size="small" (click)="deleteGroup()" *ngIf="groupMembers && groupMembers.length <= 1">Delete
-          </ion-button>
+  <div *ngIf="group"> 
+    <ion-row padding>
+      <div class="group-info">
+        <div class="group-img">
+          <img src="{{group.img}}">
         </div>
-      </ion-col>
-      <ion-col size="4">
-        <img src="{{group.img}}" style="border-radius: 100%; width: 80px; height: 80px;" tappable (click)="setPhoto()"
-          onError="this.src='./assets/images/default-group.png'">
-      </ion-col>
+        <div class="group-name">    
+          {{group.name}}
+        </div>
+        <div class="group-desc">
+          {{group.description}}
+        </div>
+        <div class="group-name"> 
+          Group Tags
+          </div>
+          <div class="group-tags">
+            <ion-row>
+              <div class="tags" *ngFor="let tag of group.groupTags">
+                <span class="item-rating" [attr.ratingBase]="1">#{{tag}}</span>
+              </div>
+            </ion-row>
+          </div>
+        <div>
+          <ion-button expand="block" color="secondary" (click)="leaveGroup()" *ngIf="groupMembers && groupMembers.length > 1">Leave Group
+          </ion-button>
+        </div> 
+   </div>
+ 
     </ion-row>
-    <ion-list *ngIf="groupMembers" lines="none">
+ <ion-list *ngIf="groupMembers" lines="none">
       <ion-item>
         <ion-label>
           <ion-text>
