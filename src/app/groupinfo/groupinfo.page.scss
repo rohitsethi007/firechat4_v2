@@ -1,0 +1,52 @@
+:host {
+    --page-margin: var(--app-fair-margin);
+    --page-background: var(--app-background);
+    --page-rating-2-color: #aa6c39;
+    --page-rating-1-color: #bbb2b2;
+  }
+
+.group-info {
+    margin: var(--page-margin) var(--page-margin) var(--page-margin) var(--page-margin);
+    .group-img {
+  
+    }
+    .group-name {
+      padding-top: var(--page-margin);
+      padding-bottom: var(--page-margin);
+      font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+      text-align: left;
+      font-weight: bold;
+      font-size: 19px;
+    }
+
+    .group-tags {
+      padding-bottom: calc(var(--page-margin));
+     
+      .tags {
+        padding-right: 5px;
+  
+      .item-rating {
+        // Default background
+        background-color: rgba(var(--page-color-rgb), .35);
+                // color: var(--ion-color-lightest);
+                // border-radius: var(--app-narrow-radius);
+                // padding-top: calc(var(--page-margin) / 1);
+                //padding-bottom: calc(var(--page-margin) / 3);
+                // padding-left: calc(var(--page-margin) / 2);
+                padding-right: calc(var(--page-margin) / 2);
+                font-size: 14px;
+                font-weight: bold;
+                width: 100%;
+                display: block;
+                text-align: center;
+                &[ratingBase="0"] {
+                  color: var(--page-rating-1-color);
+                }
+                &[ratingBase="1"] {
+                  color: var(--page-rating-2-color);
+                }
+      }
+  
+      }
+    }
+  }
