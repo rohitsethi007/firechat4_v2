@@ -846,33 +846,6 @@ FirebaseService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
 
 
 
-/***/ }),
-
-/***/ "./src/app/validators/checkbox-checked.validator.ts":
-/*!**********************************************************!*\
-  !*** ./src/app/validators/checkbox-checked.validator.ts ***!
-  \**********************************************************/
-/*! exports provided: CheckboxCheckedValidator */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckboxCheckedValidator", function() { return CheckboxCheckedValidator; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-
-class CheckboxCheckedValidator {
-    static tagsSelected(min) {
-        const validator = (formArray) => {
-            const totalSelected = formArray.controls
-                .map(control => control.value)
-                .reduce((prev, next) => next ? prev + next : prev, 0);
-            return totalSelected >= min ? null : { required: true };
-        };
-        return validator;
-    }
-}
-
-
 /***/ })
 
 }]);
