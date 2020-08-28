@@ -93,7 +93,9 @@
 :root {
   /* Set the font family of the entire app */
   --ion-font-family: 'Rubik', sans-serif;
-  --app-background: #FFFFFF;
+  --app-background: #a2a4ab;
+  --ion-text-color: #070606;
+  --color: black;
   --app-background-shade: var(--ion-background-color-step-50, #F2F2F2);
   --app-background-alt: var(--ion-color-primary);
   --app-background-alt-shade: var(--ion-color-primary-shade);
@@ -109,8 +111,10 @@
 
 html.ios {
   --app-header-height: 44px;
+  --color:black;
 }
 
 html.md {
   --app-header-height: 56px;
+  --color:black;
 }

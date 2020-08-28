@@ -37,7 +37,7 @@
         </ion-card-header>
         <ion-card-content class="message" *ngIf="item.type === 'general'">
           <div (click)="viewPost(item)">
-          <b>{{item.title}}.</b> {{item.data.message}} <br/>
+          <ion-label><b>{{item.title}}.</b> {{item.data.message}} <br/></ion-label>
         </div>
           <div class="reviews-wrapper">
           <ion-row>

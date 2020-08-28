@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { DataService } from '../services/data.service';
-import { NavController, ActionSheetController, AlertController, ModalController } from '@ionic/angular';
+import { NavController, ActionSheetController, AlertController, ModalController, IonRouterOutlet } from '@ionic/angular';
 import { LoadingService } from '../services/loading.service';
 
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
@@ -34,6 +34,7 @@ export class FeedPage implements OnInit {
     public modalCtrl: ModalController,
     public firestore: AngularFirestore,
     public alertCtrl: AlertController,
+    private routerOutlet: IonRouterOutlet,
     public loadingProvider: LoadingService,
     public actionSheet: ActionSheetController,
     private route: ActivatedRoute,
@@ -363,6 +364,8 @@ export class FeedPage implements OnInit {
     const p = this.posts[postIndex];
     const modal = await this.modalCtrl.create({
       component: ReactionListModalPage,
+      swipeToClose: true,
+      presentingElement: this.routerOutlet.nativeEl,
       componentProps: {
         reactions: p.reactions
       }

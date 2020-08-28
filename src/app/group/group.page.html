@@ -20,7 +20,7 @@
   			<ion-icon name="chatbubbles"></ion-icon>
     </ion-segment-button> -->
 		<ion-segment-button value="groupInfo">
-      <ion-icon name="ellipsis-vertical"></ion-icon>
+      <ion-icon name="settings-outline"></ion-icon>
 		</ion-segment-button>
     <ion-segment-button value="posts">
       <ion-icon size="medium" name="chatbubbles"></ion-icon>
@@ -365,20 +365,19 @@ Group Tags
     </div>
   </ion-row>
 </div>
-
+<div class="group-name"> 
+  Group Members ({{groupMembers.length}})
+  </div>
    <ion-list *ngIf="groupMembers">
-     <ion-list-header class="group-name">
-     Group Members ({{groupMembers.length}})
-     </ion-list-header>
     <!-- <ion-item (click)="addMembers()">
      <ion-icon name="add" item-left></ion-icon>
      <h2>Add Members</h2>
      </ion-item>-->
      <ion-item *ngFor="let member of groupMembers" (click)="viewUser(member.$key)">
-     <ion-avatar item-left>
+     <ion-avatar>
        <img src="{{member.img}}" onError="this.src='./assets/images/default-dp.png'"/>
      </ion-avatar>
-     <ion-label>{{member.name}}</ion-label>
+     <ion-label class="group-member-name">{{member.name}}</ion-label>
      <p>{{member.description}}</p>
      </ion-item>
    </ion-list>
