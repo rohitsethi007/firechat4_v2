@@ -41,6 +41,15 @@ ion-button{
   --box-shadow:none;
 }
 
+ion-searchbar {
+  padding: 0px;
+  height:30px;
+  border-radius: 40px;
+  // override Ionic fixed height
+  // height: 100%;
+  // Learn more about CSS contain property here: https://termvader.github.io/css-contain/
+  contain: content;
+}
 ion-card{
   color:black;
 }

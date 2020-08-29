@@ -19,6 +19,10 @@
   </ion-toolbar>
 
 </ion-header>
+<!-- <ion-badge class="badge" *ngIf="item.type === 'general'" color="tertiary">Post</ion-badge>
+<ion-badge class="badge" *ngIf="item.type === 'event'" color="warning">Event</ion-badge>
+<ion-badge class="badge" *ngIf="item.type === 'poll'" color="medium">Poll</ion-badge>
+<ion-badge class="badge" *ngIf="item.type === 'resource'" color="dark">Resource</ion-badge>  -->
 
 
 <ion-content>
@@ -138,9 +142,9 @@
         <ion-card-content class="message" *ngIf="item.type === 'poll'" >
           <div (click)="viewPoll(item)">
           <b>{{item.title}}.</b><br/>
-          <ion-row class="info-row" *ngFor="let pollOption of item.data.pollOptions">
-            <ion-col class="poll-option-col">
-               <div><ion-icon size="small" class="icon" src="./assets/icon/checked.svg" ></ion-icon> <span class="text">{{pollOption.name}}</span></div>
+          <ion-row  *ngFor="let pollOption of item.data.pollOptions">
+            <ion-col >
+               <div><ion-icon class="poll-icon" name="checkbox-outline"></ion-icon> <span>{{pollOption.name}}</span></div>
             </ion-col>
           </ion-row>
         </div>

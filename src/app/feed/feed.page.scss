@@ -3,7 +3,6 @@
     --page-background: var(--app-background);
     --page-rating-2-color: #aa6c39;
     --page-rating-1-color: #bbb2b2;
-    --color: black;
   }
 
 .filters-toolbar {
@@ -16,15 +15,15 @@
     .searchbar-row {
       --ion-grid-column-padding: 0px;
   
-      ion-searchbar.items-searchbar {
-        padding: 0px;
-        height:30px;
-        border-radius: 10px;
-        // override Ionic fixed height
-        // height: 100%;
-        // Learn more about CSS contain property here: https://termvader.github.io/css-contain/
-        contain: content;
-      }
+      // ion-searchbar.items-searchbar {
+      //   padding: 0px;
+      //   height:30px;
+      //   border-radius: 10px;
+      //   // override Ionic fixed height
+      //   // height: 100%;
+      //   // Learn more about CSS contain property here: https://termvader.github.io/css-contain/
+      //   // contain: content;
+      // }
   
       .call-to-action-col {
         //padding-inline-start: var(--page-margin);
@@ -71,21 +70,34 @@
   vertical-align: middle;
  }
  
+ .poll-icon {
+  display: inline-block;
+  vertical-align: middle;
+  padding-right: 5px;
+ }
+
+ .badge {
+   
+ }
  .text{
    display: inline-block;
    vertical-align: middle;
    padding-left: 3px;
    text-transform: capitalize !important;
+   font-size: 12px;
  }
  .addedByTitle {
    margin-left: 10px;
    line-height: 5px;
-   text-decoration: none 
+   text-decoration: none;
+   letter-spacing: 1px;
  }
  .addedByDate {
   margin-left: 10px;
-   font-style: italic;
+  font-style: italic;
+  font-size: 12px;
   }
+  
 .addedByImg {
     width: 45px;
     float: left;
@@ -106,6 +118,7 @@
     -moz-osx-font-smoothing: auto;
     overflow: hidden; 
     text-overflow: ellipsis;
+    color:black;
 
     .reactions {
       margin-bottom: 0px;
