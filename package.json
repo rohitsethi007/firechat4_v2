@@ -23,6 +23,7 @@
     "@angular/router": "~8.1.2",
     "@capacitor/android": "^2.4.0",
     "@capacitor/core": "1.5.3",
+    "@capacitor/ios": "^2.4.0",
     "@ionic-native/camera": "^5.16.0",
     "@ionic-native/chooser": "^5.19.1",
     "@ionic-native/contacts": "^5.16.0",

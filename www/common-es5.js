@@ -1321,63 +1321,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       providedIn: 'root'
     }), tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__["AngularFirestore"], _loading_service__WEBPACK_IMPORTED_MODULE_2__["LoadingService"], _angular_fire_auth__WEBPACK_IMPORTED_MODULE_5__["AngularFireAuth"], _data_service__WEBPACK_IMPORTED_MODULE_3__["DataService"]])], FirebaseService);
     /***/
-  },
-
-  /***/
-  "./src/app/validators/checkbox-checked.validator.ts":
-  /*!**********************************************************!*\
-    !*** ./src/app/validators/checkbox-checked.validator.ts ***!
-    \**********************************************************/
-
-  /*! exports provided: CheckboxCheckedValidator */
-
-  /***/
-  function srcAppValidatorsCheckboxCheckedValidatorTs(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-
-    __webpack_require__.r(__webpack_exports__);
-    /* harmony export (binding) */
-
-
-    __webpack_require__.d(__webpack_exports__, "CheckboxCheckedValidator", function () {
-      return CheckboxCheckedValidator;
-    });
-    /* harmony import */
-
-
-    var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
-    /*! tslib */
-    "./node_modules/tslib/tslib.es6.js");
-
-    var CheckboxCheckedValidator =
-    /*#__PURE__*/
-    function () {
-      function CheckboxCheckedValidator() {
-        _classCallCheck(this, CheckboxCheckedValidator);
-      }
-
-      _createClass(CheckboxCheckedValidator, null, [{
-        key: "tagsSelected",
-        value: function tagsSelected(min) {
-          var validator = function validator(formArray) {
-            var totalSelected = formArray.controls.map(function (control) {
-              return control.value;
-            }).reduce(function (prev, next) {
-              return next ? prev + next : prev;
-            }, 0);
-            return totalSelected >= min ? null : {
-              required: true
-            };
-          };
-
-          return validator;
-        }
-      }]);
-
-      return CheckboxCheckedValidator;
-    }();
-    /***/
-
   }
 }]);
 //# sourceMappingURL=common-es5.js.map
