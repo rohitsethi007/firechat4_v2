@@ -1,5 +1,5 @@
 :host {
-     --page-margin: var(--app-fair-margin);
+    //  --page-margin: var(--app-fair-margin);
     --page-background: var(--app-background);
     --page-rating-2-color: #aa6c39;
     --page-rating-1-color: #bbb2b2;
@@ -124,8 +124,8 @@
       margin-bottom: 0px;
       margin-left: -10px;
     } 
-    .reviews-wrapper {
-      padding-top: calc(var(--page-margin) / 1);
+    .tags-wrapper {
+      padding-top: 5px;
       // padding-bottom: calc(var(--page-margin) / 3);
      
       .tags {

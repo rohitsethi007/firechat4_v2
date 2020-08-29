@@ -29,7 +29,16 @@ export class LoadingService {
     }
   }
 
-  showToast(message) {
-    this.toastCtrl.create({ message: message, duration: 3000 }).then(r => r.present())
+  async showToast(message) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 3000,
+      position: 'top',
+      animated: true,
+      color: 'secondary',
+      cssClass: 'toastCss',
+      mode: 'ios'
+    });
+    toast.present();
   }
 }

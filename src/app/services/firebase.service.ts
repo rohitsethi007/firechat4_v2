@@ -155,7 +155,7 @@ export class FirebaseService {
 
     this.loadingProvider.show();
     this.dataProvider.getUser(loggedInUserId).get().subscribe((account: any) => {
-      let friends = account.data().friends;
+      let friends = account.data().friends; 
       if (!friends) {
         friends = [userId];
       } else {

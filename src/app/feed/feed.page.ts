@@ -8,6 +8,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { NgAnalyzeModulesHost } from '@angular/compiler';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-feed',
@@ -15,6 +16,7 @@ import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-moda
   styleUrls: ['./feed.page.scss'],
 })
 export class FeedPage implements OnInit {
+  [x: string]: any;
   unreadMessagesCount: any;
   friendRequestCount: any;
   unreadGroupMessagesCount: any;
@@ -22,11 +24,12 @@ export class FeedPage implements OnInit {
   groupsInfo: any;
   conversationList: any;
   conversationsInfo: any;
-
+  notifications: any = [];
   private title: any;
   private groupId: any;
   private posts: any = [];
   private memberofGroups: any = [];
+  private loggedInUserId: any;
 
   constructor(
     public dataProvider: DataService,
@@ -46,9 +49,10 @@ export class FeedPage implements OnInit {
   }
 
   ionViewDidEnter() {
-
+    this.loggedInUserId = firebase.auth().currentUser.uid;
    // Get Posts
-   this.dataProvider.getCurrentUser().get().subscribe((groups) => {
+    this.dataProvider.getCurrentUser().get().subscribe((groups) => {
+     this.notifications = groups.data().notifications;
      this.firestore.collection('posts').ref.where('groupId', 'in', groups.data().groups).orderBy("date","desc").onSnapshot((po: any) => {
       this.posts = [];
       po.forEach(p => {
@@ -138,7 +142,9 @@ export class FeedPage implements OnInit {
         this.addOrUpdatePost(post);
   });
 });
-  });
+    });
+
+
   }
 
   addOrUpdatePost(post) {
@@ -165,8 +171,8 @@ export class FeedPage implements OnInit {
       if (!this.conversationList) {
         this.conversationList = [conversation];
       } else {
-        var index = -1;
-        for (var i = 0; i < this.conversationList.length; i++) {
+        let index = -1;
+        for (let i = 0; i < this.conversationList.length; i++) {
           if (this.conversationList[i].$key == conversation.$key) {
             index = i;
           }
@@ -184,7 +190,7 @@ export class FeedPage implements OnInit {
     computeUnreadMessagesCount() {
       this.unreadMessagesCount = 0;
       if (this.conversationList) {
-        for (var i = 0; i < this.conversationList.length; i++) {
+        for (let i = 0; i < this.conversationList.length; i++) {
           this.unreadMessagesCount += this.conversationList[i].messages.length - this.conversationsInfo[i].messagesRead;
           if (this.unreadMessagesCount == 0) {
             this.unreadMessagesCount = null;
@@ -238,6 +244,15 @@ export class FeedPage implements OnInit {
       }).then(r => r.present());
     }
 
+    showPostOptions(post) {
+      const action = this.actionSheet.create({
+        header: 'Post options',
+        backdropDismiss: true,
+        mode: 'md',
+        cssClass: 'GroupAction',
+        buttons: this.createPostOptionButtons(post)
+      }).then(r => r.present());
+    }
     newPoll() {
       this.router.navigateByUrl('/new-poll/' + this.groupId);
     }
@@ -401,5 +416,103 @@ export class FeedPage implements OnInit {
 
   viewGroup(groupId) {
     this.router.navigateByUrl('/group/' + groupId);
+  }
+
+  followPost(post) {
+    if (!this.notifications) {
+      this.notifications = [post.key];
+    } else {
+      this.notifications.push(post.key);
+    }
+
+    this.dataProvider.getUser(this.loggedInUserId).update({
+      notifications: this.notifications
+    }).then(() => {
+      this.loadingProvider.showToast('You will be notified when there are new replies');
+    });
+  }
+
+  unFollowPost(post) {
+    const index = this.notifications.indexOf(post.key, 0);
+    if (index > -1) {
+      this.notifications.splice(index, 1);
+    }
+
+    this.dataProvider.getUser(this.loggedInUserId).update({
+      notifications: this.notifications
+    }).then(() => {
+      this.loadingProvider.showToast('You won\'t get notifications for this post');
+    });
+  }
+
+  reportPost(post) {
+    this.dataProvider.addReports(this.loggedInUserId, post).then(() => {
+      this.loadingProvider.showToast('Thank you for reporting the post.');
+    });
+  }
+
+  deletePost(post) {
+    this.alertCtrl.create({
+      header: 'Delete Post',
+      message: 'Are you sure you want to delete this post?',
+      buttons: [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Yes',
+          handler: data => {
+             this.firestore.doc('posts/' + post.key).delete();
+          }
+        }
+      ]
+    }).then(r => r.present());
+  }
+
+  createPostOptionButtons(post) {
+    let buttons = [];
+    let reportButton = {
+      text: 'Report Post',
+      icon: 'flag-outline',
+      handler: () => {
+        this.reportPost(post);
+       }
+      };
+    let notificationButton = {};
+
+    if (post.addedByUser.addedByKey === this.loggedInUserId) {
+      const deletePostButton = {
+        text: 'Delete Post',
+        icon: 'trash-outline',
+        cssClass: 'actionicon',
+        handler: () => {
+          this.deletePost(post);
+        }
+      };
+      buttons.push(deletePostButton);
+    } else {
+      if (this.notifications && this.notifications.some(el => el === post.key)) {
+        notificationButton = {
+            text: 'Turn Off Notifications',
+            icon: 'notifications-off-outline',
+            cssClass: 'actionicon',
+            handler: () => {
+              this.unFollowPost(post);
+            }
+          };
+      } else {
+        notificationButton = {
+          text: 'Turn On Notifications',
+          icon: 'notifications-outline',
+          cssClass: 'actionicon',
+          handler: () => {
+            this.followPost(post);
+          }
+        };
+      }
+      buttons.push(notificationButton);
+  }
+    buttons.push(reportButton);
+    return buttons;
   }
 }

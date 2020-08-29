@@ -171,6 +171,14 @@ export class DataService {
       // return this.afdb.list('/groups', ref => ref.orderByChild('name'));
   }
 
+  addReports(userId, post) {
+    const report = {
+      reportedBy: userId,
+      postId: post.key
+    }
+    return this.firestore.collection('reports').add(report);
+  }
+
   addResource(resource) {
     return this.firestore.collection('resources').add(resource);
     // return this.afdb.list('resources').push(resource);
@@ -314,9 +322,6 @@ export class DataService {
      this.firestore.doc('polls/' + pollId).update({
       reactions: r
     });
-    //  this.afdb.object('/polls/' + pollId).update( {
-    //    reviews: r
-    //  });
      this.updatePollReviews(pollId, review);
    }
  
@@ -328,6 +333,5 @@ export class DataService {
    // Get messages of the group given the Id.
    getGroupPosts(groupId) {
      return this.firestore.doc('groups/' + groupId).collection('posts');
-    // return this.afdb.object('/groups/' + groupId + '/posts');
   }
 }

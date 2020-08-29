@@ -1,8 +1,8 @@
-<ion-header>
+<ion-header translucent>
   <ion-toolbar class="filters-toolbar">
     <ion-row class="searchbar-row" align-items-center>
     <ion-col>
-        <ion-searchbar class="items-searchbar" animated  placeholder="Search ..."></ion-searchbar>
+        <ion-searchbar animated  placeholder="Search..."></ion-searchbar>
       </ion-col>
       <ion-col class="call-to-action-col">
         <ion-button fill="clear" color="secondary" class="filters-btn" routerLink="/messages">
@@ -31,6 +31,8 @@
      <div class="listing-item" *ngFor="let item of posts" >
       <ion-card>
         <ion-card-header>
+          <ion-row>
+            <ion-col size=11>
            <ion-card-subtitle class="addedBy">
             <img class="addedByImg" src="{{item.avatar}}" onError="this.src='./assets/images/default-dp.png'" /> 
              <p><a class="addedByTitle" (click)="viewUser(item.addedByUser.addedByKey)" ><b>{{item.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf="item.showNewIcon" class="newIcon" src="./assets/icon/new.svg" />  -->
@@ -38,12 +40,21 @@
              <span class="addedByDate">posted {{item.date.toDate() | DateFormat}}</span><br/>
             <a (click)="viewGroup(item.groupId)" class="addedByTitle">in <b>{{item.groupName}}</b></a></p>
           </ion-card-subtitle>
+        </ion-col>
+        <ion-col size=1>
+          <ion-buttons>
+            <ion-button (click)="showPostOptions(item)">
+              <ion-icon slot="end" name="chevron-down-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-col>
+        </ion-row>
         </ion-card-header>
         <ion-card-content class="message" *ngIf="item.type === 'general'">
           <div (click)="viewPost(item)">
           <ion-label><b>{{item.title}}.</b> {{item.data.message}} <br/></ion-label>
         </div>
-          <div class="reviews-wrapper">
+          <div class="tags-wrapper">
           <ion-row>
             <div class="tags" *ngFor="let tag of item.postTags">
               <span *ngIf="tag.isChecked" class="item-rating" [attr.ratingBase]="1">#{{tag.val}}</span>
@@ -94,7 +105,7 @@
             {{item.data.address}}<br/><br/>
             {{item.data.link}}
           </div>
-          <div class="reviews-wrapper">
+          <div class="tags-wrapper">
             <ion-row>
               <div class="tags" *ngFor="let tag of item.postTags">
                 <span *ngIf="tag.isChecked" class="item-rating" [attr.ratingBase]="1">#{{tag.val}}</span>
@@ -148,7 +159,7 @@
             </ion-col>
           </ion-row>
         </div>
-          <div class="reviews-wrapper">
+          <div class="tags-wrapper">
             <ion-row>
               <div class="tags" *ngFor="let tag of item.postTags">
                 <span *ngIf="tag.isChecked" class="item-rating" [attr.ratingBase]="1">#{{tag.val}}</span>
@@ -200,7 +211,7 @@
           <a href="{{item.data.metasite}}">{{item.data.metasite}}</a>
           </div>
         </div>
-          <div class="reviews-wrapper">
+          <div class="tags-wrapper">
             <ion-row>
               <div class="tags" *ngFor="let tag of item.postTags">
                 <span *ngIf="tag.isChecked" class="item-rating" [attr.ratingBase]="1">#{{tag.val}}</span>

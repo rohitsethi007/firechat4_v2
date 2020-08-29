@@ -22,6 +22,7 @@ export class NewPostPage implements OnInit {
   private addedByUser: any;
   private step: any = 1;
   groups: any;
+  userNotifications: any = [];
 
   validations = {
     title: [
@@ -107,6 +108,8 @@ export class NewPostPage implements OnInit {
       addedByImg: value.payload.data().img
     };
 
+      this.userNotifications = value.payload.data().notifications;
+
       this.post = {
           addedByUser: this.addedByUser,
           date: '',
@@ -120,8 +123,6 @@ export class NewPostPage implements OnInit {
           totalReviewCount: 0
         };
       });
-
-
   }
 
    submitPostForm() {
@@ -158,6 +159,12 @@ export class NewPostPage implements OnInit {
           this.loadingProvider.hide();
           this.router.navigateByUrl('tabs/tab1');
         });
+
+        if (!this.userNotifications) {
+          this.userNotifications = [this.postId];
+        } else {
+          this.userNotifications.push(this.postId);
+        }
       });
 
    }

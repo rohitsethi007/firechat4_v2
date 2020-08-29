@@ -134,7 +134,7 @@ export class MessagePage implements OnInit {
       }, 60000);
     }
 
-    // this.scrollBottom();
+    this.scrollBottom();
   }
   // Load previous messages in relation to numberOfMessages.
   loadPreviousMessages() {
@@ -354,14 +354,10 @@ export class MessagePage implements OnInit {
     this.modalCtrl.create({
       component: ImagemodalPage,
       componentProps: {
-        img: img
+        img
       }
     }).then(res => {
       res.present();
-    })
-    // let imageModal = this.modalCtrl.create(ImageModalPage, { img: img });
-    // imageModal.present();
+    });
   }
-
-
 }
