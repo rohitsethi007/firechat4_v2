@@ -24,6 +24,9 @@ export class PostPage implements OnInit {
   private title: any;
   private postReviews: any;
   private message: any;
+  private postMedia: any = [];
+  notifications: any = [];
+  private loggedInUserId: any;
 
   constructor(
     private dataProvider: DataService,
@@ -45,7 +48,7 @@ export class PostPage implements OnInit {
   }
 
   ionViewDidEnter() {
-
+    this.loggedInUserId = firebase.auth().currentUser.uid;
   }
 
   ngOnInit() {
@@ -214,10 +217,10 @@ export class PostPage implements OnInit {
   }
 
   submitReply() {
-    this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');;
-     let review: any;
-     let currentUserName: any;
-     this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
+    this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    let review: any;
+    let currentUserName: any;
+    this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
        if (account) {
          currentUserName = account.data().username;
  
@@ -237,100 +240,176 @@ export class PostPage implements OnInit {
   }
 
   attach() {
-  //   this.actionSheet.create({
-  //     header: 'Choose attachments',
-  //     buttons: [{
-  //       text: 'Camera',
-  //       handler: () => {
-  //         this.imageProvider.uploadPhotoMessage(this.conversationId, this.camera.PictureSourceType.CAMERA).then((url) => {
-  //           this.message = url;
-  //           this.submitReply('image');
-  //         });
-  //       }
-  //     }, {
-  //       text: 'Photo Library',
-  //       handler: () => {
-  //         this.imageProvider.uploadPhotoMessage(this.conversationId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
-  //           this.message = url;
-  //           this.submitReply('image');
-  //         });
-  //       }
-  //     },
-  //     {
-  //       text: 'Video',
-  //       handler: () => {
-  //         this.imageProvider.uploadVideoMessage(this.conversationId).then(url => {
-  //           this.message = url;
-  //           this.submitReply('video');
-  //         });
-  //       }
-  //     }
-  //       , {
-  //       text: 'Location',
-  //       handler: () => {
-  //         this.geolocation.getCurrentPosition({
-  //           timeout: 5000
-  //         }).then(res => {
-  //           let locationMessage = 'Location:<br> lat:' + res.coords.latitude + '<br> lng:' + res.coords.longitude;
-  //           let mapUrl = '<a href=\'https://www.google.com/maps/search/' 
-  //           + res.coords.latitude + ',' + res.coords.longitude + '\'>View on Map</a>';
-
-  //           let confirm = this.alertCtrl.create({
-  //             header: 'Your Location',
-  //             message: locationMessage,
-  //             buttons: [{
-  //               text: 'cancel',
-  //               handler: () => {
-  //                 console.log('canceled');
-  //               }
-  //             }, {
-  //               text: 'Share',
-  //               handler: () => {
-  //                 this.message = locationMessage + '<br>' + mapUrl;
-  //                 this.submitReply('location');
-  //               }
-  //             }]
-  //           }).then(r => r.present());
-  //         }, locationErr => {
-  //           console.log('Location Error' + JSON.stringify(locationErr));
-  //         });
-  //       }
-  //     }, {
-  //       text: 'Contact',
-  //       handler: () => {
-  //         this.contacts.pickContact().then(data => {
-  //           let name;
-  //           if (data.displayName !== null) { name = data.displayName; }
-  //           else { name = data.name.givenName + ' ' + data.name.familyName; }
-  //           this.message = '<b>Name:</b> ' + name + '<br><b>Mobile:</b> <a href=\'tel:'
-  //               + data.phoneNumbers[0].value + '\'>' + data.phoneNumbers[0].value + '</a>';
-  //           this.submitReply('contact');
-  //         }, err => {
-  //           console.log(err);
-  //         })
-  //       }
-  //     }, {
-  //       text: 'cancel',
-  //       role: 'cancel',
-  //       handler: () => {
-  //         console.log('cancelled');
-  //       }
-  //     }]
-  //   }).then(r => r.present());
-  // }
+    this.actionSheet.create({
+      header: 'Choose images',
+      buttons: [{
+        text: 'Camera',
+        handler: () => {
+          this.imageProvider.uploadPostPhoto(this.postId, this.camera.PictureSourceType.CAMERA).then((url) => {
+            this.postMedia.push(url);
+          });
+        }
+      }, {
+        text: 'Photo Library',
+        handler: () => {
+          this.imageProvider.uploadPhotoMessage(this.postId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
+            this.postMedia.push(url);
+          });
+        }
+      },
+      {
+        text: 'Video',
+        handler: () => {
+          this.imageProvider.uploadVideoMessage(this.postId).then(url => {
+            this.postMedia(url);
+          });
+        }
+      }
+        ,  {
+        text: 'cancel',
+        role: 'cancel',
+        handler: () => {
+          console.log('cancelled');
+        }
+      }]
+    }).then(r => r.present());
   }
 
-  viewUser(userId) {
-    let loggedInUserId = this.dataProvider.getCurrentUserId();
-    console.log(loggedInUserId, userId);
-    if (loggedInUserId === userId) {
+  removeMedia(media) {
+    this.postMedia.splice();
+    this.postMedia = this.postMedia.filter(x => x !== media);
+    this.dataProvider.deletePostPhoto(this.postId, media);
+  }
+
+viewUser(userId) {
+    if (this.loggedInUserId === userId) {
       this.router.navigateByUrl('/profile');
     } else {
       this.router.navigateByUrl('/userinfo/' + userId);
     }
   }
 
-  viewGroup(groupId) {
+viewGroup(groupId) {
     this.router.navigateByUrl('/group/' + groupId);
+  }
+
+  showPostOptions(post) {
+    const action = this.actionSheet.create({
+      header: 'Post options',
+      backdropDismiss: true,
+      mode: 'md',
+      cssClass: 'GroupAction',
+      buttons: this.createPostOptionButtons(post)
+    }).then(r => r.present());
+  }
+  followPost(post) {
+    if (!this.notifications) {
+      this.notifications = [post.key];
+    } else {
+      this.notifications.push(post.key);
+    }
+
+    this.dataProvider.getUser(this.loggedInUserId).update({
+      notifications: this.notifications
+    }).then(() => {
+      this.loadingProvider.showToast('You will be notified when there are new replies');
+    });
+  }
+
+  unFollowPost(post) {
+    const index = this.notifications.indexOf(post.key, 0);
+    if (index > -1) {
+      this.notifications.splice(index, 1);
+    }
+
+    this.dataProvider.getUser(this.loggedInUserId).update({
+      notifications: this.notifications
+    }).then(() => {
+      this.loadingProvider.showToast('You won\'t get notifications for this post');
+    });
+  }
+
+  reportPost(post) {
+    this.dataProvider.addReports(this.loggedInUserId, post).then(() => {
+      this.loadingProvider.showToast('Thank you for reporting the post.');
+    });
+  }
+
+  deletePost(post) {
+    this.alertCtrl.create({
+      header: 'Delete Post',
+      message: 'Are you sure you want to delete this post?',
+      buttons: [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Yes',
+          handler: data => {
+             this.firestore.doc('posts/' + post.key).delete();
+          }
+        }
+      ]
+    }).then(r => r.present());
+  }
+
+  createPostOptionButtons(post) {
+    let buttons = [];
+    let cancelButton = {
+      text: 'Cancel',
+      icon: 'close',
+      role: 'cancel',
+      handler: () => {
+        console.log('Cancel clicked');
+      }
+    };
+
+    let reportButton = {
+      text: 'Report Post',
+      icon: 'flag-outline',
+      handler: () => {
+        this.reportPost(post);
+       }
+      };
+    let notificationButton = {};
+
+    if (post.addedByUser.addedByKey === this.loggedInUserId) {
+      const deletePostButton = {
+        text: 'Delete Post',
+        icon: 'trash-outline',
+        cssClass: 'actionicon',
+        handler: () => {
+          this.deletePost(post);
+        }
+      };
+      buttons.push(deletePostButton);
+    } else {
+      if (this.notifications && this.notifications.some(el => el === post.key)) {
+        notificationButton = {
+            text: 'Turn Off Notifications',
+            icon: 'notifications-off-outline',
+            cssClass: 'actionicon',
+            handler: () => {
+              this.unFollowPost(post);
+            }
+          };
+      } else {
+        notificationButton = {
+          text: 'Turn On Notifications',
+          icon: 'notifications-outline',
+          cssClass: 'actionicon',
+          handler: () => {
+            this.followPost(post);
+          }
+        };
+      }
+
+
+      buttons.push(notificationButton);
+  }
+  
+    buttons.push(reportButton);
+    buttons.push(cancelButton);
+    return buttons;
   }
 }

@@ -65,18 +65,18 @@ export class NewPollPage implements OnInit {
 
     this.pollForm = new FormGroup({
       description: new FormControl('', Validators.compose([
-        Validators.minLength(10),
-        Validators.maxLength(50),
+        // Validators.minLength(10),
+        // Validators.maxLength(50),
         Validators.required
       ])),
       pollOption1: new FormControl('', Validators.compose([
-        Validators.minLength(1),
-        Validators.maxLength(20),
+        // Validators.minLength(1),
+        // Validators.maxLength(20),
         Validators.required
       ])),
       pollOption2: new FormControl('', Validators.compose([
-        Validators.minLength(1),
-        Validators.maxLength(20),
+        // Validators.minLength(1),
+        // Validators.maxLength(20),
         Validators.required
       ])),
       pollOption3: new FormControl(''),
@@ -127,7 +127,8 @@ export class NewPollPage implements OnInit {
       type: 'poll',
       data: {},
       totalReactionCount: 0,
-      totalReviewCount: 0
+      totalReviewCount: 0,
+      totalPollCount: 0
     };
   });
 

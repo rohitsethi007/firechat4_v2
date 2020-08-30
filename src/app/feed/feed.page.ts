@@ -68,6 +68,16 @@ export class FeedPage implements OnInit {
       } else {
         post.showNewIcon = true;
       }
+
+        if (post.type === 'poll') {
+          const today = new Date();
+          const de = post.data.dateEnding.toDate();
+          if (post.de < today) {
+            post.pollClosed = true;
+          } else {
+            post.pollClosed = false;
+          }
+        }
         // get reactions list
         this.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe((reactions: any) => {
           post.reactions = [];
@@ -124,19 +134,7 @@ export class FeedPage implements OnInit {
             } else {
               post.showBookmark = false;
             }
-
-          // totalPollCount
-          if (post.reactions !== undefined) {
-            foundBookmark = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                          && el.reactionType === 'Bookmark');
-            }
-          if (foundBookmark) {
-              post.showBookmark = true;
-            } else {
-              post.showBookmark = false;
-            }
         }
-
         });
         post.postTags = post.postTags.filter(x => x.isChecked !== false);
         this.addOrUpdatePost(post);
@@ -252,7 +250,7 @@ export class FeedPage implements OnInit {
         cssClass: 'GroupAction',
         buttons: this.createPostOptionButtons(post)
       }).then(r => r.present());
-    }
+    } 
     newPoll() {
       this.router.navigateByUrl('/new-poll/' + this.groupId);
     }
@@ -471,6 +469,16 @@ export class FeedPage implements OnInit {
 
   createPostOptionButtons(post) {
     let buttons = [];
+    
+    let cancelButton = {
+      text: 'Cancel',
+      icon: 'close',
+      role: 'cancel',
+      handler: () => {
+        console.log('Cancel clicked');
+      }
+    };
+
     let reportButton = {
       text: 'Report Post',
       icon: 'flag-outline',
@@ -513,6 +521,7 @@ export class FeedPage implements OnInit {
       buttons.push(notificationButton);
   }
     buttons.push(reportButton);
+    buttons.push(cancelButton);
     return buttons;
   }
 }

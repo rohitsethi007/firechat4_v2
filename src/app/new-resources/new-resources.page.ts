@@ -236,7 +236,7 @@ export class NewResourcesPage implements OnInit {
     this.loadingProvider.show();
 
     // Add resource info and date.
-    this.resource.date = new Date().toString();
+    this.resource.date = new Date();
     this.resource.title = this.contactForm.value.title;
     this.resource.postTags = [];
     this.resource.postTags = this.postTags;
@@ -274,7 +274,7 @@ export class NewResourcesPage implements OnInit {
 
   upload() {
     // Add resource info and date.
-    this.resource.date = new Date().toString();
+    this.resource.date = new Date();
     this.resource.title = this.contactForm.value.title;
     this.resource.postTags = [];
     this.resource.postTags = this.postTags;

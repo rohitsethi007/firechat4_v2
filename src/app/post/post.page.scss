@@ -1,9 +1,31 @@
 :host {
-  --page-margin: var(--app-fair-margin);
+  // --page-margin: var(--app-fair-margin);
   --page-background: var(--app-background);
   --page-highlighted-background: var(--ion-color-secondary-tint);
 }
 
+
+ion-content ion-card{
+  width: 100%;
+  padding-top: 0px;
+  margin-top: 0px;
+  margin-left: 0px;
+}
+
+ion-card ion-card-header{
+  padding-top: 0px;
+  margin-top: 0px;
+  padding-bottom: 0px;
+}
+.title {
+  font-family: 'HelveticaNeue-Medium', 'Helvetica Neue Medium','Roboto-Medium', 'Segoe UI Semibold', sans-serif;
+  font-weight: 500px;
+  font-size: 18px;
+  line-height: 23px;
+  margin: 1 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .contact-card-content {
   --background: var(--page-background);
 
@@ -44,16 +66,6 @@
   }
  }
 
-    .title {
-      font-family: 'HelveticaNeue-Medium', 'Helvetica Neue Medium','Roboto-Medium', 'Segoe UI Semibold', sans-serif;
-      font-weight: 500px;
-      font-size: 18px;
-      line-height: 23px;
-      margin: 1 0 4px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
     .subtitle{
       line-height: 20px;
       width: 100%;
@@ -72,42 +84,65 @@
       vertical-align: middle;
     }
      
-    .text{
-       display: inline-block;
-       vertical-align: middle;
-       padding-left: 3px;
-       text-transform: capitalize !important;
-       font-family:  "HelveticaNeue", "Helvetica Neue", Helvetica, "Roboto", "Segoe UI", Arial, sans-serif;
-       font-weight: 400;
-       font-size: 14px;
-    }
-
-    .reviews {
+   .reviews {
       margin-bottom: 15px;
+    }
+    .text{
+      display: inline-block;
+      vertical-align: middle;
+      padding-left: 3px;
+      text-transform: capitalize !important;
+      font-size: 12px;
     }
     .addedByTitle {
       margin-left: 10px;
-      line-height: 1;    
-      margin-right:5px;  
+      line-height: 5px;
+      text-decoration: none;
+      letter-spacing: 1px;
     }
     .addedByDate {
-      margin-left: 10px;
-      font-style: italic;
+     margin-left: 10px;
+     font-style: italic;
+     font-size: 12px;
      }
-    .addedByDateReview {
-      font-style: italic;
-     }
+     
    .addedByImg {
-       width: 50px;
+       width: 45px;
        float: left;
        vertical-align: middle;
+
      }
+
     .addedByImgReview {
       width: 50px;
+      height: 50px;
       margin-left: 10px;
       float: left;
       vertical-align: middle;
+      border-radius: 50%;
     }
+    .addedByTitleReview {
+      font-size: 12px;
+      margin-left: 10px;
+      line-height: 5px;
+      text-decoration: none;
+      letter-spacing: 1px;
+    }
+
+    .addedByDateReview {
+      font-style: italic;
+      font-size: 10px;
+      letter-spacing: normal !important;
+    }
+
+    .messageReview {
+      font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+      font-weight: 400px;
+      font-size: 12px;
+      line-height: 15px;
+      margin-left: 10px;
+    }
+
      .review {
        width:90%;
      }
@@ -120,7 +155,7 @@
   }
 
   .reviews-wrapper {
-    padding: 0px var(--page-margin) var(--page-margin);
+    // padding: 0px var(--page-margin) var(--page-margin);
     .reviews-list {
       margin-bottom: calc(var(--page-margin) / 2);
       .review-item {
@@ -203,4 +238,21 @@
     }
 
 }
+
+}
+
+.postMedia {
+  width:50px;
+}
+.comment {
+  border: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  resize: none;
+  width: 100%;
+  z-index: 2;
+  background: none;
+  letter-spacing: inherit;
+  border-radius: 20px;
 }

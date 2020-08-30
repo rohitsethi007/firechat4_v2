@@ -48,6 +48,7 @@
 
   }
 
+    
   ion-content ion-card{
     width: 100%;
     padding-top: 0px;
@@ -139,8 +140,8 @@
                 // padding-top: calc(var(--page-margin) / 1);
                 //padding-bottom: calc(var(--page-margin) / 3);
                 // padding-left: calc(var(--page-margin) / 2);
-                padding-right: calc(var(--page-margin) / 2);
-                font-size: 14px;
+                padding-right: 15px;
+                font-size: 12px;
                 font-weight: bold;
                 width: 100%;
                 display: block;

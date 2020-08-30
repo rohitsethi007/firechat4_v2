@@ -59,13 +59,13 @@ export class NewPostPage implements OnInit {
     this.postForm = new FormGroup(
       {
         title: new FormControl('', Validators.compose([
-            Validators.minLength(5),
-            Validators.maxLength(20),
+            // Validators.minLength(5),
+            // Validators.maxLength(20),
             Validators.required
           ])),
         message: new FormControl('', Validators.compose([
-          Validators.minLength(10),
-          Validators.maxLength(100),
+          // Validators.minLength(10),
+          // Validators.maxLength(100),
           Validators.required
         ])),
          tags: new FormArray([], CheckboxCheckedValidator.tagsSelected(1))
