@@ -92,7 +92,7 @@
   <ion-toolbar> <div>
     <ion-item *ngIf="postMedia && postMedia.length > 0" *ngFor="let media of postMedia">
           <ion-thumbnail slot="start">
-            <ion-img [src]="media"></ion-img>
+            <ion-img [src]=media></ion-img>
           </ion-thumbnail>
           <ion-buttons>
             <ion-button (click)="removeMedia()">
