@@ -199,6 +199,7 @@ export class NewPostPage implements OnInit {
         handler: () => {
           this.imageProvider.uploadPostPhoto(this.camera.PictureSourceType.CAMERA).then((url) => {
             this.postMedia.push(url);
+            console.log(url);
           });
         }
       }, {
@@ -206,6 +207,7 @@ export class NewPostPage implements OnInit {
         handler: () => {
           this.imageProvider.uploadPostPhoto(this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
             this.postMedia.push(url);
+            console.log(url);
           });
         }
       },
@@ -214,6 +216,7 @@ export class NewPostPage implements OnInit {
         handler: () => {
           this.imageProvider.uploadPostVideo().then(url => {
             this.postMedia(url);
+            console.log(url);
           });
         }
       }
