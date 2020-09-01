@@ -252,7 +252,7 @@ export class PostPage implements OnInit {
       }, {
         text: 'Photo Library',
         handler: () => {
-          this.imageProvider.uploadPhotoMessage(this.postId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
+          this.imageProvider.uploadPostPhoto(this.postId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
             this.postMedia.push(url);
           });
         }
@@ -260,7 +260,7 @@ export class PostPage implements OnInit {
       {
         text: 'Video',
         handler: () => {
-          this.imageProvider.uploadVideoMessage(this.postId).then(url => {
+          this.imageProvider.uploadPostVideo(this.postId).then(url => {
             this.postMedia(url);
           });
         }

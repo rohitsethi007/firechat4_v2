@@ -238,6 +238,13 @@ export class FeedPage implements OnInit {
           handler: () => {
             this.newEvent();
           }
+        }, {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
         }]
       }).then(r => r.present());
     }

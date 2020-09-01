@@ -279,6 +279,38 @@ export class ImageService {
     });
   }
 
+  uploadPostVideo(postId): Promise<any> {
+    return new Promise(resolve => {
+      this.loadingProvider.show();
+      this.mediaCapture.captureVideo().then(data => {
+        let videoUrl = data[0].fullPath;
+        let x = videoUrl.split("/");
+        let filepath = videoUrl.substring(0, videoUrl.lastIndexOf("/"));
+        let name = x[x.length - 1];
+        this.file.readAsArrayBuffer(filepath, name).then(success => {
+          let blob = new Blob([success], { type: "video/mp4" });
+
+          let uploadRef = firebase.storage().ref().child('videos/' + name);
+          uploadRef.put(blob).then(res => {
+            let process = res.bytesTransferred / res.totalBytes * 100;
+            console.log(process);
+            this.loadingProvider.hide();
+            uploadRef.getDownloadURL().then(url => {
+              resolve(url);
+            })
+
+          }, err => {
+            this.loadingProvider.hide();
+            console.log("Failed")
+          });
+        });
+      }, err => {
+        this.loadingProvider.hide();
+        console.log("Media Err = " + err);
+      });
+    });
+  }
+
   deletePostPhoto(postId,url){
     var fileName = url.substring(url.lastIndexOf('%2F') + 3, url.lastIndexOf('?'));
     firebase.storage().ref().child('images/' + postId + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });

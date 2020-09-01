@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { ActionSheetController } from '@ionic/angular';
 import { FormArray, FormGroup, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
 import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
+import { Camera } from '@ionic-native/camera/ngx';
 
 @Component({
   selector: 'app-new-post',
@@ -23,6 +25,7 @@ export class NewPostPage implements OnInit {
   private step: any = 1;
   groups: any;
   userNotifications: any = [];
+  private postMedia: any = [];
 
   validations = {
     title: [
@@ -45,11 +48,13 @@ export class NewPostPage implements OnInit {
     private router: Router,
     public dataProvider: DataService,
     public imageProvider: ImageService,
-    public loadingProvider: LoadingService
+    public loadingProvider: LoadingService,
+    public camera: Camera,
+    public actionSheet: ActionSheetController,
   ) {
     this.postTags = [];
     this.groupId = this.route.snapshot.params.id;
-    this.group = {name:''}
+    this.group = {name: ''}
     if (this.groupId === 'undefined') {
       this.step = 1;
     } else {
@@ -71,6 +76,7 @@ export class NewPostPage implements OnInit {
          tags: new FormArray([], CheckboxCheckedValidator.tagsSelected(1))
     });
    }
+
   ionViewDidEnter() {
     if (this.step === 1) {
     this.title = 'Select a group ...';
@@ -81,7 +87,7 @@ export class NewPostPage implements OnInit {
         });
       });
     } else {
-      this.title = 'Create a Post in ...';
+      this.title = 'Create a Post in';
 
       this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
         this.group = group.payload.data();
@@ -89,7 +95,7 @@ export class NewPostPage implements OnInit {
           this.postTags.push({val: element, isChecked: false});
         });
         this.addTagControls();
-      });   
+      });
     }
   }
 
@@ -172,7 +178,7 @@ export class NewPostPage implements OnInit {
    selectGroup(groupId) {
     this.groupId = groupId;
     this.step = 2;
-    this.title = 'Create a Post in ...';
+    this.title = 'General';
 
     this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
       this.group = group.payload.data();
@@ -184,5 +190,47 @@ export class NewPostPage implements OnInit {
   });
 
    }
+
+   attach() {
+    this.actionSheet.create({
+      header: 'Attach images',
+      buttons: [{
+        text: 'Camera',
+        handler: () => {
+          this.imageProvider.uploadPostPhoto(this.postId, this.camera.PictureSourceType.CAMERA).then((url) => {
+            this.postMedia.push(url);
+          });
+        }
+      }, {
+        text: 'Photo Library',
+        handler: () => {
+          this.imageProvider.uploadPostPhoto(this.postId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
+            this.postMedia.push(url);
+          });
+        }
+      },
+      {
+        text: 'Video',
+        handler: () => {
+          this.imageProvider.uploadPostVideo(this.postId).then(url => {
+            this.postMedia(url);
+          });
+        }
+      }
+        ,  {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: () => {
+          console.log('cancelled');
+        }
+      }]
+    }).then(r => r.present());
+  }
+
+  removeMedia(media) {
+    this.postMedia.splice();
+    this.postMedia = this.postMedia.filter(x => x !== media);
+    this.dataProvider.deletePostPhoto(this.postId, media);
+  }
 
 }

@@ -1,27 +1,26 @@
 <ion-header>
-  <ion-toolbar color="secondary">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>{{title}}</ion-title>
+    <ion-buttons *ngIf="step==2" slot="end">
+      <ion-button color="secondary" class="ion-text-capitalize" [disabled]="!postForm.valid" (click)="submitPostForm()">Post</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>  
 
 <ion-content class="forms-validations-content">
   <div *ngIf="step==1"> 
     <div *ngIf="groups && groups.length > 0">
-      <ion-list lines="none">
-        <ion-item *ngFor="let group of groups" (click)="selectGroup(group.$key)">
+      <ion-list>
+        <ion-item text-wrap *ngFor="let group of groups" (click)="selectGroup(group.$key)">
           <ion-thumbnail slot="start">
             <img src="{{group.img}}" onError="this.src='./assets/images/default-group.png'">
           </ion-thumbnail>
           <ion-label>
-            <ion-text>
-              <h2>{{group.name}}</h2>
-            </ion-text>
-            <ion-text>
-              <p>created {{group.dateCreated.toDate() | DateFormat}}</p>
-            </ion-text>
+              <b>{{group.name}}</b><br/>
+              {{group.description}}
           </ion-label>
           <ion-badge slot="end" color="danger" *ngIf="group.unreadMessagesCount > 0">{{group.unreadMessagesCount}}
           </ion-badge>
@@ -32,34 +31,33 @@
   <div *ngIf="step==2">
   <form class="validations-form" [formGroup]="postForm" (ngSubmit)="submitPostForm()">
     <ion-list class="inputs-list" lines="full">
-      <ion-list-header>
-        <ion-label class="header-title">{{group.name}}</ion-label>
+      <ion-list-header class="header">
+        posting in &nbsp;<ion-label><b>{{group.name}}</b></ion-label>
       </ion-list-header>
       <ion-item class="input-item">
-        <ion-label position="floating">Title:</ion-label>
-        <ion-input type="text" formControlName="title" clearInput placeholder="Enter the subject"></ion-input>
+ 
+        <ion-input type="text" formControlName="title" placeholder="Subject"></ion-input>
       </ion-item>
-      <div class="error-container">
+      <!-- <div class="error-container">
         <ng-container *ngFor="let validation of validations.title">
           <div class="error-message" *ngIf="postForm.get('title').hasError(validation.type) && (postForm.get('title').dirty || postForm.get('title').touched)">
             <ion-icon name="information-circle-outline"></ion-icon>
             <span>{{ validation.message }}</span>
           </div>
         </ng-container>
-      </div>
+      </div> -->
 
       <ion-item class="input-item">
-        <ion-label position="floating">Message:</ion-label>
-        <ion-textarea rows="6"  formControlName="message" clearInput placeholder="Enter the message"></ion-textarea>
+        <ion-textarea rows="6"  formControlName="message" clearInput placeholder="Message"></ion-textarea>
       </ion-item>
-      <div class="error-container">
+      <!-- <div class="error-container">
         <ng-container *ngFor="let validation of validations.message">
           <div class="error-message" *ngIf="postForm.get('message').hasError(validation.type) && (postForm.get('message').dirty || postForm.get('message').touched)">
             <ion-icon name="information-circle-outline"></ion-icon>
             <span>{{ validation.message }}</span>
           </div>
         </ng-container>
-      </div>
+      </div> -->
       <ion-list class="inputs-list" lines="full">
         <ion-list-header>
           <ion-label class="header-title">Select relevant tags</ion-label>
@@ -85,8 +83,31 @@
         </div>
       </ion-list>
 
-    <ion-button class="submit-btn" type="submit" expand="block" fill="outline" [disabled]="!postForm.valid" >Submit</ion-button>
+    <!-- <ion-button class="submit-btn" type="submit" expand="block" fill="outline" [disabled]="!postForm.valid" >Submit</ion-button> -->
     </ion-list>
   </form>
 </div>
 </ion-content>
+<ion-footer *ngIf="step==2">
+  <ion-toolbar>
+    <ion-item *ngIf="postMedia && postMedia.length > 0">
+      <div>
+        <ion-col *ngFor="let media of postMedia">
+          <ion-thumbnail slot="start">
+            <img class="postMedia" src="{{media}}">
+          </ion-thumbnail>
+          <ion-buttons>
+            <ion-button (click)="removeMedia()">
+              <ion-icon size="small" name="close-circle-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-col>
+      </div>
+    </ion-item>
+    <ion-item>
+      <ion-button class="ion-text-capitalize" fill="clear" (click)="attach()">
+        <ion-icon class="ion-padding-end" size="large" name="camera-outline"></ion-icon>Add photo or video
+      </ion-button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

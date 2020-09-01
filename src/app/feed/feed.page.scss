@@ -1,32 +1,31 @@
 :host {
-    //  --page-margin: var(--app-fair-margin);
-    --page-background: var(--app-background);
-    --page-rating-2-color: #aa6c39;
-    --page-rating-1-color: #bbb2b2;
+     --page-margin: var(--app-narrow-margin);
+     --page-background: var(--app-background);
+  }
+  
+  ion-searchbar {
+    --border-radius: 30px;
   }
 
 .filters-toolbar {
     --padding-start: var(--page-margin);
     --padding-end: var(--page-margin);
-    --padding-top: var(--page-margin);
-    // --padding-bottom: var(--page-margin);
-    // --border-style: 10px;
-  
+    // --padding-top: var(--page-margin);
+
     .searchbar-row {
       --ion-grid-column-padding: 0px;
   
-      // ion-searchbar.items-searchbar {
-      //   padding: 0px;
-      //   height:30px;
-      //   border-radius: 10px;
-      //   // override Ionic fixed height
-      //   // height: 100%;
-      //   // Learn more about CSS contain property here: https://termvader.github.io/css-contain/
-      //   // contain: content;
-      // }
+      .searchbar {
+        padding: 0px;
+        height:30px;
+        border-radius: 20px;
+        // override Ionic fixed height
+        // height: 100%;
+        // Learn more about CSS contain property here: https://termvader.github.io/css-contain/
+        //  contain: content;
+      }
   
       .call-to-action-col {
-        //padding-inline-start: var(--page-margin);
         max-width: fit-content;
         flex-shrink: 0;
         flex-grow: 0;
@@ -47,21 +46,7 @@
     }
 
   }
-
     
-  ion-content ion-card{
-    width: 100%;
-    padding-top: 0px;
-    margin-top: 0px;
-    margin-left: 0px;
-  }
-
-  ion-card ion-card-header{
-    padding-top: 0px;
-    margin-top: 0px;
-    padding-bottom: 0px;
-  }
-
 .listing-item {
   background-color: var(--page-background);
  }
@@ -77,9 +62,6 @@
   padding-right: 5px;
  }
 
- .badge {
-   
- }
  .text{
    display: inline-block;
    vertical-align: middle;
@@ -91,7 +73,7 @@
    margin-left: 10px;
    line-height: 5px;
    text-decoration: none;
-   letter-spacing: 1px;
+  //  letter-spacing: 1px;
  }
  .addedByDate {
   margin-left: 10px;
@@ -110,7 +92,6 @@
     vertical-align: middle;
   }
   .message {
-    // margin-top: 2px;
     font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
     font-weight: 400;
     font-size: 14px;
@@ -119,7 +100,6 @@
     -moz-osx-font-smoothing: auto;
     overflow: hidden; 
     text-overflow: ellipsis;
-    color:black;
 
     .reactions {
       margin-bottom: 0px;
@@ -127,31 +107,19 @@
     } 
     .tags-wrapper {
       padding-top: 5px;
-      // padding-bottom: calc(var(--page-margin) / 3);
      
       .tags {
         padding-right: 5px;
 
       .item-rating {
-        // Default background
         background-color: rgba(var(--page-color-rgb), .35);
-                // color: var(--ion-color-lightest);
-                // border-radius: var(--app-narrow-radius);
-                // padding-top: calc(var(--page-margin) / 1);
-                //padding-bottom: calc(var(--page-margin) / 3);
-                // padding-left: calc(var(--page-margin) / 2);
-                padding-right: 15px;
-                font-size: 12px;
-                font-weight: bold;
-                width: 100%;
-                display: block;
-                text-align: center;
-                &[ratingBase="0"] {
-                  color: var(--page-rating-1-color);
-                }
-                &[ratingBase="1"] {
-                  color: var(--page-rating-2-color);
-                }
+        padding-right: 15px;
+        font-size: 12px;
+        font-weight: bold;
+        width: 100%;
+        display: block;
+        text-align: center;
+        color: #aa6c39;
       }
       }
     }
