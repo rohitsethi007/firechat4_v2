@@ -22,6 +22,7 @@ import { Facebook } from '@ionic-native/facebook/ngx';
 import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { MediaCapture } from '@ionic-native/media-capture/ngx';
+import { ImagePicker } from '@ionic-native/image-picker/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
@@ -77,6 +78,7 @@ import { Chooser } from '@ionic-native/chooser/ngx';
     FileChooser,
     FirebaseX,
     Geolocation,
+    ImagePicker,
     Contacts,
     Chooser,
     Keyboard,

@@ -52,6 +52,7 @@ export class NewPostPage implements OnInit {
     public camera: Camera,
     public actionSheet: ActionSheetController,
   ) {
+    this.postMedia = [];
        this.postTags = [];
        this.groupId = this.route.snapshot.params.id;
        this.group = {name: ''}
