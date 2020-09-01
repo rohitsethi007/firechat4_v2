@@ -52,7 +52,21 @@ export class NewPostPage implements OnInit {
     public camera: Camera,
     public actionSheet: ActionSheetController,
   ) {
-    this.postTags = [];
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
+     this.postTags = [];
     this.groupId = this.route.snapshot.params.id;
     this.group = {name: ''}
     if (this.groupId === 'undefined') {
@@ -233,7 +247,8 @@ export class NewPostPage implements OnInit {
   removeMedia(media) {
     this.postMedia.splice();
     this.postMedia = this.postMedia.filter(x => x !== media);
-    this.dataProvider.deletePostPhoto(this.postId, media);
+    console.log('this.postMedia:', this.postMedia);
+    this.imageProvider.deletePostPhoto(media);
   }
 
 }

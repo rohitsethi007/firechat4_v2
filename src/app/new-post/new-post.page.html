@@ -89,19 +89,22 @@
 </div>
 </ion-content>
 <ion-footer *ngIf="step==2">
-  <ion-toolbar> <div>
-    <ion-item *ngIf="postMedia && postMedia.length > 0" *ngFor="let media of postMedia">
+  <ion-toolbar>
+    <ion-row lines="none" class="uploads item-text-wrap" *ngIf="postMedia && postMedia.length > 0">
+      <div class="img-wrap" *ngFor="let media of postMedia">
           <ion-thumbnail slot="start">
-            <ion-img [src]=media></ion-img>
+            <span class="close" (click)="removeMedia(media)">&times;</span>
+            <ion-img [src]="media">
+              <!-- <ion-buttons class=""> 
+                <ion-button (click)="removeMedia()">
+                  <ion-icon size="small" name="close-circle-outline"></ion-icon>
+                </ion-button>
+              </ion-buttons> -->
+            </ion-img>
           </ion-thumbnail>
-          <ion-buttons>
-            <ion-button (click)="removeMedia()">
-              <ion-icon size="small" name="close-circle-outline"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-    </ion-item>
-    </div>
-    <ion-item>
+        </div>
+    </ion-row>
+    <ion-item lines="none">
       <ion-button class="ion-text-capitalize" fill="clear" (click)="attach()">
         <ion-icon class="ion-padding-end" size="large" name="camera-outline"></ion-icon>Add photo or video
       </ion-button>

@@ -269,7 +269,7 @@ export class PostPage implements OnInit {
   removeMedia(media) {
     this.postMedia.splice();
     this.postMedia = this.postMedia.filter(x => x !== media);
-    this.dataProvider.deletePostPhoto(this.postId, media);
+    this.dataProvider.deletePostReactionPhoto(this.postId, media);
   }
 
 viewUser(userId) {

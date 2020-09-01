@@ -279,6 +279,12 @@ export class ImageService {
     });
   }
 
+  deletePostPhoto(url) {
+    var fileName = url.substring(url.lastIndexOf('%2F') + 3, url.lastIndexOf('?'));
+    firebase.storage().ref().child('images/posts/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
+ 
+  }
+
   uploadPostReactionPhoto(postId, userId, sourceType): Promise<any> {
     return new Promise(resolve => {
       this.photoMessageOptions.sourceType = sourceType;
@@ -341,7 +347,7 @@ export class ImageService {
     });
   }
 
-  deletePostPhoto(postId,url){
+  deletePostReactionPhoto(postId,url){
     var fileName = url.substring(url.lastIndexOf('%2F') + 3, url.lastIndexOf('?'));
     firebase.storage().ref().child('images/' + postId + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
   }

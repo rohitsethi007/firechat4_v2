@@ -71,3 +71,30 @@
   
 }
 }
+
+.uploads {
+  margin: 5px;
+.img-wrap {
+  position: relative;
+  display: inline-block;
+  font-size: 0;
+  padding: 5px;
+}
+.img-wrap .close {
+  position: absolute;
+  top: -2px;
+  right: -7px;
+  z-index: 100;
+  background-color: #FFF;
+  padding: 5px 2px 2px;
+  color: #000;
+  cursor: pointer;
+  text-align: center;
+  font-size: 22px;
+  line-height: 10px;
+  border-radius: 50%;
+}
+.img-wrap:hover .close {
+  opacity: 1;
+}
+}
