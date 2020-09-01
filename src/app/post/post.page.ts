@@ -245,27 +245,18 @@ export class PostPage implements OnInit {
       buttons: [{
         text: 'Camera',
         handler: () => {
-          this.imageProvider.uploadPostPhoto(this.postId, this.camera.PictureSourceType.CAMERA).then((url) => {
+          this.imageProvider.uploadPostReactionPhoto(this.postId, this.loggedInUserId, this.camera.PictureSourceType.CAMERA).then((url) => {
             this.postMedia.push(url);
           });
         }
       }, {
         text: 'Photo Library',
         handler: () => {
-          this.imageProvider.uploadPostPhoto(this.postId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
+          this.imageProvider.uploadPostReactionPhoto(this.postId, this.loggedInUserId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
             this.postMedia.push(url);
           });
         }
-      },
-      {
-        text: 'Video',
-        handler: () => {
-          this.imageProvider.uploadPostVideo(this.postId).then(url => {
-            this.postMedia(url);
-          });
-        }
-      }
-        ,  {
+      },  {
         text: 'cancel',
         role: 'cancel',
         handler: () => {

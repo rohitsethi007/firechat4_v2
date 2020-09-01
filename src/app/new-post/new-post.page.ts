@@ -197,14 +197,14 @@ export class NewPostPage implements OnInit {
       buttons: [{
         text: 'Camera',
         handler: () => {
-          this.imageProvider.uploadPostPhoto(this.postId, this.camera.PictureSourceType.CAMERA).then((url) => {
+          this.imageProvider.uploadPostPhoto(this.camera.PictureSourceType.CAMERA).then((url) => {
             this.postMedia.push(url);
           });
         }
       }, {
         text: 'Photo Library',
         handler: () => {
-          this.imageProvider.uploadPostPhoto(this.postId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
+          this.imageProvider.uploadPostPhoto(this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
             this.postMedia.push(url);
           });
         }
@@ -212,7 +212,7 @@ export class NewPostPage implements OnInit {
       {
         text: 'Video',
         handler: () => {
-          this.imageProvider.uploadPostVideo(this.postId).then(url => {
+          this.imageProvider.uploadPostVideo().then(url => {
             this.postMedia(url);
           });
         }
