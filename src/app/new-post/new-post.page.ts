@@ -52,30 +52,16 @@ export class NewPostPage implements OnInit {
     public camera: Camera,
     public actionSheet: ActionSheetController,
   ) {
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-    this.postMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FgyAa6Lqb.jpg?alt=media&token=5922d8ec-9358-4946-92ee-a7823c40eedd');
-     this.postTags = [];
-    this.groupId = this.route.snapshot.params.id;
-    this.group = {name: ''}
-    if (this.groupId === 'undefined') {
+       this.postTags = [];
+       this.groupId = this.route.snapshot.params.id;
+       this.group = {name: ''}
+       if (this.groupId === 'undefined') {
       this.step = 1;
     } else {
       this.step = 2;
     }
 
-    this.postForm = new FormGroup(
+       this.postForm = new FormGroup(
       {
         title: new FormControl('', Validators.compose([
             // Validators.minLength(5),
@@ -219,8 +205,8 @@ export class NewPostPage implements OnInit {
       }, {
         text: 'Photo Library',
         handler: () => {
-          this.imageProvider.uploadPostPhoto(this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
-            this.postMedia.push(url);
+          this.imageProvider.getImages().then((url) => {
+            this.postMedia = this.postMedia.concat(url);
             console.log(url);
           });
         }
