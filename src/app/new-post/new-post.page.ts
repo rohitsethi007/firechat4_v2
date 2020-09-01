@@ -14,7 +14,7 @@ import { Camera } from '@ionic-native/camera/ngx';
   styleUrls: ['./new-post.page.scss'],
 })
 export class NewPostPage implements OnInit {
-  @ViewChild('slideWithNav', { static: false }) slideWithNav: IonSlides;
+  // @ViewChild('slideWithNav', { static: false }) slideWithNav: IonSlides;
 
   private postForm: FormGroup;
   private post: any;
