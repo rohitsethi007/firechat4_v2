@@ -261,7 +261,7 @@ export class ImageService {
           'contentType': imgBlob.type
         };
         // Generate filename and upload to Firebase Storage.
-        let upRef = firebase.storage().ref().child('images/posts' + '/' + this.generateFilename());
+        let upRef = firebase.storage().ref().child('images/posts/' + this.generateFilename());
         upRef.put(imgBlob, metadata).then((snapshot) => {
           // URL of the uploaded image!
           upRef.getDownloadURL().then(url => {
