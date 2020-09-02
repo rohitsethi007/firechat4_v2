@@ -545,10 +545,10 @@ export class ImageService {
       // 800 and height 0 the image will be 800 pixels wide if the source
       // is at least that wide.
       width: 200,
-      //height: 200,
+      height: 100,
 
       // quality of resized image, defaults to 100
-      quality: 25,
+      quality: 100,
 
       // output type, defaults to FILE_URIs.
       // available options are 

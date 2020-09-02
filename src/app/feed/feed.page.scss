@@ -101,6 +101,10 @@
     overflow: hidden; 
     text-overflow: ellipsis;
 
+    .slider {
+      margin-bottom: 5px;
+    }
+
     .reactions {
       margin-bottom: 0px;
       margin-left: -10px;
@@ -123,4 +127,8 @@
       }
       }
     }
+  }
+
+  ion-slides {
+    height: auto;
   }
