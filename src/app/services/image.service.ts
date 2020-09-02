@@ -208,12 +208,14 @@ export class ImageService {
   //Delete the image given the url.
   deleteImageFile(path) {
     var fileName = path.substring(path.lastIndexOf('%2F') + 3, path.lastIndexOf('?'));
+    // tslint:disable-next-line: max-line-length
     firebase.storage().ref().child('images/' + firebase.auth().currentUser.uid + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
   }
 
   //Delete the user.img given the user.
   deleteUserImageFile(user) {
     var fileName = user.img.substring(user.img.lastIndexOf('%2F') + 3, user.img.lastIndexOf('?'));
+    // tslint:disable-next-line: max-line-length
     firebase.storage().ref().child('images/' + user.userId + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
   }
 
@@ -254,33 +256,28 @@ export class ImageService {
     });
   }
 
-  uploadPostPhoto(sourceType): Promise<any> {
+  uploadPostPhoto(postMedia): Promise<any> {
     return new Promise(resolve => {
-      this.photoMessageOptions.sourceType = sourceType;
-      this.loadingProvider.show();
-      // Get picture from camera or gallery.
-      this.camera.getPicture(this.photoMessageOptions).then((imageData) => {
+      for (let i = 0; i < postMedia.length; i++) {
         // Process the returned imageURI.
-        let imgBlob = this.imgURItoBlob("data:image/jpeg;base64," + imageData);
+        let imgBlob = this.imgURItoBlob("data:image/jpeg;base64," + postMedia[i]);
         let metadata = {
           'contentType': imgBlob.type
         };
+
         // Generate filename and upload to Firebase Storage.
         let upRef = firebase.storage().ref().child('images/posts/' + this.generateFilename());
         upRef.put(imgBlob, metadata).then((snapshot) => {
           // URL of the uploaded image!
           upRef.getDownloadURL().then(url => {
-            this.loadingProvider.hide();
-            resolve(url);
-          })
+            postMedia[i] = url;
+          });
 
         }).catch((error) => {
-          this.loadingProvider.hide();
-          this.loadingProvider.showToast("Something went wrong");
+          console.log('Error occured while uploading images:', error);
         });
-      }).catch((error) => {
-        this.loadingProvider.hide();
-      });
+      }
+      resolve(postMedia);
     });
   }
 
@@ -531,7 +528,7 @@ export class ImageService {
     });
   }
 
-  getImages() : Promise<any>{
+  getImages(): Promise<any>{
     return new Promise(resolve => {
     this.options = {
       // Android only. Max images to be selected, defaults to 15. If this is set to 1, upon

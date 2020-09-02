@@ -3,7 +3,8 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Storage } from '@ionic/storage';
 // import * as firebase from 'firebase';
-import * as firebase from 'firebase/app'
+import * as firebase from 'firebase/app';
+import { ImageService } from './image.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class DataService {
     private afAuth: AngularFireAuth,
     private storage: Storage,
     private firestore: AngularFirestore,
+    public imageProvider: ImageService
   ) { 
   //   if (this.afAuth.auth.currentUser === null ) { return; }
   //   this.firestore.doc('accounts/' + this.afAuth.auth.currentUser.uid).snapshotChanges().subscribe((value: any) => {
@@ -190,12 +192,14 @@ export class DataService {
   }
 
   addPost(post) {
-    return this.firestore.collection('posts').add(post);
+    this.imageProvider.uploadPostPhoto(post.postMedia).then((data) => {
+      post.postMedia = data;
+      return this.firestore.collection('posts').add(post);
+    });
   }
 
   addEvent(event) {
     return this.firestore.collection('events').add(event);
-    // return this.afdb.list('events').push(event);
   }
 
   updateResourceReviews(resourceKey, review) {
