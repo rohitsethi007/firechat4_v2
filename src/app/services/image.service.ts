@@ -273,7 +273,7 @@ export class ImageService {
           upRef.getDownloadURL().then(url => {
             postMediaUrls.push(url);
             console.log('Rohit downloaded url:', url);
-          });
+          }).catch((err) => {console.log('Error occurred while downloading the url of images.')});
         }).catch((error) => {
           console.log('Error occured while uploading images:', error);
         });
