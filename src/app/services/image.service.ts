@@ -458,7 +458,6 @@ export class ImageService {
     });
   }
 
-  
   // Upload group photo message and return a promise as url.
   uploadGroupPhotoResource(groupId, sourceType): Promise<any> {
     return new Promise(resolve => {
@@ -544,14 +543,13 @@ export class ImageService {
       // will be at most 800 pixels wide and 800 pixels tall.  If the width is
       // 800 and height 0 the image will be 800 pixels wide if the source
       // is at least that wide.
-      width: 200,
-      height: 100,
+      width: 800,
 
       // quality of resized image, defaults to 100
       quality: 100,
 
       // output type, defaults to FILE_URIs.
-      // available options are 
+      // available options are
       // window.imagePicker.OutputType.FILE_URI (0) or 
       // window.imagePicker.OutputType.BASE64_STRING (1)
       outputType: 1
