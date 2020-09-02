@@ -256,31 +256,39 @@ export class ImageService {
     });
   }
 
-  uploadPostPhoto(postMedia): Promise<any> {
-    let postMediaUrls: any = [];
+  uploadPostPhotos(postMedia): Promise<any> {
+    let promises = [];
     return new Promise(resolve => {
       for (let i = 0; i < postMedia.length; i++) {
-        // Process the returned imageURI.
-        let imgBlob = this.imgURItoBlob(postMedia[i]);
-        let metadata = {
-          'contentType': imgBlob.type
-        };
-
-        // Generate filename and upload to Firebase Storage.
-        let upRef = firebase.storage().ref().child('images/posts/' + this.generateFilename());
-        upRef.put(imgBlob, metadata).then((snapshot) => {
-          // URL of the uploaded image!
-          upRef.getDownloadURL().then(url => {
-            postMediaUrls.push(url);
-            console.log('Rohit downloaded url:', url);
-          }).catch((err) => {console.log('Error occurred while downloading the url of images.')});
-        }).catch((error) => {
-          console.log('Error occured while uploading images:', error);
-        });
+          promises.push(this.getDownloadUrlImage(postMedia[i]));
       }
-      resolve(postMediaUrls);
+      Promise.all(promises).then((results) => {
+        resolve(results);
     });
+  });
   }
+
+  getDownloadUrlImage(imageBase64: any): Promise<any> {
+    return new Promise(resolve => {
+      // Process the returned imageURI.
+      let imgBlob = this.imgURItoBlob(imageBase64);
+      let metadata = {
+        'contentType': imgBlob.type
+      };
+
+      // Generate filename and upload to Firebase Storage.
+      let upRef = firebase.storage().ref().child('images/posts/' + this.generateFilename());
+      upRef.put(imgBlob, metadata).then((snapshot) => {
+        // URL of the uploaded image!
+        upRef.getDownloadURL().then(url => {
+          resolve(url);
+        }).catch((err) => {console.log('Error occurred while downloading the url of images.')});
+      }).catch((error) => {
+        console.log('Error occured while uploading images:', error);
+      });
+  });
+}
+
 
   deletePostPhoto(url) {
     var fileName = url.substring(url.lastIndexOf('%2F') + 3, url.lastIndexOf('?'));
