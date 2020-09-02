@@ -193,8 +193,9 @@ export class DataService {
 
   addPost(post): Promise<any> {
     return new Promise(resolve => {
-    this.imageProvider.uploadPostPhoto(post.postMedia).then((data) => {
-      post.postMedia = data;
+    this.imageProvider.uploadPostPhoto(post.postMedia).then((postMediaUrls) => {
+      post.postMedia = [];
+      post.postMedia = postMediaUrls;
       return resolve(this.firestore.collection('posts').add(post));
       });
     });

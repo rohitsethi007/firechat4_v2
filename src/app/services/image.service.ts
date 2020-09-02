@@ -257,6 +257,7 @@ export class ImageService {
   }
 
   uploadPostPhoto(postMedia): Promise<any> {
+    let postMediaUrls: any = [];
     return new Promise(resolve => {
       for (let i = 0; i < postMedia.length; i++) {
         // Process the returned imageURI.
@@ -270,14 +271,14 @@ export class ImageService {
         upRef.put(imgBlob, metadata).then((snapshot) => {
           // URL of the uploaded image!
           upRef.getDownloadURL().then(url => {
-            postMedia[i] = url;
+            postMediaUrls.push(url);
+            console.log('Rohit downloaded url:', url);
           });
-
         }).catch((error) => {
           console.log('Error occured while uploading images:', error);
         });
       }
-      resolve(postMedia);
+      resolve(postMediaUrls);
     });
   }
 
