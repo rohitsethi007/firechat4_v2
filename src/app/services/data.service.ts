@@ -191,10 +191,12 @@ export class DataService {
     // return this.afdb.list('resources').push(resource);
   }
 
-  addPost(post) {
+  addPost(post): Promise<any> {
+    return new Promise(resolve => {
     this.imageProvider.uploadPostPhoto(post.postMedia).then((data) => {
       post.postMedia = data;
-      return this.firestore.collection('posts').add(post);
+      return resolve(this.firestore.collection('posts').add(post));
+      });
     });
   }
 
