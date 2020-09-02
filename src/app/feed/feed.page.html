@@ -53,8 +53,7 @@
         <ion-card-content class="message" *ngIf="item.type === 'general'">
           <div (click)="viewPost(item)">
             <div>
-              <ion-slides class="slider" pager="true" [options]="slideOptsOne" #slideWithNav
-              (ionSlideDidChange)="SlideDidChange(sliderOne,slideWithNav)">
+              <ion-slides class="slider" pager="true" [options]="slideOptsOne" #slideWithNav>
               <ion-slide *ngFor="let s of item.postMedia">
                 <img src="{{s}}">
               </ion-slide>
