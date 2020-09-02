@@ -256,6 +256,37 @@ export class ImageService {
     });
   }
 
+    // Upload photo message and return the url as promise.
+    uploadPostPhoto(sourceType): Promise<any> {
+      return new Promise(resolve => {
+        this.photoMessageOptions.sourceType = sourceType;
+        this.loadingProvider.show();
+        // Get picture from camera or gallery.
+        this.camera.getPicture(this.photoMessageOptions).then((imageData) => {
+          // Process the returned imageURI.
+          let imgBlob = this.imgURItoBlob("data:image/jpeg;base64," + imageData);
+          let metadata = {
+            'contentType': imgBlob.type
+          };
+          // Generate filename and upload to Firebase Storage.
+          let upRef = firebase.storage().ref().child('images/posts/' + this.generateFilename());
+          upRef.put(imgBlob, metadata).then((snapshot) => {
+            // URL of the uploaded image!
+            upRef.getDownloadURL().then(url => {
+              this.loadingProvider.hide();
+              resolve(url);
+            })
+  
+          }).catch((error) => {
+            this.loadingProvider.hide();
+            this.loadingProvider.showToast("Something went wrong");
+          });
+        }).catch((error) => {
+          this.loadingProvider.hide();
+        });
+      });
+    }
+
   uploadPostPhotos(postMedia): Promise<any> {
     let promises = [];
     return new Promise(resolve => {
