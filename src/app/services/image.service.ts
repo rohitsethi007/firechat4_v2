@@ -260,7 +260,7 @@ export class ImageService {
     return new Promise(resolve => {
       for (let i = 0; i < postMedia.length; i++) {
         // Process the returned imageURI.
-        let imgBlob = this.imgURItoBlob("data:image/jpeg;base64," + postMedia[i]);
+        let imgBlob = this.imgURItoBlob(postMedia[i]);
         let metadata = {
           'contentType': imgBlob.type
         };
