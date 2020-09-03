@@ -573,7 +573,7 @@ export class ImageService {
     this.options = {
       // Android only. Max images to be selected, defaults to 15. If this is set to 1, upon
       // selection of a single image, the plugin will return it.
-      //maximumImagesCount: 3,
+      maximumImagesCount: 10,
 
       // max width and height to allow the images to be.  Will keep aspect
       // ratio no matter what.  So if both are 800, the returned image
@@ -582,7 +582,7 @@ export class ImageService {
       // is at least that wide.
 
       // quality of resized image, defaults to 100
-      quality: 100,
+      quality: 80,
 
       // output type, defaults to FILE_URIs.
       // available options are
