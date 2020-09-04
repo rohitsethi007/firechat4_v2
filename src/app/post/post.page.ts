@@ -49,6 +49,7 @@ export class PostPage implements OnInit {
     public geolocation: Geolocation,
     public alertCtrl: AlertController
   ) {
+   // this.reviewMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FkjD2RUnc.jpg?alt=media&token=d0073c88-58cf-4fc0-9e5c-c6a491bb2673');
     this.post = {showSmiley: false, showHug: false, addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now(), reviewMedia: []};
     this.getPostDetails();
   }

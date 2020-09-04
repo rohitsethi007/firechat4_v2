@@ -110,7 +110,8 @@
               </span>
                   <br/>
                   <br/>
-                  <ion-img class="messageMedia" [src]="r.reviewMedia"></ion-img>
+                  <div *ngIf="r.reviewMedia" class="bgSizeContain" 
+                  [ngStyle]="{'background-image':'url('+r.reviewMedia+')'}"></div>
                   <div class="messageReview" [innerHTML]="r.review"></div>
             </ion-col>
       </ion-row>
@@ -123,28 +124,16 @@
 </ion-content>
 <ion-footer>
   <ion-toolbar>
-    <ion-row lines="none" class="uploads item-text-wrap" *ngIf="postMedia && postMedia.length > 0">
-      <div class="img-wrap" *ngFor="let media of postMedia">
+    <ion-row lines="none" class="uploads item-text-wrap" *ngIf="reviewMedia && reviewMedia.length > 0">
+      <div class="img-wrap" *ngFor="let media of reviewMedia">
           <ion-thumbnail slot="start">
             <span class="close" (click)="removeMedia(media)">&times;</span>
             <ion-img [src]="media"></ion-img>
           </ion-thumbnail>
         </div>
     </ion-row>
-    <ion-item *ngIf="reviewMedia && reviewMedia.length > 0">
-      <div >
-        <ion-col *ngFor="let media of reviewMedia">
-          <img class="postMedia" src="{{media}}">
-          <ion-buttons>
-            <ion-button [disabled]="postMedia.length > 1" (click)="removeMedia()">
-              <ion-icon size="small" name="close-circle-outline"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-col>
-      </div>
-    </ion-item>
     <ion-item>
-      <ion-button fill="clear" (click)="attach()">
+      <ion-button fill="clear" (click)="attach()" [disabled]="reviewMedia.length >= 1">
         <ion-icon size="large" name="camera-outline"></ion-icon>
       </ion-button>
       <ion-textarea class="comment" rows="0" placeholder="Type your message" [(ngModel)]="message"></ion-textarea>
