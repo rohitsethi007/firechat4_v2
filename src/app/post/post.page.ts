@@ -24,10 +24,12 @@ export class PostPage implements OnInit {
   private title: any;
   private postReviews: any;
   private message: any;
-  private postMedia: any = [];
-  notifications: any = [];
+  private notifications: any = [];
   private loggedInUserId: any;
-  slideOptsOne = {
+  private reviewMedia: any = [];
+  private uploadingImage: boolean;
+
+  private slideOptsOne = {
     initialSlide: 0,
     slidesPerView: 1,
     autoplay: false
@@ -47,7 +49,7 @@ export class PostPage implements OnInit {
     public geolocation: Geolocation,
     public alertCtrl: AlertController
   ) {
-    this.post = {showSmiley: false, showHug: false, addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now(), postMedia: []};
+    this.post = {showSmiley: false, showHug: false, addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now(), reviewMedia: []};
     this.getPostDetails();
   }
 
@@ -235,7 +237,8 @@ export class PostPage implements OnInit {
               addedByUsername: account.data().username,
               addedByImg: account.data().img
             },
-           review: this.message
+           review: this.message,
+           reviewMedia: this.reviewMedia
          };
 
          this.dataProvider.updatePostReviews(this.postId, review);
@@ -249,15 +252,19 @@ export class PostPage implements OnInit {
       buttons: [{
         text: 'Camera',
         handler: () => {
+          this.uploadingImage = true;
           this.imageProvider.uploadPostReactionPhoto(this.postId, this.loggedInUserId, this.camera.PictureSourceType.CAMERA).then((url) => {
-            this.postMedia.push(url);
+            this.reviewMedia.push(url);
+            this.uploadingImage = false;
           });
         }
       }, {
         text: 'Photo Library',
         handler: () => {
+          this.uploadingImage = true;
           this.imageProvider.uploadPostReactionPhoto(this.postId, this.loggedInUserId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
-            this.postMedia.push(url);
+            this.reviewMedia.push(url);
+            this.uploadingImage = false;
           });
         }
       },  {
@@ -271,9 +278,9 @@ export class PostPage implements OnInit {
   }
 
   removeMedia(media) {
-    this.postMedia.splice();
-    this.postMedia = this.postMedia.filter(x => x !== media);
-    this.dataProvider.deletePostReactionPhoto(this.postId, media);
+    this.reviewMedia.splice();
+    this.reviewMedia = this.reviewMedia.filter(x => x !== media);
+    this.imageProvider.deletePostPhoto(media);
   }
 
 viewUser(userId) {
