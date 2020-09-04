@@ -158,7 +158,7 @@ export class DataService {
       this.firestore.collection('posts').doc(pollKey).update({
         totalPollCount : increment
       });
-    });;
+    });
   }
 
   updatePollComments(pollKey, comments) {
@@ -167,15 +167,13 @@ export class DataService {
     });
   }
 
-  addPoll(poll){
+  addPoll(poll) {
     return this.firestore.collection('polls').add(poll);
-    // return this.afdb.list('polls').push(poll);
   }
 
     // Get all groups.
   getGroups() {
     return this.firestore.collection('groups');
-      // return this.afdb.list('/groups', ref => ref.orderByChild('name'));
   }
 
   addReports(userId, post) {
@@ -188,14 +186,16 @@ export class DataService {
 
   addResource(resource) {
     return this.firestore.collection('resources').add(resource);
-    // return this.afdb.list('resources').push(resource);
   }
 
   addPost(post): Promise<any> {
     return new Promise(resolve => {
     this.imageProvider.uploadPostPhotos(post.postMedia).then((postMediaUrls) => {
       post.postMedia = [];
-      post.postMedia = postMediaUrls;
+
+      if (postMediaUrls) {
+        post.postMedia = postMediaUrls;
+      }
       return resolve(this.firestore.collection('posts').add(post));
       });
     });

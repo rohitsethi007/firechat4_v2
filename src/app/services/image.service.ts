@@ -288,15 +288,20 @@ export class ImageService {
     }
 
   uploadPostPhotos(postMedia): Promise<any> {
-    let promises = [];
-    return new Promise(resolve => {
-      for (let i = 0; i < postMedia.length; i++) {
-          promises.push(this.getDownloadUrlImage(postMedia[i]));
-      }
-      Promise.all(promises).then((results) => {
-        resolve(results);
+      let promises = [];
+      return new Promise(resolve => {
+        if (postMedia && postMedia.length > 0) {
+        // tslint:disable-next-line: prefer-for-of
+        for (let i = 0; i < postMedia.length; i++) {
+            promises.push(this.getDownloadUrlImage(postMedia[i]));
+        }
+        Promise.all(promises).then((results) => {
+          resolve(results);
+      });
+    } else {
+      resolve(postMedia);
+    }
     });
-  });
   }
 
   getDownloadUrlImage(imageBase64: any): Promise<any> {

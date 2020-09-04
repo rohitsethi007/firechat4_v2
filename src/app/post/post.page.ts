@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, AlertController, ModalController } from '@ionic/angular';
+import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { DataService } from '../services/data.service';
 import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
@@ -11,7 +12,9 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { ImagemodalPage } from '../imagemodal/imagemodal.page';
-import * as firebase from 'firebase/app'
+import { ChartDataSets } from 'chart.js';
+import { Color, Label } from 'ng2-charts';
+import * as firebase from 'firebase/app';
 
 @Component({
   selector: 'app-post',
@@ -28,6 +31,51 @@ export class PostPage implements OnInit {
   private loggedInUserId: any;
   private reviewMedia: any = [];
   private uploadingImage: boolean;
+
+  // Poll related fields
+  private poll: any;
+  private pollId: any;
+  private pollOptionForm: FormGroup;
+  private optionsArray: string[];
+  private selectedOption: any;
+  private voted: any;
+  private pollClosed: any;
+  private chartType = 'pie';
+   // Data
+   chartData: ChartDataSets[] = [{ data: [], label: 'Poll Results', backgroundColor: [
+    "#f43004",
+    "#decf3f",
+    "#FFA500",
+    "#9b59b6",
+  ],
+ }];
+   chartLabels: Label[];
+
+   // Options
+   chartOptions =   {
+    legend: {
+      display: true
+    },
+    legendCallback: function(chart) {
+      var text = [];
+      text.push('<ul class="0-legend">');
+      var ds = this.chartData.datasets[0];
+      var sum = ds.data.reduce(function add(a, b) {
+        return a + b;
+      }, 0);
+      for (var i = 0; i < ds.data.length; i++) {
+        text.push('<li>');
+        var perc = Math.round(100 * ds.data[i] / sum);
+        // tslint:disable-next-line: max-line-length
+        text.push('<span style="background-color:' + ds.backgroundColor[i] + '">' + '</span>' + this.chartData.labels[i] + ' (' + ds.data[i] + ') (' + perc + '%)');
+        text.push('</li>');
+      }
+      text.push('</ul>');
+      return text.join('');
+    }
+  };
+
+
 
   private slideOptsOne = {
     initialSlide: 0,
@@ -51,6 +99,12 @@ export class PostPage implements OnInit {
   ) {
    // this.reviewMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FkjD2RUnc.jpg?alt=media&token=d0073c88-58cf-4fc0-9e5c-c6a491bb2673');
     this.post = {showSmiley: false, showHug: false, addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now(), reviewMedia: []};
+    this.pollOptionForm = new FormGroup({
+      selected_poll_option: new FormControl('', Validators.compose([
+        Validators.required
+      ]))
+    });
+
     this.getPostDetails();
   }
 
@@ -110,6 +164,30 @@ export class PostPage implements OnInit {
               p.showHug = false;
             }
 
+          // Check for Checkin
+          let foundCheckin = false;
+          if (p.reactions !== undefined) {
+              foundCheckin = p.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                          && el.reactionType === 'Checkin');
+            }
+          if (foundCheckin) {
+              p.showCheckin = true;
+            } else {
+              p.showCheckin = false;
+            }
+
+          // Check for Bookmark
+          let foundBookmark = false;
+          if (p.reactions !== undefined) {
+              foundBookmark = p.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                          && el.reactionType === 'Bookmark');
+            }
+          if (foundBookmark) {
+              p.showBookmark = true;
+            } else {
+              p.showBookmark = false;
+            }
+
           p.totalReactionCount = totalReactionCount;
         }
 
@@ -141,6 +219,92 @@ export class PostPage implements OnInit {
 
         });
 
+        // poll related data
+        if (p.type === 'poll') {
+          console.log('inside poll');
+          let pollOption0Votes;
+          let pollOption1Votes;
+          let pollOption2Votes;
+          let pollOption3Votes;
+
+          let pollOption0Name: string;
+          let pollOption1Name: string;
+          let pollOption2Name: string;
+          let pollOption3Name: string;
+
+          pollOption0Name = p.data.pollOptions[0].name;
+          pollOption1Name = p.data.pollOptions[1].name;
+
+          if (p.data.pollOptions[2] != null) {
+            pollOption2Name = p.data.pollOptions[2].name;
+          }
+          if (p.data.pollOptions[3] != null) {
+            pollOption3Name = p.data.pollOptions[3].name;
+          }
+
+          if (p.data.pollOptions[0].members == null) {
+            pollOption0Votes = 0;
+          } else {
+            pollOption0Votes = p.data.pollOptions[0].members.length;
+          }
+
+          if (p.data.pollOptions[1].members == null) {
+            pollOption1Votes = 0;
+          } else {
+            pollOption1Votes = p.data.pollOptions[1].members.length;
+          }
+
+          if (p.data.pollOptions[2] == null || p.data.pollOptions[2].members == null) {
+            pollOption2Votes = 0;
+          } else {
+            pollOption2Votes = p.data.pollOptions[2].members.length;
+          }
+
+          if (p.data.pollOptions[3] == null || p.data.pollOptions[3].members == null) {
+            pollOption3Votes = 0;
+          } else {
+            pollOption3Votes = p.data.pollOptions[3].members.length;
+          }
+
+        // this.optionsArray = [pollOption0Name, pollOption1Name, pollOption2Name, pollOption3Name];
+        // this.chartData = [pollOption0Votes, pollOption1Votes, pollOption3Votes, pollOption3Votes];
+          this.chartLabels = [];
+          this.chartData[0].data = [];
+
+          this.chartData[0].data.push(pollOption0Votes);
+          this.chartData[0].data.push(pollOption1Votes);
+          this.chartLabels.push(pollOption0Name);
+          this.chartLabels.push(pollOption1Name);
+
+          if (p.data.pollOptions[2] != null) {
+            this.chartData[0].data.push(pollOption2Votes);
+            this.chartLabels.push(pollOption2Name);
+          }
+          if (p.data.pollOptions[3] != null) {
+            this.chartData[0].data.push(pollOption3Votes);
+            this.chartLabels.push(pollOption3Name);
+          }
+
+          this.selectedOption = '';
+          this.voted = false;
+
+          const today = new Date();
+          const de = p.data.dateEnding.toDate();
+          if (de < today) {
+            this.pollClosed = true;
+          } else {
+            this.pollClosed = false;
+          }
+          p.data.pollOptions.forEach(pollOption => {
+            if (pollOption.members != null) {
+              pollOption.members.forEach(member => {
+                if (member === this.dataProvider.getCurrentUserId()) {
+                  this.voted = true;
+                }
+              });
+            }
+          });
+        }
         this.post = p;
       }
       this.loadingProvider.hide();
@@ -209,6 +373,68 @@ export class PostPage implements OnInit {
     }
   }
 
+  submitReactionCheckin() {
+    const reaction = this.post.reactions.find(
+      el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+      && el.reactionType === 'Checkin');
+    if (reaction === undefined) {
+      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
+        if (account) {
+          const currentUserName = account.data().username;
+          let reaction = {
+            key: '',
+            dateCreated: new Date(),
+            addedByUser: {
+                          addedByKey: this.dataProvider.getCurrentUserId(),
+                          addedByUsername: account.data().username,
+                          addedByImg: account.data().img
+                        },
+            reactionType: 'Checkin'
+          };
+
+          this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+            this.post.showCheckin = true;
+          });
+
+      }
+  });
+    } else {
+      this.post.showCheckin = false;
+      this.dataProvider.removePostReaction(this.post.key, reaction.key);
+    }
+  }
+
+  submitReactionBookmark() {
+    const reaction = this.post.reactions.find(
+      el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+      && el.reactionType === 'Bookmark');
+    if (reaction === undefined) {
+      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
+        if (account) {
+          const currentUserName = account.data().username;
+          let reaction = {
+            key: '',
+            dateCreated: new Date(),
+            addedByUser: {
+                          addedByKey: this.dataProvider.getCurrentUserId(),
+                          addedByUsername: account.data().username,
+                          addedByImg: account.data().img
+                        },
+            reactionType: 'Bookmark'
+          };
+
+          this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+            this.post.showBookmark = true;
+          });
+
+      }
+  });
+    } else {
+      this.post.showBookmark = false;
+      this.dataProvider.removePostReaction(this.post.key, reaction.key);
+    }
+  }
+
   async showReactionsList() {
     if (this.post.totalReactionCount === 0) {
       return;
@@ -244,6 +470,7 @@ export class PostPage implements OnInit {
 
          this.dataProvider.updatePostReviews(this.postId, review);
          this.message = '';
+         this.reviewMedia = [];
         }});
   }
 
@@ -305,6 +532,7 @@ viewGroup(groupId) {
       buttons: this.createPostOptionButtons(post)
     }).then(r => r.present());
   }
+
   followPost(post) {
     if (!this.notifications) {
       this.notifications = [post.key];
@@ -414,5 +642,16 @@ viewGroup(groupId) {
     buttons.push(reportButton);
     buttons.push(cancelButton);
     return buttons;
+  }
+
+  vote() {
+    const pollOptionIndex = this.pollOptionForm.value["selected_poll_option"];
+    console.log('pollOptionIndex', pollOptionIndex);
+    const members = [];
+    members.push(this.dataProvider.getCurrentUserId());
+    this.post.data.pollOptions[pollOptionIndex].members = members;
+    this.voted = true;
+    this.dataProvider.updatePollMembers(this.postId, this.post.data);
+    this.ngOnInit();
   }
 }

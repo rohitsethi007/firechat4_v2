@@ -85,7 +85,7 @@ export class PollPage implements OnInit {
     this.dataProvider.getPollDetails(this.pollId).snapshotChanges().subscribe((p: any) => {
       if (p) {
         console.log('p:', p);
-        let poll = p.payload.data();;
+        let poll = p.payload.data();
         poll.reactions = [];
         poll.key = p.key;
         this.title = p.payload.data().description;

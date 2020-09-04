@@ -402,15 +402,15 @@ export class FeedPage implements OnInit {
   }
 
   viewEvent(post) {
-    this.router.navigateByUrl('event/' + post.key);
+    this.router.navigateByUrl('post/' + post.key);
   }
 
   viewPoll(post) {
-    this.router.navigateByUrl('poll/' + post.key);
+    this.router.navigateByUrl('post/' + post.key);
   }
   
   viewResource(post) {
-    this.router.navigateByUrl('resource/' + post.key);
+    this.router.navigateByUrl('post/' + post.key);
   }
 
   viewUser(userId) {
