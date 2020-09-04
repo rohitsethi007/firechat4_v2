@@ -1,9 +1,14 @@
 <ion-header>
-  <ion-toolbar color="secondary">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>{{title}}</ion-title>
+    <ion-buttons *ngIf="step==2" slot="end">
+      <ion-button *ngIf="tab=='contact'" color="secondary" class="ion-text-capitalize" [disabled]="!contactForm.valid" (click)="submitContactForm()">Post</ion-button>
+      <ion-button *ngIf="tab=='upload'" color="secondary" class="ion-text-capitalize" [disabled]="!uploadForm.valid" (click)="submitUploadForm()">Post</ion-button>
+      <ion-button *ngIf="tab=='link'" color="secondary" class="ion-text-capitalize" [disabled]="!weblinkForm.valid" (click)="submitLinkForm()">Post</ion-button>
+    </ion-buttons>
   </ion-toolbar>
   <ion-segment *ngIf="step==2" color="secondary" [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
     <ion-segment-button value="contact">
@@ -21,21 +26,15 @@
 <ion-content  class="forms-validations-content">
   <div *ngIf="step==1"> 
     <div *ngIf="groups && groups.length > 0">
-      <ion-list lines="none">
-        <ion-item *ngFor="let group of groups" (click)="selectGroup(group.$key)">
+      <ion-list>
+        <ion-item text-wrap *ngFor="let group of groups" (click)="selectGroup(group.$key)">
           <ion-thumbnail slot="start">
             <img src="{{group.img}}" onError="this.src='./assets/images/default-group.png'">
           </ion-thumbnail>
           <ion-label>
-            <ion-text>
-              <h2>{{group.name}}</h2>
-            </ion-text>
-            <ion-text>
-              <p>created {{group.dateCreated.toDate() | DateFormat}}</p>
-            </ion-text>
+              <b>{{group.name}}</b><br/>
+              {{group.description}}
           </ion-label>
-          <ion-badge slot="end" color="danger" *ngIf="group.unreadMessagesCount > 0">{{group.unreadMessagesCount}}
-          </ion-badge>
         </ion-item>
       </ion-list>
     </div>
@@ -45,69 +44,24 @@
     <div *ngSwitchCase="'contact'">
       <form class="validations-form" [formGroup]="contactForm" (ngSubmit)="submitContactForm()">
         <ion-list class="inputs-list" lines="full">
-          <ion-list-header>
-            <ion-label class="header-title">{{group.name}}</ion-label>
+          <ion-list-header class="header">
+            posting in &nbsp;<ion-label><b>{{group.name}}</b></ion-label>
           </ion-list-header>
           <ion-item class="input-item">
-            <ion-label position="floating">Title</ion-label>
             <ion-input type="text" formControlName="title" clearInput placeholder="Enter a short description"></ion-input>
           </ion-item>
-          <div class="error-container">
-            <ng-container *ngFor="let validation of validations.title">
-              <div class="error-message" *ngIf="contactForm.get('title').hasError(validation.type) && (contactForm.get('title').dirty || contactForm.get('title').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <span>{{ validation.message }}</span>
-              </div>
-            </ng-container>
-          </div>
           <ion-item class="input-item">
-            <ion-label position="floating">Name:</ion-label>
             <ion-input type="text" formControlName="name" clearInput placeholder="Enter the name of the contact"></ion-input>
           </ion-item>
-          <div class="error-container">
-            <ng-container *ngFor="let validation of validations.name">
-              <div class="error-message" *ngIf="contactForm.get('name').hasError(validation.type) && (contactForm.get('name').dirty || contactForm.get('name').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <span>{{ validation.message }}</span>
-              </div>
-            </ng-container>
-          </div>
           <ion-item class="input-item">
-            <ion-label position="floating">Address:</ion-label>
             <ion-textarea rows="6"  formControlName="address" clearInput placeholder="Enter the full address of the contact"></ion-textarea>
           </ion-item>
-          <div class="error-container">
-            <ng-container *ngFor="let validation of validations.address">
-              <div class="error-message" *ngIf="contactForm.get('address').hasError(validation.type) && (contactForm.get('address').dirty || contactForm.get('address').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <span>{{ validation.message }}</span>
-              </div>
-            </ng-container>
-          </div>
           <ion-item class="input-item">
-            <ion-label position="floating">Phone No:</ion-label>
             <ion-input type="text" formControlName="phones" clearInput placeholder="Enter one or more phone numbers (comma separated)"></ion-input>
           </ion-item>
-          <div class="error-container">
-            <ng-container *ngFor="let validation of validations.contactForm">
-              <div class="error-message" *ngIf="contactForm.get('phones').hasError(validation.type) && (contactForm.get('phones').dirty || contactForm.get('phones').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <span>{{ validation.message }}</span>
-              </div>
-            </ng-container>
-          </div>
           <ion-item class="input-item">
-            <ion-label position="floating">Email:</ion-label>
             <ion-input type="text" formControlName="email" clearInput placeholder="Enter an email address if available"></ion-input>
           </ion-item>
-          <div class="error-container">
-            <ng-container *ngFor="let validation of validations.contactForm">
-              <div class="error-message" *ngIf="contactForm.get('email').hasError(validation.type) && (contactForm.get('email').dirty || contactForm.get('email').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <span>{{ validation.message }}</span>
-              </div>
-            </ng-container>
-          </div>
         </ion-list>
         <ion-list class="inputs-list" lines="full">
           <ion-list-header>
@@ -134,31 +88,22 @@
           </div>
         </ion-list>
   
-        <ion-button class="submit-btn" type="submit" expand="block" fill="outline" [disabled]="!contactForm.valid">Submit</ion-button>
+        <!-- <ion-button class="submit-btn" type="submit" expand="block" fill="outline" [disabled]="!contactForm.valid">Submit</ion-button> -->
 
       </form>
     </div>
     <div *ngSwitchCase="'upload'">
    <form class="validations-form" [formGroup]="uploadForm" (ngSubmit)="submitUploadForm()">
         <ion-list class="inputs-list" lines="full">
-          <ion-list-header>
-            <ion-label class="header-title">{{group.name}}</ion-label>
+          <ion-list-header class="header">
+            posting in &nbsp;<ion-label><b>{{group.name}}</b></ion-label>
           </ion-list-header>
           <ion-item class="input-item">
-            <ion-label position="floating">Title</ion-label>
             <ion-input type="text" formControlName="title" clearInput placeholder="Enter a short description"></ion-input>
           </ion-item>
-          <div class="error-container">
-            <ng-container *ngFor="let validation of validations.title">
-              <div class="error-message" *ngIf="uploadForm.get('title').hasError(validation.type) && (uploadForm.get('title').dirty || uploadForm.get('title').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <span>{{ validation.message }}</span>
-              </div>
-            </ng-container>
-          </div>
           <ion-item class="input-item">
             <ion-buttons>
-              <ion-button color="danger" (click)="upload()" class="submit-btn" expand="block" >Attach a File/Document<ion-icon name="attach"></ion-icon></ion-button>
+              <ion-button expand="block" color="secondary" (click)="upload()"><ion-icon name="attach"></ion-icon>Attach a File/Document</ion-button>
             </ion-buttons>
           </ion-item>
         </ion-list>
@@ -187,41 +132,22 @@
           </div>
         </ion-list>
   
-        <ion-button class="submit-btn" type="submit" expand="block" fill="outline" [disabled]="!uploadForm.valid">Submit</ion-button>
+        <!-- <ion-button class="submit-btn" type="submit" expand="block" fill="outline" [disabled]="!uploadForm.valid">Submit</ion-button> -->
 
       </form>
     </div>
     <div *ngSwitchCase="'link'">
       <form class="validations-form" [formGroup]="weblinkForm" (ngSubmit)="submitLinkForm()">
         <ion-list class="inputs-list" lines="full">
-          <ion-list-header>
-            <ion-label class="header-title">{{group.name}}</ion-label>
+          <ion-list-header class="header">
+            posting in &nbsp;<ion-label><b>{{group.name}}</b></ion-label>
           </ion-list-header>
           <ion-item class="input-item">
-            <ion-label position="floating">Title</ion-label>
             <ion-input type="text" formControlName="title" clearInput placeholder="Enter a short description"></ion-input>
           </ion-item>
-          <div class="error-container">
-            <ng-container *ngFor="let validation of validations.title">
-              <div class="error-message" *ngIf="weblinkForm.get('title').hasError(validation.type) && (weblinkForm.get('title').dirty || weblinkForm.get('title').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <span>{{ validation.message }}</span>
-              </div>
-            </ng-container>
-          </div>
-
           <ion-item class="input-item">
-            <ion-label position="floating">Weblink</ion-label>
             <ion-input type="text" formControlName="link" clearInput placeholder="Paste or type the link" (focusout)="linkFocusOut()"></ion-input>
           </ion-item>
-          <div class="error-container">
-            <ng-container *ngFor="let validation of validations.link">
-              <div class="error-message" *ngIf="weblinkForm.get('link').hasError(validation.type) && (weblinkForm.get('link').dirty || weblinkForm.get('link').touched)">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <span>{{ validation.message }}</span>
-              </div>
-            </ng-container>
-          </div>
           <div>
             <hr/>
             <div>
@@ -261,7 +187,7 @@
             </div>
           </ion-list>
   
-        <ion-button class="submit-btn" type="submit" expand="block" fill="outline" [disabled]="!weblinkForm.valid">Submit</ion-button>
+        <!-- <ion-button class="submit-btn" type="submit" expand="block" fill="outline" [disabled]="!weblinkForm.valid">Submit</ion-button> -->
 
       </form> 
     </div>

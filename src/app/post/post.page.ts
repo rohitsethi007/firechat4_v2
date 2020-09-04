@@ -27,7 +27,11 @@ export class PostPage implements OnInit {
   private postMedia: any = [];
   notifications: any = [];
   private loggedInUserId: any;
-
+  slideOptsOne = {
+    initialSlide: 0,
+    slidesPerView: 1,
+    autoplay: false
+   };
   constructor(
     private dataProvider: DataService,
     private loadingProvider: LoadingService,
@@ -43,7 +47,7 @@ export class PostPage implements OnInit {
     public geolocation: Geolocation,
     public alertCtrl: AlertController
   ) {
-    this.post = {showSmiley: false, showHug: false, addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now()};
+    this.post = {showSmiley: false, showHug: false, addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now(), postMedia: []};
     this.getPostDetails();
   }
 

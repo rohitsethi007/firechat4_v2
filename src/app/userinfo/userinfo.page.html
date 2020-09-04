@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -8,10 +8,14 @@
 </ion-header>
 
 <ion-content>
-  <div *ngIf="user"
-    style="display:flex; flex-direction: column; justify-content: center; height: 100%; align-items: center;">
-    <img src="{{user.img}}" (click)="enlargeImage(user.img)" onError="this.src='./assets/images/default-dp.png'"
-      style="border-radius: 100%; height: 80px; width: 80px;">
+  <div *ngIf="user">
+    <ion-row padding> 
+    <div class="user-info">
+      <div class="user-img">
+        <img src="{{user.img}}">
+      </div>
+
+    <img src="{{user.img}}" (click)="enlargeImage(user.img)" onError="this.src='./assets/images/default-dp.png'">
     <h4 style="margin:0">{{user.name}}</h4>
     <p style="color:#aaa;margin:0">@{{user.username}}</p>
     <p style="color:#444">{{user.description}}</p>
@@ -40,5 +44,7 @@
     </div>
 
 
+  </div>
+  </ion-row>
   </div>
 </ion-content>

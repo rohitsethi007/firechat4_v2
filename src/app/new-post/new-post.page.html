@@ -22,8 +22,6 @@
               <b>{{group.name}}</b><br/>
               {{group.description}}
           </ion-label>
-          <ion-badge slot="end" color="danger" *ngIf="group.unreadMessagesCount > 0">{{group.unreadMessagesCount}}
-          </ion-badge>
         </ion-item>
       </ion-list>
     </div>
@@ -35,34 +33,15 @@
         posting in &nbsp;<ion-label><b>{{group.name}}</b></ion-label>
       </ion-list-header>
       <ion-item class="input-item">
- 
         <ion-input type="text" formControlName="title" placeholder="Subject"></ion-input>
       </ion-item>
-      <!-- <div class="error-container">
-        <ng-container *ngFor="let validation of validations.title">
-          <div class="error-message" *ngIf="postForm.get('title').hasError(validation.type) && (postForm.get('title').dirty || postForm.get('title').touched)">
-            <ion-icon name="information-circle-outline"></ion-icon>
-            <span>{{ validation.message }}</span>
-          </div>
-        </ng-container>
-      </div> -->
-
       <ion-item class="input-item">
         <ion-textarea rows="6"  formControlName="message" clearInput placeholder="Message"></ion-textarea>
       </ion-item>
-      <!-- <div class="error-container">
-        <ng-container *ngFor="let validation of validations.message">
-          <div class="error-message" *ngIf="postForm.get('message').hasError(validation.type) && (postForm.get('message').dirty || postForm.get('message').touched)">
-            <ion-icon name="information-circle-outline"></ion-icon>
-            <span>{{ validation.message }}</span>
-          </div>
-        </ng-container>
-      </div> -->
       <ion-list class="inputs-list" lines="full">
         <ion-list-header>
           <ion-label class="header-title">Select relevant tags</ion-label>
         </ion-list-header>
-  
         <div class="reviews-wrapper">
         <ion-row>
           <div class="tags" formArrayName="tags" *ngFor="let entry of postForm.controls.tags.controls; let i = index">

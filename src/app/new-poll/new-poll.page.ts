@@ -95,7 +95,7 @@ export class NewPollPage implements OnInit {
         });
       });
     } else {
-      this.title = 'Create a Poll in ...';
+      this.title = 'Poll';
 
       this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
         this.group = group.payload.data();
@@ -212,7 +212,7 @@ export class NewPollPage implements OnInit {
     this.groupId = groupId;
     console.log('groupId', groupId);
     this.step = 2;
-    this.title = 'Create an Event in ...';
+    this.title = 'Event';
 
     this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
       this.group = group.payload.data();

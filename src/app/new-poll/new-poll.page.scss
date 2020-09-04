@@ -1,51 +1,17 @@
 :host {
-  --page-margin: var(--app-fair-margin);
-  --page-background: var(--app-background-shade);
+  --page-margin: var(--app-narrow-margin);
 }
 
 .forms-validations-content {
-  --background: var(--page-background);
-
-  .validations-form {
+   .validations-form {
     margin-bottom: calc(var(--page-margin) * 2);
 
     .inputs-list {
-      --ion-item-background: var(--page-background);
-
       padding: var(--page-margin) var(--page-margin) calc(var(--page-margin) * 2);
 
-      ion-list-header {
-        padding-inline-start: 0px;
-
-        .header-title {
-          font-family: "HelveticaNeue-Medium", "Helvetica Neue Medium", "Helvetica-Bold", "Roboto-Medium", "Segoe UI Semibold", "Arial-Bold", sans-serif;
-          font-weight: 500px;
-          font-size: 18px;
-          line-height: 23px;
-          margin: 1 0 4px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
+      .header {
+        font-size: 14px;
       }
-
-      .input-item {
-        --padding-start: 0px;
-        --padding-end: 0px;
-        --inner-padding-end: 0px;
-        font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
-        font-weight: 400;
-        font-size: 20px;
-        -webkit-font-smoothing: subpixel-antialiased;
-        -moz-osx-font-smoothing: auto;
-        overflow: hidden; 
-        text-overflow: ellipsis;
-      }
-
-      .terms-item {
-        --border-width: 0px;
-        --inner-padding-end: 0px;
-      }
-
       .error-container {
         .error-message {
           margin: calc(var(--page-margin) / 2) 0px;
@@ -60,18 +26,6 @@
           }
         }
         }
-
-      .counter-item {
-        app-counter-input {
-          --counter-background: transparent;
-          --counter-color: var(--ion-color-primary);
-          --counter-border-color: var(--ion-color-primary);
-        }
-
-        .counter-value {
-          text-align: center;
-        }
-      }
     }
 
     .submit-btn {
@@ -115,6 +69,33 @@
     opacity: 0;
   }
   
+}
+}
+
+.uploads {
+  margin: 5px;
+.img-wrap {
+  position: relative;
+  display: inline-block;
+  font-size: 0;
+  padding: 5px;
+}
+.img-wrap .close {
+  position: absolute;
+  top: -2px;
+  right: -7px;
+  z-index: 100;
+  background-color: #FFF;
+  padding: 5px 2px 2px;
+  color: #000;
+  cursor: pointer;
+  text-align: center;
+  font-size: 22px;
+  line-height: 10px;
+  border-radius: 50%;
+}
+.img-wrap:hover .close {
+  opacity: 1;
 }
 }
 

@@ -1,0 +1,12 @@
+:host {
+    --page-margin: var(--app-narrow-margin);
+    --page-background: var(--app-background);
+  }
+
+.user-info {
+    margin: var(--page-margin) var(--page-margin) var(--page-margin) var(--page-margin);
+    width: 100%;
+    .user-img {
+  
+    }
+}

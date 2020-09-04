@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { FirebaseService } from '../services/firebase.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as firebase from 'firebase';
@@ -26,7 +26,7 @@ export class UserinfoPage implements OnInit {
     // public navCtrl: NavController,
     // public navParams: NavParams,
     private router: Router,
-    // public modalCtrl: ModalController,
+    public modalCtrl: ModalController,
     public dataProvider: DataService,
     public loadingProvider: LoadingService,
     public alertCtrl: AlertController,

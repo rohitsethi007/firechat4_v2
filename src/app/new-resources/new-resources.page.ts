@@ -398,7 +398,7 @@ export class NewResourcesPage implements OnInit {
     this.groupId = groupId;
     console.log('groupId', groupId);
     this.step = 2;
-    this.title = 'Add a Resource in ...';
+    this.title = 'Resource';
     this.tab = 'contact';
     this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
       this.group = group.payload.data();

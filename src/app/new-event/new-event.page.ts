@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
-import { NavController } from '@ionic/angular';
+import { ActionSheetController, NavController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../services/data.service';
+import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
 import { HttpClient } from '@angular/common/http';
+import { Camera } from '@ionic-native/camera/ngx';
 
 import * as moment from 'moment';
 import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
@@ -32,6 +34,8 @@ export class NewEventPage implements OnInit {
   private addedByUser: any;
   private step: any = 1;
   groups: any;
+  userNotifications: any = [];
+  private postMedia: any = [];
 
   validations = {
     title: [
@@ -57,7 +61,10 @@ export class NewEventPage implements OnInit {
     public dataProvider: DataService,
     public loadingProvider: LoadingService,
     public navCtrl: NavController,
-    private http: HttpClient
+    private http: HttpClient,
+    public camera: Camera,
+    public actionSheet: ActionSheetController,
+    public imageProvider: ImageService,
   ) {
     this.groupId = this.route.snapshot.params.id;
 
@@ -98,7 +105,7 @@ export class NewEventPage implements OnInit {
         });
       });
     } else {
-      this.title = 'Create a Post in ...';
+      this.title = 'Post';
 
       this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
         this.group = group.payload.data();
@@ -129,7 +136,8 @@ export class NewEventPage implements OnInit {
         type: 'event',
         data: {},
         totalReactionCount: 0,
-        totalReviewCount: 0
+        totalReviewCount: 0,
+        postMedia: []
     };
     });
 
@@ -152,6 +160,7 @@ export class NewEventPage implements OnInit {
     this.event.title = this.eventForm.value.title;
     this.event.postTags = [];
     this.event.postTags = this.postTags;
+    this.event.postMedia = this.postMedia;
 
     this.event.data = {
       message: this.eventForm.value.description,
@@ -163,7 +172,6 @@ export class NewEventPage implements OnInit {
 
 
     // Add event to database.
-    console.log('this.event:', this.event);
     this.dataProvider.addPost(this.event).then((success) => {
         const eventId = success.id;
         this.eventId = eventId;
@@ -204,15 +212,15 @@ export class NewEventPage implements OnInit {
       this.loadingProvider.hide();
     });
 
-    const o = getMeta("<meta name='page' content='index'><meta property='description' content='This is the index page'>")
-    this.linkDescription = o.description;
+    // const o = getMeta("<meta name='page' content='index'><meta property='description' content='This is the index page'>")
+    // this.linkDescription = o.description;
     }
 
     selectGroup(groupId) {
       this.groupId = groupId;
       console.log('groupId', groupId);
       this.step = 2;
-      this.title = 'Create an Event in ...';
+      this.title = 'Event';
   
       this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
         this.group = group.payload.data();
@@ -220,8 +228,52 @@ export class NewEventPage implements OnInit {
           this.postTags.push({val: element, isChecked: false});
         });
         this.addTagControls();
-  
     });
-  
      }
+
+     attach() {
+      this.actionSheet.create({
+        header: 'Attach images',
+        buttons: [{
+          text: 'Camera',
+          handler: () => {
+            this.imageProvider.uploadPostPhoto(this.camera.PictureSourceType.CAMERA).then((url) => {
+              this.postMedia.push(url);
+              console.log(url);
+            });
+          }
+        }, {
+          text: 'Photo Library',
+          handler: () => {
+            this.imageProvider.getImages().then((url) => {
+              this.postMedia = this.postMedia.concat(url);
+              console.log(url);
+            });
+          }
+        },
+        {
+          text: 'Video',
+          handler: () => {
+            this.imageProvider.uploadPostVideo().then(url => {
+              this.postMedia(url);
+              console.log(url);
+            });
+          }
+        }
+          ,  {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('cancelled');
+          }
+        }]
+      }).then(r => r.present());
+    }
+  
+    removeMedia(media) {
+      this.postMedia.splice();
+      this.postMedia = this.postMedia.filter(x => x !== media);
+      console.log('this.postMedia:', this.postMedia);
+      this.imageProvider.deletePostPhoto(media);
+    }
 }

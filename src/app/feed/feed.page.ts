@@ -30,7 +30,11 @@ export class FeedPage implements OnInit {
   private posts: any = [];
   private memberofGroups: any = [];
   private loggedInUserId: any;
-
+  slideOptsOne = {
+    initialSlide: 0,
+    slidesPerView: 1,
+    autoplay: false
+   };
   constructor(
     public dataProvider: DataService,
     public navCtrl: NavController,
