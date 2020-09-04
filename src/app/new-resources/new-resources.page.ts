@@ -29,9 +29,9 @@ export class NewResourcesPage implements OnInit {
   private groupId: any;
   private group: any;
   private resourceId: any;
-  private metaicon: any = null;
-  private metadescription: any;
-  private metatitle: any;
+  private metaicon: any = '';
+  private metadescription: any = '';
+  private metatitle: any = '';
   private metasite: any;
   private segment: any;
   require: any;
@@ -237,7 +237,7 @@ export class NewResourcesPage implements OnInit {
 
     // Add resource info and date.
     this.resource.date = new Date();
-    this.resource.title = this.contactForm.value.title;
+    this.resource.title = this.weblinkForm.value.title;
     this.resource.postTags = [];
     this.resource.postTags = this.postTags;
     this.resource.groupId = this.groupId;
@@ -268,6 +268,10 @@ export class NewResourcesPage implements OnInit {
       this.metaicon = o['og:image'];
       this.metadescription = o.description;
       this.metatitle = o['og:title'];
+
+      console.log('link', this.metaicon);
+      console.log('link', this.metatitle);
+      
       this.loadingProvider.hide();
     });
   }
