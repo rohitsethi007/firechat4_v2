@@ -123,6 +123,78 @@ ion-card ion-card-header{
     ion-slides {
       height: auto;
     }
+    .details-divider {
+      margin: 3px var(--page-margin) 3px;
+      border-top: 2px solid rgba(var(--ion-color-light-shade-rgb), .4);
+    }
+
+    .user-preferences-wrapper {
+      .header {
+        width: 100%;
+      }
+  
+      .messageReview {
+        font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+        font-weight: 400px;
+        font-size: 12px;
+        line-height: 19px;
+        margin-left: 10px;
+           
+      }
+  
+      .title {
+        font-family: 'HelveticaNeue-Medium', 'Helvetica Neue Medium','Roboto-Medium', 'Segoe UI Semibold', sans-serif;
+        font-weight: 500px;
+        font-size: 18px;
+        line-height: 23px;
+        margin: 1 0 4px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+  
+      .subtitle{
+        line-height: 20px;
+        width: 100%;
+      }
+  
+      .subtitle img {
+        height: 30px;
+        width: 30px;
+        vertical-align: middle;
+        display: inline-block;
+  
+      }
+  
+      .icon {
+        display: inline-block;
+        vertical-align: middle;
+      }
+       
+      .text{
+        display: inline-block;
+        vertical-align: middle;
+        padding-left: 3px;
+        text-transform: capitalize !important;
+      }
+
+      .addedByTitleReview {
+        margin-left: 10px;
+        line-height: 1;    
+        margin-right:5px;
+        font-size: 12px;  
+      }
+      .addedByDateReview {
+        font-style: italic;
+        font-size: 12px; 
+       }
+
+      .addedByImgReview {
+        width: 40px;
+        margin-left: 10px;
+        float: left;
+        vertical-align: middle;
+      }
+    }
   .reviews-wrapper {
     // padding: 0px var(--page-margin) var(--page-margin);
     .reviews-list {
@@ -214,14 +286,6 @@ ion-card ion-card-header{
   width:50px;
 }
 .comment {
-  border: none;
-  padding: 0;
-  margin: 0;
-  position: relative;
-  resize: none;
-  width: 100%;
-  z-index: 2;
-  background: none;
-  letter-spacing: inherit;
-  border-radius: 20px;
+   border-radius: 20px;
+  font-size:12px;
 }
