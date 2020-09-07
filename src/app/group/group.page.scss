@@ -7,6 +7,10 @@
 .tab-title {
   size: 9px;
 }
+ion-segment-button {
+  background-color: var(--page-background);
+}
+
 .filters-toolbar {
   --padding-start: var(--page-margin);
   --padding-end: var(--page-margin);
@@ -47,7 +51,6 @@
   }
 
 }
-
 
 .listing-item {
 background-color: var(--page-background);
@@ -180,4 +183,8 @@ margin-left: 10px;
   .group-member-name {
     padding-left: var(--page-margin);
   }
+}
+
+.empty-list {
+  text-align: center;
 }

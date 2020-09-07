@@ -39,7 +39,7 @@ import { PopoverPageModule } from './popover/popover.module';
 import { ReviewModalPageModule } from './review-modal/review-modal.module';
 import { ReactionListModalPageModule } from './reaction-list-modal/reaction-list-modal.module';
 import { Chooser } from '@ionic-native/chooser/ngx';
-
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
 @NgModule({
   declarations: [
@@ -82,6 +82,7 @@ import { Chooser } from '@ionic-native/chooser/ngx';
     Contacts,
     Chooser,
     Keyboard,
+    LocalNotifications,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

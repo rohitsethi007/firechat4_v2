@@ -59,7 +59,14 @@
     },
     "cordova-plugin-inappbrowser": {
       "PACKAGE_NAME": "com.codesundar.ionicchat"
+    },
+    "cordova-plugin-local-notification": {
+      "PACKAGE_NAME": "com.codesundar.ionicchat"
     }
   },
-  "dependent_plugins": {}
+  "dependent_plugins": {
+    "cordova-plugin-badge": {
+      "PACKAGE_NAME": "com.codesundar.ionicchat"
+    }
+  }
 }

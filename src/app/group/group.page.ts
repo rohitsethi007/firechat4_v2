@@ -2,7 +2,8 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { Camera } from '@ionic-native/camera/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { NavController, ActionSheetController, AlertController, ModalController, PopoverController } from '@ionic/angular';
+// tslint:disable-next-line: max-line-length
+import { NavController, ActionSheetController, AlertController, ModalController, PopoverController, IonInfiniteScroll } from '@ionic/angular';
 import { Contacts } from '@ionic-native/contacts/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LoadingService } from '../services/loading.service';
@@ -23,7 +24,7 @@ import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-moda
 export class GroupPage implements OnInit {
 
   @ViewChild('content', null) content: ElementRef;
-
+  @ViewChild(IonInfiniteScroll, {static: true}) infiniteScroll: IonInfiniteScroll;
   title: any;
   groupId: any;
   message: any;
@@ -59,8 +60,31 @@ export class GroupPage implements OnInit {
 
   // posts
   private posts: any = [];
-  private postsToShow: any; 
+  private postsToShow: any;
   private numberOfPosts = 10;
+
+  // infinite scroll data
+  private firstDataSetPost: any;
+  private lastDataSetPost: any;
+  private maxNoOfPosts: any = 1000;
+  private nextDataSetPost: firebase.firestore.Query;
+
+  private firstDataSetEvent: any;
+  private lastDataSetEvent: any;
+  private maxNoOfEvents: any = 1000;
+  private nextDataSetEvent: firebase.firestore.Query;
+
+
+  private firstDataSetPoll: any;
+  private lastDataSetPoll: any;
+  private maxNoOfPolls: any = 1000;
+  private nextDataSetPoll: firebase.firestore.Query;
+
+
+  private firstDataSetResources: any;
+  private lastDataSetResources: any;
+  private maxNoOfResources: any = 1000;
+  private nextDataSetResources: firebase.firestore.Query;
 
   // GroupPage
   // This is the page where the user can chat with other group members and view group info.
@@ -99,7 +123,7 @@ export class GroupPage implements OnInit {
 
     // Get user information for system message sent to the group when a member was added.
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
-      this.notifications = user.data().notifications;
+      this.notifications = user.payload.data().notifications;
       this.user  = user.payload.data();
   });
     this.getGroupDetailsandPosts();
@@ -107,9 +131,7 @@ export class GroupPage implements OnInit {
     this.loadingProvider.hide();
   }
 
-  ionViewDidEnter() {
-    // this.getGroupDetailsandMessages();
-  }
+  ionViewDidEnter() { }
 
   // Load previous messages in relation to numberOfMessages.
   loadPreviousMessages() {
@@ -316,6 +338,7 @@ export class GroupPage implements OnInit {
       }]
     }).then(r => r.present());
   }
+
   takePhoto() {
     this.imageProvider.uploadGroupPhotoMessage(this.groupId, this.camera.PictureSourceType.CAMERA).then((url) => {
       // Process image message.
@@ -369,8 +392,6 @@ export class GroupPage implements OnInit {
     this.presentPopover(event, message);
   }
 
-  // MY Methods ************************
-
   async joinGroup() {
     this.alert = this.alertCtrl.create({
       header: 'Join Group',
@@ -415,7 +436,6 @@ export class GroupPage implements OnInit {
     }).then(r => r.present());
   }
 
-
   async presentPopover(myEvent: any, message) {
     let ev: any;
     ev = {
@@ -436,8 +456,6 @@ export class GroupPage implements OnInit {
     });
     return await popover.present();
   }
-
-  /// ********************* POLL Functions ***********************************/
 
   getGroupDetailsandMessages() {
     // Get group details
@@ -539,7 +557,6 @@ export class GroupPage implements OnInit {
     }
   }
 
-
   getGroupDetailsandPosts() {
     // Get group details
     this.posts = [];
@@ -548,12 +565,11 @@ export class GroupPage implements OnInit {
 
     this.group = group.payload.data();
     this.title = group.payload.data().name;
-      console.log('this.group', this.group);
+
     // Get Group Members
     if (this.group.members) {
       this.group.members.forEach((memberId) => {
         this.dataProvider.getUser(memberId).snapshotChanges().subscribe((member: any) => {
-          console.log('member',member.payload);
           if (member.payload.exists) {
             member = { $key: member.payload.id, ...member.payload.data() };
             this.addUpdateOrRemoveMember(member);
@@ -563,62 +579,17 @@ export class GroupPage implements OnInit {
     }
 
         // Get group posts
-    this.firestore.collection('/posts/').ref
+    this.firstDataSetPost = this.firestore.collection('posts').ref
         .where('groupId', '==', this.groupId)
-        .where('type','==', 'general')
-        .get().then((po) => {
-          this.posts = [];
-          po.forEach((p) => {
-            let post: any;
-            post = p.data();
-            post.key = p.id;
-            const startDate = new Date(post.date);
-          // Do your operations
-            const endDate   = new Date();
-            const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
-            if (seconds > 120) {
-            post.showNewIcon = false;
-          } else {
-            post.showNewIcon = true;
-          }
-            // get reactions list
-            this.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe((reactions: any) => {
-              post.reactions = [];
-              reactions.forEach(element => {
-              let reaction = element.payload.doc.data();
-              reaction.key = element.payload.doc.id;
-              post.reactions.push(reaction);
-            });
-    
-              // Check for Thanks
-              if (reactions) {
-              let foundSmiley = false;
-              if (post.reactions !== undefined) {
-                  foundSmiley = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                                && el.reactionType === 'Thanks');
-                }
-              if (foundSmiley) {
-                  post.showSmiley = true;
-                } else {
-                  post.showSmiley = false;
-                }
-                // Check for Hugs
-              let foundHug = false;
-              if (post.reactions !== undefined) {
-                  foundHug = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                              && el.reactionType === 'Hug');
-                }
-              if (foundHug) {
-                  post.showHug = true;
-                } else {
-                  post.showHug = false;
-                }
-            }
-           });
-            post.postTags = post.postTags.filter(x => x.isChecked !== false);
-            this.addOrUpdatePost(post);
-          });
-          });
+        .where('type', '==', 'general')
+        .orderBy('date', 'desc')
+        .limit(5);
+
+    this.firstDataSetPost.onSnapshot((po) => {
+      this.lastDataSetPost = po.docs[po.docs.length - 1];
+      this.posts = [];
+        this.loadEachPostData(po);
+      });
     });
 
     // Update messages' date time elapsed every minute based on Moment.js.
@@ -635,8 +606,59 @@ export class GroupPage implements OnInit {
     }
   }
 
-  // Check if user exists in the group then add/update user.
-  // If the user has already left the group, remove user from the list.
+  loadEachPostData(po: any) {
+    po.forEach((p) => {
+      let post: any;
+      post = p.data();
+      post.key = p.id;
+      const startDate = new Date(post.date);
+    // Do your operations
+      const endDate   = new Date();
+      const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+      if (seconds > 120) {
+      post.showNewIcon = false;
+    } else {
+      post.showNewIcon = true;
+    }
+      // get reactions list
+      this.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe((reactions: any) => {
+        post.reactions = [];
+        reactions.forEach(element => {
+        let reaction = element.payload.doc.data();
+        reaction.key = element.payload.doc.id;
+        post.reactions.push(reaction);
+      });
+
+        // Check for Thanks
+        if (reactions) {
+        let foundSmiley = false;
+        if (post.reactions !== undefined) {
+            foundSmiley = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                          && el.reactionType === 'Thanks');
+          }
+        if (foundSmiley) {
+            post.showSmiley = true;
+          } else {
+            post.showSmiley = false;
+          }
+          // Check for Hugs
+        let foundHug = false;
+        if (post.reactions !== undefined) {
+            foundHug = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                        && el.reactionType === 'Hug');
+          }
+        if (foundHug) {
+            post.showHug = true;
+          } else {
+            post.showHug = false;
+          }
+      }
+     });
+      post.postTags = post.postTags.filter(x => x.isChecked !== false);
+      this.addOrUpdatePost(post);
+    });
+  }
+
   addUpdateOrRemoveMember(member) {
     console.log('member',member);
     if (this.group) {
@@ -673,7 +695,6 @@ export class GroupPage implements OnInit {
     }
   }
 
-
   segmentChanged($event) {
     if (this.tab === 'groups') {
       this.title = this.group.name; this.getGroupDetailsandMessages();
@@ -692,203 +713,215 @@ export class GroupPage implements OnInit {
 
   getPolls() {
         // Get group posts
-        this.firestore.collection('/posts/').ref
-        .where('groupId', '==', this.groupId)
-        .where('type','==', 'poll')
-        .get().then((po) => {
-          this.posts = [];
-          po.forEach((p) => {
-            let post: any;
-            post = p.data();
-            post.key = p.id;
-            const startDate = new Date(post.date);
-          // Do your operations
-            const endDate   = new Date();
-            const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
-            if (seconds > 120) {
-            post.showNewIcon = false;
-          } else {
-            post.showNewIcon = true;
-          }
-            post.postTags = post.postTags.filter(x => x.isChecked !== false);
-            this.addOrUpdatePoll(post);
-          });
-          });
+    this.firstDataSetPoll = this.firestore.collection('posts').ref
+                              .where('groupId', '==', this.groupId)
+                              .where('type', '==', 'poll')
+                              .orderBy('date', 'desc')
+                              .limit(5);
+    // Get group posts
+    this.firstDataSetPoll
+    .onSnapshot((po) => {
+      this.lastDataSetPoll = po.docs[po.docs.length - 1];
+      this.polls = [];
+      this.loadEachPollData(po);
+      });
   }
-  // Open Poll
+
+  loadEachPollData(po: any) {
+    po.forEach((p) => {
+      let post: any;
+      post = p.data();
+      post.key = p.id;
+      const startDate = new Date(post.date);
+    // Do your operations
+      const endDate   = new Date();
+      const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+      if (seconds > 120) {
+      post.showNewIcon = false;
+    } else {
+      post.showNewIcon = true;
+    }
+      post.postTags = post.postTags.filter(x => x.isChecked !== false);
+      this.addOrUpdatePoll(post);
+    });
+  }
+
   viewPoll(poll) {
-    this.router.navigateByUrl('poll/' + poll.key);
+    this.router.navigateByUrl('post/' + poll.key);
   }
 
-  // View Resource selected
   viewResource(resource) {
-    this.router.navigateByUrl('resource/' + resource.key);
-    /*const navigationExtras: NavigationExtras = {
-      state: {
-        resource: resource
-      }
-    };
-    this.router.navigate(['resource'], navigationExtras); */
+    this.router.navigateByUrl('post/' + resource.key);
   }
 
-  // View Post selected
   viewPost(post) {
     console.log('postID: ' + post.key);
     this.router.navigateByUrl('post/' + post.key);
 
   }
 
-  // View Resource selected
   viewEvent(event) {
-    this.router.navigateByUrl('event/' + event.key);
+    this.router.navigateByUrl('post/' + event.key);
   }
 
   newPoll() {
     this.router.navigateByUrl('/new-poll/' + this.groupId);
-    // this.app.getRootNav().push(NewPollPage, { groupId: this.groupId });
   }
 
   newPost() {
     this.router.navigateByUrl('/new-post/' + this.groupId);
-    // this.app.getRootNav().push(NewPollPage, { groupId: this.groupId });
   }
 
   newResource() {
     this.router.navigateByUrl('/new-resource/' + this.groupId);
-    // this.app.getRootNav().push(NewResourcePage, { groupId: this.groupId });
   }
 
   newEvent() {
     this.router.navigateByUrl('/new-event/' + this.groupId);
-    // this.app.getRootNav().push(NewResourcePage, { groupId: this.groupId });
   }
 
   getResources() {
     // Get group posts
-    this.firestore.collection('/posts/').ref
+    this.firstDataSetResources = this.firestore.collection('posts').ref
     .where('groupId', '==', this.groupId)
     .where('type', '==', 'resource')
-    .get().then((po) => {
-      this.resources = [];
-      po.forEach((p) => {
-        let post: any;
-        post = p.data();
-        post.key = p.id;
-        const startDate = new Date(post.date);
-      // Do your operations
-        const endDate   = new Date();
-        const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
-        if (seconds > 120) {
-        post.showNewIcon = false;
-      } else {
-        post.showNewIcon = true;
-      }
-        // get reactions list
-        this.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe((reactions: any) => {
-          post.reactions = [];
-          reactions.forEach(element => {
-          let reaction = element.payload.doc.data();
-          reaction.key = element.payload.doc.id;
-          post.reactions.push(reaction);
-        });
+    .orderBy('date', 'desc')
+    .limit(5);
+    // Get group posts
+    this.firstDataSetResources
+        .onSnapshot((po) => {
+    this.lastDataSetResources = po.docs[po.docs.length - 1];
+    this.resources = [];
+    this.loadEachResourceData(po);
+    });
+  }
 
-          // Check for Thanks
-          if (reactions) {
-          let foundSmiley = false;
-          if (post.reactions !== undefined) {
-              foundSmiley = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                            && el.reactionType === 'Thanks');
-            }
-          if (foundSmiley) {
-              post.showSmiley = true;
-            } else {
-              post.showSmiley = false;
-            }
-          // Check for Bookmark
-          let foundBookmark = false;
-          if (post.reactions !== undefined) {
-            foundBookmark = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                          && el.reactionType === 'Bookmark');
-            }
-          if (foundBookmark) {
-              post.showBookmark = true;
-            } else {
-              post.showBookmark = false;
-            }
-        }
-        });
-        post.postTags = post.postTags.filter(x => x.isChecked !== false);
-        this.addOrUpdateResource(post);
+  loadEachResourceData(po: any) {
+    po.forEach((p) => {
+      let post: any;
+      post = p.data();
+      post.key = p.id;
+      const startDate = new Date(post.date);
+    // Do your operations
+      const endDate   = new Date();
+      const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+      if (seconds > 120) {
+      post.showNewIcon = false;
+    } else {
+      post.showNewIcon = true;
+    }
+      // get reactions list
+      this.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe((reactions: any) => {
+        post.reactions = [];
+        reactions.forEach(element => {
+        let reaction = element.payload.doc.data();
+        reaction.key = element.payload.doc.id;
+        post.reactions.push(reaction);
       });
+
+        // Check for Thanks
+        if (reactions) {
+        let foundSmiley = false;
+        if (post.reactions !== undefined) {
+            foundSmiley = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                          && el.reactionType === 'Thanks');
+          }
+        if (foundSmiley) {
+            post.showSmiley = true;
+          } else {
+            post.showSmiley = false;
+          }
+        // Check for Bookmark
+        let foundBookmark = false;
+        if (post.reactions !== undefined) {
+          foundBookmark = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                        && el.reactionType === 'Bookmark');
+          }
+        if (foundBookmark) {
+            post.showBookmark = true;
+          } else {
+            post.showBookmark = false;
+          }
+      }
       });
+      post.postTags = post.postTags.filter(x => x.isChecked !== false);
+      this.addOrUpdateResource(post);
+    });
   }
 
   getEvents() {
-        // Get group posts
-        this.firestore.collection('/posts/').ref
-        .where('groupId', '==', this.groupId)
-        .where('type', '==', 'event')
-        .get().then((po) => {
-          this.events = [];
-          po.forEach((p) => {
-            let post: any;
-            post = p.data();
-            post.key = p.id;
-            const startDate = new Date(post.date);
-          // Do your operations
-            const endDate   = new Date();
-            const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
-            if (seconds > 120) {
-            post.showNewIcon = false;
-          } else {
-            post.showNewIcon = true;
-          }
-            // get reactions list
-            this.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe((reactions: any) => {
-              post.reactions = [];
-              reactions.forEach(element => {
-              let reaction = element.payload.doc.data();
-              reaction.key = element.payload.doc.id;
-              post.reactions.push(reaction);
-            });
-    
-              // Check for Thanks
-              if (reactions) {
-              let foundSmiley = false;
-              if (post.reactions !== undefined) {
-                  foundSmiley = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                                && el.reactionType === 'Thanks');
-                }
-              if (foundSmiley) {
-                  post.showSmiley = true;
-                } else {
-                  post.showSmiley = false;
-                }
-               // Check for Checkin
-              let foundCheckin = false;
-              if (post.reactions !== undefined) {
-                foundCheckin = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                              && el.reactionType === 'Checkin');
-                }
-              if (foundCheckin) {
-                  post.showCheckin = true;
-                } else {
-                  post.showCheckin = false;
-                }
+    // Get group posts
+    this.firstDataSetEvent = this.firestore.collection('posts').ref
+    .where('groupId', '==', this.groupId)
+    .where('type', '==', 'event')
+    .orderBy('date', 'desc')
+    .limit(5);
+    // Get group posts
+    this.firstDataSetEvent
+        .onSnapshot((po) => {
+    this.lastDataSetEvent = po.docs[po.docs.length - 1];
+    this.events = [];
+    this.loadEachEventData(po);
+    });
+  }
 
-            }
-            });
-            post.postTags = post.postTags.filter(x => x.isChecked !== false);
-            this.addOrUpdateEvent(post);
-          });
-          });
+  loadEachEventData(po: any) {
+    po.forEach((p) => {
+      let post: any;
+      post = p.data();
+      post.key = p.id;
+      const startDate = new Date(post.date);
+    // Do your operations
+      const endDate   = new Date();
+      const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+      if (seconds > 120) {
+      post.showNewIcon = false;
+    } else {
+      post.showNewIcon = true;
+    }
+      // get reactions list
+      this.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe((reactions: any) => {
+        post.reactions = [];
+        reactions.forEach(element => {
+        let reaction = element.payload.doc.data();
+        reaction.key = element.payload.doc.id;
+        post.reactions.push(reaction);
+      });
+
+        // Check for Thanks
+        if (reactions) {
+        let foundSmiley = false;
+        if (post.reactions !== undefined) {
+            foundSmiley = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                          && el.reactionType === 'Thanks');
+          }
+        if (foundSmiley) {
+            post.showSmiley = true;
+          } else {
+            post.showSmiley = false;
+          }
+         // Check for Checkin
+        let foundCheckin = false;
+        if (post.reactions !== undefined) {
+          foundCheckin = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
+                                        && el.reactionType === 'Checkin');
+          }
+        if (foundCheckin) {
+            post.showCheckin = true;
+          } else {
+            post.showCheckin = false;
+          }
+
+      }
+      });
+      post.postTags = post.postTags.filter(x => x.isChecked !== false);
+      this.addOrUpdateEvent(post);
+    });
   }
 
   openResourceFilter() {
     this.openModal();
   }
-
-
 
   openModal() {
 
@@ -912,7 +945,7 @@ export class GroupPage implements OnInit {
     });
 
   }
-  // Add or update group for real-time sync based on our observer.
+
   addOrUpdatePoll(poll) {
     let totalPollCount = 0;
     poll.pollTagsString = '';
@@ -966,435 +999,521 @@ export class GroupPage implements OnInit {
     }
   }
 
+  addOrUpdateResource(resource) {
+    resource.resourceTagsString = '';
+    if (resource.resourceTags && resource.resourceTags) {
+      resource.resourceTags.forEach(element => {
+        if (element.isChecked == true) {
+          resource.resourceTagsString = resource.resourceTagsString + ', ' + element.val;
+        }
+      });
 
-
-// Add or update group for real-time sync based on our observer.
-addOrUpdateResource(resource) {
-  resource.resourceTagsString = '';
-  if (resource.resourceTags && resource.resourceTags) {
-    resource.resourceTags.forEach(element => {
-      if (element.isChecked == true) {
-        resource.resourceTagsString = resource.resourceTagsString + ', ' + element.val;
-      }
-    });
-
-    resource.resourceTagsString = resource.resourceTagsString.replace(', ', '');
-  } else {
-    resource.resourceTagsString = 'No tags found';
-
-  }
-
-  // Add NEW Icon
-  const startDate = new Date(resource.dateCreated);
-  const endDate   = new Date();
-  const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
-
-  if (seconds > 120) {
-    resource.showNewIcon = false;
-  } else {
-    resource.showNewIcon = true;
-  }
-
-  if (!this.resources) {
-    this.resources = [resource];
-  } else {
-    let index = -1;
-    for (let i = 0; i < this.resources.length; i++) {
-      if (this.resources[i].key == resource.key) {
-        index = i;
-      }
-    }
-    if (index > -1) {
-      this.resources[index] = resource;
+      resource.resourceTagsString = resource.resourceTagsString.replace(', ', '');
     } else {
-      this.resources.push(resource);
+      resource.resourceTagsString = 'No tags found';
+
     }
-  }
-}
 
-addOrUpdatePost(post) {
-  post.postTagsString = '';
-  if (post.resourceTags && post.resourceTags) {
-    post.resourceTags.forEach(element => {
-      if (element.isChecked == true) {
-        post.postTagsString = post.resourceTagsString + ', ' + element.val;
-      }
-    });
+    // Add NEW Icon
+    const startDate = new Date(resource.dateCreated);
+    const endDate   = new Date();
+    const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
 
-    post.postTagsString = post.postTagsString.replace(', ', '');
-  } else {
-    post.postTagsString = 'No tags found';
-
-  }
-  if (!this.posts) {
-    this.posts = [post];
-  } else {
-    let index = -1;
-    for (let i = 0; i < this.posts.length; i++) {
-      if (this.posts[i].key == post.key) {
-        index = i;
-      }
-    }
-    if (index > -1) {
-      this.posts[index] = post;
+    if (seconds > 120) {
+      resource.showNewIcon = false;
     } else {
-      this.posts.push(post);
+      resource.showNewIcon = true;
     }
-  }
 
-}
-
-// Add or update group for real-time sync based on our observer.
-addOrUpdateEvent(event) {
-  event.eventTagsString = '';
-  if (event.eventTags) {
-    event.eventTags.forEach(element => {
-      if (element.isChecked === true) {
-        event.eventTagsString = event.eventTagsString + ', ' + element.val;
-      }
-    });
-    // Remove first comma from the string
-    event.eventTagsString = event.eventTagsString.replace(', ', '');
-  } else {
-    event.eventTagsString = 'No tags found';
-  }
-
-  // Add NEW Icon
-  const startDate = new Date(event.dateCreated);
-  const endDate   = new Date();
-  const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
-
-  if (seconds > 120) {
-    event.showNewIcon = false;
-  } else {
-    event.showNewIcon = true;
-  }
-
-  if (!this.events) {
-    this.events = [event];
-  } else {
-    let index = -1;
-    for (let i = 0; i < this.events.length; i++) {
-      if (this.events[i].key === event.key) {
-        index = i;
-      }
-    }
-    if (index > -1) {
-      this.events[index] = event;
+    if (!this.resources) {
+      this.resources = [resource];
     } else {
-      this.events.push(event);
-    }
-  }
-}
-
-showGroupOptions() {
-const action = this.actionSheet.create({
-  header: 'Create a new ...',
-  backdropDismiss: true,
-  mode: 'md',
-  cssClass: 'GroupAction',
-  buttons: [{
-    text: 'Post',
-    icon: 'chatbubbles',
-    handler: () => {
-      this.newPost();
-    }
-  }, {
-    text: 'Resource',
-    icon: 'document',
-    handler: () => {
-      this.newResource();
-    }
-  }, {
-    text: 'Poll',
-    icon: 'podium',
-    handler: () => {
-      this.newPoll();
-    }
-  }, {
-    text: 'Event',
-    icon: 'calendar',
-    cssClass: 'cancelAction',
-    handler: () => {
-      this.newEvent();
-    }
-  }]
-}).then(r => r.present());
-}
-
-submitReactionPost(post, reactionType) {
-  switch (reactionType) {
-    case 'Thanks': {
-      if (!post.showSmiley) {
-        this.addPostReaction(post, reactionType);
-        post.showSmiley = true;
-        post.totalReactionCount += 1;
-      } else {
-        this.removePostReaction(post, reactionType);
-        post.showSmiley = false;
-        post.totalReactionCount -= 1;
+      let index = -1;
+      for (let i = 0; i < this.resources.length; i++) {
+        if (this.resources[i].key == resource.key) {
+          index = i;
+        }
       }
-      break;
-    }
-
-    case 'Hug': {
-      if (!post.showHug) {
-        this.addPostReaction(post, reactionType);
-        post.showHug = true;
-        post.totalReactionCount += 1;
+      if (index > -1) {
+        this.resources[index] = resource;
       } else {
-        this.removePostReaction(post, reactionType);
-        post.showHug = false;
-        post.totalReactionCount -= 1;
+        this.resources.push(resource);
       }
-      break;
     }
+  }
 
-    case 'Checkin': {
-      if (!post.showCheckin) {
-        this.addPostReaction(post, reactionType);
-        post.showCheckin = true;
-        post.totalReactionCount += 1;
+  addOrUpdatePost(post) {
+    post.postTagsString = '';
+    if (post.resourceTags && post.resourceTags) {
+      post.resourceTags.forEach(element => {
+        if (element.isChecked == true) {
+          post.postTagsString = post.resourceTagsString + ', ' + element.val;
+        }
+      });
+
+      post.postTagsString = post.postTagsString.replace(', ', '');
+    } else {
+      post.postTagsString = 'No tags found';
+
+    }
+    if (!this.posts) {
+      this.posts = [post];
+    } else {
+      let index = -1;
+      for (let i = 0; i < this.posts.length; i++) {
+        if (this.posts[i].key == post.key) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        this.posts[index] = post;
       } else {
-        this.removePostReaction(post, reactionType);
-        post.showCheckin = false;
-        post.totalReactionCount -= 1;
+        this.posts.push(post);
       }
-      break;
     }
 
-    case 'Bookmark': {
-      if (!post.showBookmark) {
-        this.addPostReaction(post, reactionType);
-        post.showBookmark = true;
-        post.totalReactionCount += 1;
+  }
+
+  addOrUpdateEvent(event) {
+    event.eventTagsString = '';
+    if (event.eventTags) {
+      event.eventTags.forEach(element => {
+        if (element.isChecked === true) {
+          event.eventTagsString = event.eventTagsString + ', ' + element.val;
+        }
+      });
+      // Remove first comma from the string
+      event.eventTagsString = event.eventTagsString.replace(', ', '');
+    } else {
+      event.eventTagsString = 'No tags found';
+    }
+
+    // Add NEW Icon
+    const startDate = new Date(event.dateCreated);
+    const endDate   = new Date();
+    const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+
+    if (seconds > 120) {
+      event.showNewIcon = false;
+    } else {
+      event.showNewIcon = true;
+    }
+
+    if (!this.events) {
+      this.events = [event];
+    } else {
+      let index = -1;
+      for (let i = 0; i < this.events.length; i++) {
+        if (this.events[i].key === event.key) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        this.events[index] = event;
       } else {
-        this.removePostReaction(post, reactionType);
-        post.showBookmark = false;
-        post.totalReactionCount -= 1;
+        this.events.push(event);
       }
-      break;
     }
   }
-}
 
-addPostReaction(post, reactionType) {
-  // first find the post in the collection
-  let postIndex: any;
-  let p: any;
-  if (post.type === 'general') {
-    postIndex = this.posts.findIndex(el => el.key ===  post.key);
-    p = this.posts[postIndex];
-  } else if (post.type === 'event') {
-    postIndex = this.events.findIndex(el => el.key ===  post.key);
-    p = this.events[postIndex];
-  } else if (post.type === 'poll') {
-    postIndex = this.polls.findIndex(el => el.key ===  post.key);
-    p = this.polls[postIndex];
-  } else if (post.type === 'resource') {
-    postIndex = this.resources.findIndex(el => el.key ===  post.key);
-    p = this.resources[postIndex];
-  }
-  this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-    if (account) {
-    let reaction = {
-      key: '',
-      dateCreated: new Date(),
-      addedByUser: {
-                    addedByKey: this.dataProvider.getCurrentUserId(),
-                    addedByUsername: account.data().username,
-                    addedByImg: account.data().img
-                  },
-      reactionType
-  };
-
-    if (postIndex >= 0) {
-    this.dataProvider.updatePostReactions(post.key, reaction);
-  }
-}
-});
-}
-
-
-removePostReaction(post, reactionType) {
-  let postIndex: any;
-  let p: any;
-  if (post.type === 'general') {
-    postIndex = this.posts.findIndex(el => el.key ===  post.key);
-    p = this.posts[postIndex];
-  } else if (post.type === 'event') {
-    postIndex = this.events.findIndex(el => el.key ===  post.key);
-    p = this.events[postIndex];
-  } else if (post.type === 'poll') {
-    postIndex = this.polls.findIndex(el => el.key ===  post.key);
-    p = this.polls[postIndex];
-  } else if (post.type === 'resource') {
-    postIndex = this.resources.findIndex(el => el.key ===  post.key);
-    p = this.resources[postIndex];
-  }
-
-  const found = false;
-  if (p.reactions !== undefined) {
-    let values = Object.keys(p.reactions).map(function(e) {
-      return p.reactions[e];
-    });
-
-    const reaction = post.reactions.find(
-      el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
-      && el.reactionType === reactionType);
-
-    console.log('reaction.key', reaction);
-    this.dataProvider.removePostReaction(post.key, reaction.key);
-  }
-}
-
-async showReactionsList(post) {
-  if (post.totalReactionCount === 0) {
-    return;
-  }
- // first find the post in the collection
-  let postIndex: any;
-  let p: any;
-  if (post.type === 'general') {
-    postIndex = this.posts.findIndex(el => el.key ===  post.key);
-    p = this.posts[postIndex];
-  } else if (post.type === 'event') {
-    postIndex = this.events.findIndex(el => el.key ===  post.key);
-    p = this.events[postIndex];
-  } else if (post.type === 'poll') {
-    postIndex = this.polls.findIndex(el => el.key ===  post.key);
-    p = this.polls[postIndex];
-  } else if (post.type === 'resource') {
-    postIndex = this.resources.findIndex(el => el.key ===  post.key);
-    p = this.resources[postIndex];
-  }
-
-  const modal = await this.modalCtrl.create({
-    component: ReactionListModalPage,
-    componentProps: {
-      reactions: p.reactions
-    }
-  });
-  return await modal.present();
-}
-
-showPostOptions(post) {
+  showGroupOptions() {
   const action = this.actionSheet.create({
-    header: 'Post options',
+    header: 'Create a new ...',
     backdropDismiss: true,
     mode: 'md',
     cssClass: 'GroupAction',
-    buttons: this.createPostOptionButtons(post)
-  }).then(r => r.present());
-}
-
-followPost(post) {
-  if (!this.notifications) {
-    this.notifications = [post.key];
-  } else {
-    this.notifications.push(post.key);
-  }
-
-  this.dataProvider.getUser(this.loggedInUserId).update({
-    notifications: this.notifications
-  }).then(() => {
-    this.loadingProvider.showToast('You will be notified when there are new replies');
-  });
-}
-
-unFollowPost(post) {
-  const index = this.notifications.indexOf(post.key, 0);
-  if (index > -1) {
-    this.notifications.splice(index, 1);
-  }
-
-  this.dataProvider.getUser(this.loggedInUserId).update({
-    notifications: this.notifications
-  }).then(() => {
-    this.loadingProvider.showToast('You won\'t get notifications for this post');
-  });
-}
-
-reportPost(post) {
-  this.dataProvider.addReports(this.loggedInUserId, post).then(() => {
-    this.loadingProvider.showToast('Thank you for reporting the post.');
-  });
-}
-
-deletePost(post) {
-  this.alertCtrl.create({
-    header: 'Delete Post',
-    message: 'Are you sure you want to delete this post?',
-    buttons: [
-      {
-        text: 'Cancel'
-      },
-      {
-        text: 'Yes',
-        handler: data => {
-           this.firestore.doc('posts/' + post.key).delete();
-        }
-      }
-    ]
-  }).then(r => r.present());
-}
-
-createPostOptionButtons(post) {
-  let buttons = [];
-  
-  let cancelButton = {
-    text: 'Cancel',
-    icon: 'close',
-    role: 'cancel',
-    handler: () => {
-      console.log('Cancel clicked');
-    }
-  };
-
-  let reportButton = {
-    text: 'Report Post',
-    icon: 'flag-outline',
-    handler: () => {
-      this.reportPost(post);
-     }
-    };
-  let notificationButton = {};
-
-  if (post.addedByUser.addedByKey === this.loggedInUserId) {
-    const deletePostButton = {
-      text: 'Delete Post',
-      icon: 'trash-outline',
-      cssClass: 'actionicon',
+    buttons: [{
+      text: 'Post',
+      icon: 'chatbubbles',
       handler: () => {
-        this.deletePost(post);
+        this.newPost();
+      }
+    }, {
+      text: 'Resource',
+      icon: 'document',
+      handler: () => {
+        this.newResource();
+      }
+    }, {
+      text: 'Poll',
+      icon: 'podium',
+      handler: () => {
+        this.newPoll();
+      }
+    }, {
+      text: 'Event',
+      icon: 'calendar',
+      cssClass: 'cancelAction',
+      handler: () => {
+        this.newEvent();
+      }
+    }]
+  }).then(r => r.present());
+  }
+
+  submitReactionPost(post, reactionType) {
+    switch (reactionType) {
+      case 'Thanks': {
+        if (!post.showSmiley) {
+          this.addPostReaction(post, reactionType);
+          post.showSmiley = true;
+          post.totalReactionCount += 1;
+        } else {
+          this.removePostReaction(post, reactionType);
+          post.showSmiley = false;
+          post.totalReactionCount -= 1;
+        }
+        break;
+      }
+
+      case 'Hug': {
+        if (!post.showHug) {
+          this.addPostReaction(post, reactionType);
+          post.showHug = true;
+          post.totalReactionCount += 1;
+        } else {
+          this.removePostReaction(post, reactionType);
+          post.showHug = false;
+          post.totalReactionCount -= 1;
+        }
+        break;
+      }
+
+      case 'Checkin': {
+        if (!post.showCheckin) {
+          this.addPostReaction(post, reactionType);
+          post.showCheckin = true;
+          post.totalReactionCount += 1;
+        } else {
+          this.removePostReaction(post, reactionType);
+          post.showCheckin = false;
+          post.totalReactionCount -= 1;
+        }
+        break;
+      }
+
+      case 'Bookmark': {
+        if (!post.showBookmark) {
+          this.addPostReaction(post, reactionType);
+          post.showBookmark = true;
+          post.totalReactionCount += 1;
+        } else {
+          this.removePostReaction(post, reactionType);
+          post.showBookmark = false;
+          post.totalReactionCount -= 1;
+        }
+        break;
+      }
+    }
+  }
+
+  addPostReaction(post, reactionType) {
+    // first find the post in the collection
+    let postIndex: any;
+    let p: any;
+    if (post.type === 'general') {
+      postIndex = this.posts.findIndex(el => el.key ===  post.key);
+      p = this.posts[postIndex];
+    } else if (post.type === 'event') {
+      postIndex = this.events.findIndex(el => el.key ===  post.key);
+      p = this.events[postIndex];
+    } else if (post.type === 'poll') {
+      postIndex = this.polls.findIndex(el => el.key ===  post.key);
+      p = this.polls[postIndex];
+    } else if (post.type === 'resource') {
+      postIndex = this.resources.findIndex(el => el.key ===  post.key);
+      p = this.resources[postIndex];
+    }
+    this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
+      if (account) {
+      let reaction = {
+        key: '',
+        dateCreated: new Date(),
+        addedByUser: {
+                      addedByKey: this.dataProvider.getCurrentUserId(),
+                      addedByUsername: account.data().username,
+                      addedByImg: account.data().img
+                    },
+        reactionType
+    };
+
+      if (postIndex >= 0) {
+      this.dataProvider.updatePostReactions(post.key, reaction);
+    }
+  }
+  });
+  }
+
+  removePostReaction(post, reactionType) {
+    let postIndex: any;
+    let p: any;
+    if (post.type === 'general') {
+      postIndex = this.posts.findIndex(el => el.key ===  post.key);
+      p = this.posts[postIndex];
+    } else if (post.type === 'event') {
+      postIndex = this.events.findIndex(el => el.key ===  post.key);
+      p = this.events[postIndex];
+    } else if (post.type === 'poll') {
+      postIndex = this.polls.findIndex(el => el.key ===  post.key);
+      p = this.polls[postIndex];
+    } else if (post.type === 'resource') {
+      postIndex = this.resources.findIndex(el => el.key ===  post.key);
+      p = this.resources[postIndex];
+    }
+
+    const found = false;
+    if (p.reactions !== undefined) {
+      let values = Object.keys(p.reactions).map(function(e) {
+        return p.reactions[e];
+      });
+
+      const reaction = post.reactions.find(
+        el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+        && el.reactionType === reactionType);
+
+      console.log('reaction.key', reaction);
+      this.dataProvider.removePostReaction(post.key, reaction.key);
+    }
+  }
+
+  async showReactionsList(post) {
+    if (post.totalReactionCount === 0) {
+      return;
+    }
+  // first find the post in the collection
+    let postIndex: any;
+    let p: any;
+    if (post.type === 'general') {
+      postIndex = this.posts.findIndex(el => el.key ===  post.key);
+      p = this.posts[postIndex];
+    } else if (post.type === 'event') {
+      postIndex = this.events.findIndex(el => el.key ===  post.key);
+      p = this.events[postIndex];
+    } else if (post.type === 'poll') {
+      postIndex = this.polls.findIndex(el => el.key ===  post.key);
+      p = this.polls[postIndex];
+    } else if (post.type === 'resource') {
+      postIndex = this.resources.findIndex(el => el.key ===  post.key);
+      p = this.resources[postIndex];
+    }
+
+    const modal = await this.modalCtrl.create({
+      component: ReactionListModalPage,
+      componentProps: {
+        reactions: p.reactions
+      }
+    });
+    return await modal.present();
+  }
+
+  showPostOptions(post) {
+    const action = this.actionSheet.create({
+      header: 'Post options',
+      backdropDismiss: true,
+      mode: 'md',
+      cssClass: 'GroupAction',
+      buttons: this.createPostOptionButtons(post)
+    }).then(r => r.present());
+  }
+
+  followPost(post) {
+    if (!this.notifications) {
+      this.notifications = [post.key];
+    } else {
+      this.notifications.push(post.key);
+    }
+
+    this.dataProvider.getUser(this.loggedInUserId).update({
+      notifications: this.notifications
+    }).then(() => {
+      this.loadingProvider.showToast('You will be notified when there are new replies');
+    });
+  }
+
+  unFollowPost(post) {
+    const index = this.notifications.indexOf(post.key, 0);
+    if (index > -1) {
+      this.notifications.splice(index, 1);
+    }
+
+    this.dataProvider.getUser(this.loggedInUserId).update({
+      notifications: this.notifications
+    }).then(() => {
+      this.loadingProvider.showToast('You won\'t get notifications for this post');
+    });
+  }
+
+  reportPost(post) {
+    this.dataProvider.addReports(this.loggedInUserId, post).then(() => {
+      this.loadingProvider.showToast('Thank you for reporting the post.');
+    });
+  }
+
+  deletePost(post) {
+    this.alertCtrl.create({
+      header: 'Delete Post',
+      message: 'Are you sure you want to delete this post?',
+      buttons: [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Yes',
+          handler: data => {
+            this.firestore.doc('posts/' + post.key).delete();
+          }
+        }
+      ]
+    }).then(r => r.present());
+  }
+
+  createPostOptionButtons(post) {
+    let buttons = [];
+    
+    let cancelButton = {
+      text: 'Cancel',
+      icon: 'close',
+      role: 'cancel',
+      handler: () => {
+        console.log('Cancel clicked');
       }
     };
-    buttons.push(deletePostButton);
-  } else {
-    if (this.notifications && this.notifications.some(el => el === post.key)) {
-      notificationButton = {
-          text: 'Turn Off Notifications',
-          icon: 'notifications-off-outline',
-          cssClass: 'actionicon',
-          handler: () => {
-            this.unFollowPost(post);
-          }
-        };
-    } else {
-      notificationButton = {
-        text: 'Turn On Notifications',
-        icon: 'notifications-outline',
+
+    let reportButton = {
+      text: 'Report Post',
+      icon: 'flag-outline',
+      handler: () => {
+        this.reportPost(post);
+      }
+      };
+    let notificationButton = {};
+
+    if (post.addedByUser.addedByKey === this.loggedInUserId) {
+      const deletePostButton = {
+        text: 'Delete Post',
+        icon: 'trash-outline',
         cssClass: 'actionicon',
         handler: () => {
-          this.followPost(post);
+          this.deletePost(post);
         }
       };
-    }
-    buttons.push(notificationButton);
-}
-  buttons.push(reportButton);
-  buttons.push(cancelButton);
-  return buttons;
-}
+      buttons.push(deletePostButton);
+    } else {
+      if (this.notifications && this.notifications.some(el => el === post.key)) {
+        notificationButton = {
+            text: 'Turn Off Notifications',
+            icon: 'notifications-off-outline',
+            cssClass: 'actionicon',
+            handler: () => {
+              this.unFollowPost(post);
+            }
+          };
+      } else {
+        notificationButton = {
+          text: 'Turn On Notifications',
+          icon: 'notifications-outline',
+          cssClass: 'actionicon',
+          handler: () => {
+            this.followPost(post);
+          }
+        };
+      }
+      buttons.push(notificationButton);
+  }
+    buttons.push(reportButton);
+    buttons.push(cancelButton);
+    return buttons;
+  }
 
+  loadDataPosts(event) {
+    if ( this.posts.length > this.maxNoOfPosts ) {
+      event.target.disabled = true;
+    } else {
+      if (this.lastDataSetPost) {
+      this.nextDataSetPost = this.firestore.collection('posts').ref
+                          .where('groupId', '==', this.groupId)
+                          .where('type', '==', 'general')
+                          .orderBy('date', 'desc')
+                          .startAfter(this.lastDataSetPost).limit(5);
+      this.nextDataSetPost.onSnapshot((po: any) => {
+      this.lastDataSetPost = po.docs[po.docs.length - 1];
+      if (po.docs.length > 0) {
+        this.loadEachPostData(po);
+      }
+      event.target.complete();
+        });
+      } else {
+        event.target.complete();
+      }
+    }
+  }
+
+  loadDataPolls(event) {
+    if ( this.polls.length > this.maxNoOfPolls ) {
+      event.target.disabled = true;
+    } else {
+      if (this.lastDataSetPoll) {
+      this.nextDataSetPoll = this.firestore.collection('posts').ref
+                          .where('groupId', '==', this.groupId)
+                          .where('type', '==', 'poll')
+                          .orderBy('date', 'desc')
+                          .startAfter(this.lastDataSetPoll).limit(5);
+      this.nextDataSetPoll.onSnapshot((po: any) => {
+      this.lastDataSetPoll = po.docs[po.docs.length - 1];
+      if (po.docs.length > 0) {
+        this.loadEachPollData(po);
+      }
+      event.target.complete();
+        });
+      } else {
+        event.target.complete();
+      }
+    }
+  }
+
+  loadDataEvents(event) {
+    if ( this.events.length > this.maxNoOfEvents ) {
+      event.target.disabled = true;
+    } else {
+      if (this.lastDataSetEvent) {
+      this.nextDataSetEvent = this.firestore.collection('posts').ref
+                          .where('groupId', '==', this.groupId)
+                          .where('type', '==', 'event')
+                          .orderBy('date', 'desc')
+                          .startAfter(this.lastDataSetEvent).limit(5);
+      this.nextDataSetEvent.onSnapshot((po: any) => {
+      this.lastDataSetEvent = po.docs[po.docs.length - 1];
+      if (po.docs.length > 0) {
+        this.loadEachEventData(po);
+      }
+      event.target.complete();
+        });
+      } else {
+        event.target.complete();
+      }
+    }
+  }
+
+  loadDataResources(event) {
+    if ( this.events.length > this.maxNoOfResources ) {
+      event.target.disabled = true;
+    } else {
+      if (this.lastDataSetResources) {
+      this.nextDataSetResources = this.firestore.collection('posts').ref
+                          .where('groupId', '==', this.groupId)
+                          .where('type', '==', 'resource')
+                          .orderBy('date', 'desc')
+                          .startAfter(this.lastDataSetResources).limit(5);
+      this.nextDataSetResources.onSnapshot((po: any) => {
+      this.lastDataSetResources = po.docs[po.docs.length - 1];
+      if (po.docs.length > 0) {
+        this.loadEachResourceData(po);
+      }
+      event.target.complete();
+        });
+      } else {
+        event.target.complete();
+      }
+    }
+  }
 }

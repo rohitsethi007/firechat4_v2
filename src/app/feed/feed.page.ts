@@ -2,6 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { NavController, ActionSheetController, AlertController, ModalController, IonRouterOutlet, IonInfiniteScroll } from '@ionic/angular';
 import { LoadingService } from '../services/loading.service';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -52,7 +53,8 @@ export class FeedPage implements OnInit {
     public actionSheet: ActionSheetController,
     private route: ActivatedRoute,
     private router: Router,
-    private afAuth: AngularFireAuth
+    private afAuth: AngularFireAuth,
+    private localNotifications: LocalNotifications
     ) { }
 
   ngOnInit() {

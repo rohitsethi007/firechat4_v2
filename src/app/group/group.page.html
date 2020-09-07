@@ -15,7 +15,7 @@
 
   </ion-toolbar>
 
-  <ion-segment scrollable value="posts" color="secondary" [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
+  <ion-segment value="posts" color="secondary" [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
 		<!-- <ion-segment-button value="group">
   			<ion-icon name="chatbubbles"></ion-icon>
     </ion-segment-button> -->
@@ -447,4 +447,29 @@ Group Tags
    <p padding style="color:#aaa">Started {{group.dateCreated | DateFormat}}</p>
    </div>
   </div>
+
+  <ion-infinite-scroll *ngIf="tab=='posts'" threshold="100px" (ionInfinite)="loadDataPosts($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <ion-infinite-scroll *ngIf="tab=='events'" threshold="100px" (ionInfinite)="loadDataEvents($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <ion-infinite-scroll *ngIf="tab=='polls'" threshold="100px" (ionInfinite)="loadDataPolls($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <ion-infinite-scroll *ngIf="tab=='resources'" threshold="100px" (ionInfinite)="loadDataResources($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>

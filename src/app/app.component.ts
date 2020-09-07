@@ -24,7 +24,7 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      this.statusBar.styleLightContent();
+      this.statusBar.styleBlackTranslucent();
       this.splashScreen.hide();
 
       this.platform.backButton.subscribe(() => null);
