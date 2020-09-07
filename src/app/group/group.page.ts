@@ -51,6 +51,8 @@ export class GroupPage implements OnInit {
   private eventTags: any;
   private eventTagsString: any;
   private alert: any;
+  private loggedInUserId: any;
+  notifications: any = [];
 
   private toggled = false;
   private emojitext: string;
@@ -79,7 +81,9 @@ export class GroupPage implements OnInit {
     private router: Router,
 
     public popoverCtrl: PopoverController
-  ) { }
+  ) {
+    this.loggedInUserId = firebase.auth().currentUser.uid;
+  }
 
   handleSelection(event) {
     this.emojitext = this.emojitext + ' ' + event.char;
@@ -95,6 +99,7 @@ export class GroupPage implements OnInit {
 
     // Get user information for system message sent to the group when a member was added.
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
+      this.notifications = user.data().notifications;
       this.user  = user.payload.data();
   });
     this.getGroupDetailsandPosts();
@@ -1271,6 +1276,125 @@ async showReactionsList(post) {
     }
   });
   return await modal.present();
+}
+
+showPostOptions(post) {
+  const action = this.actionSheet.create({
+    header: 'Post options',
+    backdropDismiss: true,
+    mode: 'md',
+    cssClass: 'GroupAction',
+    buttons: this.createPostOptionButtons(post)
+  }).then(r => r.present());
+}
+
+followPost(post) {
+  if (!this.notifications) {
+    this.notifications = [post.key];
+  } else {
+    this.notifications.push(post.key);
+  }
+
+  this.dataProvider.getUser(this.loggedInUserId).update({
+    notifications: this.notifications
+  }).then(() => {
+    this.loadingProvider.showToast('You will be notified when there are new replies');
+  });
+}
+
+unFollowPost(post) {
+  const index = this.notifications.indexOf(post.key, 0);
+  if (index > -1) {
+    this.notifications.splice(index, 1);
+  }
+
+  this.dataProvider.getUser(this.loggedInUserId).update({
+    notifications: this.notifications
+  }).then(() => {
+    this.loadingProvider.showToast('You won\'t get notifications for this post');
+  });
+}
+
+reportPost(post) {
+  this.dataProvider.addReports(this.loggedInUserId, post).then(() => {
+    this.loadingProvider.showToast('Thank you for reporting the post.');
+  });
+}
+
+deletePost(post) {
+  this.alertCtrl.create({
+    header: 'Delete Post',
+    message: 'Are you sure you want to delete this post?',
+    buttons: [
+      {
+        text: 'Cancel'
+      },
+      {
+        text: 'Yes',
+        handler: data => {
+           this.firestore.doc('posts/' + post.key).delete();
+        }
+      }
+    ]
+  }).then(r => r.present());
+}
+
+createPostOptionButtons(post) {
+  let buttons = [];
+  
+  let cancelButton = {
+    text: 'Cancel',
+    icon: 'close',
+    role: 'cancel',
+    handler: () => {
+      console.log('Cancel clicked');
+    }
+  };
+
+  let reportButton = {
+    text: 'Report Post',
+    icon: 'flag-outline',
+    handler: () => {
+      this.reportPost(post);
+     }
+    };
+  let notificationButton = {};
+
+  if (post.addedByUser.addedByKey === this.loggedInUserId) {
+    const deletePostButton = {
+      text: 'Delete Post',
+      icon: 'trash-outline',
+      cssClass: 'actionicon',
+      handler: () => {
+        this.deletePost(post);
+      }
+    };
+    buttons.push(deletePostButton);
+  } else {
+    if (this.notifications && this.notifications.some(el => el === post.key)) {
+      notificationButton = {
+          text: 'Turn Off Notifications',
+          icon: 'notifications-off-outline',
+          cssClass: 'actionicon',
+          handler: () => {
+            this.unFollowPost(post);
+          }
+        };
+    } else {
+      notificationButton = {
+        text: 'Turn On Notifications',
+        icon: 'notifications-outline',
+        cssClass: 'actionicon',
+        handler: () => {
+          this.followPost(post);
+        }
+      };
+    }
+    buttons.push(notificationButton);
+}
+  buttons.push(reportButton);
+  buttons.push(cancelButton);
+  return buttons;
 }
 
 }
