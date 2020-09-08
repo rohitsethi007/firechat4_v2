@@ -340,7 +340,7 @@ export class FeedPage implements OnInit {
   viewPoll(post) {
     this.router.navigateByUrl('post/' + post.key);
   }
-  
+
   viewResource(post) {
     this.router.navigateByUrl('post/' + post.key);
   }
