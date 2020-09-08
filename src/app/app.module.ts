@@ -84,7 +84,7 @@ import { FCM } from '@ionic-native/fcm/ngx';
     Chooser,
     Keyboard,
     LocalNotifications,
-    FCM
+    FCM,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
