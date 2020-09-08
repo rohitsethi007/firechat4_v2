@@ -66,18 +66,21 @@ export class FeedPage implements OnInit {
     this.dataProvider.getCurrentUser().get().subscribe((user) => {
      this.notifications = user.data().notifications;
      this.loggedInUser = user.data();
-     this.firstDataSet = this.firestore.collection('posts').ref
-                          .where('groupId', 'in', this.loggedInUser.groups)
-                          .orderBy('date', 'desc')
-                          .limit(5);
-     this.firstDataSet.onSnapshot((po: any) => {
-      this.lastDataSet = po.docs[po.docs.length - 1];
-      this.posts = [];
-      this.loadEachPostData(po);
-      });
+     this.getFeedData();
     });
   }
 
+  getFeedData() {
+    this.firstDataSet = this.firestore.collection('posts').ref
+    .where('groupId', 'in', this.loggedInUser.groups)
+    .orderBy('date', 'desc')
+    .limit(5);
+    this.firstDataSet.get().then((po: any) => {
+    this.lastDataSet = po.docs[po.docs.length - 1];
+    this.posts = [];
+    this.loadEachPostData(po);
+});
+  }
   addOrUpdatePost(post) {
     if (!this.posts) {
       this.posts = [post];
@@ -573,5 +576,10 @@ export class FeedPage implements OnInit {
       post.postTags = post.postTags.filter(x => x.isChecked !== false);
       this.addOrUpdatePost(post);
     });
+  }
+
+  doRefresh(event) {
+    this.getFeedData();
+    event.target.complete();
   }
 }

@@ -26,6 +26,9 @@
 
 
 <ion-content fullscreen>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
      <!-- Show Posts -->
      <div *ngIf="posts && posts.length > 0" >
      <div class="listing-item" *ngFor="let item of posts" >
