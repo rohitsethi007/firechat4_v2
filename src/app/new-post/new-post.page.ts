@@ -175,6 +175,15 @@ export class NewPostPage implements OnInit {
         } else {
           this.userNotifications.push(this.postId);
         }
+
+        // Update user data on the database.
+        this.dataProvider.getUser(this.addedByUser.addedByKey).update({
+          notifications: this.userNotifications
+        }).then(() => {
+          // Back.
+          this.loadingProvider.hide();
+          this.router.navigateByUrl('tabs/tab1');
+        });
       });
 
    }

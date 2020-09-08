@@ -3,9 +3,9 @@
   "display": "standalone",
   "name": "IonChat",
   "short_name": "IonChat",
-  "version": "com.codesundar.ionicchat",
-  "description": "Ionic Chat App.",
-  "author": "MyThemeBox Team",
+  "version": "com.socialshare",
+  "description": "Social Share",
+  "author": "Social Share Team",
   "icons": [],
   "start_url": "index.html"
 }

@@ -40,6 +40,7 @@ import { ReviewModalPageModule } from './review-modal/review-modal.module';
 import { ReactionListModalPageModule } from './reaction-list-modal/reaction-list-modal.module';
 import { Chooser } from '@ionic-native/chooser/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+import { FCM } from '@ionic-native/fcm/ngx';
 
 @NgModule({
   declarations: [
@@ -83,6 +84,7 @@ import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
     Chooser,
     Keyboard,
     LocalNotifications,
+    FCM
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

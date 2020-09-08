@@ -62,6 +62,9 @@
     },
     "cordova-plugin-local-notification": {
       "PACKAGE_NAME": "com.codesundar.ionicchat"
+    },
+    "cordova-plugin-fcm-with-dependecy-updated": {
+      "PACKAGE_NAME": "com.codesundar.ionicchat"
     }
   },
   "dependent_plugins": {

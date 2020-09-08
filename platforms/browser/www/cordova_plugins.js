@@ -514,6 +514,14 @@ module.exports = [
             "cordova.plugins.notification.local.core",
             "plugin.notification.local.core"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-fcm-with-dependecy-updated/www/FCMPlugin.js",
+        "id": "cordova-plugin-fcm-with-dependecy-updated.FCMPlugin",
+        "pluginId": "cordova-plugin-fcm-with-dependecy-updated",
+        "clobbers": [
+            "FCM"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -536,7 +544,8 @@ module.exports.metadata =
     "cordova-sqlite-storage": "4.0.0",
     "cordova-plugin-inappbrowser": "3.2.0",
     "cordova-plugin-badge": "0.8.8",
-    "cordova-plugin-local-notification": "0.9.0-beta.2"
+    "cordova-plugin-local-notification": "0.9.0-beta.2",
+    "cordova-plugin-fcm-with-dependecy-updated": "7.3.1"
 }
 // BOTTOM OF METADATA
 });
