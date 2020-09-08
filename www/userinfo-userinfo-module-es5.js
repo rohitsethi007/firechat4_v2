@@ -21,7 +21,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "<ion-header>\n  <ion-toolbar color=\"primary\">\n    <ion-buttons slot=\"start\">\n      <ion-back-button></ion-back-button>\n    </ion-buttons>\n    <ion-title *ngIf=\"user\">{{user.name}}</ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content>\n  <div *ngIf=\"user\"\n    style=\"display:flex; flex-direction: column; justify-content: center; height: 100%; align-items: center;\">\n    <img src=\"{{user.img}}\" (click)=\"enlargeImage(user.img)\" onError=\"this.src='./assets/images/default-dp.png'\"\n      style=\"border-radius: 100%; height: 80px; width: 80px;\">\n    <h4 style=\"margin:0\">{{user.name}}</h4>\n    <p style=\"color:#aaa;margin:0\">@{{user.username}}</p>\n    <p style=\"color:#444\">{{user.description}}</p>\n    <div style=\"border-top: 1px solid #ececec; padding: 10px;\">\n      <!-- Show actions based on the status of the user in relation to the current logged in user. -->\n      <div *ngIf=\"friendRequests && friendRequests.indexOf(user.$key) > -1\">\n        <p class=\"info\">Sent you a friend request.</p>\n        <ion-button size=\"small\" (click)=\"rejectFriendRequest()\">\n          Decline\n        </ion-button>\n        <ion-button size=\"small\" (click)=\"acceptFriendRequest()\">\n          Accept\n        </ion-button>\n      </div>\n      <div *ngIf=\"requestsSent && requestsSent.indexOf(user.$key) > -1\">\n        <ion-button size=\"small\" (click)=\"cancelFriendRequest()\">Cancel\n          Request</ion-button>\n      </div>\n      <div *ngIf=\"canAdd()\">\n        <ion-button size=\"small\" (click)=\"sendFriendRequest()\">Add Friend</ion-button>\n      </div>\n      <div *ngIf=\"friends && friends.indexOf(user.$key) > -1\">\n        <ion-button size=\"small\" (click)=\"sendMessage()\">Start Chat</ion-button>\n        <ion-button size=\"small\" (click)=\"block()\">Block User</ion-button>\n      </div>\n    </div>\n\n\n  </div>\n</ion-content>";
+    __webpack_exports__["default"] = "<ion-header>\r\n  <ion-toolbar>\r\n    <ion-buttons slot=\"start\">\r\n      <ion-back-button></ion-back-button>\r\n    </ion-buttons>\r\n    <ion-title *ngIf=\"user\">{{user.name}}</ion-title>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n  <div *ngIf=\"user\">\r\n    <ion-row padding> \r\n    <div class=\"user-info\">\r\n      <div class=\"user-img\">\r\n        <img src=\"{{user.img}}\">\r\n      </div>\r\n\r\n    <img src=\"{{user.img}}\" (click)=\"enlargeImage(user.img)\" onError=\"this.src='./assets/images/default-dp.png'\">\r\n    <h4 style=\"margin:0\">{{user.name}}</h4>\r\n    <p style=\"color:#aaa;margin:0\">@{{user.username}}</p>\r\n    <p style=\"color:#444\">{{user.description}}</p>\r\n    <div style=\"border-top: 1px solid #ececec; padding: 10px;\">\r\n      <!-- Show actions based on the status of the user in relation to the current logged in user. -->\r\n      <div *ngIf=\"friendRequests && friendRequests.indexOf(user.$key) > -1\">\r\n        <p class=\"info\">Sent you a friend request.</p>\r\n        <ion-button size=\"small\" (click)=\"rejectFriendRequest()\">\r\n          Decline\r\n        </ion-button>\r\n        <ion-button size=\"small\" (click)=\"acceptFriendRequest()\">\r\n          Accept\r\n        </ion-button>\r\n      </div>\r\n      <div *ngIf=\"requestsSent && requestsSent.indexOf(user.$key) > -1\">\r\n        <ion-button size=\"small\" (click)=\"cancelFriendRequest()\">Cancel\r\n          Request</ion-button>\r\n      </div>\r\n      <div *ngIf=\"canAdd()\">\r\n        <ion-button size=\"small\" (click)=\"sendFriendRequest()\">Add Friend</ion-button>\r\n      </div>\r\n      <div *ngIf=\"friends && friends.indexOf(user.$key) > -1\">\r\n        <ion-button size=\"small\" (click)=\"sendMessage()\">Start Chat</ion-button>\r\n        <ion-button size=\"small\" (click)=\"block()\">Block User</ion-button>\r\n      </div>\r\n    </div>\r\n\r\n\r\n  </div>\r\n  </ion-row>\r\n  </div>\r\n</ion-content>";
     /***/
   },
 
@@ -119,7 +119,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL3VzZXJpbmZvL3VzZXJpbmZvLnBhZ2Uuc2NzcyJ9 */";
+    __webpack_exports__["default"] = ":host {\n  --page-margin: var(--app-narrow-margin);\n  --page-background: var(--app-background);\n}\n\n.user-info {\n  margin: var(--page-margin) var(--page-margin) var(--page-margin) var(--page-margin);\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvdXNlcmluZm8vQzpcXFVzZXJzXFxyb2hpc2V0aGlcXERvY3VtZW50c1xcaW9uaWNcXGZpcmVjaGF0NF92Mi9zcmNcXGFwcFxcdXNlcmluZm9cXHVzZXJpbmZvLnBhZ2Uuc2NzcyIsInNyYy9hcHAvdXNlcmluZm8vdXNlcmluZm8ucGFnZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksdUNBQUE7RUFDQSx3Q0FBQTtBQ0NKOztBREVBO0VBQ0ksbUZBQUE7QUNDSiIsImZpbGUiOiJzcmMvYXBwL3VzZXJpbmZvL3VzZXJpbmZvLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIjpob3N0IHtcclxuICAgIC0tcGFnZS1tYXJnaW46IHZhcigtLWFwcC1uYXJyb3ctbWFyZ2luKTtcclxuICAgIC0tcGFnZS1iYWNrZ3JvdW5kOiB2YXIoLS1hcHAtYmFja2dyb3VuZCk7XHJcbiAgfVxyXG5cclxuLnVzZXItaW5mbyB7XHJcbiAgICBtYXJnaW46IHZhcigtLXBhZ2UtbWFyZ2luKSB2YXIoLS1wYWdlLW1hcmdpbikgdmFyKC0tcGFnZS1tYXJnaW4pIHZhcigtLXBhZ2UtbWFyZ2luKTtcclxuICAgIC51c2VyLWltZyB7XHJcbiAgXHJcbiAgICB9XHJcbn0iLCI6aG9zdCB7XG4gIC0tcGFnZS1tYXJnaW46IHZhcigtLWFwcC1uYXJyb3ctbWFyZ2luKTtcbiAgLS1wYWdlLWJhY2tncm91bmQ6IHZhcigtLWFwcC1iYWNrZ3JvdW5kKTtcbn1cblxuLnVzZXItaW5mbyB7XG4gIG1hcmdpbjogdmFyKC0tcGFnZS1tYXJnaW4pIHZhcigtLXBhZ2UtbWFyZ2luKSB2YXIoLS1wYWdlLW1hcmdpbikgdmFyKC0tcGFnZS1tYXJnaW4pO1xufSJdfQ== */";
     /***/
   },
 
@@ -204,11 +204,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       // This is the page where the user can view user information, and do appropriate actions based on their relation to the current logged in user.
       function UserinfoPage( // public navCtrl: NavController,
       // public navParams: NavParams,
-      router, // public modalCtrl: ModalController,
-      dataProvider, loadingProvider, alertCtrl, firebaseProvider, route) {
+      router, modalCtrl, dataProvider, loadingProvider, alertCtrl, firebaseProvider, route) {
         _classCallCheck(this, UserinfoPage);
 
         this.router = router;
+        this.modalCtrl = modalCtrl;
         this.dataProvider = dataProvider;
         this.loadingProvider = loadingProvider;
         this.alertCtrl = alertCtrl;
@@ -405,6 +405,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       return [{
         type: _angular_router__WEBPACK_IMPORTED_MODULE_6__["Router"]
       }, {
+        type: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["ModalController"]
+      }, {
         type: _services_data_service__WEBPACK_IMPORTED_MODULE_2__["DataService"]
       }, {
         type: _services_loading_service__WEBPACK_IMPORTED_MODULE_3__["LoadingService"]
@@ -425,7 +427,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       styles: [tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(
       /*! ./userinfo.page.scss */
       "./src/app/userinfo/userinfo.page.scss")).default]
-    }), tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_6__["Router"], _services_data_service__WEBPACK_IMPORTED_MODULE_2__["DataService"], _services_loading_service__WEBPACK_IMPORTED_MODULE_3__["LoadingService"], _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["AlertController"], _services_firebase_service__WEBPACK_IMPORTED_MODULE_5__["FirebaseService"], _angular_router__WEBPACK_IMPORTED_MODULE_6__["ActivatedRoute"]])], UserinfoPage);
+    }), tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_6__["Router"], _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["ModalController"], _services_data_service__WEBPACK_IMPORTED_MODULE_2__["DataService"], _services_loading_service__WEBPACK_IMPORTED_MODULE_3__["LoadingService"], _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["AlertController"], _services_firebase_service__WEBPACK_IMPORTED_MODULE_5__["FirebaseService"], _angular_router__WEBPACK_IMPORTED_MODULE_6__["ActivatedRoute"]])], UserinfoPage);
     /***/
   }
 }]);

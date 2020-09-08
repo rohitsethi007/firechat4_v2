@@ -63,6 +63,7 @@ export class FeedPage implements OnInit {
     ) { 
       this.plt.ready()
       .then(() => {
+        console.log('platform ready in Feed page');
         this.fcm.onNotification().subscribe(data => {
           if (data.wasTapped) {
             console.log("Received in background");
@@ -74,9 +75,9 @@ export class FeedPage implements OnInit {
         this.fcm.onTokenRefresh().subscribe(token => {
           // Register your new token in your back-end if you want
           // backend.registerToken(token);
-          console.log('token', token);
+          console.log('fcm token', token);
         });
-      });
+      })
     }
 
     subscribeToTopic() {

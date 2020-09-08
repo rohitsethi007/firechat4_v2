@@ -21,7 +21,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "<ion-header>\n  <ion-toolbar color=\"secondary\">\n    <ion-buttons slot=\"start\">\n      <ion-back-button></ion-back-button>\n    </ion-buttons>\n    <ion-title (click)=\"groupInfo()\">{{title}}</ion-title>\n    <ion-buttons slot=\"end\"> \n      <ion-button *ngIf=\"loggedInUserIsMember == true\" (click)=\"showGroupOptions()\" ><ion-icon name=\"ellipsis-vertical\"></ion-icon></ion-button>\n   <ion-button *ngIf=\"loggedInUserIsMember == false\" (click)=\"joinGroup()\" >Join Group</ion-button>\n    <ion-button *ngIf=\"loggedInUserIsMember == true && tab=='posts'\" (click)=\"newPost()\" ><ion-icon name=\"add-circle-outline\"></ion-icon></ion-button>\n    <ion-button *ngIf=\"loggedInUserIsMember == true && tab=='polls'\" (click)=\"newPoll()\" ><ion-icon name=\"add-circle-outline\"></ion-icon></ion-button>\n\t\t<ion-button *ngIf=\"loggedInUserIsMember == true && tab=='resources'\" (click)=\"newResource()\" ><ion-icon name=\"add-circle-outline\"></ion-icon></ion-button>\n\t\t<ion-button *ngIf=\"loggedInUserIsMember == true && tab=='events'\" (click)=\"newEvent()\" ><ion-icon name=\"add-circle-outline\"></ion-icon></ion-button>\n\t</ion-buttons>\n\n  </ion-toolbar>\n\n  <ion-segment scrollable value=\"groupInfo\" color=\"secondary\" [(ngModel)]=\"tab\" (ionChange)=\"segmentChanged($event)\">\n\t\t<!-- <ion-segment-button value=\"group\">\n  \t\t\t<ion-icon name=\"chatbubbles\"></ion-icon>\n    </ion-segment-button> -->\n\t\t<!-- <ion-segment-button value=\"groupInfo\">\n      <ion-icon name=\"ellipsis-vertical\"></ion-icon>\n\t\t</ion-segment-button> -->\n    <ion-segment-button value=\"posts\">\n      <ion-icon size=\"medium\" name=\"chatbubbles\"></ion-icon>\n      <!-- <span class=\"tab-title\">Posts</span> -->\n    </ion-segment-button>\n\t\t<ion-segment-button value=\"polls\">\n      <ion-icon size=\"medium\" name=\"podium\"></ion-icon>\n      <!-- <span class=\"tab-title\">Polls</span> -->\n\t\t</ion-segment-button>\n\t\t<ion-segment-button value=\"resources\">\n      <ion-icon size=\"medium\" name=\"library\"></ion-icon>\n      <!-- <span class=\"tab-title\">Resources</span> -->\n    </ion-segment-button>\n    <ion-segment-button value=\"events\">\n      <ion-icon size=\"medium\" name=\"calendar\"></ion-icon>\n      <!-- <span class=\"tab-title\">Events</span> -->\n    </ion-segment-button>\n</ion-segment>\n</ion-header>\n\n<ion-content>\n  <div [ngSwitch]=\"tab\" >\n\n  <div *ngSwitchCase=\"'posts'\">\n    <!-- No Posts to show -->\n     <div class=\"empty-list\" *ngIf=\"posts && posts.length == 0\">\n     <h1><ion-icon name=\"chatbubbles-outline\"></ion-icon></h1>\n     <p>No new Posts added to this group.</p>\n     </div>\n     <!-- Show Posts -->\n     <div *ngIf=\"posts && posts.length > 0\" >\n     <div class=\"listing-item\" *ngFor=\"let item of posts | reverse\" >\n      <ion-card>\n        <ion-card-header>\n          <ion-card-subtitle class=\"addedBy\">\n           <img class=\"addedByImg\" src=\"{{item.avatar}}\" onError=\"this.src='./assets/images/default-dp.png'\" /> \n            <p><a class=\"addedByTitle\" (click)=\"viewUser(item.addedByUser.addedByKey)\" ><b>{{item.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf=\"item.showNewIcon\" class=\"newIcon\" src=\"./assets/icon/new.svg\" />  -->\n             <br/>\n            <span class=\"addedByDate\">posted {{item.date.toDate() | DateFormat}}</span><br/>\n           <a (click)=\"viewGroup(item.groupId)\" class=\"addedByTitle\">in <b>{{item.groupName}}</b></a></p>\n         </ion-card-subtitle>\n       </ion-card-header>\n       <ion-card-content class=\"message\" *ngIf=\"item.type === 'general'\">\n        <div (click)=\"viewPost(item)\">\n        <b>{{item.title}}.</b> {{item.data.message}} <br/>\n      </div>\n        <div class=\"reviews-wrapper\">\n        <ion-row>\n          <div class=\"tags\" *ngFor=\"let tag of item.postTags\">\n            <span *ngIf=\"tag.isChecked\" class=\"item-rating\" [attr.ratingBase]=\"1\">#{{tag.val}}</span>\n            <span *ngIf=\"!tag.isChecked\" class=\"item-rating\" [attr.ratingBase]=\"0\">#{{tag.val}}</span>\n          </div>\n        </ion-row>\n        </div>\n        <div class=\"reactions\">\n        <ion-row >\n          <ion-col size=3>\n            <ion-buttons>\n              <ion-button (click)=\"submitReactionPost(item, 'Thanks')\">\n             <div *ngIf=\"item.showSmiley\"><ion-icon size=\"small\" class=\"icon\" src=\"./assets/icon/smile-active.svg\" ></ion-icon> <span class=\"text\">Thanks</span></div> \n             <div *ngIf=\"!item.showSmiley\"><ion-icon size=\"small\" class=\"icon\"  src=\"./assets/icon/smile.svg\" ></ion-icon> <span class=\"text\">Thanks</span></div> \n            </ion-button>\n            </ion-buttons> \n          </ion-col>\n          <ion-col size=3>\n            <ion-buttons>\n              <ion-button (click)=\"submitReactionPost(item, 'Hug')\">\n             <div *ngIf=\"item.showHug\"><ion-icon size=\"small\" class=\"icon\" src=\"./assets/icon/hug-active.svg\" ></ion-icon> <span class=\"text\">Hug</span></div> \n             <div *ngIf=\"!item.showHug\"><ion-icon size=\"small\" class=\"icon\"  src=\"./assets/icon/hug.svg\" ></ion-icon> <span class=\"text\">Hug</span></div> \n            </ion-button>\n            </ion-buttons> \n          </ion-col>\n          <ion-col size=2></ion-col>\n          <ion-col size=2>\n            <ion-buttons>\n              <ion-button (click)=\"showReactionsList(item)\">\n            <div><ion-icon size=\"small\" src=\"./assets/icon/smile-active.svg\" class=\"icon\"></ion-icon><ion-icon size=\"small\" src=\"./assets/icon/hug-active.svg\" class=\"icon\"></ion-icon> <span class=\"text\">{{item.totalReactionCount}}</span></div>\n          </ion-button>\n        </ion-buttons> \n          </ion-col>\n          <ion-col size=2>\n            <ion-buttons>\n              <ion-button>\n            <div><ion-icon size=\"small\" src=\"./assets/icon/chat.svg\" class=\"icon\"></ion-icon> <span class=\"text\">{{item.totalReviewCount}}</span></div>\n          </ion-button>\n        </ion-buttons> \n          </ion-col>\n        </ion-row>\n        </div>\n      </ion-card-content>\n      </ion-card>\n    </div>\n     </div>\n    </div>\n     <div *ngSwitchCase=\"'polls'\">\n    <!-- No polls to show -->\n     <div class=\"empty-list\" *ngIf=\"polls && polls.length == 0\">\n     <h1><ion-icon name=\"md-chatbubbles\"></ion-icon></h1>\n     <p>No new polls yet.</p>\n     </div>\n     <!-- Show polls -->\n     <div *ngIf=\"polls && polls.length > 0\">\n      <div class=\"listing-item\" *ngFor=\"let item of polls\">\n     <ion-card>\n      <ion-card-header>\n        <ion-card-subtitle class=\"addedBy\">\n         <img class=\"addedByImg\" src=\"{{item.avatar}}\" onError=\"this.src='./assets/images/default-dp.png'\" /> \n          <p><a class=\"addedByTitle\" (click)=\"viewUser(item.addedByUser.addedByKey)\" ><b>{{item.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf=\"item.showNewIcon\" class=\"newIcon\" src=\"./assets/icon/new.svg\" />  -->\n           <br/>\n          <span class=\"addedByDate\">posted {{item.date.toDate() | DateFormat}}</span><br/>\n         <a (click)=\"viewGroup(item.groupId)\" class=\"addedByTitle\">in <b>{{item.groupName}}</b></a></p>\n       </ion-card-subtitle>\n     </ion-card-header>\n     <ion-card-content class=\"message\">\n      <div (click)=\"viewPoll(item)\">\n      <b>{{item.title}}.</b><br/>\n      <ion-row class=\"info-row\" *ngFor=\"let pollOption of item.data.pollOptions\">\n        <ion-col class=\"poll-option-col\">\n           <div><ion-icon size=\"small\" class=\"icon\" src=\"./assets/icon/checked.svg\" ></ion-icon> <span class=\"text\">{{pollOption.name}}</span></div>\n        </ion-col>\n      </ion-row>\n    </div>\n      <div class=\"reviews-wrapper\">\n        <ion-row>\n          <div class=\"tags\" *ngFor=\"let tag of item.postTags\">\n            <span *ngIf=\"tag.isChecked\" class=\"item-rating\" [attr.ratingBase]=\"1\">#{{tag.val}}</span>\n            <span *ngIf=\"!tag.isChecked\" class=\"item-rating\" [attr.ratingBase]=\"0\">#{{tag.val}}</span>\n          </div>\n        </ion-row>\n        </div>\n\n        <ion-row class=\"info-row\" >\n       <ion-col size=\"8\">\n                 <span class=\"text\">Poll ends {{item.data.dateEnding.toDate() | DateFormat}}</span> \n              </ion-col>\n        <ion-col size=\"1\">\n        </ion-col>\n              <ion-col size=\"3\">\n                <div><span class=\"text\">{{item.totalPollCount}} voted</span></div>\n              </ion-col>\n            </ion-row>\n    </ion-card-content>\n      </ion-card>\n   </div>\n      </div>\n    </div>\n    <div *ngSwitchCase=\"'resources'\">\n    <!-- No Resources to show -->\n     <div class=\"empty-list\" *ngIf=\"resources && resources.length == 0\">\n     <h1><ion-icon name=\"chatbubbles-outline\"></ion-icon></h1>\n     <p>No new Resources added to this group.</p>\n     </div>\n     <!-- Show Resources -->\n     <div *ngIf=\"resources && resources.length > 0\" >\n      <div class=\"listing-item\" *ngFor=\"let item of resources\">\n       <div>\n     <ion-card>\n      <ion-card-header>\n        <ion-card-subtitle class=\"addedBy\">\n         <img class=\"addedByImg\" src=\"{{item.avatar}}\" onError=\"this.src='./assets/images/default-dp.png'\" /> \n          <p><a class=\"addedByTitle\" (click)=\"viewUser(item.addedByUser.addedByKey)\" ><b>{{item.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf=\"item.showNewIcon\" class=\"newIcon\" src=\"./assets/icon/new.svg\" />  -->\n           <br/>\n          <span class=\"addedByDate\">posted {{item.date.toDate() | DateFormat}}</span><br/>\n         <a (click)=\"viewGroup(item.groupId)\" class=\"addedByTitle\">in <b>{{item.groupName}}</b></a></p>\n       </ion-card-subtitle>\n     </ion-card-header>\n     <ion-card-content class=\"message\">\n      <div (click)=\"viewResource(item)\">\n      <b>{{item.title}}.</b><br/>\n      <div *ngIf=\"item?.data.type == 'contact'\">\n        {{item.data.name}}<br/>\n        {{item.data.address}}<br/><br/>\n        {{item.data.email}}<br/>\n        {{item.data.phones}}<br/>\n      </div>\n      <div *ngIf=\"item?.data.type == 'upload'\">\n        <div *ngIf=\"item.data.uploadtype == 'location'\" [innerHtml]=\"item.data.url\"></div>\n        <div *ngIf=\"item.data.uploadtype == 'contact'\">\n        {{item.data.name}}<br/>\n        {{item.data.address}}<br/>\n        {{item.data.phones}}<br/>\n        {{item.data.email}}<br/>\n        </div>\n        <div *ngIf=\"item.data.uploadtype == 'image'\">\n        <img src=\"{{item.data.resolvedurl}}\" />\n        </div>\n        <div *ngIf=\"item.data.uploadtype == 'video'\">\n          <video controls width=\"100%\" src=\"{{item.data.resolvedurl}}\" ></video>\n        </div>\n      </div>\n      <div *ngIf=\"item?.data.type == 'weblink'\">\n      {{item.data.metatitle}}<br/>\n      <img [src]=\"item.data.metaicon\"/> \n      {{item.data.metadescription}}<br/><br/>\n      <a href=\"{{item.data.metasite}}\">{{item.data.metasite}}</a>\n      </div>\n    </div>\n      <div class=\"reviews-wrapper\">\n        <ion-row>\n          <div class=\"tags\" *ngFor=\"let tag of item.postTags\">\n            <span *ngIf=\"tag.isChecked\" class=\"item-rating\" [attr.ratingBase]=\"1\">#{{tag.val}}</span>\n            <span *ngIf=\"!tag.isChecked\" class=\"item-rating\" [attr.ratingBase]=\"0\">#{{tag.val}}</span>\n          </div>\n        </ion-row>\n      </div>\n      <div class=\"reactions\">\n         <ion-row>\n          <ion-col size=3>\n            <ion-buttons>\n            <ion-button (click)=\"submitReactionPost(item, 'Thanks')\">\n           <div *ngIf=\"item.showSmiley\"><ion-icon size=\"small\" class=\"icon\" src=\"./assets/icon/smile-active.svg\" ></ion-icon> <span class=\"text\">Thanks</span></div> \n           <div *ngIf=\"!item.showSmiley\"><ion-icon size=\"small\" class=\"icon\"  src=\"./assets/icon/smile.svg\" ></ion-icon> <span class=\"text\">Thanks</span></div> \n            </ion-button>\n            </ion-buttons> \n          </ion-col>\n          <ion-col size=3>\n               <ion-buttons>\n               <ion-button (click)=\"submitReactionPost(item, 'Bookmark')\">\n              <div *ngIf=\"item.showBookmark\"><ion-icon size=\"small\" class=\"icon\" src=\"./assets/icon/bookmark-active.svg\" ></ion-icon> <span class=\"text\">Bookmark</span></div> \n              <div *ngIf=\"!item.showBookmark\"><ion-icon size=\"small\" class=\"icon\"  src=\"./assets/icon/bookmark.svg\" ></ion-icon> <span class=\"text\">Bookmark</span></div> \n               </ion-button>\n               </ion-buttons> \n          </ion-col>\n        <ion-col size=2></ion-col>\n        <ion-col size=2>\n               <ion-buttons>\n               <ion-button (click)=\"showReactionsList(item)\">\n               <div><ion-icon size=\"small\" src=\"./assets/icon/bookmark-active.svg\" class=\"icon\"></ion-icon><ion-icon size=\"small\" src=\"./assets/icon/smile-active.svg\" class=\"icon\"></ion-icon><span class=\"text\">{{item.totalReactionCount}}</span></div>\n             </ion-button>\n             </ion-buttons> \n             </ion-col>\n             <ion-col size=2>\n               <ion-buttons>\n               <ion-button>\n                <div><ion-icon size=\"small\" src=\"./assets/icon/chat.svg\" class=\"icon\"></ion-icon> <span class=\"text\">{{item.totalReviewCount}}</span></div>\n              </ion-button>\n             </ion-buttons> \n             </ion-col>\n        </ion-row>\n      \n      </div>\n    </ion-card-content>\n        </ion-card>\n           </div>\n     </div>\n      </div>\n    </div>\n    <div *ngSwitchCase=\"'events'\">\n      <!-- No Events to show -->\n       <div class=\"empty-list\" *ngIf=\"events && events.length == 0\">\n       <h1><ion-icon name=\"chatbubbles\"></ion-icon></h1>\n       <p>No new upcoming Events added to this group.</p>\n       </div>\n       <!-- Show Events -->\n       <div *ngIf=\"events && events.length > 0\" >\n        <div class=\"listing-item\" *ngFor=\"let item of events\">\n          <ion-card>\n            <ion-card-header>\n              <ion-card-subtitle class=\"addedBy\">\n               <img class=\"addedByImg\" src=\"{{item.avatar}}\" onError=\"this.src='./assets/images/default-dp.png'\" /> \n                <p><a class=\"addedByTitle\" (click)=\"viewUser(item.addedByUser.addedByKey)\" ><b>{{item.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf=\"item.showNewIcon\" class=\"newIcon\" src=\"./assets/icon/new.svg\" />  -->\n                 <br/>\n                <span class=\"addedByDate\">posted {{item.date.toDate() | DateFormat}}</span><br/>\n               <a (click)=\"viewGroup(item.groupId)\" class=\"addedByTitle\">in <b>{{item.groupName}}</b></a></p>\n             </ion-card-subtitle>\n           </ion-card-header>\n           <ion-card-content class=\"message\" *ngIf=\"item.type === 'event'\">\n            <div (click)=\"viewEvent(item)\">\n            <b>{{item.title}}.</b> <br/>{{item.data.eventDate}} at {{item.data.eventTime}}<br/><br/>\n              {{item.data.address}}<br/><br/>\n              {{item.data.link}}\n            </div>\n            <div class=\"reviews-wrapper\">\n              <ion-row>\n                <div class=\"tags\" *ngFor=\"let tag of item.postTags\">\n                  <span *ngIf=\"tag.isChecked\" class=\"item-rating\" [attr.ratingBase]=\"1\">#{{tag.val}}</span>\n                  <span *ngIf=\"!tag.isChecked\" class=\"item-rating\" [attr.ratingBase]=\"0\">#{{tag.val}}</span>\n                </div>\n              </ion-row>\n            </div>\n            <div class=\"reactions\">\n              <ion-row>\n                <ion-col size=3>\n                  <ion-buttons>\n                    <ion-button (click)=\"submitReactionPost(item, 'Thanks')\">\n                    <div *ngIf=\"item.showSmiley\"><ion-icon size=\"small\" class=\"icon\" src=\"./assets/icon/smile-active.svg\" ></ion-icon> <span class=\"text\">Thanks</span></div> \n                    <div *ngIf=\"!item.showSmiley\"><ion-icon size=\"small\" class=\"icon\"  src=\"./assets/icon/smile.svg\" ></ion-icon> <span class=\"text\">Thanks</span></div> \n                  </ion-button>\n                  </ion-buttons> \n                </ion-col>\n                <ion-col size=3>\n                  <ion-buttons>\n                    <ion-button (click)=\"submitReactionPost(item, 'Checkin')\">\n                    <div *ngIf=\"item.showCheckin\"><ion-icon size=\"small\" class=\"icon\" src=\"./assets/icon/checkin-active.svg\" ></ion-icon> <span class=\"text\">Checkin</span></div> \n                    <div *ngIf=\"!item.showCheckin\"><ion-icon size=\"small\" class=\"icon\"  src=\"./assets/icon/checkin.svg\" ></ion-icon> <span class=\"text\">Checkin</span></div> \n                  </ion-button>\n                  </ion-buttons> \n                </ion-col>\n                <ion-col size=2></ion-col>\n                <ion-col size=2>\n                        <ion-buttons>\n                          <ion-button (click)=\"showReactionsList(item)\">\n                        <div><ion-icon size=\"small\" src=\"./assets/icon/smile-active.svg\" class=\"icon\"></ion-icon><ion-icon size=\"small\" src=\"./assets/icon/checkin-active.svg\" class=\"icon\"></ion-icon><span class=\"text\">{{item.totalReactionCount}}</span></div>\n                      </ion-button>\n                    </ion-buttons> \n                </ion-col>\n                <ion-col size=2>\n                        <ion-buttons>\n                          <ion-button>\n                            <div><ion-icon size=\"small\" src=\"./assets/icon/chat.svg\" class=\"icon\"></ion-icon> <span class=\"text\">{{item.totalReviewCount}}</span></div>\n                          </ion-button>\n                    </ion-buttons> \n                </ion-col>\n               </ion-row>\n           </div>\n          </ion-card-content>\n        </ion-card>\n        </div>\n       </div>\n      </div>\n      <!-- Group Info -->\n <div  class=\"group-info\" *ngSwitchCase=\"'groupInfo'\">\n  <div>\n\n    <div class=\"group-img\">\n      <img src=\"{{group.img}}\">\n    </div>\n    <div class=\"group-name\">    \n      {{group.name}}\n    </div>\n    <div class=\"group-desc\">\n      {{group.description}}\n    </div>\n</div>\n<div class=\"group-name\"> \nGroup Tags\n</div>\n<div class=\"group-tags\">\n  <ion-row>\n    <div class=\"tags\" *ngFor=\"let tag of group.groupTags\">\n      <span class=\"item-rating\" [attr.ratingBase]=\"1\">#{{tag}}</span>\n    </div>\n  </ion-row>\n</div>\n<div class=\"group-name\"> \n  Group Members ({{groupMembers.length}})\n  </div>\n   <ion-list *ngIf=\"groupMembers\">\n    <!-- <ion-item (click)=\"addMembers()\">\n     <ion-icon name=\"add\" item-left></ion-icon>\n     <h2>Add Members</h2>\n     </ion-item>-->\n     <ion-item *ngFor=\"let member of groupMembers\" (click)=\"viewUser(member.$key)\">\n     <ion-avatar>\n       <img src=\"{{member.img}}\" onError=\"this.src='./assets/images/default-dp.png'\"/>\n     </ion-avatar>\n     <ion-label class=\"group-member-name\">{{member.name}}</ion-label>\n     <p>{{member.description}}</p>\n     </ion-item>\n   </ion-list>\n   <ion-list-header *ngIf=\"loggedInUserIsMember == true\" >\n     More\n   </ion-list-header>\n   <ion-list *ngIf=\"loggedInUserIsMember == true\"  style=\"text-align: center;\">  \n     <ion-item no-lines tappable (click)=\"leaveGroup()\" *ngIf=\"groupMembers && groupMembers.length > 1\">\n     Leave Group\n     </ion-item>\n     <!-- When there's only one member left, allow deleting of group. -->\n     <ion-item color=\"danger\" no-lines tappable (click)=\"deleteGroup()\" *ngIf=\"groupMembers && groupMembers.length <= 1\">\n     Delete Group\n     </ion-item>\n   </ion-list>\n   <p padding style=\"color:#aaa\">Started {{group.dateCreated | DateFormat}}</p>\n   </div>\n  </div>\n</ion-content>\n";
+    __webpack_exports__["default"] = "<ion-header>\r\n  <ion-toolbar>\r\n    <ion-buttons slot=\"start\">\r\n      <ion-back-button></ion-back-button>\r\n    </ion-buttons>\r\n    <ion-title (click)=\"groupInfo()\">{{title}}</ion-title>\r\n    <ion-buttons slot=\"end\"> \r\n      <ion-button *ngIf=\"loggedInUserIsMember == true\" (click)=\"showGroupOptions()\" ><ion-icon name=\"ellipsis-vertical\"></ion-icon></ion-button>\r\n   <ion-button *ngIf=\"loggedInUserIsMember == false\" (click)=\"joinGroup()\" >Join Group</ion-button>\r\n    <ion-button *ngIf=\"loggedInUserIsMember == true && tab=='posts'\" (click)=\"newPost()\" ><ion-icon name=\"add-circle-outline\"></ion-icon></ion-button>\r\n    <ion-button *ngIf=\"loggedInUserIsMember == true && tab=='polls'\" (click)=\"newPoll()\" ><ion-icon name=\"add-circle-outline\"></ion-icon></ion-button>\r\n\t\t<ion-button *ngIf=\"loggedInUserIsMember == true && tab=='resources'\" (click)=\"newResource()\" ><ion-icon name=\"add-circle-outline\"></ion-icon></ion-button>\r\n\t\t<ion-button *ngIf=\"loggedInUserIsMember == true && tab=='events'\" (click)=\"newEvent()\" ><ion-icon name=\"add-circle-outline\"></ion-icon></ion-button>\r\n\t</ion-buttons>\r\n\r\n  </ion-toolbar>\r\n\r\n  <ion-segment value=\"posts\" color=\"secondary\" [(ngModel)]=\"tab\" (ionChange)=\"segmentChanged($event)\">\r\n\t\t<!-- <ion-segment-button value=\"group\">\r\n  \t\t\t<ion-icon name=\"chatbubbles\"></ion-icon>\r\n    </ion-segment-button> -->\r\n\t\t<!-- <ion-segment-button value=\"groupInfo\">\r\n      <ion-icon name=\"ellipsis-vertical\"></ion-icon>\r\n\t\t</ion-segment-button> -->\r\n    <ion-segment-button value=\"posts\">\r\n      <ion-icon size=\"medium\" name=\"chatbubbles\"></ion-icon>\r\n      <!-- <span class=\"tab-title\">Posts</span> -->\r\n    </ion-segment-button>\r\n\t\t<ion-segment-button value=\"polls\">\r\n      <ion-icon size=\"medium\" name=\"podium\"></ion-icon>\r\n      <!-- <span class=\"tab-title\">Polls</span> -->\r\n\t\t</ion-segment-button>\r\n\t\t<ion-segment-button value=\"resources\">\r\n      <ion-icon size=\"medium\" name=\"library\"></ion-icon>\r\n      <!-- <span class=\"tab-title\">Resources</span> -->\r\n    </ion-segment-button>\r\n    <ion-segment-button value=\"events\">\r\n      <ion-icon size=\"medium\" name=\"calendar\"></ion-icon>\r\n      <!-- <span class=\"tab-title\">Events</span> -->\r\n    </ion-segment-button>\r\n</ion-segment>\r\n</ion-header>\r\n\r\n<ion-content fullscreen>\r\n  <div [ngSwitch]=\"tab\" >\r\n\r\n  <div *ngSwitchCase=\"'posts'\">\r\n    <!-- No Posts to show -->\r\n     <div class=\"empty-list\" *ngIf=\"posts && posts.length == 0\">\r\n     <h1><ion-icon name=\"chatbubbles-outline\"></ion-icon></h1>\r\n     <p>No new Posts added to this group.</p>\r\n     </div>\r\n     <!-- Show Posts -->\r\n     <div *ngIf=\"posts && posts.length > 0\" >\r\n     <div class=\"listing-item\" *ngFor=\"let item of posts\" >\r\n      <ion-card>\r\n        <ion-card-header>\r\n          <ion-row>\r\n            <ion-col size=10>\r\n           <ion-card-subtitle class=\"addedBy\">\r\n            <img class=\"addedByImg\" src=\"{{item.avatar}}\" onError=\"this.src='./assets/images/default-dp.png'\" /> \r\n             <p><a class=\"addedByTitle\" (click)=\"viewUser(item.addedByUser.addedByKey)\" ><b>{{item.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf=\"item.showNewIcon\" class=\"newIcon\" src=\"./assets/icon/new.svg\" />  -->\r\n              <br/>\r\n             <span class=\"addedByDate\">posted {{item.date.toDate() | DateFormat}}</span><br/>\r\n            <a (click)=\"viewGroup(item.groupId)\" class=\"addedByTitle\">in <b>{{item.groupName}}</b></a></p>\r\n          </ion-card-subtitle>\r\n        </ion-col>\r\n        <ion-col size=2>\r\n          <ion-buttons>\r\n            <ion-button (click)=\"showPostOptions(item)\">\r\n              <ion-icon slot=\"end\" name=\"chevron-down-outline\"></ion-icon>\r\n            </ion-button>\r\n          </ion-buttons>\r\n        </ion-col>\r\n        </ion-row>\r\n        </ion-card-header>\r\n        <ion-card-content class=\"message\" *ngIf=\"item.type === 'general'\">\r\n          <div (click)=\"viewPost(item)\">\r\n            <div>\r\n              <ion-slides class=\"slider\" pager=\"true\" [options]=\"slideOptsOne\" #slideWithNav>\r\n              <ion-slide *ngFor=\"let s of item.postMedia\">\r\n                <div class=\"bgSizeContain\" \r\n                [ngStyle]=\"{'background-image':'url('+s+')'}\">\r\n              </div>\r\n              </ion-slide>\r\n            </ion-slides>\r\n            </div>\r\n          <ion-label><b>{{item.title}}.</b> {{item.data.message}} <br/></ion-label>\r\n        </div>\r\n          <div class=\"tags-wrapper\">\r\n          <ion-row>\r\n            <div class=\"tags\" *ngFor=\"let tag of item.postTags\">\r\n              <span class=\"item-rating\">#{{tag.val}}</span>\r\n            </div>\r\n          </ion-row>\r\n          </div>\r\n          <div class=\"reactions\">\r\n          <ion-row >\r\n            <ion-col size=3>\r\n              <ion-buttons>\r\n                <ion-button (click)=\"submitReactionPost(item, 'Thanks')\">\r\n               <div *ngIf=\"item.showSmiley\"><ion-icon size=\"small\" class=\"icon\" src=\"./assets/icon/smile-active.svg\" ></ion-icon> <span class=\"text\">Thanks</span></div> \r\n               <div *ngIf=\"!item.showSmiley\"><ion-icon size=\"small\" class=\"icon\"  src=\"./assets/icon/smile.svg\" ></ion-icon> <span class=\"text\">Thanks</span></div> \r\n              </ion-button>\r\n              </ion-buttons> \r\n            </ion-col>\r\n            <ion-col size=3>\r\n              <ion-buttons>\r\n                <ion-button (click)=\"submitReactionPost(item, 'Hug')\">\r\n               <div *ngIf=\"item.showHug\"><ion-icon size=\"small\" class=\"icon\" src=\"./assets/icon/hug-active.svg\" ></ion-icon> <span class=\"text\">Hug</span></div> \r\n               <div *ngIf=\"!item.showHug\"><ion-icon size=\"small\" class=\"icon\"  src=\"./assets/icon/hug.svg\" ></ion-icon> <span class=\"text\">Hug</span></div> \r\n              </ion-button>\r\n              </ion-buttons> \r\n            </ion-col>\r\n            <ion-col size=2></ion-col>\r\n            <ion-col size=2>\r\n              <ion-buttons>\r\n                <ion-button (click)=\"showReactionsList(item)\">\r\n              <div><ion-icon size=\"small\" src=\"./assets/icon/smile-active.svg\" class=\"icon\"></ion-icon><ion-icon size=\"small\" src=\"./assets/icon/hug-active.svg\" class=\"icon\"></ion-icon> <span class=\"text\">{{item.totalReactionCount}}</span></div>\r\n            </ion-button>\r\n          </ion-buttons> \r\n            </ion-col>\r\n            <ion-col size=2>\r\n              <ion-buttons>\r\n                <ion-button>\r\n              <div><ion-icon size=\"small\" class=\"icon\" name=\"chatbox-outline\"></ion-icon> <span class=\"text\">{{item.totalReviewCount}}</span></div>\r\n            </ion-button>\r\n          </ion-buttons> \r\n            </ion-col>\r\n          </ion-row>\r\n          </div>\r\n        </ion-card-content>\r\n      </ion-card>\r\n    </div>\r\n     </div>\r\n    </div>\r\n     <div *ngSwitchCase=\"'polls'\">\r\n    <!-- No polls to show -->\r\n     <div class=\"empty-list\" *ngIf=\"polls && polls.length == 0\">\r\n     <h1><ion-icon name=\"md-chatbubbles\"></ion-icon></h1>\r\n     <p>No new polls yet.</p>\r\n     </div>\r\n     <!-- Show polls -->\r\n     <div *ngIf=\"polls && polls.length > 0\">\r\n      <div class=\"listing-item\" *ngFor=\"let item of polls\">\r\n     <ion-card>\r\n      <ion-card-header>\r\n        <ion-row>\r\n          <ion-col size=10>\r\n         <ion-card-subtitle class=\"addedBy\">\r\n          <img class=\"addedByImg\" src=\"{{item.avatar}}\" onError=\"this.src='./assets/images/default-dp.png'\" /> \r\n           <p><a class=\"addedByTitle\" (click)=\"viewUser(item.addedByUser.addedByKey)\" ><b>{{item.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf=\"item.showNewIcon\" class=\"newIcon\" src=\"./assets/icon/new.svg\" />  -->\r\n            <br/>\r\n           <span class=\"addedByDate\">posted {{item.date.toDate() | DateFormat}}</span><br/>\r\n          <a (click)=\"viewGroup(item.groupId)\" class=\"addedByTitle\">in <b>{{item.groupName}}</b></a></p>\r\n        </ion-card-subtitle>\r\n      </ion-col>\r\n      <ion-col size=2>\r\n        <ion-buttons>\r\n          <ion-button (click)=\"showPostOptions(item)\">\r\n            <ion-icon slot=\"end\" name=\"chevron-down-outline\"></ion-icon>\r\n          </ion-button>\r\n        </ion-buttons>\r\n      </ion-col>\r\n      </ion-row>\r\n      </ion-card-header>\r\n\r\n      <ion-card-content class=\"message\" *ngIf=\"item.type === 'poll'\" >\r\n        <div (click)=\"viewPoll(item)\">\r\n        <b>{{item.title}}.</b><br/>\r\n        <ion-row  *ngFor=\"let pollOption of item.data.pollOptions\">\r\n          <ion-col >\r\n             <div><ion-icon class=\"poll-icon\" name=\"checkbox-outline\"></ion-icon> <span>{{pollOption.name}}</span></div>\r\n          </ion-col>\r\n        </ion-row>\r\n      </div>\r\n      <div class=\"tags-wrapper\">\r\n        <ion-row>\r\n          <div class=\"tags\" *ngFor=\"let tag of item.postTags\">\r\n            <span class=\"item-rating\">#{{tag.val}}</span>\r\n          </div>\r\n        </ion-row>\r\n        </div>\r\n\r\n              <ion-row class=\"info-row\" >\r\n         <ion-col size=\"8\">\r\n                   <span class=\"text\" *ngIf=\"!item.pollClosed\">Poll ends {{item.data.dateEnding.toDate() | DateFormat}}</span> \r\n                   <span class=\"text\" *ngIf=\"item.pollClosed\">Poll closed</span> \r\n                </ion-col>\r\n          <ion-col size=\"1\">\r\n          </ion-col>\r\n                <ion-col size=\"3\">\r\n                  <div><span class=\"text\">{{item.totalPollCount}} voted</span></div>\r\n                </ion-col>\r\n              </ion-row>\r\n      </ion-card-content>\r\n      </ion-card>\r\n   </div>\r\n      </div>\r\n    </div>\r\n    <div *ngSwitchCase=\"'resources'\">\r\n    <!-- No Resources to show -->\r\n     <div class=\"empty-list\" *ngIf=\"resources && resources.length == 0\">\r\n     <h1><ion-icon name=\"chatbubbles-outline\"></ion-icon></h1>\r\n     <p>No new Resources added to this group.</p>\r\n     </div>\r\n     <!-- Show Resources -->\r\n     <div *ngIf=\"resources && resources.length > 0\" >\r\n      <div class=\"listing-item\" *ngFor=\"let item of resources\">\r\n       <div>\r\n     <ion-card>\r\n      <ion-card-header>\r\n        <ion-row>\r\n          <ion-col size=10>\r\n         <ion-card-subtitle class=\"addedBy\">\r\n          <img class=\"addedByImg\" src=\"{{item.avatar}}\" onError=\"this.src='./assets/images/default-dp.png'\" /> \r\n           <p><a class=\"addedByTitle\" (click)=\"viewUser(item.addedByUser.addedByKey)\" ><b>{{item.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf=\"item.showNewIcon\" class=\"newIcon\" src=\"./assets/icon/new.svg\" />  -->\r\n            <br/>\r\n           <span class=\"addedByDate\">posted {{item.date.toDate() | DateFormat}}</span><br/>\r\n          <a (click)=\"viewGroup(item.groupId)\" class=\"addedByTitle\">in <b>{{item.groupName}}</b></a></p>\r\n        </ion-card-subtitle>\r\n      </ion-col>\r\n      <ion-col size=2>\r\n        <ion-buttons>\r\n          <ion-button (click)=\"showPostOptions(item)\">\r\n            <ion-icon slot=\"end\" name=\"chevron-down-outline\"></ion-icon>\r\n          </ion-button>\r\n        </ion-buttons>\r\n      </ion-col>\r\n      </ion-row>\r\n      </ion-card-header>\r\n      <ion-card-content class=\"message\" *ngIf=\"item.type === 'resource'\">\r\n        <div (click)=\"viewResource(item)\">\r\n        <b>{{item.title}}.</b><br/>\r\n        <div *ngIf=\"item?.data.type == 'contact'\">\r\n          {{item.data.name}}<br/>\r\n          {{item.data.address}}<br/><br/>\r\n          {{item.data.email}}<br/>\r\n          {{item.data.phones}}<br/>\r\n        </div>\r\n        <div *ngIf=\"item?.data.type == 'upload'\">\r\n          <div *ngIf=\"item.data.uploadtype == 'location'\" [innerHtml]=\"item.data.url\"></div>\r\n          <div *ngIf=\"item.data.uploadtype == 'contact'\">\r\n          {{item.data.name}}<br/>\r\n          {{item.data.address}}<br/>\r\n          {{item.data.phones}}<br/>\r\n          {{item.data.email}}<br/>\r\n          </div>\r\n          <div *ngIf=\"item.data.uploadtype == 'image'\">\r\n          <img src=\"{{item.data.resolvedurl}}\" />\r\n          </div>\r\n          <div *ngIf=\"item.data.uploadtype == 'video'\">\r\n            <video controls width=\"100%\" src=\"{{item.data.resolvedurl}}\" ></video>\r\n          </div>\r\n        </div>\r\n        <div *ngIf=\"item?.data.type == 'weblink'\">\r\n        {{item.data.metatitle}}<br/>\r\n        <img [src]=\"item.data.metaicon\"/> \r\n        {{item.data.metadescription}}<br/><br/>\r\n        <a href=\"{{item.data.metasite}}\">{{item.data.metasite}}</a>\r\n        </div>\r\n      </div>\r\n      <div class=\"tags-wrapper\">\r\n        <ion-row>\r\n          <div class=\"tags\" *ngFor=\"let tag of item.postTags\">\r\n            <span class=\"item-rating\">#{{tag.val}}</span>\r\n          </div>\r\n        </ion-row>\r\n        </div>\r\n        <div class=\"reactions\">\r\n           <ion-row>\r\n            <ion-col size=3>\r\n              <ion-buttons>\r\n              <ion-button (click)=\"submitReactionPost(item, 'Thanks')\">\r\n             <div *ngIf=\"item.showSmiley\"><ion-icon size=\"small\" class=\"icon\" src=\"./assets/icon/smile-active.svg\" ></ion-icon> <span class=\"text\">Thanks</span></div> \r\n             <div *ngIf=\"!item.showSmiley\"><ion-icon size=\"small\" class=\"icon\"  src=\"./assets/icon/smile.svg\" ></ion-icon> <span class=\"text\">Thanks</span></div> \r\n              </ion-button>\r\n              </ion-buttons> \r\n            </ion-col>\r\n            <ion-col size=3>\r\n                 <ion-buttons>\r\n                 <ion-button (click)=\"submitReactionPost(item, 'Bookmark')\">\r\n                <div *ngIf=\"item.showBookmark\"><ion-icon size=\"small\" class=\"icon\" src=\"./assets/icon/bookmark-active.svg\" ></ion-icon> <span class=\"text\">Bookmark</span></div> \r\n                <div *ngIf=\"!item.showBookmark\"><ion-icon size=\"small\" class=\"icon\"  src=\"./assets/icon/bookmark.svg\" ></ion-icon> <span class=\"text\">Bookmark</span></div> \r\n                 </ion-button>\r\n                 </ion-buttons> \r\n            </ion-col>\r\n          <ion-col size=2></ion-col>\r\n          <ion-col size=2>\r\n                 <ion-buttons>\r\n                 <ion-button (click)=\"showReactionsList(item)\">\r\n                 <div><ion-icon size=\"small\" src=\"./assets/icon/bookmark-active.svg\" class=\"icon\"></ion-icon><ion-icon size=\"small\" src=\"./assets/icon/smile-active.svg\" class=\"icon\"></ion-icon><span class=\"text\">{{item.totalReactionCount}}</span></div>\r\n               </ion-button>\r\n               </ion-buttons> \r\n               </ion-col>\r\n               <ion-col size=2>\r\n                 <ion-buttons>\r\n                 <ion-button>\r\n                  <div><ion-icon size=\"small\" class=\"icon\" name=\"chatbox-outline\"></ion-icon> <span class=\"text\">{{item.totalReviewCount}}</span></div>\r\n                </ion-button>\r\n               </ion-buttons> \r\n               </ion-col>\r\n          </ion-row>\r\n        \r\n        </div>\r\n      </ion-card-content>\r\n        </ion-card>\r\n           </div>\r\n     </div>\r\n      </div>\r\n    </div>\r\n    <div *ngSwitchCase=\"'events'\">\r\n      <!-- No Events to show -->\r\n       <div class=\"empty-list\" *ngIf=\"events && events.length == 0\">\r\n       <h1><ion-icon name=\"chatbubbles\"></ion-icon></h1>\r\n       <p>No new upcoming Events added to this group.</p>\r\n       </div>\r\n       <!-- Show Events -->\r\n       <div *ngIf=\"events && events.length > 0\" >\r\n        <div class=\"listing-item\" *ngFor=\"let item of events\">\r\n          <ion-card>\r\n            <ion-card-header>\r\n              <ion-row>\r\n                <ion-col size=10>\r\n               <ion-card-subtitle class=\"addedBy\">\r\n                <img class=\"addedByImg\" src=\"{{item.avatar}}\" onError=\"this.src='./assets/images/default-dp.png'\" /> \r\n                 <p><a class=\"addedByTitle\" (click)=\"viewUser(item.addedByUser.addedByKey)\" ><b>{{item.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf=\"item.showNewIcon\" class=\"newIcon\" src=\"./assets/icon/new.svg\" />  -->\r\n                  <br/>\r\n                 <span class=\"addedByDate\">posted {{item.date.toDate() | DateFormat}}</span><br/>\r\n                <a (click)=\"viewGroup(item.groupId)\" class=\"addedByTitle\">in <b>{{item.groupName}}</b></a></p>\r\n              </ion-card-subtitle>\r\n            </ion-col>\r\n            <ion-col size=2>\r\n              <ion-buttons>\r\n                <ion-button (click)=\"showPostOptions(item)\">\r\n                  <ion-icon slot=\"end\" name=\"chevron-down-outline\"></ion-icon>\r\n                </ion-button>\r\n              </ion-buttons>\r\n            </ion-col>\r\n            </ion-row>\r\n            </ion-card-header>\r\n            <ion-card-content class=\"message\" *ngIf=\"item.type === 'event'\">\r\n              <div (click)=\"viewEvent(item)\">\r\n              <b>{{item.title}}.</b> <br/>{{item.data.eventDate}} at {{item.data.eventTime}}<br/><br/>\r\n                {{item.data.address}}<br/><br/>\r\n                {{item.data.link}}\r\n              </div>\r\n              <div class=\"tags-wrapper\">\r\n                <ion-row>\r\n                  <div class=\"tags\" *ngFor=\"let tag of item.postTags\">\r\n                    <span class=\"item-rating\">#{{tag.val}}</span>\r\n                  </div>\r\n                </ion-row>\r\n                </div>\r\n              <div class=\"reactions\">\r\n                <ion-row>\r\n                  <ion-col size=3>\r\n                    <ion-buttons>\r\n                      <ion-button (click)=\"submitReactionPost(item, 'Thanks')\">\r\n                      <div *ngIf=\"item.showSmiley\"><ion-icon size=\"small\" class=\"icon\" src=\"./assets/icon/smile-active.svg\" ></ion-icon> <span class=\"text\">Thanks</span></div> \r\n                      <div *ngIf=\"!item.showSmiley\"><ion-icon size=\"small\" class=\"icon\"  src=\"./assets/icon/smile.svg\" ></ion-icon> <span class=\"text\">Thanks</span></div> \r\n                    </ion-button>\r\n                    </ion-buttons> \r\n                  </ion-col>\r\n                  <ion-col size=3>\r\n                    <ion-buttons>\r\n                      <ion-button (click)=\"submitReactionPost(item, 'Checkin')\">\r\n                      <div *ngIf=\"item.showCheckin\"><ion-icon size=\"small\" class=\"icon\" src=\"./assets/icon/checkin-active.svg\" ></ion-icon> <span class=\"text\">Checkin</span></div> \r\n                      <div *ngIf=\"!item.showCheckin\"><ion-icon size=\"small\" class=\"icon\"  src=\"./assets/icon/checkin.svg\" ></ion-icon> <span class=\"text\">Checkin</span></div> \r\n                    </ion-button>\r\n                    </ion-buttons> \r\n                  </ion-col>\r\n                  <ion-col size=2></ion-col>\r\n                  <ion-col size=2>\r\n                          <ion-buttons>\r\n                            <ion-button (click)=\"showReactionsList(item)\">\r\n                          <div><ion-icon size=\"small\" src=\"./assets/icon/smile-active.svg\" class=\"icon\"></ion-icon><ion-icon size=\"small\" src=\"./assets/icon/checkin-active.svg\" class=\"icon\"></ion-icon><span class=\"text\">{{item.totalReactionCount}}</span></div>\r\n                        </ion-button>\r\n                      </ion-buttons> \r\n                  </ion-col>\r\n                  <ion-col size=2>\r\n                          <ion-buttons>\r\n                            <ion-button>\r\n                              <div><ion-icon size=\"small\" class=\"icon\" name=\"chatbox-outline\"></ion-icon> <span class=\"text\">{{item.totalReviewCount}}</span></div>\r\n                            </ion-button>\r\n                      </ion-buttons> \r\n                  </ion-col>\r\n                 </ion-row>\r\n             </div>\r\n            </ion-card-content>\r\n        </ion-card>\r\n        </div>\r\n       </div>\r\n      </div>\r\n      <!-- Group Info -->\r\n <div  class=\"group-info\" *ngSwitchCase=\"'groupInfo'\">\r\n  <div>\r\n\r\n    <div class=\"group-img\">\r\n      <img src=\"{{group.img}}\">\r\n    </div>\r\n    <div class=\"group-name\">    \r\n      {{group.name}}\r\n    </div>\r\n    <div class=\"group-desc\">\r\n      {{group.description}}\r\n    </div>\r\n</div>\r\n<div class=\"group-name\"> \r\nGroup Tags\r\n</div>\r\n<div class=\"group-tags\">\r\n  <ion-row>\r\n    <div class=\"tags\" *ngFor=\"let tag of group.groupTags\">\r\n      <span class=\"item-rating\" [attr.ratingBase]=\"1\">#{{tag}}</span>\r\n    </div>\r\n  </ion-row>\r\n</div>\r\n<div class=\"group-name\"> \r\n  Group Members ({{groupMembers.length}})\r\n  </div>\r\n   <ion-list *ngIf=\"groupMembers\">\r\n    <!-- <ion-item (click)=\"addMembers()\">\r\n     <ion-icon name=\"add\" item-left></ion-icon>\r\n     <h2>Add Members</h2>\r\n     </ion-item>-->\r\n     <ion-item *ngFor=\"let member of groupMembers\" (click)=\"viewUser(member.$key)\">\r\n     <ion-avatar>\r\n       <img src=\"{{member.img}}\" onError=\"this.src='./assets/images/default-dp.png'\"/>\r\n     </ion-avatar>\r\n     <ion-label class=\"group-member-name\">{{member.name}}</ion-label>\r\n     <p>{{member.description}}</p>\r\n     </ion-item>\r\n   </ion-list>\r\n   <ion-list-header *ngIf=\"loggedInUserIsMember == true\" >\r\n     More\r\n   </ion-list-header>\r\n   <ion-list *ngIf=\"loggedInUserIsMember == true\"  style=\"text-align: center;\">  \r\n     <ion-item no-lines tappable (click)=\"leaveGroup()\" *ngIf=\"groupMembers && groupMembers.length > 1\">\r\n     Leave Group\r\n     </ion-item>\r\n     <!-- When there's only one member left, allow deleting of group. -->\r\n     <ion-item color=\"danger\" no-lines tappable (click)=\"deleteGroup()\" *ngIf=\"groupMembers && groupMembers.length <= 1\">\r\n     Delete Group\r\n     </ion-item>\r\n   </ion-list>\r\n   <p padding style=\"color:#aaa\">Started {{group.dateCreated | DateFormat}}</p>\r\n   </div>\r\n  </div>\r\n\r\n  <ion-infinite-scroll *ngIf=\"tab=='posts'\" threshold=\"100px\" (ionInfinite)=\"loadDataPosts($event)\">\r\n    <ion-infinite-scroll-content\r\n      loadingSpinner=\"bubbles\"\r\n      loadingText=\"Loading more data...\">\r\n    </ion-infinite-scroll-content>\r\n  </ion-infinite-scroll>\r\n  <ion-infinite-scroll *ngIf=\"tab=='events'\" threshold=\"100px\" (ionInfinite)=\"loadDataEvents($event)\">\r\n    <ion-infinite-scroll-content\r\n      loadingSpinner=\"bubbles\"\r\n      loadingText=\"Loading more data...\">\r\n    </ion-infinite-scroll-content>\r\n  </ion-infinite-scroll>\r\n  <ion-infinite-scroll *ngIf=\"tab=='polls'\" threshold=\"100px\" (ionInfinite)=\"loadDataPolls($event)\">\r\n    <ion-infinite-scroll-content\r\n      loadingSpinner=\"bubbles\"\r\n      loadingText=\"Loading more data...\">\r\n    </ion-infinite-scroll-content>\r\n  </ion-infinite-scroll>\r\n  <ion-infinite-scroll *ngIf=\"tab=='resources'\" threshold=\"100px\" (ionInfinite)=\"loadDataResources($event)\">\r\n    <ion-infinite-scroll-content\r\n      loadingSpinner=\"bubbles\"\r\n      loadingText=\"Loading more data...\">\r\n    </ion-infinite-scroll-content>\r\n  </ion-infinite-scroll>\r\n</ion-content>\r\n";
     /***/
   },
 
@@ -131,7 +131,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = ":host {\n  --page-margin: var(--app-fair-margin);\n  --page-background: var(--app-background);\n  --page-rating-2-color: #aa6c39;\n  --page-rating-1-color: #bbb2b2;\n}\n\n.tab-title {\n  size: 9px;\n}\n\n.filters-toolbar {\n  --padding-start: var(--page-margin);\n  --padding-end: var(--page-margin);\n  --padding-top: var(--page-margin);\n  --padding-bottom: var(--page-margin);\n  --border-style: 10px;\n}\n\n.filters-toolbar .searchbar-row {\n  --ion-grid-column-padding: 0px;\n}\n\n.filters-toolbar .searchbar-row ion-searchbar.items-searchbar {\n  padding: 0px;\n  height: 100%;\n  contain: content;\n}\n\n.filters-toolbar .searchbar-row .call-to-action-col {\n  max-width: -webkit-fit-content;\n  max-width: -moz-fit-content;\n  max-width: fit-content;\n  flex-shrink: 0;\n  -webkit-box-flex: 0;\n          flex-grow: 0;\n  display: -webkit-box;\n  display: flex;\n  -webkit-box-pack: end;\n          justify-content: flex-end;\n}\n\n.filters-toolbar .searchbar-row .call-to-action-col .filters-btn {\n  --padding-start: 6px;\n  --padding-end: 6px;\n  margin: 0px;\n  font-size: 15px;\n  height: initial;\n}\n\n.listing-item {\n  background-color: var(--page-background);\n}\n\n.icon {\n  display: inline-block;\n  vertical-align: middle;\n}\n\n.text {\n  display: inline-block;\n  vertical-align: middle;\n  padding-left: 3px;\n  text-transform: capitalize !important;\n}\n\n.addedByTitle {\n  margin-left: 10px;\n  line-height: 5px;\n  text-decoration: none;\n}\n\n.addedByDate {\n  margin-left: 10px;\n  font-style: italic;\n}\n\n.addedByImg {\n  width: 50px;\n  float: left;\n  vertical-align: middle;\n}\n\n.newIcon {\n  margin-left: 10px;\n  height: 40px;\n  vertical-align: middle;\n}\n\n.message {\n  font-family: \"HelveticaNeue\", \"Helvetica Neue\", Helvetica, \"Roboto\", \"Segoe UI\", Arial, sans-serif;\n  font-weight: 400;\n  font-size: 14px;\n  -webkit-font-smoothing: subpixel-antialiased;\n  -moz-osx-font-smoothing: auto;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.message .reactions {\n  margin-left: -10px;\n}\n\n.message .reviews-wrapper {\n  padding-top: calc(var(--page-margin) / 1);\n  padding-bottom: calc(var(--page-margin) / 3);\n}\n\n.message .reviews-wrapper .tags {\n  padding-right: 5px;\n}\n\n.message .reviews-wrapper .tags .item-rating {\n  background-color: rgba(var(--page-color-rgb), 0.35);\n  padding-right: calc(var(--page-margin) / 2);\n  font-size: 14px;\n  font-weight: bold;\n  width: 100%;\n  display: block;\n  text-align: center;\n}\n\n.message .reviews-wrapper .tags .item-rating[ratingBase=\"0\"] {\n  color: var(--page-rating-1-color);\n}\n\n.message .reviews-wrapper .tags .item-rating[ratingBase=\"1\"] {\n  color: var(--page-rating-2-color);\n}\n\n.group-info {\n  margin: var(--page-margin) var(--page-margin) var(--page-margin) var(--page-margin);\n}\n\n.group-info .group-name {\n  padding-top: var(--page-margin);\n  padding-bottom: var(--page-margin);\n  font-family: \"HelveticaNeue\", \"Helvetica Neue\", Helvetica, \"Roboto\", \"Segoe UI\", Arial, sans-serif;\n  text-align: left;\n  font-weight: bold;\n  font-size: 19px;\n}\n\n.group-info .group-tags {\n  padding-bottom: calc(var(--page-margin) / 3);\n}\n\n.group-info .group-tags .tags {\n  padding-right: 5px;\n}\n\n.group-info .group-tags .tags .item-rating {\n  background-color: rgba(var(--page-color-rgb), 0.35);\n  padding-right: calc(var(--page-margin) / 2);\n  font-size: 14px;\n  font-weight: bold;\n  width: 100%;\n  display: block;\n  text-align: center;\n}\n\n.group-info .group-tags .tags .item-rating[ratingBase=\"0\"] {\n  color: var(--page-rating-1-color);\n}\n\n.group-info .group-tags .tags .item-rating[ratingBase=\"1\"] {\n  color: var(--page-rating-2-color);\n}\n\n.group-info .group-member-name {\n  padding-left: var(--page-margin);\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9yaXRhc2V0aGkvRG9jdW1lbnRzL0dpdEh1Yi9maXJlY2hhdDRfdjIvc3JjL2FwcC9ncm91cC9ncm91cC5wYWdlLnNjc3MiLCJzcmMvYXBwL2dyb3VwL2dyb3VwLnBhZ2Uuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLHFDQUFBO0VBQ0Esd0NBQUE7RUFDQSw4QkFBQTtFQUNBLDhCQUFBO0FDQ0Y7O0FEQ0E7RUFDRSxTQUFBO0FDRUY7O0FEQUE7RUFDRSxtQ0FBQTtFQUNBLGlDQUFBO0VBQ0EsaUNBQUE7RUFDQSxvQ0FBQTtFQUNBLG9CQUFBO0FDR0Y7O0FEREU7RUFDRSw4QkFBQTtBQ0dKOztBRERJO0VBQ0UsWUFBQTtFQUVBLFlBQUE7RUFFQSxnQkFBQTtBQ0NOOztBREVJO0VBRUUsOEJBQUE7RUFBQSwyQkFBQTtFQUFBLHNCQUFBO0VBQ0EsY0FBQTtFQUNBLG1CQUFBO1VBQUEsWUFBQTtFQUVBLG9CQUFBO0VBQUEsYUFBQTtFQUNBLHFCQUFBO1VBQUEseUJBQUE7QUNGTjs7QURJTTtFQUNFLG9CQUFBO0VBQ0Esa0JBQUE7RUFFQSxXQUFBO0VBQ0EsZUFBQTtFQUVBLGVBQUE7QUNKUjs7QURZQTtFQUNBLHdDQUFBO0FDVEE7O0FEWUE7RUFDQSxxQkFBQTtFQUNBLHNCQUFBO0FDVEE7O0FEWUE7RUFDQyxxQkFBQTtFQUNBLHNCQUFBO0VBQ0EsaUJBQUE7RUFDQSxxQ0FBQTtBQ1REOztBRFdBO0VBQ0MsaUJBQUE7RUFDQSxnQkFBQTtFQUNBLHFCQUFBO0FDUkQ7O0FEVUE7RUFDQSxpQkFBQTtFQUNDLGtCQUFBO0FDUEQ7O0FEU0E7RUFDRSxXQUFBO0VBQ0EsV0FBQTtFQUNBLHNCQUFBO0FDTkY7O0FEUUE7RUFDRSxpQkFBQTtFQUNBLFlBQUE7RUFDQSxzQkFBQTtBQ0xGOztBRE9BO0VBQ0Usa0dBQUE7RUFDQSxnQkFBQTtFQUNBLGVBQUE7RUFFQSw0Q0FBQTtFQUNBLDZCQUFBO0VBQ0EsZ0JBQUE7RUFDQSx1QkFBQTtBQ0xGOztBRE9FO0VBQ0Usa0JBQUE7QUNMSjs7QURPRTtFQUNFLHlDQUFBO0VBQ0EsNENBQUE7QUNMSjs7QURPSTtFQUNFLGtCQUFBO0FDTE47O0FET0k7RUFFRSxtREFBQTtFQU1RLDJDQUFBO0VBQ0EsZUFBQTtFQUNBLGlCQUFBO0VBQ0EsV0FBQTtFQUNBLGNBQUE7RUFDQSxrQkFBQTtBQ1hkOztBRFljO0VBQ0UsaUNBQUE7QUNWaEI7O0FEWWM7RUFDRSxpQ0FBQTtBQ1ZoQjs7QURrQkE7RUFDRSxtRkFBQTtBQ2ZGOztBRG1CRTtFQUNFLCtCQUFBO0VBQ0Esa0NBQUE7RUFDQSxrR0FBQTtFQUNBLGdCQUFBO0VBQ0EsaUJBQUE7RUFDQSxlQUFBO0FDakJKOztBRG1CRTtFQUNFLDRDQUFBO0FDakJKOztBRG1CSTtFQUNFLGtCQUFBO0FDakJOOztBRG1CSTtFQUVFLG1EQUFBO0VBTVEsMkNBQUE7RUFDQSxlQUFBO0VBQ0EsaUJBQUE7RUFDQSxXQUFBO0VBQ0EsY0FBQTtFQUNBLGtCQUFBO0FDdkJkOztBRHdCYztFQUNFLGlDQUFBO0FDdEJoQjs7QUR3QmM7RUFDRSxpQ0FBQTtBQ3RCaEI7O0FENkJFO0VBQ0UsZ0NBQUE7QUMzQkoiLCJmaWxlIjoic3JjL2FwcC9ncm91cC9ncm91cC5wYWdlLnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyI6aG9zdCB7XG4gIC0tcGFnZS1tYXJnaW46IHZhcigtLWFwcC1mYWlyLW1hcmdpbik7XG4gIC0tcGFnZS1iYWNrZ3JvdW5kOiB2YXIoLS1hcHAtYmFja2dyb3VuZCk7XG4gIC0tcGFnZS1yYXRpbmctMi1jb2xvcjogI2FhNmMzOTtcbiAgLS1wYWdlLXJhdGluZy0xLWNvbG9yOiAjYmJiMmIyO1xufVxuLnRhYi10aXRsZSB7XG4gIHNpemU6IDlweDtcbn1cbi5maWx0ZXJzLXRvb2xiYXIge1xuICAtLXBhZGRpbmctc3RhcnQ6IHZhcigtLXBhZ2UtbWFyZ2luKTtcbiAgLS1wYWRkaW5nLWVuZDogdmFyKC0tcGFnZS1tYXJnaW4pO1xuICAtLXBhZGRpbmctdG9wOiB2YXIoLS1wYWdlLW1hcmdpbik7XG4gIC0tcGFkZGluZy1ib3R0b206IHZhcigtLXBhZ2UtbWFyZ2luKTtcbiAgLS1ib3JkZXItc3R5bGU6IDEwcHg7XG5cbiAgLnNlYXJjaGJhci1yb3cge1xuICAgIC0taW9uLWdyaWQtY29sdW1uLXBhZGRpbmc6IDBweDtcblxuICAgIGlvbi1zZWFyY2hiYXIuaXRlbXMtc2VhcmNoYmFyIHtcbiAgICAgIHBhZGRpbmc6IDBweDtcbiAgICAgIC8vIG92ZXJyaWRlIElvbmljIGZpeGVkIGhlaWdodFxuICAgICAgaGVpZ2h0OiAxMDAlO1xuICAgICAgLy8gTGVhcm4gbW9yZSBhYm91dCBDU1MgY29udGFpbiBwcm9wZXJ0eSBoZXJlOiBodHRwczovL3Rlcm12YWRlci5naXRodWIuaW8vY3NzLWNvbnRhaW4vXG4gICAgICBjb250YWluOiBjb250ZW50O1xuICAgIH1cblxuICAgIC5jYWxsLXRvLWFjdGlvbi1jb2wge1xuICAgICAgLy9wYWRkaW5nLWlubGluZS1zdGFydDogdmFyKC0tcGFnZS1tYXJnaW4pO1xuICAgICAgbWF4LXdpZHRoOiBmaXQtY29udGVudDtcbiAgICAgIGZsZXgtc2hyaW5rOiAwO1xuICAgICAgZmxleC1ncm93OiAwO1xuXG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAganVzdGlmeS1jb250ZW50OiBmbGV4LWVuZDtcblxuICAgICAgLmZpbHRlcnMtYnRuIHtcbiAgICAgICAgLS1wYWRkaW5nLXN0YXJ0OiA2cHg7XG4gICAgICAgIC0tcGFkZGluZy1lbmQ6IDZweDtcblxuICAgICAgICBtYXJnaW46IDBweDtcbiAgICAgICAgZm9udC1zaXplOiAxNXB4O1xuICAgICAgICAvLyBvdmVycmlkZSBJb25pYyBmaXhlZCBoZWlnaHRcbiAgICAgICAgaGVpZ2h0OiBpbml0aWFsO1xuICAgICAgfVxuICAgIH1cbiAgfVxuXG59XG5cblxuLmxpc3RpbmctaXRlbSB7XG5iYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1wYWdlLWJhY2tncm91bmQpO1xufVxuXG4uaWNvbiB7XG5kaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG52ZXJ0aWNhbC1hbGlnbjogbWlkZGxlO1xufVxuXG4udGV4dHtcbiBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gdmVydGljYWwtYWxpZ246IG1pZGRsZTtcbiBwYWRkaW5nLWxlZnQ6IDNweDtcbiB0ZXh0LXRyYW5zZm9ybTogY2FwaXRhbGl6ZSAhaW1wb3J0YW50O1xufVxuLmFkZGVkQnlUaXRsZSB7XG4gbWFyZ2luLWxlZnQ6IDEwcHg7XG4gbGluZS1oZWlnaHQ6IDVweDtcbiB0ZXh0LWRlY29yYXRpb246IG5vbmUgXG59XG4uYWRkZWRCeURhdGUge1xubWFyZ2luLWxlZnQ6IDEwcHg7XG4gZm9udC1zdHlsZTogaXRhbGljO1xufVxuLmFkZGVkQnlJbWcge1xuICB3aWR0aDogNTBweDtcbiAgZmxvYXQ6IGxlZnQ7XG4gIHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7XG59XG4ubmV3SWNvbiB7XG4gIG1hcmdpbi1sZWZ0OiAxMHB4O1xuICBoZWlnaHQ6IDQwcHg7XG4gIHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7XG59XG4ubWVzc2FnZSB7XG4gIGZvbnQtZmFtaWx5OiAnSGVsdmV0aWNhTmV1ZScsICdIZWx2ZXRpY2EgTmV1ZScsIEhlbHZldGljYSwgJ1JvYm90bycsICdTZWdvZSBVSScsIEFyaWFsLCBzYW5zLXNlcmlmO1xuICBmb250LXdlaWdodDogNDAwO1xuICBmb250LXNpemU6IDE0cHg7XG4gIC8vIGxpbmUtaGVpZ2h0OiAxOXB4O1xuICAtd2Via2l0LWZvbnQtc21vb3RoaW5nOiBzdWJwaXhlbC1hbnRpYWxpYXNlZDtcbiAgLW1vei1vc3gtZm9udC1zbW9vdGhpbmc6IGF1dG87XG4gIG92ZXJmbG93OiBoaWRkZW47IFxuICB0ZXh0LW92ZXJmbG93OiBlbGxpcHNpcztcblxuICAucmVhY3Rpb25zIHtcbiAgICBtYXJnaW4tbGVmdDogLTEwcHg7XG4gIH0gXG4gIC5yZXZpZXdzLXdyYXBwZXIge1xuICAgIHBhZGRpbmctdG9wOiBjYWxjKHZhcigtLXBhZ2UtbWFyZ2luKSAvIDEpO1xuICAgIHBhZGRpbmctYm90dG9tOiBjYWxjKHZhcigtLXBhZ2UtbWFyZ2luKSAvIDMpO1xuICAgXG4gICAgLnRhZ3Mge1xuICAgICAgcGFkZGluZy1yaWdodDogNXB4O1xuXG4gICAgLml0ZW0tcmF0aW5nIHtcbiAgICAgIC8vIERlZmF1bHQgYmFja2dyb3VuZFxuICAgICAgYmFja2dyb3VuZC1jb2xvcjogcmdiYSh2YXIoLS1wYWdlLWNvbG9yLXJnYiksIC4zNSk7XG4gICAgICAgICAgICAgIC8vIGNvbG9yOiB2YXIoLS1pb24tY29sb3ItbGlnaHRlc3QpO1xuICAgICAgICAgICAgICAvLyBib3JkZXItcmFkaXVzOiB2YXIoLS1hcHAtbmFycm93LXJhZGl1cyk7XG4gICAgICAgICAgICAgIC8vIHBhZGRpbmctdG9wOiBjYWxjKHZhcigtLXBhZ2UtbWFyZ2luKSAvIDEpO1xuICAgICAgICAgICAgICAvL3BhZGRpbmctYm90dG9tOiBjYWxjKHZhcigtLXBhZ2UtbWFyZ2luKSAvIDMpO1xuICAgICAgICAgICAgICAvLyBwYWRkaW5nLWxlZnQ6IGNhbGModmFyKC0tcGFnZS1tYXJnaW4pIC8gMik7XG4gICAgICAgICAgICAgIHBhZGRpbmctcmlnaHQ6IGNhbGModmFyKC0tcGFnZS1tYXJnaW4pIC8gMik7XG4gICAgICAgICAgICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICAgICAgICAgICAgZm9udC13ZWlnaHQ6IGJvbGQ7XG4gICAgICAgICAgICAgIHdpZHRoOiAxMDAlO1xuICAgICAgICAgICAgICBkaXNwbGF5OiBibG9jaztcbiAgICAgICAgICAgICAgdGV4dC1hbGlnbjogY2VudGVyO1xuICAgICAgICAgICAgICAmW3JhdGluZ0Jhc2U9XCIwXCJdIHtcbiAgICAgICAgICAgICAgICBjb2xvcjogdmFyKC0tcGFnZS1yYXRpbmctMS1jb2xvcik7XG4gICAgICAgICAgICAgIH1cbiAgICAgICAgICAgICAgJltyYXRpbmdCYXNlPVwiMVwiXSB7XG4gICAgICAgICAgICAgICAgY29sb3I6IHZhcigtLXBhZ2UtcmF0aW5nLTItY29sb3IpO1xuICAgICAgICAgICAgICB9XG4gICAgfVxuXG4gICAgfVxuICB9XG59XG5cbi5ncm91cC1pbmZvIHtcbiAgbWFyZ2luOiB2YXIoLS1wYWdlLW1hcmdpbikgdmFyKC0tcGFnZS1tYXJnaW4pIHZhcigtLXBhZ2UtbWFyZ2luKSB2YXIoLS1wYWdlLW1hcmdpbik7XG4gIC5ncm91cC1pbWcge1xuXG4gIH1cbiAgLmdyb3VwLW5hbWUge1xuICAgIHBhZGRpbmctdG9wOiB2YXIoLS1wYWdlLW1hcmdpbik7XG4gICAgcGFkZGluZy1ib3R0b206IHZhcigtLXBhZ2UtbWFyZ2luKTtcbiAgICBmb250LWZhbWlseTogJ0hlbHZldGljYU5ldWUnLCAnSGVsdmV0aWNhIE5ldWUnLCBIZWx2ZXRpY2EsICdSb2JvdG8nLCAnU2Vnb2UgVUknLCBBcmlhbCwgc2Fucy1zZXJpZjtcbiAgICB0ZXh0LWFsaWduOiBsZWZ0O1xuICAgIGZvbnQtd2VpZ2h0OiBib2xkO1xuICAgIGZvbnQtc2l6ZTogMTlweDtcbiAgfVxuICAuZ3JvdXAtdGFncyB7XG4gICAgcGFkZGluZy1ib3R0b206IGNhbGModmFyKC0tcGFnZS1tYXJnaW4pIC8gMyk7XG4gICBcbiAgICAudGFncyB7XG4gICAgICBwYWRkaW5nLXJpZ2h0OiA1cHg7XG5cbiAgICAuaXRlbS1yYXRpbmcge1xuICAgICAgLy8gRGVmYXVsdCBiYWNrZ3JvdW5kXG4gICAgICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKHZhcigtLXBhZ2UtY29sb3ItcmdiKSwgLjM1KTtcbiAgICAgICAgICAgICAgLy8gY29sb3I6IHZhcigtLWlvbi1jb2xvci1saWdodGVzdCk7XG4gICAgICAgICAgICAgIC8vIGJvcmRlci1yYWRpdXM6IHZhcigtLWFwcC1uYXJyb3ctcmFkaXVzKTtcbiAgICAgICAgICAgICAgLy8gcGFkZGluZy10b3A6IGNhbGModmFyKC0tcGFnZS1tYXJnaW4pIC8gMSk7XG4gICAgICAgICAgICAgIC8vcGFkZGluZy1ib3R0b206IGNhbGModmFyKC0tcGFnZS1tYXJnaW4pIC8gMyk7XG4gICAgICAgICAgICAgIC8vIHBhZGRpbmctbGVmdDogY2FsYyh2YXIoLS1wYWdlLW1hcmdpbikgLyAyKTtcbiAgICAgICAgICAgICAgcGFkZGluZy1yaWdodDogY2FsYyh2YXIoLS1wYWdlLW1hcmdpbikgLyAyKTtcbiAgICAgICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICAgICAgICBmb250LXdlaWdodDogYm9sZDtcbiAgICAgICAgICAgICAgd2lkdGg6IDEwMCU7XG4gICAgICAgICAgICAgIGRpc3BsYXk6IGJsb2NrO1xuICAgICAgICAgICAgICB0ZXh0LWFsaWduOiBjZW50ZXI7XG4gICAgICAgICAgICAgICZbcmF0aW5nQmFzZT1cIjBcIl0ge1xuICAgICAgICAgICAgICAgIGNvbG9yOiB2YXIoLS1wYWdlLXJhdGluZy0xLWNvbG9yKTtcbiAgICAgICAgICAgICAgfVxuICAgICAgICAgICAgICAmW3JhdGluZ0Jhc2U9XCIxXCJdIHtcbiAgICAgICAgICAgICAgICBjb2xvcjogdmFyKC0tcGFnZS1yYXRpbmctMi1jb2xvcik7XG4gICAgICAgICAgICAgIH1cbiAgICB9XG5cbiAgICB9XG4gIH1cblxuICAuZ3JvdXAtbWVtYmVyLW5hbWUge1xuICAgIHBhZGRpbmctbGVmdDogdmFyKC0tcGFnZS1tYXJnaW4pO1xuICB9XG59XG4iLCI6aG9zdCB7XG4gIC0tcGFnZS1tYXJnaW46IHZhcigtLWFwcC1mYWlyLW1hcmdpbik7XG4gIC0tcGFnZS1iYWNrZ3JvdW5kOiB2YXIoLS1hcHAtYmFja2dyb3VuZCk7XG4gIC0tcGFnZS1yYXRpbmctMi1jb2xvcjogI2FhNmMzOTtcbiAgLS1wYWdlLXJhdGluZy0xLWNvbG9yOiAjYmJiMmIyO1xufVxuXG4udGFiLXRpdGxlIHtcbiAgc2l6ZTogOXB4O1xufVxuXG4uZmlsdGVycy10b29sYmFyIHtcbiAgLS1wYWRkaW5nLXN0YXJ0OiB2YXIoLS1wYWdlLW1hcmdpbik7XG4gIC0tcGFkZGluZy1lbmQ6IHZhcigtLXBhZ2UtbWFyZ2luKTtcbiAgLS1wYWRkaW5nLXRvcDogdmFyKC0tcGFnZS1tYXJnaW4pO1xuICAtLXBhZGRpbmctYm90dG9tOiB2YXIoLS1wYWdlLW1hcmdpbik7XG4gIC0tYm9yZGVyLXN0eWxlOiAxMHB4O1xufVxuLmZpbHRlcnMtdG9vbGJhciAuc2VhcmNoYmFyLXJvdyB7XG4gIC0taW9uLWdyaWQtY29sdW1uLXBhZGRpbmc6IDBweDtcbn1cbi5maWx0ZXJzLXRvb2xiYXIgLnNlYXJjaGJhci1yb3cgaW9uLXNlYXJjaGJhci5pdGVtcy1zZWFyY2hiYXIge1xuICBwYWRkaW5nOiAwcHg7XG4gIGhlaWdodDogMTAwJTtcbiAgY29udGFpbjogY29udGVudDtcbn1cbi5maWx0ZXJzLXRvb2xiYXIgLnNlYXJjaGJhci1yb3cgLmNhbGwtdG8tYWN0aW9uLWNvbCB7XG4gIG1heC13aWR0aDogZml0LWNvbnRlbnQ7XG4gIGZsZXgtc2hyaW5rOiAwO1xuICBmbGV4LWdyb3c6IDA7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGp1c3RpZnktY29udGVudDogZmxleC1lbmQ7XG59XG4uZmlsdGVycy10b29sYmFyIC5zZWFyY2hiYXItcm93IC5jYWxsLXRvLWFjdGlvbi1jb2wgLmZpbHRlcnMtYnRuIHtcbiAgLS1wYWRkaW5nLXN0YXJ0OiA2cHg7XG4gIC0tcGFkZGluZy1lbmQ6IDZweDtcbiAgbWFyZ2luOiAwcHg7XG4gIGZvbnQtc2l6ZTogMTVweDtcbiAgaGVpZ2h0OiBpbml0aWFsO1xufVxuXG4ubGlzdGluZy1pdGVtIHtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tcGFnZS1iYWNrZ3JvdW5kKTtcbn1cblxuLmljb24ge1xuICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gIHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7XG59XG5cbi50ZXh0IHtcbiAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlO1xuICBwYWRkaW5nLWxlZnQ6IDNweDtcbiAgdGV4dC10cmFuc2Zvcm06IGNhcGl0YWxpemUgIWltcG9ydGFudDtcbn1cblxuLmFkZGVkQnlUaXRsZSB7XG4gIG1hcmdpbi1sZWZ0OiAxMHB4O1xuICBsaW5lLWhlaWdodDogNXB4O1xuICB0ZXh0LWRlY29yYXRpb246IG5vbmU7XG59XG5cbi5hZGRlZEJ5RGF0ZSB7XG4gIG1hcmdpbi1sZWZ0OiAxMHB4O1xuICBmb250LXN0eWxlOiBpdGFsaWM7XG59XG5cbi5hZGRlZEJ5SW1nIHtcbiAgd2lkdGg6IDUwcHg7XG4gIGZsb2F0OiBsZWZ0O1xuICB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlO1xufVxuXG4ubmV3SWNvbiB7XG4gIG1hcmdpbi1sZWZ0OiAxMHB4O1xuICBoZWlnaHQ6IDQwcHg7XG4gIHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7XG59XG5cbi5tZXNzYWdlIHtcbiAgZm9udC1mYW1pbHk6IFwiSGVsdmV0aWNhTmV1ZVwiLCBcIkhlbHZldGljYSBOZXVlXCIsIEhlbHZldGljYSwgXCJSb2JvdG9cIiwgXCJTZWdvZSBVSVwiLCBBcmlhbCwgc2Fucy1zZXJpZjtcbiAgZm9udC13ZWlnaHQ6IDQwMDtcbiAgZm9udC1zaXplOiAxNHB4O1xuICAtd2Via2l0LWZvbnQtc21vb3RoaW5nOiBzdWJwaXhlbC1hbnRpYWxpYXNlZDtcbiAgLW1vei1vc3gtZm9udC1zbW9vdGhpbmc6IGF1dG87XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIHRleHQtb3ZlcmZsb3c6IGVsbGlwc2lzO1xufVxuLm1lc3NhZ2UgLnJlYWN0aW9ucyB7XG4gIG1hcmdpbi1sZWZ0OiAtMTBweDtcbn1cbi5tZXNzYWdlIC5yZXZpZXdzLXdyYXBwZXIge1xuICBwYWRkaW5nLXRvcDogY2FsYyh2YXIoLS1wYWdlLW1hcmdpbikgLyAxKTtcbiAgcGFkZGluZy1ib3R0b206IGNhbGModmFyKC0tcGFnZS1tYXJnaW4pIC8gMyk7XG59XG4ubWVzc2FnZSAucmV2aWV3cy13cmFwcGVyIC50YWdzIHtcbiAgcGFkZGluZy1yaWdodDogNXB4O1xufVxuLm1lc3NhZ2UgLnJldmlld3Mtd3JhcHBlciAudGFncyAuaXRlbS1yYXRpbmcge1xuICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKHZhcigtLXBhZ2UtY29sb3ItcmdiKSwgMC4zNSk7XG4gIHBhZGRpbmctcmlnaHQ6IGNhbGModmFyKC0tcGFnZS1tYXJnaW4pIC8gMik7XG4gIGZvbnQtc2l6ZTogMTRweDtcbiAgZm9udC13ZWlnaHQ6IGJvbGQ7XG4gIHdpZHRoOiAxMDAlO1xuICBkaXNwbGF5OiBibG9jaztcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xufVxuLm1lc3NhZ2UgLnJldmlld3Mtd3JhcHBlciAudGFncyAuaXRlbS1yYXRpbmdbcmF0aW5nQmFzZT1cIjBcIl0ge1xuICBjb2xvcjogdmFyKC0tcGFnZS1yYXRpbmctMS1jb2xvcik7XG59XG4ubWVzc2FnZSAucmV2aWV3cy13cmFwcGVyIC50YWdzIC5pdGVtLXJhdGluZ1tyYXRpbmdCYXNlPVwiMVwiXSB7XG4gIGNvbG9yOiB2YXIoLS1wYWdlLXJhdGluZy0yLWNvbG9yKTtcbn1cblxuLmdyb3VwLWluZm8ge1xuICBtYXJnaW46IHZhcigtLXBhZ2UtbWFyZ2luKSB2YXIoLS1wYWdlLW1hcmdpbikgdmFyKC0tcGFnZS1tYXJnaW4pIHZhcigtLXBhZ2UtbWFyZ2luKTtcbn1cbi5ncm91cC1pbmZvIC5ncm91cC1uYW1lIHtcbiAgcGFkZGluZy10b3A6IHZhcigtLXBhZ2UtbWFyZ2luKTtcbiAgcGFkZGluZy1ib3R0b206IHZhcigtLXBhZ2UtbWFyZ2luKTtcbiAgZm9udC1mYW1pbHk6IFwiSGVsdmV0aWNhTmV1ZVwiLCBcIkhlbHZldGljYSBOZXVlXCIsIEhlbHZldGljYSwgXCJSb2JvdG9cIiwgXCJTZWdvZSBVSVwiLCBBcmlhbCwgc2Fucy1zZXJpZjtcbiAgdGV4dC1hbGlnbjogbGVmdDtcbiAgZm9udC13ZWlnaHQ6IGJvbGQ7XG4gIGZvbnQtc2l6ZTogMTlweDtcbn1cbi5ncm91cC1pbmZvIC5ncm91cC10YWdzIHtcbiAgcGFkZGluZy1ib3R0b206IGNhbGModmFyKC0tcGFnZS1tYXJnaW4pIC8gMyk7XG59XG4uZ3JvdXAtaW5mbyAuZ3JvdXAtdGFncyAudGFncyB7XG4gIHBhZGRpbmctcmlnaHQ6IDVweDtcbn1cbi5ncm91cC1pbmZvIC5ncm91cC10YWdzIC50YWdzIC5pdGVtLXJhdGluZyB7XG4gIGJhY2tncm91bmQtY29sb3I6IHJnYmEodmFyKC0tcGFnZS1jb2xvci1yZ2IpLCAwLjM1KTtcbiAgcGFkZGluZy1yaWdodDogY2FsYyh2YXIoLS1wYWdlLW1hcmdpbikgLyAyKTtcbiAgZm9udC1zaXplOiAxNHB4O1xuICBmb250LXdlaWdodDogYm9sZDtcbiAgd2lkdGg6IDEwMCU7XG4gIGRpc3BsYXk6IGJsb2NrO1xuICB0ZXh0LWFsaWduOiBjZW50ZXI7XG59XG4uZ3JvdXAtaW5mbyAuZ3JvdXAtdGFncyAudGFncyAuaXRlbS1yYXRpbmdbcmF0aW5nQmFzZT1cIjBcIl0ge1xuICBjb2xvcjogdmFyKC0tcGFnZS1yYXRpbmctMS1jb2xvcik7XG59XG4uZ3JvdXAtaW5mbyAuZ3JvdXAtdGFncyAudGFncyAuaXRlbS1yYXRpbmdbcmF0aW5nQmFzZT1cIjFcIl0ge1xuICBjb2xvcjogdmFyKC0tcGFnZS1yYXRpbmctMi1jb2xvcik7XG59XG4uZ3JvdXAtaW5mbyAuZ3JvdXAtbWVtYmVyLW5hbWUge1xuICBwYWRkaW5nLWxlZnQ6IHZhcigtLXBhZ2UtbWFyZ2luKTtcbn0iXX0= */";
+    __webpack_exports__["default"] = ":host {\n  --page-margin: var(--app-fair-margin);\n  --page-background: var(--app-background);\n  --page-rating-2-color: #aa6c39;\n  --page-rating-1-color: #bbb2b2;\n}\n\n.tab-title {\n  size: 9px;\n}\n\nion-segment-button {\n  background-color: var(--page-background);\n}\n\n.filters-toolbar {\n  --padding-start: var(--page-margin);\n  --padding-end: var(--page-margin);\n  --padding-top: var(--page-margin);\n  --padding-bottom: var(--page-margin);\n  --border-style: 10px;\n}\n\n.filters-toolbar .searchbar-row {\n  --ion-grid-column-padding: 0px;\n}\n\n.filters-toolbar .searchbar-row ion-searchbar.items-searchbar {\n  padding: 0px;\n  height: 100%;\n  contain: content;\n}\n\n.filters-toolbar .searchbar-row .call-to-action-col {\n  max-width: -webkit-fit-content;\n  max-width: -moz-fit-content;\n  max-width: fit-content;\n  flex-shrink: 0;\n  -webkit-box-flex: 0;\n          flex-grow: 0;\n  display: -webkit-box;\n  display: flex;\n  -webkit-box-pack: end;\n          justify-content: flex-end;\n}\n\n.filters-toolbar .searchbar-row .call-to-action-col .filters-btn {\n  --padding-start: 6px;\n  --padding-end: 6px;\n  margin: 0px;\n  font-size: 15px;\n  height: initial;\n}\n\n.listing-item {\n  background-color: var(--page-background);\n}\n\n.icon {\n  display: inline-block;\n  vertical-align: middle;\n}\n\n.text {\n  display: inline-block;\n  vertical-align: middle;\n  padding-left: 3px;\n  text-transform: capitalize !important;\n}\n\n.addedByTitle {\n  margin-left: 10px;\n  line-height: 5px;\n  text-decoration: none;\n}\n\n.addedByDate {\n  margin-left: 10px;\n  font-style: italic;\n}\n\n.addedByImg {\n  width: 50px;\n  float: left;\n  vertical-align: middle;\n}\n\n.newIcon {\n  margin-left: 10px;\n  height: 40px;\n  vertical-align: middle;\n}\n\n.message {\n  font-family: \"HelveticaNeue\", \"Helvetica Neue\", Helvetica, \"Roboto\", \"Segoe UI\", Arial, sans-serif;\n  font-weight: 400;\n  font-size: 14px;\n  line-height: 19px;\n  -webkit-font-smoothing: subpixel-antialiased;\n  -moz-osx-font-smoothing: auto;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.message .slider {\n  margin-bottom: 5px;\n}\n\n.message .slider .bgSizeContain {\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-size: 100%;\n  width: 100%;\n  height: 200px;\n  text-shadow: white 0px 0px 2px;\n  font-size: 16px;\n  border-radius: 10px;\n}\n\n.message .reactions {\n  margin-bottom: 0px;\n  margin-left: -10px;\n}\n\n.message .tags-wrapper {\n  padding-top: 5px;\n}\n\n.message .tags-wrapper .tags {\n  padding-right: 5px;\n}\n\n.message .tags-wrapper .tags .item-rating {\n  background-color: rgba(var(--page-color-rgb), 0.35);\n  padding-right: 15px;\n  font-size: 12px;\n  font-weight: bold;\n  width: 100%;\n  display: block;\n  text-align: center;\n  color: #aa6c39;\n}\n\n.group-info {\n  margin: var(--page-margin) var(--page-margin) var(--page-margin) var(--page-margin);\n}\n\n.group-info .group-name {\n  padding-top: var(--page-margin);\n  padding-bottom: var(--page-margin);\n  font-family: \"HelveticaNeue\", \"Helvetica Neue\", Helvetica, \"Roboto\", \"Segoe UI\", Arial, sans-serif;\n  text-align: left;\n  font-weight: bold;\n  font-size: 19px;\n}\n\n.group-info .group-tags {\n  padding-bottom: calc(var(--page-margin) / 3);\n}\n\n.group-info .group-tags .tags {\n  padding-right: 5px;\n}\n\n.group-info .group-tags .tags .item-rating {\n  background-color: rgba(var(--page-color-rgb), 0.35);\n  padding-right: calc(var(--page-margin) / 2);\n  font-size: 14px;\n  font-weight: bold;\n  width: 100%;\n  display: block;\n  text-align: center;\n}\n\n.group-info .group-tags .tags .item-rating[ratingBase=\"0\"] {\n  color: var(--page-rating-1-color);\n}\n\n.group-info .group-tags .tags .item-rating[ratingBase=\"1\"] {\n  color: var(--page-rating-2-color);\n}\n\n.group-info .group-member-name {\n  padding-left: var(--page-margin);\n}\n\n.empty-list {\n  text-align: center;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvZ3JvdXAvQzpcXFVzZXJzXFxyb2hpc2V0aGlcXERvY3VtZW50c1xcaW9uaWNcXGZpcmVjaGF0NF92Mi9zcmNcXGFwcFxcZ3JvdXBcXGdyb3VwLnBhZ2Uuc2NzcyIsInNyYy9hcHAvZ3JvdXAvZ3JvdXAucGFnZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0UscUNBQUE7RUFDQSx3Q0FBQTtFQUNBLDhCQUFBO0VBQ0EsOEJBQUE7QUNDRjs7QURDQTtFQUNFLFNBQUE7QUNFRjs7QURBQTtFQUNFLHdDQUFBO0FDR0Y7O0FEQUE7RUFDRSxtQ0FBQTtFQUNBLGlDQUFBO0VBQ0EsaUNBQUE7RUFDQSxvQ0FBQTtFQUNBLG9CQUFBO0FDR0Y7O0FEREU7RUFDRSw4QkFBQTtBQ0dKOztBRERJO0VBQ0UsWUFBQTtFQUVBLFlBQUE7RUFFQSxnQkFBQTtBQ0NOOztBREVJO0VBRUUsOEJBQUE7RUFBQSwyQkFBQTtFQUFBLHNCQUFBO0VBQ0EsY0FBQTtFQUNBLG1CQUFBO1VBQUEsWUFBQTtFQUVBLG9CQUFBO0VBQUEsYUFBQTtFQUNBLHFCQUFBO1VBQUEseUJBQUE7QUNGTjs7QURJTTtFQUNFLG9CQUFBO0VBQ0Esa0JBQUE7RUFFQSxXQUFBO0VBQ0EsZUFBQTtFQUVBLGVBQUE7QUNKUjs7QURXQTtFQUNBLHdDQUFBO0FDUkE7O0FEV0E7RUFDQSxxQkFBQTtFQUNBLHNCQUFBO0FDUkE7O0FEV0E7RUFDQyxxQkFBQTtFQUNBLHNCQUFBO0VBQ0EsaUJBQUE7RUFDQSxxQ0FBQTtBQ1JEOztBRFVBO0VBQ0MsaUJBQUE7RUFDQSxnQkFBQTtFQUNBLHFCQUFBO0FDUEQ7O0FEU0E7RUFDQSxpQkFBQTtFQUNDLGtCQUFBO0FDTkQ7O0FEUUE7RUFDRSxXQUFBO0VBQ0EsV0FBQTtFQUNBLHNCQUFBO0FDTEY7O0FET0E7RUFDRSxpQkFBQTtFQUNBLFlBQUE7RUFDQSxzQkFBQTtBQ0pGOztBRE1BO0VBQ0Usa0dBQUE7RUFDQSxnQkFBQTtFQUNBLGVBQUE7RUFDQSxpQkFBQTtFQUNBLDRDQUFBO0VBQ0EsNkJBQUE7RUFDQSxnQkFBQTtFQUNBLHVCQUFBO0FDSEY7O0FES0U7RUFDRSxrQkFBQTtBQ0hKOztBRElJO0VBQ0UsNEJBQUE7RUFDQSxrQ0FBQTtFQUNBLHFCQUFBO0VBQ0EsV0FBQTtFQUNBLGFBQUE7RUFDQSw4QkFBQTtFQUNBLGVBQUE7RUFHQSxtQkFBQTtBQ0ZOOztBRE1FO0VBQ0Usa0JBQUE7RUFDQSxrQkFBQTtBQ0pKOztBRE1FO0VBQ0UsZ0JBQUE7QUNKSjs7QURNSTtFQUNFLGtCQUFBO0FDSk47O0FETUk7RUFDRSxtREFBQTtFQUNBLG1CQUFBO0VBQ0EsZUFBQTtFQUNBLGlCQUFBO0VBQ0EsV0FBQTtFQUNBLGNBQUE7RUFDQSxrQkFBQTtFQUNBLGNBQUE7QUNKTjs7QURVQTtFQUNFLG1GQUFBO0FDUEY7O0FEV0U7RUFDRSwrQkFBQTtFQUNBLGtDQUFBO0VBQ0Esa0dBQUE7RUFDQSxnQkFBQTtFQUNBLGlCQUFBO0VBQ0EsZUFBQTtBQ1RKOztBRFdFO0VBQ0UsNENBQUE7QUNUSjs7QURXSTtFQUNFLGtCQUFBO0FDVE47O0FEV0k7RUFFRSxtREFBQTtFQU1RLDJDQUFBO0VBQ0EsZUFBQTtFQUNBLGlCQUFBO0VBQ0EsV0FBQTtFQUNBLGNBQUE7RUFDQSxrQkFBQTtBQ2ZkOztBRGdCYztFQUNFLGlDQUFBO0FDZGhCOztBRGdCYztFQUNFLGlDQUFBO0FDZGhCOztBRHFCRTtFQUNFLGdDQUFBO0FDbkJKOztBRHVCQTtFQUNFLGtCQUFBO0FDcEJGIiwiZmlsZSI6InNyYy9hcHAvZ3JvdXAvZ3JvdXAucGFnZS5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiOmhvc3Qge1xyXG4gIC0tcGFnZS1tYXJnaW46IHZhcigtLWFwcC1mYWlyLW1hcmdpbik7XHJcbiAgLS1wYWdlLWJhY2tncm91bmQ6IHZhcigtLWFwcC1iYWNrZ3JvdW5kKTtcclxuICAtLXBhZ2UtcmF0aW5nLTItY29sb3I6ICNhYTZjMzk7XHJcbiAgLS1wYWdlLXJhdGluZy0xLWNvbG9yOiAjYmJiMmIyO1xyXG59XHJcbi50YWItdGl0bGUge1xyXG4gIHNpemU6IDlweDtcclxufVxyXG5pb24tc2VnbWVudC1idXR0b24ge1xyXG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLXBhZ2UtYmFja2dyb3VuZCk7XHJcbn1cclxuXHJcbi5maWx0ZXJzLXRvb2xiYXIge1xyXG4gIC0tcGFkZGluZy1zdGFydDogdmFyKC0tcGFnZS1tYXJnaW4pO1xyXG4gIC0tcGFkZGluZy1lbmQ6IHZhcigtLXBhZ2UtbWFyZ2luKTtcclxuICAtLXBhZGRpbmctdG9wOiB2YXIoLS1wYWdlLW1hcmdpbik7XHJcbiAgLS1wYWRkaW5nLWJvdHRvbTogdmFyKC0tcGFnZS1tYXJnaW4pO1xyXG4gIC0tYm9yZGVyLXN0eWxlOiAxMHB4O1xyXG5cclxuICAuc2VhcmNoYmFyLXJvdyB7XHJcbiAgICAtLWlvbi1ncmlkLWNvbHVtbi1wYWRkaW5nOiAwcHg7XHJcblxyXG4gICAgaW9uLXNlYXJjaGJhci5pdGVtcy1zZWFyY2hiYXIge1xyXG4gICAgICBwYWRkaW5nOiAwcHg7XHJcbiAgICAgIC8vIG92ZXJyaWRlIElvbmljIGZpeGVkIGhlaWdodFxyXG4gICAgICBoZWlnaHQ6IDEwMCU7XHJcbiAgICAgIC8vIExlYXJuIG1vcmUgYWJvdXQgQ1NTIGNvbnRhaW4gcHJvcGVydHkgaGVyZTogaHR0cHM6Ly90ZXJtdmFkZXIuZ2l0aHViLmlvL2Nzcy1jb250YWluL1xyXG4gICAgICBjb250YWluOiBjb250ZW50O1xyXG4gICAgfVxyXG5cclxuICAgIC5jYWxsLXRvLWFjdGlvbi1jb2wge1xyXG4gICAgICAvL3BhZGRpbmctaW5saW5lLXN0YXJ0OiB2YXIoLS1wYWdlLW1hcmdpbik7XHJcbiAgICAgIG1heC13aWR0aDogZml0LWNvbnRlbnQ7XHJcbiAgICAgIGZsZXgtc2hyaW5rOiAwO1xyXG4gICAgICBmbGV4LWdyb3c6IDA7XHJcblxyXG4gICAgICBkaXNwbGF5OiBmbGV4O1xyXG4gICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGZsZXgtZW5kO1xyXG5cclxuICAgICAgLmZpbHRlcnMtYnRuIHtcclxuICAgICAgICAtLXBhZGRpbmctc3RhcnQ6IDZweDtcclxuICAgICAgICAtLXBhZGRpbmctZW5kOiA2cHg7XHJcblxyXG4gICAgICAgIG1hcmdpbjogMHB4O1xyXG4gICAgICAgIGZvbnQtc2l6ZTogMTVweDtcclxuICAgICAgICAvLyBvdmVycmlkZSBJb25pYyBmaXhlZCBoZWlnaHRcclxuICAgICAgICBoZWlnaHQ6IGluaXRpYWw7XHJcbiAgICAgIH1cclxuICAgIH1cclxuICB9XHJcblxyXG59XHJcblxyXG4ubGlzdGluZy1pdGVtIHtcclxuYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tcGFnZS1iYWNrZ3JvdW5kKTtcclxufVxyXG5cclxuLmljb24ge1xyXG5kaXNwbGF5OiBpbmxpbmUtYmxvY2s7XHJcbnZlcnRpY2FsLWFsaWduOiBtaWRkbGU7XHJcbn1cclxuXHJcbi50ZXh0e1xyXG4gZGlzcGxheTogaW5saW5lLWJsb2NrO1xyXG4gdmVydGljYWwtYWxpZ246IG1pZGRsZTtcclxuIHBhZGRpbmctbGVmdDogM3B4O1xyXG4gdGV4dC10cmFuc2Zvcm06IGNhcGl0YWxpemUgIWltcG9ydGFudDtcclxufVxyXG4uYWRkZWRCeVRpdGxlIHtcclxuIG1hcmdpbi1sZWZ0OiAxMHB4O1xyXG4gbGluZS1oZWlnaHQ6IDVweDtcclxuIHRleHQtZGVjb3JhdGlvbjogbm9uZSBcclxufVxyXG4uYWRkZWRCeURhdGUge1xyXG5tYXJnaW4tbGVmdDogMTBweDtcclxuIGZvbnQtc3R5bGU6IGl0YWxpYztcclxufVxyXG4uYWRkZWRCeUltZyB7XHJcbiAgd2lkdGg6IDUwcHg7XHJcbiAgZmxvYXQ6IGxlZnQ7XHJcbiAgdmVydGljYWwtYWxpZ246IG1pZGRsZTtcclxufVxyXG4ubmV3SWNvbiB7XHJcbiAgbWFyZ2luLWxlZnQ6IDEwcHg7XHJcbiAgaGVpZ2h0OiA0MHB4O1xyXG4gIHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7XHJcbn1cclxuLm1lc3NhZ2Uge1xyXG4gIGZvbnQtZmFtaWx5OiAnSGVsdmV0aWNhTmV1ZScsICdIZWx2ZXRpY2EgTmV1ZScsIEhlbHZldGljYSwgJ1JvYm90bycsICdTZWdvZSBVSScsIEFyaWFsLCBzYW5zLXNlcmlmO1xyXG4gIGZvbnQtd2VpZ2h0OiA0MDA7XHJcbiAgZm9udC1zaXplOiAxNHB4O1xyXG4gIGxpbmUtaGVpZ2h0OiAxOXB4O1xyXG4gIC13ZWJraXQtZm9udC1zbW9vdGhpbmc6IHN1YnBpeGVsLWFudGlhbGlhc2VkO1xyXG4gIC1tb3otb3N4LWZvbnQtc21vb3RoaW5nOiBhdXRvO1xyXG4gIG92ZXJmbG93OiBoaWRkZW47IFxyXG4gIHRleHQtb3ZlcmZsb3c6IGVsbGlwc2lzO1xyXG5cclxuICAuc2xpZGVyIHtcclxuICAgIG1hcmdpbi1ib3R0b206IDVweDtcclxuICAgIC5iZ1NpemVDb250YWluIHtcclxuICAgICAgYmFja2dyb3VuZC1yZXBlYXQ6IG5vLXJlcGVhdDtcclxuICAgICAgYmFja2dyb3VuZC1wb3NpdGlvbjogY2VudGVyIGNlbnRlcjtcclxuICAgICAgYmFja2dyb3VuZC1zaXplOiAxMDAlO1xyXG4gICAgICB3aWR0aDogMTAwJTtcclxuICAgICAgaGVpZ2h0OiAyMDBweDtcclxuICAgICAgdGV4dC1zaGFkb3c6IHdoaXRlIDBweCAwcHggMnB4O1xyXG4gICAgICBmb250LXNpemU6IDE2cHg7XHJcbiAgICAgIC13ZWJraXQtYm9yZGVyLXJhZGl1czogMTBweDtcclxuICAgICAgLW1vei1ib3JkZXItcmFkaXVzOiAxMHB4O1xyXG4gICAgICBib3JkZXItcmFkaXVzOiAxMHB4O1xyXG4gIH1cclxuICB9XHJcblxyXG4gIC5yZWFjdGlvbnMge1xyXG4gICAgbWFyZ2luLWJvdHRvbTogMHB4O1xyXG4gICAgbWFyZ2luLWxlZnQ6IC0xMHB4O1xyXG4gIH0gXHJcbiAgLnRhZ3Mtd3JhcHBlciB7XHJcbiAgICBwYWRkaW5nLXRvcDogNXB4O1xyXG4gICBcclxuICAgIC50YWdzIHtcclxuICAgICAgcGFkZGluZy1yaWdodDogNXB4O1xyXG5cclxuICAgIC5pdGVtLXJhdGluZyB7XHJcbiAgICAgIGJhY2tncm91bmQtY29sb3I6IHJnYmEodmFyKC0tcGFnZS1jb2xvci1yZ2IpLCAuMzUpO1xyXG4gICAgICBwYWRkaW5nLXJpZ2h0OiAxNXB4O1xyXG4gICAgICBmb250LXNpemU6IDEycHg7XHJcbiAgICAgIGZvbnQtd2VpZ2h0OiBib2xkO1xyXG4gICAgICB3aWR0aDogMTAwJTtcclxuICAgICAgZGlzcGxheTogYmxvY2s7XHJcbiAgICAgIHRleHQtYWxpZ246IGNlbnRlcjtcclxuICAgICAgY29sb3I6ICNhYTZjMzk7XHJcbiAgICB9XHJcbiAgICB9XHJcbiAgfVxyXG59XHJcblxyXG4uZ3JvdXAtaW5mbyB7XHJcbiAgbWFyZ2luOiB2YXIoLS1wYWdlLW1hcmdpbikgdmFyKC0tcGFnZS1tYXJnaW4pIHZhcigtLXBhZ2UtbWFyZ2luKSB2YXIoLS1wYWdlLW1hcmdpbik7XHJcbiAgLmdyb3VwLWltZyB7XHJcblxyXG4gIH1cclxuICAuZ3JvdXAtbmFtZSB7XHJcbiAgICBwYWRkaW5nLXRvcDogdmFyKC0tcGFnZS1tYXJnaW4pO1xyXG4gICAgcGFkZGluZy1ib3R0b206IHZhcigtLXBhZ2UtbWFyZ2luKTtcclxuICAgIGZvbnQtZmFtaWx5OiAnSGVsdmV0aWNhTmV1ZScsICdIZWx2ZXRpY2EgTmV1ZScsIEhlbHZldGljYSwgJ1JvYm90bycsICdTZWdvZSBVSScsIEFyaWFsLCBzYW5zLXNlcmlmO1xyXG4gICAgdGV4dC1hbGlnbjogbGVmdDtcclxuICAgIGZvbnQtd2VpZ2h0OiBib2xkO1xyXG4gICAgZm9udC1zaXplOiAxOXB4O1xyXG4gIH1cclxuICAuZ3JvdXAtdGFncyB7XHJcbiAgICBwYWRkaW5nLWJvdHRvbTogY2FsYyh2YXIoLS1wYWdlLW1hcmdpbikgLyAzKTtcclxuICAgXHJcbiAgICAudGFncyB7XHJcbiAgICAgIHBhZGRpbmctcmlnaHQ6IDVweDtcclxuXHJcbiAgICAuaXRlbS1yYXRpbmcge1xyXG4gICAgICAvLyBEZWZhdWx0IGJhY2tncm91bmRcclxuICAgICAgYmFja2dyb3VuZC1jb2xvcjogcmdiYSh2YXIoLS1wYWdlLWNvbG9yLXJnYiksIC4zNSk7XHJcbiAgICAgICAgICAgICAgLy8gY29sb3I6IHZhcigtLWlvbi1jb2xvci1saWdodGVzdCk7XHJcbiAgICAgICAgICAgICAgLy8gYm9yZGVyLXJhZGl1czogdmFyKC0tYXBwLW5hcnJvdy1yYWRpdXMpO1xyXG4gICAgICAgICAgICAgIC8vIHBhZGRpbmctdG9wOiBjYWxjKHZhcigtLXBhZ2UtbWFyZ2luKSAvIDEpO1xyXG4gICAgICAgICAgICAgIC8vcGFkZGluZy1ib3R0b206IGNhbGModmFyKC0tcGFnZS1tYXJnaW4pIC8gMyk7XHJcbiAgICAgICAgICAgICAgLy8gcGFkZGluZy1sZWZ0OiBjYWxjKHZhcigtLXBhZ2UtbWFyZ2luKSAvIDIpO1xyXG4gICAgICAgICAgICAgIHBhZGRpbmctcmlnaHQ6IGNhbGModmFyKC0tcGFnZS1tYXJnaW4pIC8gMik7XHJcbiAgICAgICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xyXG4gICAgICAgICAgICAgIGZvbnQtd2VpZ2h0OiBib2xkO1xyXG4gICAgICAgICAgICAgIHdpZHRoOiAxMDAlO1xyXG4gICAgICAgICAgICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gICAgICAgICAgICAgIHRleHQtYWxpZ246IGNlbnRlcjtcclxuICAgICAgICAgICAgICAmW3JhdGluZ0Jhc2U9XCIwXCJdIHtcclxuICAgICAgICAgICAgICAgIGNvbG9yOiB2YXIoLS1wYWdlLXJhdGluZy0xLWNvbG9yKTtcclxuICAgICAgICAgICAgICB9XHJcbiAgICAgICAgICAgICAgJltyYXRpbmdCYXNlPVwiMVwiXSB7XHJcbiAgICAgICAgICAgICAgICBjb2xvcjogdmFyKC0tcGFnZS1yYXRpbmctMi1jb2xvcik7XHJcbiAgICAgICAgICAgICAgfVxyXG4gICAgfVxyXG5cclxuICAgIH1cclxuICB9XHJcblxyXG4gIC5ncm91cC1tZW1iZXItbmFtZSB7XHJcbiAgICBwYWRkaW5nLWxlZnQ6IHZhcigtLXBhZ2UtbWFyZ2luKTtcclxuICB9XHJcbn1cclxuXHJcbi5lbXB0eS1saXN0IHtcclxuICB0ZXh0LWFsaWduOiBjZW50ZXI7XHJcbn1cclxuIiwiOmhvc3Qge1xuICAtLXBhZ2UtbWFyZ2luOiB2YXIoLS1hcHAtZmFpci1tYXJnaW4pO1xuICAtLXBhZ2UtYmFja2dyb3VuZDogdmFyKC0tYXBwLWJhY2tncm91bmQpO1xuICAtLXBhZ2UtcmF0aW5nLTItY29sb3I6ICNhYTZjMzk7XG4gIC0tcGFnZS1yYXRpbmctMS1jb2xvcjogI2JiYjJiMjtcbn1cblxuLnRhYi10aXRsZSB7XG4gIHNpemU6IDlweDtcbn1cblxuaW9uLXNlZ21lbnQtYnV0dG9uIHtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tcGFnZS1iYWNrZ3JvdW5kKTtcbn1cblxuLmZpbHRlcnMtdG9vbGJhciB7XG4gIC0tcGFkZGluZy1zdGFydDogdmFyKC0tcGFnZS1tYXJnaW4pO1xuICAtLXBhZGRpbmctZW5kOiB2YXIoLS1wYWdlLW1hcmdpbik7XG4gIC0tcGFkZGluZy10b3A6IHZhcigtLXBhZ2UtbWFyZ2luKTtcbiAgLS1wYWRkaW5nLWJvdHRvbTogdmFyKC0tcGFnZS1tYXJnaW4pO1xuICAtLWJvcmRlci1zdHlsZTogMTBweDtcbn1cbi5maWx0ZXJzLXRvb2xiYXIgLnNlYXJjaGJhci1yb3cge1xuICAtLWlvbi1ncmlkLWNvbHVtbi1wYWRkaW5nOiAwcHg7XG59XG4uZmlsdGVycy10b29sYmFyIC5zZWFyY2hiYXItcm93IGlvbi1zZWFyY2hiYXIuaXRlbXMtc2VhcmNoYmFyIHtcbiAgcGFkZGluZzogMHB4O1xuICBoZWlnaHQ6IDEwMCU7XG4gIGNvbnRhaW46IGNvbnRlbnQ7XG59XG4uZmlsdGVycy10b29sYmFyIC5zZWFyY2hiYXItcm93IC5jYWxsLXRvLWFjdGlvbi1jb2wge1xuICBtYXgtd2lkdGg6IGZpdC1jb250ZW50O1xuICBmbGV4LXNocmluazogMDtcbiAgZmxleC1ncm93OiAwO1xuICBkaXNwbGF5OiBmbGV4O1xuICBqdXN0aWZ5LWNvbnRlbnQ6IGZsZXgtZW5kO1xufVxuLmZpbHRlcnMtdG9vbGJhciAuc2VhcmNoYmFyLXJvdyAuY2FsbC10by1hY3Rpb24tY29sIC5maWx0ZXJzLWJ0biB7XG4gIC0tcGFkZGluZy1zdGFydDogNnB4O1xuICAtLXBhZGRpbmctZW5kOiA2cHg7XG4gIG1hcmdpbjogMHB4O1xuICBmb250LXNpemU6IDE1cHg7XG4gIGhlaWdodDogaW5pdGlhbDtcbn1cblxuLmxpc3RpbmctaXRlbSB7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLXBhZ2UtYmFja2dyb3VuZCk7XG59XG5cbi5pY29uIHtcbiAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlO1xufVxuXG4udGV4dCB7XG4gIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgdmVydGljYWwtYWxpZ246IG1pZGRsZTtcbiAgcGFkZGluZy1sZWZ0OiAzcHg7XG4gIHRleHQtdHJhbnNmb3JtOiBjYXBpdGFsaXplICFpbXBvcnRhbnQ7XG59XG5cbi5hZGRlZEJ5VGl0bGUge1xuICBtYXJnaW4tbGVmdDogMTBweDtcbiAgbGluZS1oZWlnaHQ6IDVweDtcbiAgdGV4dC1kZWNvcmF0aW9uOiBub25lO1xufVxuXG4uYWRkZWRCeURhdGUge1xuICBtYXJnaW4tbGVmdDogMTBweDtcbiAgZm9udC1zdHlsZTogaXRhbGljO1xufVxuXG4uYWRkZWRCeUltZyB7XG4gIHdpZHRoOiA1MHB4O1xuICBmbG9hdDogbGVmdDtcbiAgdmVydGljYWwtYWxpZ246IG1pZGRsZTtcbn1cblxuLm5ld0ljb24ge1xuICBtYXJnaW4tbGVmdDogMTBweDtcbiAgaGVpZ2h0OiA0MHB4O1xuICB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlO1xufVxuXG4ubWVzc2FnZSB7XG4gIGZvbnQtZmFtaWx5OiBcIkhlbHZldGljYU5ldWVcIiwgXCJIZWx2ZXRpY2EgTmV1ZVwiLCBIZWx2ZXRpY2EsIFwiUm9ib3RvXCIsIFwiU2Vnb2UgVUlcIiwgQXJpYWwsIHNhbnMtc2VyaWY7XG4gIGZvbnQtd2VpZ2h0OiA0MDA7XG4gIGZvbnQtc2l6ZTogMTRweDtcbiAgbGluZS1oZWlnaHQ6IDE5cHg7XG4gIC13ZWJraXQtZm9udC1zbW9vdGhpbmc6IHN1YnBpeGVsLWFudGlhbGlhc2VkO1xuICAtbW96LW9zeC1mb250LXNtb290aGluZzogYXV0bztcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgdGV4dC1vdmVyZmxvdzogZWxsaXBzaXM7XG59XG4ubWVzc2FnZSAuc2xpZGVyIHtcbiAgbWFyZ2luLWJvdHRvbTogNXB4O1xufVxuLm1lc3NhZ2UgLnNsaWRlciAuYmdTaXplQ29udGFpbiB7XG4gIGJhY2tncm91bmQtcmVwZWF0OiBuby1yZXBlYXQ7XG4gIGJhY2tncm91bmQtcG9zaXRpb246IGNlbnRlciBjZW50ZXI7XG4gIGJhY2tncm91bmQtc2l6ZTogMTAwJTtcbiAgd2lkdGg6IDEwMCU7XG4gIGhlaWdodDogMjAwcHg7XG4gIHRleHQtc2hhZG93OiB3aGl0ZSAwcHggMHB4IDJweDtcbiAgZm9udC1zaXplOiAxNnB4O1xuICAtd2Via2l0LWJvcmRlci1yYWRpdXM6IDEwcHg7XG4gIC1tb3otYm9yZGVyLXJhZGl1czogMTBweDtcbiAgYm9yZGVyLXJhZGl1czogMTBweDtcbn1cbi5tZXNzYWdlIC5yZWFjdGlvbnMge1xuICBtYXJnaW4tYm90dG9tOiAwcHg7XG4gIG1hcmdpbi1sZWZ0OiAtMTBweDtcbn1cbi5tZXNzYWdlIC50YWdzLXdyYXBwZXIge1xuICBwYWRkaW5nLXRvcDogNXB4O1xufVxuLm1lc3NhZ2UgLnRhZ3Mtd3JhcHBlciAudGFncyB7XG4gIHBhZGRpbmctcmlnaHQ6IDVweDtcbn1cbi5tZXNzYWdlIC50YWdzLXdyYXBwZXIgLnRhZ3MgLml0ZW0tcmF0aW5nIHtcbiAgYmFja2dyb3VuZC1jb2xvcjogcmdiYSh2YXIoLS1wYWdlLWNvbG9yLXJnYiksIDAuMzUpO1xuICBwYWRkaW5nLXJpZ2h0OiAxNXB4O1xuICBmb250LXNpemU6IDEycHg7XG4gIGZvbnQtd2VpZ2h0OiBib2xkO1xuICB3aWR0aDogMTAwJTtcbiAgZGlzcGxheTogYmxvY2s7XG4gIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgY29sb3I6ICNhYTZjMzk7XG59XG5cbi5ncm91cC1pbmZvIHtcbiAgbWFyZ2luOiB2YXIoLS1wYWdlLW1hcmdpbikgdmFyKC0tcGFnZS1tYXJnaW4pIHZhcigtLXBhZ2UtbWFyZ2luKSB2YXIoLS1wYWdlLW1hcmdpbik7XG59XG4uZ3JvdXAtaW5mbyAuZ3JvdXAtbmFtZSB7XG4gIHBhZGRpbmctdG9wOiB2YXIoLS1wYWdlLW1hcmdpbik7XG4gIHBhZGRpbmctYm90dG9tOiB2YXIoLS1wYWdlLW1hcmdpbik7XG4gIGZvbnQtZmFtaWx5OiBcIkhlbHZldGljYU5ldWVcIiwgXCJIZWx2ZXRpY2EgTmV1ZVwiLCBIZWx2ZXRpY2EsIFwiUm9ib3RvXCIsIFwiU2Vnb2UgVUlcIiwgQXJpYWwsIHNhbnMtc2VyaWY7XG4gIHRleHQtYWxpZ246IGxlZnQ7XG4gIGZvbnQtd2VpZ2h0OiBib2xkO1xuICBmb250LXNpemU6IDE5cHg7XG59XG4uZ3JvdXAtaW5mbyAuZ3JvdXAtdGFncyB7XG4gIHBhZGRpbmctYm90dG9tOiBjYWxjKHZhcigtLXBhZ2UtbWFyZ2luKSAvIDMpO1xufVxuLmdyb3VwLWluZm8gLmdyb3VwLXRhZ3MgLnRhZ3Mge1xuICBwYWRkaW5nLXJpZ2h0OiA1cHg7XG59XG4uZ3JvdXAtaW5mbyAuZ3JvdXAtdGFncyAudGFncyAuaXRlbS1yYXRpbmcge1xuICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKHZhcigtLXBhZ2UtY29sb3ItcmdiKSwgMC4zNSk7XG4gIHBhZGRpbmctcmlnaHQ6IGNhbGModmFyKC0tcGFnZS1tYXJnaW4pIC8gMik7XG4gIGZvbnQtc2l6ZTogMTRweDtcbiAgZm9udC13ZWlnaHQ6IGJvbGQ7XG4gIHdpZHRoOiAxMDAlO1xuICBkaXNwbGF5OiBibG9jaztcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xufVxuLmdyb3VwLWluZm8gLmdyb3VwLXRhZ3MgLnRhZ3MgLml0ZW0tcmF0aW5nW3JhdGluZ0Jhc2U9XCIwXCJdIHtcbiAgY29sb3I6IHZhcigtLXBhZ2UtcmF0aW5nLTEtY29sb3IpO1xufVxuLmdyb3VwLWluZm8gLmdyb3VwLXRhZ3MgLnRhZ3MgLml0ZW0tcmF0aW5nW3JhdGluZ0Jhc2U9XCIxXCJdIHtcbiAgY29sb3I6IHZhcigtLXBhZ2UtcmF0aW5nLTItY29sb3IpO1xufVxuLmdyb3VwLWluZm8gLmdyb3VwLW1lbWJlci1uYW1lIHtcbiAgcGFkZGluZy1sZWZ0OiB2YXIoLS1wYWdlLW1hcmdpbik7XG59XG5cbi5lbXB0eS1saXN0IHtcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xufSJdfQ== */";
     /***/
   },
 
@@ -255,7 +255,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     var _reaction_list_modal_reaction_list_modal_page__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(
     /*! ../reaction-list-modal/reaction-list-modal.page */
-    "./src/app/reaction-list-modal/reaction-list-modal.page.ts");
+    "./src/app/reaction-list-modal/reaction-list-modal.page.ts"); // tslint:disable-next-line: max-line-length
+
 
     var GroupPage =
     /*#__PURE__*/
@@ -289,10 +290,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.events = [];
         this.loggedInUserIsMember = 'false';
         this.resourceTags = [];
+        this.notifications = [];
         this.toggled = false; // posts
 
         this.posts = [];
         this.numberOfPosts = 10;
+        this.maxNoOfPosts = 1000;
+        this.maxNoOfEvents = 1000;
+        this.maxNoOfPolls = 1000;
+        this.maxNoOfResources = 1000;
+        this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_12__["auth"]().currentUser.uid;
       }
 
       _createClass(GroupPage, [{
@@ -313,6 +320,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.searchEvent = ''; // Get user information for system message sent to the group when a member was added.
 
           this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (user) {
+            _this.notifications = user.payload.data().notifications;
             _this.user = user.payload.data();
           });
           this.getGroupDetailsandPosts();
@@ -320,8 +328,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       }, {
         key: "ionViewDidEnter",
-        value: function ionViewDidEnter() {} // this.getGroupDetailsandMessages();
-        // Load previous messages in relation to numberOfMessages.
+        value: function ionViewDidEnter() {} // Load previous messages in relation to numberOfMessages.
 
       }, {
         key: "loadPreviousMessages",
@@ -611,8 +618,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           console.log(event.center.x);
           console.log(event.center.y);
           this.presentPopover(event, message);
-        } // MY Methods ************************
-
+        }
       }, {
         key: "joinGroup",
         value: function joinGroup() {
@@ -724,8 +730,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               }
             }, _callee2, this);
           }));
-        } /// ********************* POLL Functions ***********************************/
-
+        }
       }, {
         key: "getGroupDetailsandMessages",
         value: function getGroupDetailsandMessages() {
@@ -850,14 +855,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.groupId = this.route.snapshot.params.id;
           this.subscription = this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe(function (group) {
             _this6.group = group.payload.data();
-            _this6.title = group.payload.data().name;
-            console.log('this.group', _this6.group); // Get Group Members
+            _this6.title = group.payload.data().name; // Get Group Members
 
             if (_this6.group.members) {
               _this6.group.members.forEach(function (memberId) {
                 _this6.dataProvider.getUser(memberId).snapshotChanges().subscribe(function (member) {
-                  console.log('member', member.payload);
-
                   if (member.payload.exists) {
                     member = Object.assign({
                       $key: member.payload.id
@@ -870,70 +872,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             } // Get group posts
 
 
-            _this6.firestore.collection('/posts/').ref.where('groupId', '==', _this6.groupId).where('type', '==', 'general').get().then(function (po) {
+            _this6.firstDataSetPost = _this6.firestore.collection('posts').ref.where('groupId', '==', _this6.groupId).where('type', '==', 'general').orderBy('date', 'desc').limit(5);
+
+            _this6.firstDataSetPost.onSnapshot(function (po) {
+              _this6.lastDataSetPost = po.docs[po.docs.length - 1];
               _this6.posts = [];
-              po.forEach(function (p) {
-                var post;
-                post = p.data();
-                post.key = p.id;
-                var startDate = new Date(post.date); // Do your operations
 
-                var endDate = new Date();
-                var seconds = (endDate.getTime() - startDate.getTime()) / 1000;
-
-                if (seconds > 120) {
-                  post.showNewIcon = false;
-                } else {
-                  post.showNewIcon = true;
-                } // get reactions list
-
-
-                _this6.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe(function (reactions) {
-                  post.reactions = [];
-                  reactions.forEach(function (element) {
-                    var reaction = element.payload.doc.data();
-                    reaction.key = element.payload.doc.id;
-                    post.reactions.push(reaction);
-                  }); // Check for Thanks
-
-                  if (reactions) {
-                    var foundSmiley = false;
-
-                    if (post.reactions !== undefined) {
-                      foundSmiley = post.reactions.some(function (el) {
-                        return el.addedByUser.addedByKey === _this6.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks';
-                      });
-                    }
-
-                    if (foundSmiley) {
-                      post.showSmiley = true;
-                    } else {
-                      post.showSmiley = false;
-                    } // Check for Hugs
-
-
-                    var foundHug = false;
-
-                    if (post.reactions !== undefined) {
-                      foundHug = post.reactions.some(function (el) {
-                        return el.addedByUser.addedByKey === _this6.dataProvider.getCurrentUserId() && el.reactionType === 'Hug';
-                      });
-                    }
-
-                    if (foundHug) {
-                      post.showHug = true;
-                    } else {
-                      post.showHug = false;
-                    }
-                  }
-                });
-
-                post.postTags = post.postTags.filter(function (x) {
-                  return x.isChecked !== false;
-                });
-
-                _this6.addOrUpdatePost(post);
-              });
+              _this6.loadEachPostData(po);
             });
           }); // Update messages' date time elapsed every minute based on Moment.js.
 
@@ -949,9 +894,75 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               }
             }, 60000);
           }
-        } // Check if user exists in the group then add/update user.
-        // If the user has already left the group, remove user from the list.
+        }
+      }, {
+        key: "loadEachPostData",
+        value: function loadEachPostData(po) {
+          var _this7 = this;
 
+          po.forEach(function (p) {
+            var post;
+            post = p.data();
+            post.key = p.id;
+            var startDate = new Date(post.date); // Do your operations
+
+            var endDate = new Date();
+            var seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+
+            if (seconds > 120) {
+              post.showNewIcon = false;
+            } else {
+              post.showNewIcon = true;
+            } // get reactions list
+
+
+            _this7.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe(function (reactions) {
+              post.reactions = [];
+              reactions.forEach(function (element) {
+                var reaction = element.payload.doc.data();
+                reaction.key = element.payload.doc.id;
+                post.reactions.push(reaction);
+              }); // Check for Thanks
+
+              if (reactions) {
+                var foundSmiley = false;
+
+                if (post.reactions !== undefined) {
+                  foundSmiley = post.reactions.some(function (el) {
+                    return el.addedByUser.addedByKey === _this7.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks';
+                  });
+                }
+
+                if (foundSmiley) {
+                  post.showSmiley = true;
+                } else {
+                  post.showSmiley = false;
+                } // Check for Hugs
+
+
+                var foundHug = false;
+
+                if (post.reactions !== undefined) {
+                  foundHug = post.reactions.some(function (el) {
+                    return el.addedByUser.addedByKey === _this7.dataProvider.getCurrentUserId() && el.reactionType === 'Hug';
+                  });
+                }
+
+                if (foundHug) {
+                  post.showHug = true;
+                } else {
+                  post.showHug = false;
+                }
+              }
+            });
+
+            post.postTags = post.postTags.filter(function (x) {
+              return x.isChecked !== false;
+            });
+
+            _this7.addOrUpdatePost(post);
+          });
+        }
       }, {
         key: "addUpdateOrRemoveMember",
         value: function addUpdateOrRemoveMember(member) {
@@ -1019,227 +1030,250 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "getPolls",
         value: function getPolls() {
-          var _this7 = this;
+          var _this8 = this;
 
           // Get group posts
-          this.firestore.collection('/posts/').ref.where('groupId', '==', this.groupId).where('type', '==', 'poll').get().then(function (po) {
-            _this7.posts = [];
-            po.forEach(function (p) {
-              var post;
-              post = p.data();
-              post.key = p.id;
-              var startDate = new Date(post.date); // Do your operations
+          this.firstDataSetPoll = this.firestore.collection('posts').ref.where('groupId', '==', this.groupId).where('type', '==', 'poll').orderBy('date', 'desc').limit(5); // Get group posts
 
-              var endDate = new Date();
-              var seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+          this.firstDataSetPoll.onSnapshot(function (po) {
+            _this8.lastDataSetPoll = po.docs[po.docs.length - 1];
+            _this8.polls = [];
 
-              if (seconds > 120) {
-                post.showNewIcon = false;
-              } else {
-                post.showNewIcon = true;
-              }
-
-              post.postTags = post.postTags.filter(function (x) {
-                return x.isChecked !== false;
-              });
-
-              _this7.addOrUpdatePoll(post);
-            });
+            _this8.loadEachPollData(po);
           });
-        } // Open Poll
+        }
+      }, {
+        key: "loadEachPollData",
+        value: function loadEachPollData(po) {
+          var _this9 = this;
 
+          po.forEach(function (p) {
+            var post;
+            post = p.data();
+            post.key = p.id;
+            var startDate = new Date(post.date); // Do your operations
+
+            var endDate = new Date();
+            var seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+
+            if (seconds > 120) {
+              post.showNewIcon = false;
+            } else {
+              post.showNewIcon = true;
+            }
+
+            post.postTags = post.postTags.filter(function (x) {
+              return x.isChecked !== false;
+            });
+
+            _this9.addOrUpdatePoll(post);
+          });
+        }
       }, {
         key: "viewPoll",
         value: function viewPoll(poll) {
-          this.router.navigateByUrl('poll/' + poll.key);
-        } // View Resource selected
-
+          this.router.navigateByUrl('post/' + poll.key);
+        }
       }, {
         key: "viewResource",
         value: function viewResource(resource) {
-          this.router.navigateByUrl('resource/' + resource.key);
-          /*const navigationExtras: NavigationExtras = {
-            state: {
-              resource: resource
-            }
-          };
-          this.router.navigate(['resource'], navigationExtras); */
-        } // View Post selected
-
+          this.router.navigateByUrl('post/' + resource.key);
+        }
       }, {
         key: "viewPost",
         value: function viewPost(post) {
           console.log('postID: ' + post.key);
           this.router.navigateByUrl('post/' + post.key);
-        } // View Resource selected
-
+        }
       }, {
         key: "viewEvent",
         value: function viewEvent(event) {
-          this.router.navigateByUrl('event/' + event.key);
+          this.router.navigateByUrl('post/' + event.key);
         }
       }, {
         key: "newPoll",
         value: function newPoll() {
-          this.router.navigateByUrl('/new-poll/' + this.groupId); // this.app.getRootNav().push(NewPollPage, { groupId: this.groupId });
+          this.router.navigateByUrl('/new-poll/' + this.groupId);
         }
       }, {
         key: "newPost",
         value: function newPost() {
-          this.router.navigateByUrl('/new-post/' + this.groupId); // this.app.getRootNav().push(NewPollPage, { groupId: this.groupId });
+          this.router.navigateByUrl('/new-post/' + this.groupId);
         }
       }, {
         key: "newResource",
         value: function newResource() {
-          this.router.navigateByUrl('/new-resource/' + this.groupId); // this.app.getRootNav().push(NewResourcePage, { groupId: this.groupId });
+          this.router.navigateByUrl('/new-resource/' + this.groupId);
         }
       }, {
         key: "newEvent",
         value: function newEvent() {
-          this.router.navigateByUrl('/new-event/' + this.groupId); // this.app.getRootNav().push(NewResourcePage, { groupId: this.groupId });
+          this.router.navigateByUrl('/new-event/' + this.groupId);
         }
       }, {
         key: "getResources",
         value: function getResources() {
-          var _this8 = this;
+          var _this10 = this;
 
           // Get group posts
-          this.firestore.collection('/posts/').ref.where('groupId', '==', this.groupId).where('type', '==', 'resource').get().then(function (po) {
-            _this8.resources = [];
-            po.forEach(function (p) {
-              var post;
-              post = p.data();
-              post.key = p.id;
-              var startDate = new Date(post.date); // Do your operations
+          this.firstDataSetResources = this.firestore.collection('posts').ref.where('groupId', '==', this.groupId).where('type', '==', 'resource').orderBy('date', 'desc').limit(5); // Get group posts
 
-              var endDate = new Date();
-              var seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+          this.firstDataSetResources.onSnapshot(function (po) {
+            _this10.lastDataSetResources = po.docs[po.docs.length - 1];
+            _this10.resources = [];
 
-              if (seconds > 120) {
-                post.showNewIcon = false;
-              } else {
-                post.showNewIcon = true;
-              } // get reactions list
+            _this10.loadEachResourceData(po);
+          });
+        }
+      }, {
+        key: "loadEachResourceData",
+        value: function loadEachResourceData(po) {
+          var _this11 = this;
 
+          po.forEach(function (p) {
+            var post;
+            post = p.data();
+            post.key = p.id;
+            var startDate = new Date(post.date); // Do your operations
 
-              _this8.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe(function (reactions) {
-                post.reactions = [];
-                reactions.forEach(function (element) {
-                  var reaction = element.payload.doc.data();
-                  reaction.key = element.payload.doc.id;
-                  post.reactions.push(reaction);
-                }); // Check for Thanks
+            var endDate = new Date();
+            var seconds = (endDate.getTime() - startDate.getTime()) / 1000;
 
-                if (reactions) {
-                  var foundSmiley = false;
-
-                  if (post.reactions !== undefined) {
-                    foundSmiley = post.reactions.some(function (el) {
-                      return el.addedByUser.addedByKey === _this8.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks';
-                    });
-                  }
-
-                  if (foundSmiley) {
-                    post.showSmiley = true;
-                  } else {
-                    post.showSmiley = false;
-                  } // Check for Bookmark
+            if (seconds > 120) {
+              post.showNewIcon = false;
+            } else {
+              post.showNewIcon = true;
+            } // get reactions list
 
 
-                  var foundBookmark = false;
+            _this11.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe(function (reactions) {
+              post.reactions = [];
+              reactions.forEach(function (element) {
+                var reaction = element.payload.doc.data();
+                reaction.key = element.payload.doc.id;
+                post.reactions.push(reaction);
+              }); // Check for Thanks
 
-                  if (post.reactions !== undefined) {
-                    foundBookmark = post.reactions.some(function (el) {
-                      return el.addedByUser.addedByKey === _this8.dataProvider.getCurrentUserId() && el.reactionType === 'Bookmark';
-                    });
-                  }
+              if (reactions) {
+                var foundSmiley = false;
 
-                  if (foundBookmark) {
-                    post.showBookmark = true;
-                  } else {
-                    post.showBookmark = false;
-                  }
+                if (post.reactions !== undefined) {
+                  foundSmiley = post.reactions.some(function (el) {
+                    return el.addedByUser.addedByKey === _this11.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks';
+                  });
                 }
-              });
 
-              post.postTags = post.postTags.filter(function (x) {
-                return x.isChecked !== false;
-              });
+                if (foundSmiley) {
+                  post.showSmiley = true;
+                } else {
+                  post.showSmiley = false;
+                } // Check for Bookmark
 
-              _this8.addOrUpdateResource(post);
+
+                var foundBookmark = false;
+
+                if (post.reactions !== undefined) {
+                  foundBookmark = post.reactions.some(function (el) {
+                    return el.addedByUser.addedByKey === _this11.dataProvider.getCurrentUserId() && el.reactionType === 'Bookmark';
+                  });
+                }
+
+                if (foundBookmark) {
+                  post.showBookmark = true;
+                } else {
+                  post.showBookmark = false;
+                }
+              }
             });
+
+            post.postTags = post.postTags.filter(function (x) {
+              return x.isChecked !== false;
+            });
+
+            _this11.addOrUpdateResource(post);
           });
         }
       }, {
         key: "getEvents",
         value: function getEvents() {
-          var _this9 = this;
+          var _this12 = this;
 
           // Get group posts
-          this.firestore.collection('/posts/').ref.where('groupId', '==', this.groupId).where('type', '==', 'event').get().then(function (po) {
-            _this9.events = [];
-            po.forEach(function (p) {
-              var post;
-              post = p.data();
-              post.key = p.id;
-              var startDate = new Date(post.date); // Do your operations
+          this.firstDataSetEvent = this.firestore.collection('posts').ref.where('groupId', '==', this.groupId).where('type', '==', 'event').orderBy('date', 'desc').limit(5); // Get group posts
 
-              var endDate = new Date();
-              var seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+          this.firstDataSetEvent.onSnapshot(function (po) {
+            _this12.lastDataSetEvent = po.docs[po.docs.length - 1];
+            _this12.events = [];
 
-              if (seconds > 120) {
-                post.showNewIcon = false;
-              } else {
-                post.showNewIcon = true;
-              } // get reactions list
+            _this12.loadEachEventData(po);
+          });
+        }
+      }, {
+        key: "loadEachEventData",
+        value: function loadEachEventData(po) {
+          var _this13 = this;
 
+          po.forEach(function (p) {
+            var post;
+            post = p.data();
+            post.key = p.id;
+            var startDate = new Date(post.date); // Do your operations
 
-              _this9.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe(function (reactions) {
-                post.reactions = [];
-                reactions.forEach(function (element) {
-                  var reaction = element.payload.doc.data();
-                  reaction.key = element.payload.doc.id;
-                  post.reactions.push(reaction);
-                }); // Check for Thanks
+            var endDate = new Date();
+            var seconds = (endDate.getTime() - startDate.getTime()) / 1000;
 
-                if (reactions) {
-                  var foundSmiley = false;
-
-                  if (post.reactions !== undefined) {
-                    foundSmiley = post.reactions.some(function (el) {
-                      return el.addedByUser.addedByKey === _this9.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks';
-                    });
-                  }
-
-                  if (foundSmiley) {
-                    post.showSmiley = true;
-                  } else {
-                    post.showSmiley = false;
-                  } // Check for Checkin
+            if (seconds > 120) {
+              post.showNewIcon = false;
+            } else {
+              post.showNewIcon = true;
+            } // get reactions list
 
 
-                  var foundCheckin = false;
+            _this13.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe(function (reactions) {
+              post.reactions = [];
+              reactions.forEach(function (element) {
+                var reaction = element.payload.doc.data();
+                reaction.key = element.payload.doc.id;
+                post.reactions.push(reaction);
+              }); // Check for Thanks
 
-                  if (post.reactions !== undefined) {
-                    foundCheckin = post.reactions.some(function (el) {
-                      return el.addedByUser.addedByKey === _this9.dataProvider.getCurrentUserId() && el.reactionType === 'Checkin';
-                    });
-                  }
+              if (reactions) {
+                var foundSmiley = false;
 
-                  if (foundCheckin) {
-                    post.showCheckin = true;
-                  } else {
-                    post.showCheckin = false;
-                  }
+                if (post.reactions !== undefined) {
+                  foundSmiley = post.reactions.some(function (el) {
+                    return el.addedByUser.addedByKey === _this13.dataProvider.getCurrentUserId() && el.reactionType === 'Thanks';
+                  });
                 }
-              });
 
-              post.postTags = post.postTags.filter(function (x) {
-                return x.isChecked !== false;
-              });
+                if (foundSmiley) {
+                  post.showSmiley = true;
+                } else {
+                  post.showSmiley = false;
+                } // Check for Checkin
 
-              _this9.addOrUpdateEvent(post);
+
+                var foundCheckin = false;
+
+                if (post.reactions !== undefined) {
+                  foundCheckin = post.reactions.some(function (el) {
+                    return el.addedByUser.addedByKey === _this13.dataProvider.getCurrentUserId() && el.reactionType === 'Checkin';
+                  });
+                }
+
+                if (foundCheckin) {
+                  post.showCheckin = true;
+                } else {
+                  post.showCheckin = false;
+                }
+              }
             });
+
+            post.postTags = post.postTags.filter(function (x) {
+              return x.isChecked !== false;
+            });
+
+            _this13.addOrUpdateEvent(post);
           });
         }
       }, {
@@ -1250,7 +1284,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "openModal",
         value: function openModal() {
-          var _this10 = this;
+          var _this14 = this;
 
           this.modalCtrl.create({
             component: _tag_modal_tag_modal_page__WEBPACK_IMPORTED_MODULE_14__["TagModalPage"],
@@ -1261,19 +1295,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             res.present();
           });
           this.modalCtrl.dismiss(function (data) {
-            _this10.resourceTagsString = '';
-            _this10.resourceTags = data;
+            _this14.resourceTagsString = '';
+            _this14.resourceTags = data;
 
-            _this10.resourceTags.forEach(function (element) {
+            _this14.resourceTags.forEach(function (element) {
               if (element.isChecked == true) {
-                _this10.resourceTagsString = _this10.resourceTagsString + ', ' + element.val;
+                _this14.resourceTagsString = _this14.resourceTagsString + ', ' + element.val;
               }
             });
 
-            _this10.resourceTagsString = _this10.resourceTagsString.replace(', ', '');
+            _this14.resourceTagsString = _this14.resourceTagsString.replace(', ', '');
           });
-        } // Add or update group for real-time sync based on our observer.
-
+        }
       }, {
         key: "addOrUpdatePoll",
         value: function addOrUpdatePoll(poll) {
@@ -1329,8 +1362,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               this.polls.push(poll);
             }
           }
-        } // Add or update group for real-time sync based on our observer.
-
+        }
       }, {
         key: "addOrUpdateResource",
         value: function addOrUpdateResource(resource) {
@@ -1409,8 +1441,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               this.posts.push(post);
             }
           }
-        } // Add or update group for real-time sync based on our observer.
-
+        }
       }, {
         key: "addOrUpdateEvent",
         value: function addOrUpdateEvent(event) {
@@ -1460,7 +1491,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "showGroupOptions",
         value: function showGroupOptions() {
-          var _this11 = this;
+          var _this15 = this;
 
           var action = this.actionSheet.create({
             header: 'Create a new ...',
@@ -1471,26 +1502,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               text: 'Post',
               icon: 'chatbubbles',
               handler: function handler() {
-                _this11.newPost();
+                _this15.newPost();
               }
             }, {
               text: 'Resource',
               icon: 'document',
               handler: function handler() {
-                _this11.newResource();
+                _this15.newResource();
               }
             }, {
               text: 'Poll',
               icon: 'podium',
               handler: function handler() {
-                _this11.newPoll();
+                _this15.newPoll();
               }
             }, {
               text: 'Event',
               icon: 'calendar',
               cssClass: 'cancelAction',
               handler: function handler() {
-                _this11.newEvent();
+                _this15.newEvent();
               }
             }]
           }).then(function (r) {
@@ -1565,7 +1596,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "addPostReaction",
         value: function addPostReaction(post, reactionType) {
-          var _this12 = this;
+          var _this16 = this;
 
           // first find the post in the collection
           var postIndex;
@@ -1599,7 +1630,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 key: '',
                 dateCreated: new Date(),
                 addedByUser: {
-                  addedByKey: _this12.dataProvider.getCurrentUserId(),
+                  addedByKey: _this16.dataProvider.getCurrentUserId(),
                   addedByUsername: account.data().username,
                   addedByImg: account.data().img
                 },
@@ -1607,7 +1638,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               };
 
               if (postIndex >= 0) {
-                _this12.dataProvider.updatePostReactions(post.key, reaction);
+                _this16.dataProvider.updatePostReactions(post.key, reaction);
               }
             }
           });
@@ -1615,7 +1646,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "removePostReaction",
         value: function removePostReaction(post, reactionType) {
-          var _this13 = this;
+          var _this17 = this;
 
           var postIndex;
           var p;
@@ -1649,7 +1680,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               return p.reactions[e];
             });
             var reaction = post.reactions.find(function (el) {
-              return el.addedByUser.addedByKey === _this13.dataProvider.getCurrentUserId() && el.reactionType === reactionType;
+              return el.addedByUser.addedByKey === _this17.dataProvider.getCurrentUserId() && el.reactionType === reactionType;
             });
             console.log('reaction.key', reaction);
             this.dataProvider.removePostReaction(post.key, reaction.key);
@@ -1720,6 +1751,241 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }, _callee3, this);
           }));
         }
+      }, {
+        key: "showPostOptions",
+        value: function showPostOptions(post) {
+          var action = this.actionSheet.create({
+            header: 'Post options',
+            backdropDismiss: true,
+            mode: 'md',
+            cssClass: 'GroupAction',
+            buttons: this.createPostOptionButtons(post)
+          }).then(function (r) {
+            return r.present();
+          });
+        }
+      }, {
+        key: "followPost",
+        value: function followPost(post) {
+          var _this18 = this;
+
+          if (!this.notifications) {
+            this.notifications = [post.key];
+          } else {
+            this.notifications.push(post.key);
+          }
+
+          this.dataProvider.getUser(this.loggedInUserId).update({
+            notifications: this.notifications
+          }).then(function () {
+            _this18.loadingProvider.showToast('You will be notified when there are new replies');
+          });
+        }
+      }, {
+        key: "unFollowPost",
+        value: function unFollowPost(post) {
+          var _this19 = this;
+
+          var index = this.notifications.indexOf(post.key, 0);
+
+          if (index > -1) {
+            this.notifications.splice(index, 1);
+          }
+
+          this.dataProvider.getUser(this.loggedInUserId).update({
+            notifications: this.notifications
+          }).then(function () {
+            _this19.loadingProvider.showToast('You won\'t get notifications for this post');
+          });
+        }
+      }, {
+        key: "reportPost",
+        value: function reportPost(post) {
+          var _this20 = this;
+
+          this.dataProvider.addReports(this.loggedInUserId, post).then(function () {
+            _this20.loadingProvider.showToast('Thank you for reporting the post.');
+          });
+        }
+      }, {
+        key: "deletePost",
+        value: function deletePost(post) {
+          var _this21 = this;
+
+          this.alertCtrl.create({
+            header: 'Delete Post',
+            message: 'Are you sure you want to delete this post?',
+            buttons: [{
+              text: 'Cancel'
+            }, {
+              text: 'Yes',
+              handler: function handler(data) {
+                _this21.firestore.doc('posts/' + post.key).delete();
+              }
+            }]
+          }).then(function (r) {
+            return r.present();
+          });
+        }
+      }, {
+        key: "createPostOptionButtons",
+        value: function createPostOptionButtons(post) {
+          var _this22 = this;
+
+          var buttons = [];
+          var cancelButton = {
+            text: 'Cancel',
+            icon: 'close',
+            role: 'cancel',
+            handler: function handler() {
+              console.log('Cancel clicked');
+            }
+          };
+          var reportButton = {
+            text: 'Report Post',
+            icon: 'flag-outline',
+            handler: function handler() {
+              _this22.reportPost(post);
+            }
+          };
+          var notificationButton = {};
+
+          if (post.addedByUser.addedByKey === this.loggedInUserId) {
+            var deletePostButton = {
+              text: 'Delete Post',
+              icon: 'trash-outline',
+              cssClass: 'actionicon',
+              handler: function handler() {
+                _this22.deletePost(post);
+              }
+            };
+            buttons.push(deletePostButton);
+          } else {
+            if (this.notifications && this.notifications.some(function (el) {
+              return el === post.key;
+            })) {
+              notificationButton = {
+                text: 'Turn Off Notifications',
+                icon: 'notifications-off-outline',
+                cssClass: 'actionicon',
+                handler: function handler() {
+                  _this22.unFollowPost(post);
+                }
+              };
+            } else {
+              notificationButton = {
+                text: 'Turn On Notifications',
+                icon: 'notifications-outline',
+                cssClass: 'actionicon',
+                handler: function handler() {
+                  _this22.followPost(post);
+                }
+              };
+            }
+
+            buttons.push(notificationButton);
+          }
+
+          buttons.push(reportButton);
+          buttons.push(cancelButton);
+          return buttons;
+        }
+      }, {
+        key: "loadDataPosts",
+        value: function loadDataPosts(event) {
+          var _this23 = this;
+
+          if (this.posts.length > this.maxNoOfPosts) {
+            event.target.disabled = true;
+          } else {
+            if (this.lastDataSetPost) {
+              this.nextDataSetPost = this.firestore.collection('posts').ref.where('groupId', '==', this.groupId).where('type', '==', 'general').orderBy('date', 'desc').startAfter(this.lastDataSetPost).limit(5);
+              this.nextDataSetPost.onSnapshot(function (po) {
+                _this23.lastDataSetPost = po.docs[po.docs.length - 1];
+
+                if (po.docs.length > 0) {
+                  _this23.loadEachPostData(po);
+                }
+
+                event.target.complete();
+              });
+            } else {
+              event.target.complete();
+            }
+          }
+        }
+      }, {
+        key: "loadDataPolls",
+        value: function loadDataPolls(event) {
+          var _this24 = this;
+
+          if (this.polls.length > this.maxNoOfPolls) {
+            event.target.disabled = true;
+          } else {
+            if (this.lastDataSetPoll) {
+              this.nextDataSetPoll = this.firestore.collection('posts').ref.where('groupId', '==', this.groupId).where('type', '==', 'poll').orderBy('date', 'desc').startAfter(this.lastDataSetPoll).limit(5);
+              this.nextDataSetPoll.onSnapshot(function (po) {
+                _this24.lastDataSetPoll = po.docs[po.docs.length - 1];
+
+                if (po.docs.length > 0) {
+                  _this24.loadEachPollData(po);
+                }
+
+                event.target.complete();
+              });
+            } else {
+              event.target.complete();
+            }
+          }
+        }
+      }, {
+        key: "loadDataEvents",
+        value: function loadDataEvents(event) {
+          var _this25 = this;
+
+          if (this.events.length > this.maxNoOfEvents) {
+            event.target.disabled = true;
+          } else {
+            if (this.lastDataSetEvent) {
+              this.nextDataSetEvent = this.firestore.collection('posts').ref.where('groupId', '==', this.groupId).where('type', '==', 'event').orderBy('date', 'desc').startAfter(this.lastDataSetEvent).limit(5);
+              this.nextDataSetEvent.onSnapshot(function (po) {
+                _this25.lastDataSetEvent = po.docs[po.docs.length - 1];
+
+                if (po.docs.length > 0) {
+                  _this25.loadEachEventData(po);
+                }
+
+                event.target.complete();
+              });
+            } else {
+              event.target.complete();
+            }
+          }
+        }
+      }, {
+        key: "loadDataResources",
+        value: function loadDataResources(event) {
+          var _this26 = this;
+
+          if (this.events.length > this.maxNoOfResources) {
+            event.target.disabled = true;
+          } else {
+            if (this.lastDataSetResources) {
+              this.nextDataSetResources = this.firestore.collection('posts').ref.where('groupId', '==', this.groupId).where('type', '==', 'resource').orderBy('date', 'desc').startAfter(this.lastDataSetResources).limit(5);
+              this.nextDataSetResources.onSnapshot(function (po) {
+                _this26.lastDataSetResources = po.docs[po.docs.length - 1];
+
+                if (po.docs.length > 0) {
+                  _this26.loadEachResourceData(po);
+                }
+
+                event.target.complete();
+              });
+            } else {
+              event.target.complete();
+            }
+          }
+        }
       }]);
 
       return GroupPage;
@@ -1760,6 +2026,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     };
 
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('content', null), tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ElementRef"])], GroupPage.prototype, "content", void 0);
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])(_ionic_angular__WEBPACK_IMPORTED_MODULE_5__["IonInfiniteScroll"], {
+      static: true
+    }), tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["IonInfiniteScroll"])], GroupPage.prototype, "infiniteScroll", void 0);
     GroupPage = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
       selector: 'app-group',
       template: tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(
