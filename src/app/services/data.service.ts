@@ -19,18 +19,7 @@ export class DataService {
     private storage: Storage,
     private firestore: AngularFirestore,
     public imageProvider: ImageService
-  ) { 
-  //   if (this.afAuth.auth.currentUser === null ) { return; }
-  //   this.firestore.doc('accounts/' + this.afAuth.auth.currentUser.uid).snapshotChanges().subscribe((value: any) => {
-  //   const addedByUser = {
-  //     addedByKey: value.payload.data().userId,
-  //     addedByUsername: value.payload.data().username,
-  //     addedByImg: value.payload.data().img
-  //   };
-
-  //   this.addedByUser = addedByUser;
-  //  });
-  }
+  ) { }
 
 
   // Get all users
@@ -103,9 +92,6 @@ export class DataService {
     // return this.afdb.list('/accounts/' + this.afAuth.auth.currentUser.uid +
     //   '/conversations', ref => ref.orderByChild('blocked').equalTo(true));
   }
-
-
-// MY CODE **********************************
 
   // Get Polls of the logged in user.
   getPollDetails(pId) {

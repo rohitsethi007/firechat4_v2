@@ -38,6 +38,7 @@ const routes: Routes = [
   { path: 'post/:id', loadChildren: './post/post.module#PostPageModule', canActivate: [AuthGuardService] },
   { path: 'reaction-list-modal', loadChildren: './reaction-list-modal/reaction-list-modal.module#ReactionListModalPageModule' },
   { path: 'new-resource/:id', loadChildren: './new-resources/new-resources.module#NewResourcesPageModule' },  { path: 'feed', loadChildren: './feed/feed.module#FeedPageModule' },
+  { path: 'user-profile-modal', loadChildren: './user-profile-modal/user-profile-modal.module#UserProfileModalPageModule' },
 
 
 ];

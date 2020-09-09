@@ -3,13 +3,16 @@ import { LoginService } from '../services/login.service';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AlertController, Platform } from '@ionic/angular';
+import { AlertController, Platform, ModalController, IonRouterOutlet } from '@ionic/angular';
 import { ImageService } from '../services/image.service';
 import { Camera } from '@ionic-native/camera/ngx';
 import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Validator } from 'src/environments/validator';
+import * as firebase from 'firebase/app';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { UserProfileModalPage } from '../user-profile-modal/user-profile-modal.page';
 
 @Component({
   selector: 'app-profile',
@@ -22,6 +25,8 @@ export class ProfilePage implements OnInit {
   isPushEnabled: any = false;
   user: any;
   isBrowser = true;
+  posts: any = [];
+  groups: any = [];
 
   myForm: FormGroup;
   submitAttempt = false;
@@ -38,7 +43,11 @@ export class ProfilePage implements OnInit {
     private camera: Camera,
     private fcm: FirebaseX,
     private platform: Platform,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    public modalCtrl: ModalController,
+    private routerOutlet: IonRouterOutlet
   ) {
 
     this.errorMessages = Validator.errorMessages
@@ -57,15 +66,59 @@ export class ProfilePage implements OnInit {
 
   ionViewDidEnter() {
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
-      let account = user.payload.data(); 
+      let account = user.payload.data();
       this.loadingProvider.hide();
       if (account != null) {
         this.user = account;
+        let query = this.firestore.collection('posts').ref
+        .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.posts);
+        // .orderBy('date', 'desc');
+        console.log('this.user.posts', this.user.posts);
+        query.get().then((po: any) => {
+          console.log('po', po);
+        this.posts = [];
+        this.loadEachPostData(po);
+    });
       }
-      console.log(this.user);
+    });
+
+    this.dataProvider.getGroups().snapshotChanges().subscribe((data: any) => {
+
+      this.groups = data.map(c => {
+            return { $key: c.payload.doc.id, ...c.payload.doc.data() };
+          });
+        });
+  } 
+  
+
+  loadEachPostData(po: any) {
+    po.forEach(p => {
+      let post: any;
+      post = p.data();
+      post.key = p.id;
+      post.postTags = post.postTags.filter(x => x.isChecked !== false);
+      this.addOrUpdatePost(post);
     });
   }
 
+  addOrUpdatePost(post) {
+    if (!this.posts) {
+      this.posts = [post];
+    } else {
+      let index = -1;
+      for (let i = 0; i < this.posts.length; i++) {
+        if (this.posts[i].key == post.key) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        this.posts[index] = post;
+      } else {
+        this.posts.push(post);
+      }
+    }
+
+  }
   changeStatus() {
     this.firestore.doc('accounts/' + this.user.userId).update({ showOnline: this.user.showOnline });
   }
@@ -202,4 +255,19 @@ export class ProfilePage implements OnInit {
     this.loginService.logout();
   }
 
+  viewPost(post) {
+    this.router.navigateByUrl('post/' + post.key);
+  }
+
+  async editProfile() {
+    const modal = await this.modalCtrl.create({
+      component: UserProfileModalPage,
+      swipeToClose: true,
+      presentingElement: this.routerOutlet.nativeEl,
+      componentProps: {
+        user: this.user
+      }
+    });
+    return await modal.present();
+  }
 }

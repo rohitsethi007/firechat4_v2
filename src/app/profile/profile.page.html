@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>Profile</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()">
+      <ion-button class="logout" color="secondary" (click)="logout()">
         Logout
       </ion-button>
     </ion-buttons>
@@ -20,7 +20,21 @@
           <img src="{{user.img}}" tappable (click)="setPhoto()"
           onError="this.src='./assets/images/default-dp_rect.png'">
         </div>
-    <form [formGroup]="myForm">
+        <div>
+          <ion-item lines="none">
+          <ion-text class="profile-summary-name">{{user.name}}</ion-text>
+          <ion-button color="secondary" slot="end" (click)="editProfile()" class="profile-edit-button">Edit</ion-button>
+        </ion-item>
+        <ion-text class="profile-component-title ion-padding">@{{user.username}} · {{user.email}}</ion-text>
+      </div>
+        <br>
+        <div class="ion-no-border">
+          <ion-item class="toggle-text" lines="none">
+            <ion-text>{{user.description}}</ion-text>
+          </ion-item>
+        </div>
+        <br>
+    <!-- <form [formGroup]="myForm">
       <ion-list lines="none">
         <ion-item>
           <ion-input type="text" class="myform" placeholder="Full name" formControlName="name" [(ngModel)]="user.name"></ion-input>
@@ -38,10 +52,9 @@
           <ion-button class="save" color="secondary" expand="block" (click)="save()">Save Changes</ion-button>
         </div>
       </ion-list>
-    </form>
-    <ion-item-divider>Other Settings</ion-item-divider>
+    </form> -->
+    <ion-item-divider class="profile-component-title">Other Settings</ion-item-divider>
     <ion-list lines="none">
-
       <ion-item>
         <ion-label class="toggle-text">Enable Public Visibility</ion-label>
         <ion-toggle  slot="end" color="secondary" [(ngModel)]="user.publicVisibility" (ionChange)="changeVisibility()"></ion-toggle>
@@ -63,10 +76,32 @@
       <ion-item tappable (click)="setPassword()" *ngIf="user && user.provider == 'Email'">
         Update Password
       </ion-item>
-      <div class="ion-padding">
-        <ion-button class="save" color="danger" expand="block" (click)="deleteAccount()">Delete Account</ion-button>
-      </div>
+     </ion-list>
+     <ion-item-divider class="profile-component-title">Activity</ion-item-divider>
+     <ion-list lines="none">
+      <ion-item  *ngFor="let item of posts">
+      <ion-label class="toggle-text" color="secondary" (click)="viewPost(item)">{{item.title}}</ion-label>    
+      <ion-text slot="end" class="addedByDate">{{item.date.toDate() | DateFormat}}</ion-text>  
+    </ion-item>
+     </ion-list>
+     <ion-item-divider class="profile-component-title">Groups</ion-item-divider>
+     <ion-list lines="none">
+      <ion-item text-wrap *ngFor="let group of groups" (click)="viewGroup(group.$key)">
+        <ion-thumbnail slot="start">
+          <img src="{{group.img}}" onError="this.src='./assets/images/default-group.png'">
+        </ion-thumbnail>
+        <ion-label class="toggle-text">
+            <ion-label class="ion-no-padding" color="secondary">{{group.name}}</ion-label><br/>
+            {{group.description}}
+        </ion-label>
+      </ion-item>
     </ion-list>
+    </div>
+    
+</ion-row>
+<ion-row>
+  <div class="ion-padding save">
+    <ion-button color="danger" expand="block" (click)="deleteAccount()">Delete Account</ion-button>
   </div>
 </ion-row>
 </div>
