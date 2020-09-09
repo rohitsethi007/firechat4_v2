@@ -6,3 +6,30 @@
   .user-info {
     width: 100%;
   }
+
+  .save {
+    height: 25px;
+    text-transform: initial !important;
+  }
+
+  .myform {
+    font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, "Roboto", "Segoe UI", Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .toggle-text {
+    font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, "Roboto", "Segoe UI", Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }

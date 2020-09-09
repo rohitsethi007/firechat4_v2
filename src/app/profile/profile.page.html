@@ -18,24 +18,24 @@
       <div class="user-info">
         <div class="user-img"> 
           <img src="{{user.img}}" tappable (click)="setPhoto()"
-          onError="this.src='http://placehold.it/80x80'">
+          onError="this.src='./assets/images/default-dp_rect.png'">
         </div>
     <form [formGroup]="myForm">
       <ion-list lines="none">
         <ion-item>
-          <ion-input type="text" placeholder="Full name" formControlName="name" [(ngModel)]="user.name"></ion-input>
+          <ion-input type="text" class="myform" placeholder="Full name" formControlName="name" [(ngModel)]="user.name"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-input placeholder="Username" formControlName="username" type="text" [(ngModel)]="user.username"></ion-input>
+          <ion-input placeholder="Username" class="myform"  formControlName="username" type="text" [(ngModel)]="user.username"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-textarea formControlName="bio" placeholder="Status" [(ngModel)]="user.description"></ion-textarea>
+          <ion-textarea formControlName="bio" class="myform"  placeholder="Status" [(ngModel)]="user.description"></ion-textarea>
         </ion-item>
         <ion-item>
-          <ion-input placeholder="Email" type="text" formControlName="email" [(ngModel)]="user.email" disabled></ion-input>
+          <ion-input placeholder="Email" class="myform"  type="text" formControlName="email" [(ngModel)]="user.email" disabled></ion-input>
         </ion-item>
         <div class="ion-padding">
-          <ion-button color="secondary" expand="block" (click)="save()">Save Changes</ion-button>
+          <ion-button class="save" color="secondary" expand="block" (click)="save()">Save Changes</ion-button>
         </div>
       </ion-list>
     </form>
@@ -43,37 +43,29 @@
     <ion-list lines="none">
 
       <ion-item>
-        <ion-label>Enable Public Visibility</ion-label>
-        <ion-toggle slot="end" color="secondary" [(ngModel)]="user.publicVisibility" (ionChange)="changeVisibility()"></ion-toggle>
+        <ion-label class="toggle-text">Enable Public Visibility</ion-label>
+        <ion-toggle  slot="end" color="secondary" [(ngModel)]="user.publicVisibility" (ionChange)="changeVisibility()"></ion-toggle>
       </ion-item>
       <ion-item>
-        <ion-label>Show Online</ion-label>
+        <ion-label class="toggle-text">Show Online</ion-label>
         <ion-toggle slot="end" color="secondary" [(ngModel)]="user.showOnline" (ionChange)="changeStatus()"></ion-toggle>
       </ion-item>
       <ion-item>
-        <ion-label>
-          <ion-text>
-            <h3>Enable Notification</h3>
-          </ion-text>
-          <ion-text *ngIf="isBrowser">
-            <p>Push Notification only works on browser</p>
-          </ion-text>
-        </ion-label>
+        <ion-label class="toggle-text">Enable Notification</ion-label>
         <ion-toggle slot="end" color="secondary" [(ngModel)]="user.isPushEnabled" [disabled]="isBrowser"
           (ionChange)="changeNotification()">
         </ion-toggle>
       </ion-item>
-      <ion-item routerLink="/blockedlist">
-        <ion-label>Blocked List</ion-label>
-        <ion-icon slot="end" name="arrow-forward"></ion-icon>
+      <ion-item  routerLink="/blockedlist">
+        <ion-label class="toggle-text">Blocked List</ion-label>
+        <ion-icon slot="end" name="arrow-forward-circle-outline"></ion-icon>
       </ion-item>
       <ion-item tappable (click)="setPassword()" *ngIf="user && user.provider == 'Email'">
         Update Password
       </ion-item>
-      <ion-item tappable (click)="logout()">Logout</ion-item>
-      <ion-item tappable (click)="deleteAccount()" style="color:#F44336">
-        Delete Account
-      </ion-item>
+      <div class="ion-padding">
+        <ion-button class="save" color="danger" expand="block" (click)="deleteAccount()">Delete Account</ion-button>
+      </div>
     </ion-list>
   </div>
 </ion-row>

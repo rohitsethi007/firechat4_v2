@@ -58,9 +58,9 @@ export class FeedPage implements OnInit {
     private router: Router,
     private afAuth: AngularFireAuth,
     private localNotifications: LocalNotifications,
-    private fcm: FCM, 
+    private fcm: FCM,
     public plt: Platform
-    ) { 
+    ) {
       this.plt.ready()
       .then(() => {
         console.log('platform ready in Feed page');
@@ -77,7 +77,7 @@ export class FeedPage implements OnInit {
           // backend.registerToken(token);
           console.log('fcm token', token);
         });
-      })
+      });
     }
 
     subscribeToTopic() {
