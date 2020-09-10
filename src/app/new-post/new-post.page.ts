@@ -27,6 +27,7 @@ export class NewPostPage implements OnInit {
   private step: any = 1;
   groups: any;
   userNotifications: any = [];
+  userPosts: any = [];
   private postMedia: any = [];
  
   validations = {
@@ -117,8 +118,8 @@ export class NewPostPage implements OnInit {
       addedByImg: value.payload.data().img
     };
 
-      this.userNotifications = value.payload.data().notifications;
-
+      this.userNotifications = value.payload.data().userNotifications;
+      this.userPosts = value.payload.data().userPosts;
       this.post = {
           addedByUser: this.addedByUser,
           date: '',
@@ -156,35 +157,40 @@ export class NewPostPage implements OnInit {
     this.dataProvider.addPost(this.post).then((success) => {
         const postId = success.id;
         this.postId = postId;
+
+        // Update group data on the database.
         if (this.group.posts === undefined) {
           this.group.posts = [];
         }
         this.group.posts.push(this.postId);
-
-        // Update group data on the database.
         this.dataProvider.getGroup(this.groupId).update({
           posts: this.group.posts
-        }).then(() => {
-          // Back.
-          this.loadingProvider.hide();
-          this.router.navigateByUrl('tabs/tab1');
         });
 
+        // Update user notifications.
         if (!this.userNotifications) {
           this.userNotifications = [this.postId];
         } else {
           this.userNotifications.push(this.postId);
         }
-
-        // Update user data on the database.
         this.dataProvider.getUser(this.addedByUser.addedByKey).update({
-          notifications: this.userNotifications
-        }).then(() => {
-          // Back.
-          this.loadingProvider.hide();
-          this.router.navigateByUrl('tabs/tab1');
+          userNotifications: this.userNotifications
         });
-      });
+
+        // Update user activity.
+        if (!this.userPosts) {
+          this.userPosts = [this.postId];
+        } else {
+          this.userPosts.push(this.postId);
+        }
+        this.dataProvider.getUser(this.addedByUser.addedByKey).update({
+          userPosts: this.userPosts
+        });
+      }).then(() => {
+        // Back.
+        this.loadingProvider.hide();
+        this.router.navigateByUrl('tabs/tab1');
+      });;
 
    }
 

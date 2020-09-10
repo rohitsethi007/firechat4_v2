@@ -25,8 +25,11 @@ export class ProfilePage implements OnInit {
   isPushEnabled: any = false;
   user: any;
   isBrowser = true;
-  posts: any = [];
+  userPosts: any = [];
+  userReactions: any = [];
+  userComments: any = [];
   groups: any = [];
+  friends: any = [];
 
   myForm: FormGroup;
   submitAttempt = false;
@@ -56,8 +59,7 @@ export class ProfilePage implements OnInit {
       username: Validator.usernameValidator,
       email: Validator.emailValidator,
       bio: Validator.bioValidator
-    })
-
+    });
   }
 
   ngOnInit() {
@@ -70,55 +72,144 @@ export class ProfilePage implements OnInit {
       this.loadingProvider.hide();
       if (account != null) {
         this.user = account;
-        let query = this.firestore.collection('posts').ref
-        .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.posts);
-        // .orderBy('date', 'desc');
-        console.log('this.user.posts', this.user.posts);
-        query.get().then((po: any) => {
-          console.log('po', po);
-        this.posts = [];
-        this.loadEachPostData(po);
-    });
+
+        // get user Posts
+        if (this.user.userPosts) {
+          this.firestore.collection('posts').ref
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userPosts)
+          .get().then((po: any) => {
+            this.userPosts = [];
+            this.loadEachPostData(po, 'userPosts');
+          });
+        }
+
+        // get user Reaction Posts
+        if (this.user.userReactions) {
+          this.firestore.collection('posts').ref
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userReactions)
+          .get().then((po: any) => {
+          this.userReactions = [];
+          this.loadEachPostData(po, 'userReactions');
+          });
+        }
+
+        // get user Posts
+        if (this.user.userComments) {
+          this.firestore.collection('posts').ref
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userComments)
+          .get().then((po: any) => {
+          this.userComments = [];
+          this.loadEachPostData(po, 'userComments');
+          });
+        }
+
+        // Get User Friends list
+        if (this.user.friends) {
+          const userFriendQuery = this.firestore.collection('accounts').ref
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.friends)
+          .get().then((user: any) => {
+            this.friends = [];
+            user.forEach(p => {
+              this.addOrUpdateUserFriend(p.data());
+            });
+          });
+        }
       }
     });
 
+    // Get User Groups List
     this.dataProvider.getGroups().snapshotChanges().subscribe((data: any) => {
-
       this.groups = data.map(c => {
             return { $key: c.payload.doc.id, ...c.payload.doc.data() };
           });
         });
-  } 
-  
+  }
 
-  loadEachPostData(po: any) {
+
+  loadEachPostData(po: any, collection: any) {
     po.forEach(p => {
       let post: any;
       post = p.data();
       post.key = p.id;
       post.postTags = post.postTags.filter(x => x.isChecked !== false);
-      this.addOrUpdatePost(post);
+      if (collection === 'userPosts') { this.addOrUpdateUserPost(post); }
+      if (collection === 'userComments') { this.addOrUpdateCommentPost(post); }
+      if (collection === 'userReactions') { this.addOrUpdateReactionPost(post); }
     });
   }
 
-  addOrUpdatePost(post) {
-    if (!this.posts) {
-      this.posts = [post];
+  addOrUpdateUserPost(post) {
+    if (!this.userPosts) {
+      this.userPosts = [post];
     } else {
       let index = -1;
-      for (let i = 0; i < this.posts.length; i++) {
-        if (this.posts[i].key == post.key) {
+      for (let i = 0; i < this.userPosts.length; i++) {
+        if (this.userPosts[i].key == post.key) {
           index = i;
         }
       }
       if (index > -1) {
-        this.posts[index] = post;
+        this.userPosts[index] = post;
       } else {
-        this.posts.push(post);
+        this.userPosts.push(post);
       }
     }
-
   }
+
+  addOrUpdateUserFriend(friend) {
+    if (!this.friends) {
+      this.friends = [friend];
+    } else {
+      let index = -1;
+      for (let i = 0; i < this.friends.length; i++) {
+        if (this.friends[i].key == friend.key) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        this.friends[index] = friend;
+      } else {
+        this.friends.push(friend);
+      }
+    }
+  }
+
+  addOrUpdateReactionPost(post) {
+    if (!this.userReactions) {
+      this.userReactions = [post];
+    } else {
+      let index = -1;
+      for (let i = 0; i < this.userReactions.length; i++) {
+        if (this.userReactions[i].key == post.key) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        this.userReactions[index] = post;
+      } else {
+        this.userReactions.push(post);
+      }
+    }
+  }
+
+  addOrUpdateCommentPost(post) {
+    if (!this.userComments) {
+      this.userComments = [post];
+    } else {
+      let index = -1;
+      for (let i = 0; i < this.userComments.length; i++) {
+        if (this.userComments[i].key == post.key) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        this.userComments[index] = post;
+      } else {
+        this.userComments.push(post);
+      }
+    }
+  }
+
   changeStatus() {
     this.firestore.doc('accounts/' + this.user.userId).update({ showOnline: this.user.showOnline });
   }
@@ -262,8 +353,6 @@ export class ProfilePage implements OnInit {
   async editProfile() {
     const modal = await this.modalCtrl.create({
       component: UserProfileModalPage,
-      swipeToClose: true,
-      presentingElement: this.routerOutlet.nativeEl,
       componentProps: {
         user: this.user
       }

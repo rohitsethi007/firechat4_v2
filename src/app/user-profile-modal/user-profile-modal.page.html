@@ -1,9 +1,36 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>user-profile-modal</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title class="title">Update Profile</ion-title>
+    <ion-buttons slot="end"> 
+      <ion-button (click)="dismissModal()"><ion-icon name="close-circle-outline"></ion-icon></ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-
+<ion-content class="forms-validations-content">
+    <form class="validations-form" [formGroup]="myForm">
+      <ion-list class="inputs-list" lines="none">
+        <ion-item class="input-item">
+          <ion-label position="stacked">Full Name:</ion-label>
+          <ion-input type="text" class="myform" placeholder="Full name" formControlName="name" [(ngModel)]="user.name"></ion-input>
+        </ion-item>
+        <ion-item class="input-item">
+          <ion-label position="stacked">Username:</ion-label>
+          <ion-input placeholder="Username" class="myform"  formControlName="username" type="text" [(ngModel)]="user.username"></ion-input>
+        </ion-item>
+        <ion-item class="input-item">
+          <ion-label position="stacked">My Story:</ion-label>
+          <ion-textarea rows="10" formControlName="bio" class="myform"  placeholder="Status" [(ngModel)]="user.description"></ion-textarea>
+        </ion-item>
+        <ion-item class="input-item">
+          <ion-input placeholder="Email" class="myform"  type="text" formControlName="email" [(ngModel)]="user.email" disabled></ion-input>
+        </ion-item>
+        <div class="ion-padding">
+          <ion-button class="save" color="secondary" expand="block" (click)="save()">Save Changes</ion-button>
+        </div>
+      </ion-list>
+    </form>
 </ion-content>

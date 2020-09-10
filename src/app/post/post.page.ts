@@ -317,6 +317,13 @@ export class PostPage implements OnInit {
       && el.reactionType === 'Thanks');
     if (reaction === undefined) {
       this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
+ 
+        let userNotifications = account.data().userNotifications;
+        let userReactions = account.data().userReactions;
+
+        if (!userNotifications) { userNotifications = [] as string[]; }
+        if (!userReactions) { userReactions = [] as string[]; }
+
         if (account) {
           const currentUserName = account.data().username;
           let reaction = {
@@ -332,6 +339,22 @@ export class PostPage implements OnInit {
 
           this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
             this.post.showSmiley = true;
+          }).then(() => {
+            // Update user notifications.
+            if (!userNotifications.some(p => p !== this.postId)) {
+              userNotifications.push(this.postId);
+              this.dataProvider.getUser(account.data().userId).update({
+                userNotifications
+              });
+            }
+
+            // Update user activity.
+            if (!userReactions.some(p => p !== this.postId)) {
+              userReactions.push(this.postId);
+              this.dataProvider.getUser(account.data().userId).update({
+                userReactions
+              });
+            }
           });
 
       }
@@ -349,6 +372,9 @@ export class PostPage implements OnInit {
     if (reaction === undefined) {
       this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
         if (account) {
+          let userNotifications = account.data().userNotifications;
+          let userReactions = account.data().userReactions;
+  
           const currentUserName = account.data().username;
           let reaction = {
             key: '',
@@ -363,6 +389,22 @@ export class PostPage implements OnInit {
 
           this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
             this.post.showHug = true;
+          }).then(() => {
+            // Update user notifications.
+            if (!userNotifications.some(p => p !== this.postId)) {
+              userNotifications.push(this.postId);
+              this.dataProvider.getUser(account.data().userId).update({
+                userNotifications
+              });
+            }
+
+            // Update user activity.
+            if (!userReactions.some(p => p !== this.postId)) {
+              userReactions.push(this.postId);
+              this.dataProvider.getUser(account.data().userId).update({
+                userReactions
+              });
+            }
           });
 
       }
@@ -380,6 +422,8 @@ export class PostPage implements OnInit {
     if (reaction === undefined) {
       this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
         if (account) {
+          let userNotifications = account.data().userNotifications;
+          let userReactions = account.data().userReactions;
           const currentUserName = account.data().username;
           let reaction = {
             key: '',
@@ -394,7 +438,23 @@ export class PostPage implements OnInit {
 
           this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
             this.post.showCheckin = true;
-          });
+          }).then(() => {
+            // Update user notifications.
+            if (!userNotifications.some(p => p !== this.postId)) {
+              userNotifications.push(this.postId);
+              this.dataProvider.getUser(account.data().userId).update({
+                userNotifications
+              });
+            }
+
+            // Update user activity.
+            if (!userReactions.some(p => p !== this.postId)) {
+              userReactions.push(this.postId);
+              this.dataProvider.getUser(account.data().userId).update({
+                userReactions
+              });
+            }
+          });;
 
       }
   });
@@ -411,6 +471,8 @@ export class PostPage implements OnInit {
     if (reaction === undefined) {
       this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
         if (account) {
+          let userNotifications = account.data().userNotifications;
+          let userReactions = account.data().userReactions;
           const currentUserName = account.data().username;
           let reaction = {
             key: '',
@@ -425,7 +487,23 @@ export class PostPage implements OnInit {
 
           this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
             this.post.showBookmark = true;
-          });
+          }).then(() => {
+            // Update user notifications.
+            if (!userNotifications.some(p => p !== this.postId)) {
+              userNotifications.push(this.postId);
+              this.dataProvider.getUser(account.data().userId).update({
+                userNotifications
+              });
+            }
+
+            // Update user activity.
+            if (!userReactions.some(p => p !== this.postId)) {
+              userReactions.push(this.postId);
+              this.dataProvider.getUser(account.data().userId).update({
+                userReactions
+              });
+            }
+          });;
 
       }
   });

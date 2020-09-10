@@ -25,13 +25,13 @@
   }
 
   .toggle-text {
-    font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, "Roboto", "Segoe UI", Arial, sans-serif;
+    font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
     font-weight: 400;
     font-size: 14px;
     line-height: 19px;
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-osx-font-smoothing: auto;
-    overflow: hidden;
+    overflow: hidden; 
     text-overflow: ellipsis;
   }
 
@@ -65,4 +65,16 @@
     font-weight: 400;
     font-size: 12px;
     line-height: 16px;
+}
+
+.link {
+  color: #007B99;
+  text-decoration: none;
+}
+
+.activities {
+  padding-bottom: 20px;
+  .activities-item {
+  height: 30px;
+  }
 }

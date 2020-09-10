@@ -29,7 +29,7 @@ export class FeedPage implements OnInit {
   groupsInfo: any;
   conversationList: any;
   conversationsInfo: any;
-  notifications: any = [];
+  userNotifications: any = [];
   private title: any;
   private groupId: any;
   private posts: any = [];
@@ -100,7 +100,7 @@ export class FeedPage implements OnInit {
     this.loggedInUserId = firebase.auth().currentUser.uid;
    // Get Posts
     this.dataProvider.getCurrentUser().get().subscribe((user) => {
-     this.notifications = user.data().notifications;
+     this.userActivity = user.data().userActivity;
      this.loggedInUser = user.data();
      this.getFeedData();
     });
@@ -309,6 +309,9 @@ export class FeedPage implements OnInit {
     const p = this.posts[postIndex];
     this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
       if (account) {
+      let userNotifications = account.data().userNotifications;
+      let userReactions = account.data().userReactions;
+
       let reaction = {
         key: '',
         dateCreated: new Date(),
@@ -321,7 +324,23 @@ export class FeedPage implements OnInit {
     };
 
       if (postIndex >= 0) {
-      this.dataProvider.updatePostReactions(post.key, reaction);
+      this.dataProvider.updatePostReactions(post.key, reaction).then(() => {
+        // Update user notifications.
+        if (!userNotifications.some(p => p !== this.postId)) {
+          userNotifications.push(this.postId);
+          this.dataProvider.getUser(account.data().userId).update({
+            userNotifications
+          });
+        }
+
+        // Update user activity.
+        if (!userReactions.some(p => p !== this.postId)) {
+          userReactions.push(this.postId);
+          this.dataProvider.getUser(account.data().userId).update({
+            userReactions
+          });
+        }
+      });
     }
   }
   });
@@ -356,8 +375,6 @@ export class FeedPage implements OnInit {
     const p = this.posts[postIndex];
     const modal = await this.modalCtrl.create({
       component: ReactionListModalPage,
-      swipeToClose: true,
-      presentingElement: this.routerOutlet.nativeEl,
       componentProps: {
         reactions: p.reactions
       }
@@ -396,27 +413,27 @@ export class FeedPage implements OnInit {
   }
 
   followPost(post) {
-    if (!this.notifications) {
-      this.notifications = [post.key];
+    if (!this.userNotifications) {
+      this.userNotifications = [post.key];
     } else {
-      this.notifications.push(post.key);
+      this.userNotifications.push(post.key);
     }
 
     this.dataProvider.getUser(this.loggedInUserId).update({
-      notifications: this.notifications
+      userNotifications: this.userNotifications
     }).then(() => {
       this.loadingProvider.showToast('You will be notified when there are new replies');
     });
   }
 
   unFollowPost(post) {
-    const index = this.notifications.indexOf(post.key, 0);
+    const index = this.userNotifications.indexOf(post.key, 0);
     if (index > -1) {
-      this.notifications.splice(index, 1);
+      this.userNotifications.splice(index, 1);
     }
 
     this.dataProvider.getUser(this.loggedInUserId).update({
-      notifications: this.notifications
+      userNotifications: this.userNotifications
     }).then(() => {
       this.loadingProvider.showToast('You won\'t get notifications for this post');
     });
@@ -478,7 +495,7 @@ export class FeedPage implements OnInit {
       };
       buttons.push(deletePostButton);
     } else {
-      if (this.notifications && this.notifications.some(el => el === post.key)) {
+      if (this.userNotifications && this.userNotifications.some(el => el === post.key)) {
         notificationButton = {
             text: 'Turn Off Notifications',
             icon: 'notifications-off-outline',
