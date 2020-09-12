@@ -50,18 +50,18 @@ const routes: Routes = [
               canActivate: [AuthGuardService]
           }
         ]
-      },
-      {
-        path: 'tab5',
-        children: [
-          {
-            path: '',
-            loadChildren: () =>
-              import('../profile/profile.module').then(m => m.ProfilePageModule),
-              canActivate: [AuthGuardService]
-          }
-        ]
-      },
+       },
+      // {
+      //   path: 'tab5',
+      //   children: [
+      //     {
+      //       path: '',
+      //       loadChildren: () =>
+      //         import('../profile/profile.module').then(m => m.ProfilePageModule),
+      //         canActivate: [AuthGuardService]
+      //     }
+      //   ]
+      // },
       {
         path: '',
         redirectTo: '/tabs/tab1',

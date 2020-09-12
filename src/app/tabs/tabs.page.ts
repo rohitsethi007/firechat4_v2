@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { Storage } from '@ionic/storage';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tabs',
@@ -20,7 +21,9 @@ export class TabsPage {
   // This is the page where we set our tabs.
   constructor(
     public dataProvider: DataService,
-    public storage: Storage) {
+    public storage: Storage,
+    private router: Router
+    ) {
   }
 
   ionViewDidEnter() {
@@ -31,5 +34,9 @@ export class TabsPage {
         this.friendRequestCount = requestsRes.payload.data().friendRequests.length;
       } else { this.friendRequestCount = null; }
       });
+  }
+
+  viewProfile() {
+    this.router.navigateByUrl('/profile/' + this.dataProvider.getCurrentUserId());
   }
 }

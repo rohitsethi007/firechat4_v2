@@ -100,7 +100,18 @@
     -moz-osx-font-smoothing: auto;
     overflow: hidden; 
     text-overflow: ellipsis;
+    
 
+    .show-more {
+      font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 19px;
+      -webkit-font-smoothing: subpixel-antialiased;
+      -moz-osx-font-smoothing: auto;
+      overflow: hidden; 
+      text-overflow: ellipsis;
+    }
     .slider {
       margin-bottom: 5px;
       .bgSizeContain {

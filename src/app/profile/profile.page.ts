@@ -12,6 +12,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Validator } from 'src/environments/validator';
 import * as firebase from 'firebase/app';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { FirebaseService } from '../services/firebase.service';
 import { UserProfileModalPage } from '../user-profile-modal/user-profile-modal.page';
 
 @Component({
@@ -20,8 +21,11 @@ import { UserProfileModalPage } from '../user-profile-modal/user-profile-modal.p
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-
+  title: any;
+  userId: any;
   showOnline = false;
+  messageMe = false;
+  loggedInUserId: any;
   isPushEnabled: any = false;
   user: any;
   isBrowser = true;
@@ -30,10 +34,11 @@ export class ProfilePage implements OnInit {
   userComments: any = [];
   groups: any = [];
   friends: any = [];
-
+  myProfile = false;
   myForm: FormGroup;
   submitAttempt = false;
   errorMessages: any = [];
+  alert: any;
 
   constructor(
     private loginService: LoginService,
@@ -41,10 +46,11 @@ export class ProfilePage implements OnInit {
     private loadingProvider: LoadingService,
     private firestore: AngularFirestore,
     private afAuth: AngularFireAuth,
-    private alertCtrl: AlertController,
     private imageProvider: ImageService,
+    public alertCtrl: AlertController,
     private camera: Camera,
     private fcm: FirebaseX,
+    public firebaseProvider: FirebaseService,
     private platform: Platform,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
@@ -52,8 +58,15 @@ export class ProfilePage implements OnInit {
     public modalCtrl: ModalController,
     private routerOutlet: IonRouterOutlet
   ) {
+    this.userId = this.route.snapshot.params.id;
+    this.loggedInUserId = this.dataProvider.getCurrentUserId(); 
+    if (this.userId === this.loggedInUserId) {
+      this.myProfile = true;
+    } else {
+      this.myProfile = false;
+    }
 
-    this.errorMessages = Validator.errorMessages
+    this.errorMessages = Validator.errorMessages;
     this.myForm = this.formBuilder.group({
       name: Validator.nameValidator,
       username: Validator.usernameValidator,
@@ -67,12 +80,15 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
+    this.getUserData();
+  }
+
+  getUserData() {
+    this.dataProvider.getUser(this.userId).snapshotChanges().subscribe((user: any) => {
       let account = user.payload.data();
-      this.loadingProvider.hide();
       if (account != null) {
         this.user = account;
-
+        this.title = this.user.username;
         // get user Posts
         if (this.user.userPosts) {
           this.firestore.collection('posts').ref
@@ -105,26 +121,45 @@ export class ProfilePage implements OnInit {
 
         // Get User Friends list
         if (this.user.friends) {
-          const userFriendQuery = this.firestore.collection('accounts').ref
+          this.firestore.collection('accounts').ref
           .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.friends)
           .get().then((user: any) => {
             this.friends = [];
-            user.forEach(p => {
-              this.addOrUpdateUserFriend(p.data());
+            user.forEach(f => {
+              let friend: any;
+              friend = f.data();
+              friend.key = f.id;
+              this.addOrUpdateUserFriend(friend);
             });
+
+            console.log('this.friends', this.friends);
+            // check if logged in user is a friend
+            const foundFriend = this.friends.some(el => el.userId === this.loggedInUserId);
+            if (foundFriend) {
+               this.messageMe = true;
+            } else {
+              this.messageMe = false;
+            }
           });
         }
+
+        // Get User Groups List
+        if (this.user.groups) {
+          this.firestore.collection('groups').ref
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.groups)
+          .get().then((group: any) => {
+            this.groups = [];
+            group.forEach(g => {
+              let group: any;
+              group = g.data();
+              group.key = g.id;
+              this.addOrUpdateUserGroup(group);
+            });
+          });
+          }
       }
     });
-
-    // Get User Groups List
-    this.dataProvider.getGroups().snapshotChanges().subscribe((data: any) => {
-      this.groups = data.map(c => {
-            return { $key: c.payload.doc.id, ...c.payload.doc.data() };
-          });
-        });
   }
-
 
   loadEachPostData(po: any, collection: any) {
     po.forEach(p => {
@@ -170,6 +205,24 @@ export class ProfilePage implements OnInit {
         this.friends[index] = friend;
       } else {
         this.friends.push(friend);
+      }
+    }
+  }
+
+  addOrUpdateUserGroup(group) {
+    if (!this.groups) {
+      this.groups = [group];
+    } else {
+      let index = -1;
+      for (let i = 0; i < this.groups.length; i++) {
+        if (this.groups[i].key == group.key) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        this.groups[index] = group;
+      } else {
+        this.groups.push(group);
       }
     }
   }
@@ -232,7 +285,6 @@ export class ProfilePage implements OnInit {
   }
 
   changeNotification() {
-
     if (this.platform.is('desktop')) {
       this.user.isPushEnabled = false;
       this.loadingProvider.showToast("Notification only working on mobile device")
@@ -272,7 +324,6 @@ export class ProfilePage implements OnInit {
 
 
   setPhoto() {
-
     this.alertCtrl.create({
       header: 'Set Profile Photo',
       message: 'Do you want to take a photo or choose from your photo gallery?',
@@ -350,6 +401,14 @@ export class ProfilePage implements OnInit {
     this.router.navigateByUrl('post/' + post.key);
   }
 
+  viewUser(userId) {
+    this.router.navigateByUrl('profile/' + userId);
+  }
+
+  viewGroup(groupId) {
+    this.router.navigateByUrl('group/' + groupId);
+  }
+
   async editProfile() {
     const modal = await this.modalCtrl.create({
       component: UserProfileModalPage,
@@ -358,5 +417,28 @@ export class ProfilePage implements OnInit {
       }
     });
     return await modal.present();
+  }
+
+  messageUser() {
+    this.router.navigateByUrl('/message/' + this.userId);
+  }
+
+  connectUser() {
+    this.alert = this.alertCtrl.create({
+      header: 'Send Friend Request',
+      message: 'Do you want to send friend request to <b>' + this.user.name + '</b>?',
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: data => { }
+        },
+        {
+          text: 'Send',
+          handler: () => {
+            this.firebaseProvider.sendFriendRequest(this.userId);
+          }
+        }
+      ]
+    }).then(r => r.present());
   }
 }

@@ -30,6 +30,8 @@ export class FeedPage implements OnInit {
   conversationList: any;
   conversationsInfo: any;
   userNotifications: any = [];
+  userReactions: any = [];
+
   private title: any;
   private groupId: any;
   private posts: any = [];
@@ -100,7 +102,8 @@ export class FeedPage implements OnInit {
     this.loggedInUserId = firebase.auth().currentUser.uid;
    // Get Posts
     this.dataProvider.getCurrentUser().get().subscribe((user) => {
-     this.userActivity = user.data().userActivity;
+     this.userReactions = user.data().userReactions;
+     this.userNotifications = user.data().userNotifications;
      this.loggedInUser = user.data();
      this.getFeedData();
     });
@@ -307,43 +310,39 @@ export class FeedPage implements OnInit {
     // first find the post in the collection
     const postIndex = this.posts.findIndex(el => el.key ===  post.key);
     const p = this.posts[postIndex];
-    this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-      if (account) {
-      let userNotifications = account.data().userNotifications;
-      let userReactions = account.data().userReactions;
 
-      let reaction = {
-        key: '',
-        dateCreated: new Date(),
-        addedByUser: {
-                      addedByKey: this.dataProvider.getCurrentUserId(),
-                      addedByUsername: account.data().username,
-                      addedByImg: account.data().img
-                    },
-        reactionType
-    };
+    let reaction = {
+      key: '',
+      dateCreated: new Date(),
+      addedByUser: {
+                    addedByKey: this.dataProvider.getCurrentUserId(),
+                    addedByUsername: this.loggedInUser.username,
+                    addedByImg: this.loggedInUser.img
+                  },
+      reactionType
+  };
 
-      if (postIndex >= 0) {
-      this.dataProvider.updatePostReactions(post.key, reaction).then(() => {
-        // Update user notifications.
-        if (!userNotifications.some(p => p !== this.postId)) {
-          userNotifications.push(this.postId);
-          this.dataProvider.getUser(account.data().userId).update({
-            userNotifications
-          });
-        }
+    if (postIndex >= 0) {
+    this.dataProvider.updatePostReactions(post.key, reaction).then(() => {
+      // Update user notifications.
+      if (!this.userNotifications.some(p => p !== this.postId)) {
+        this.userNotifications.push(this.postId);
+        this.dataProvider.getUser(this.loggedInUserId).update({
+          userNotifications: this.userNotifications
+        });
+      }
 
-        // Update user activity.
-        if (!userReactions.some(p => p !== this.postId)) {
-          userReactions.push(this.postId);
-          this.dataProvider.getUser(account.data().userId).update({
-            userReactions
-          });
-        }
-      });
-    }
+      // Update user activity.
+      if (!this.userReactions.some(p => p !== this.postId)) {
+        this.userReactions.push(this.postId);
+        this.dataProvider.getUser(this.loggedInUserId).update({
+          userReactions: this.userReactions
+        });
+      }
+    });
+    
   }
-  });
+
   }
 
   removePostReaction(post, reactionType) {
@@ -386,26 +385,9 @@ export class FeedPage implements OnInit {
     this.router.navigateByUrl('post/' + post.key);
   }
 
-  viewEvent(post) {
-    this.router.navigateByUrl('post/' + post.key);
-  }
-
-  viewPoll(post) {
-    this.router.navigateByUrl('post/' + post.key);
-  }
-
-  viewResource(post) {
-    this.router.navigateByUrl('post/' + post.key);
-  }
 
   viewUser(userId) {
-    let loggedInUserId = this.dataProvider.getCurrentUserId();
-    console.log(loggedInUserId, userId);
-    if (loggedInUserId === userId) {
-      this.router.navigateByUrl('/profile');
-    } else {
-      this.router.navigateByUrl('/userinfo/' + userId);
-    }
+    this.router.navigateByUrl('/profile/' + userId);
   }
 
   viewGroup(groupId) {
@@ -549,6 +531,7 @@ export class FeedPage implements OnInit {
       let post: any;
       post = p.data();
       post.key = p.id;
+      post.showMore = false;
       const startDate = new Date(post.date);
     // Do your operations
       const endDate   = new Date();
@@ -634,5 +617,11 @@ export class FeedPage implements OnInit {
   doRefresh(event) {
     this.getFeedData();
     event.target.complete();
+  }
+
+  trimString(string, length) {
+    return string.length > length
+      ? string.substring(0, length) + "..."
+      : string;
   }
 }

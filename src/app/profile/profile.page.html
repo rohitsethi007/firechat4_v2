@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Profile</ion-title>
+    <ion-title>{{title}}</ion-title>
     <ion-buttons slot="end">
       <ion-button class="logout" color="secondary" (click)="logout()">
         Logout
@@ -23,9 +23,9 @@
         <div>
           <ion-item lines="none">
           <ion-text class="profile-summary-name">{{user.name}}</ion-text>
-          <ion-button color="primary" slot="end" (click)="editProfile()" class="profile-edit-button">Edit</ion-button>
+          <ion-button *ngIf="myProfile" color="primary" slot="end" (click)="editProfile()" class="profile-edit-button">Edit</ion-button>
         </ion-item>
-        <ion-text class="profile-component-title ion-padding">@{{user.username}} · {{user.email}}</ion-text>
+        <ion-text class="profile-component-title ion-padding">@{{user.username}}<span *ngIf="myProfile"> · {{user.email}}</span></ion-text>
       </div>
         <br>
         <div class="ion-no-border">
@@ -33,9 +33,17 @@
             <ion-text>{{user.description}}</ion-text>
           </ion-item>
         </div>
-        <br>
-    <ion-item-divider class="profile-component-title">Other Settings</ion-item-divider>
-    <ion-list lines="none">
+        <ion-row *ngIf="!myProfile">
+          <div *ngIf="!messageMe" class="ion-padding save">
+            <ion-button color="secondary" expand="block" (click)="connectUser()">Connect with me</ion-button>
+          </div>
+          <div *ngIf="messageMe" class="ion-padding save">
+            <ion-button color="secondary" expand="block" (click)="messageUser()">Message me</ion-button>
+          </div>
+        </ion-row>
+        <br><br>
+        <ion-item-divider *ngIf="myProfile" class="profile-component-title">Other Settings</ion-item-divider>
+    <ion-list *ngIf="myProfile" lines="none">
       <ion-item>
         <ion-label class="toggle-text">Enable Public Visibility</ion-label>
         <ion-toggle  slot="end" color="secondary" [(ngModel)]="user.publicVisibility" (ionChange)="changeVisibility()"></ion-toggle>
@@ -60,23 +68,27 @@
      </ion-list>
      <ion-item-divider class="profile-component-title">Activity</ion-item-divider>
      <ion-list class="activities" lines="none" > 
+      <ion-item *ngIf="userPosts.length == 0" class="toggle-text">
+       <ion-label>You have not created or commented on any posts.</ion-label>
+      </ion-item>
       <ion-item class="toggle-text activities-item"  *ngFor="let item of userPosts">
         New post: <a class="link" [routerLink]="['/post', item.key]"> "{{item.title}}"</a>
-      <!-- <ion-label class="toggle-text" color="primary" (click)="viewPost(item)">{{item.title}}</ion-label>     -->
       <ion-text slot="end" class="addedByDate">{{item.date.toDate() | date:'mediumDate'}}</ion-text>  
     </ion-item>
     <ion-item class="toggle-text activities-item"  *ngFor="let item of userReactions">
       Reacted on: <a class="link" [routerLink]="['/post', item.key]"> "{{item.title}}"</a>
-    <!-- <ion-label class="toggle-text" color="primary" (click)="viewPost(item)">{{item.title}}</ion-label>     -->
     <ion-text slot="end" class="addedByDate">{{item.date.toDate() | date:'mediumDate'}}</ion-text>  
   </ion-item>
      </ion-list>
      <ion-item-divider class="profile-component-title">Groups</ion-item-divider>
      <ion-list lines="none">
-      <ion-item text-wrap *ngFor="let group of groups" (click)="viewGroup(group.$key)">
-        <ion-thumbnail slot="start">
-          <img src="{{group.img}}" onError="this.src='./assets/images/default-group.png'">
-        </ion-thumbnail>
+      <ion-item *ngIf="groups.length == 0" class="toggle-text">
+          <ion-label>You are not joined any groups.</ion-label>
+      </ion-item>
+      <ion-item text-wrap *ngFor="let group of groups" (click)="viewGroup(group.key)">
+        <ion-avatar slot="start">
+          <ion-img src="{{group.img}}"></ion-img>
+        </ion-avatar>
         <ion-label class="toggle-text">
             <ion-label class="ion-no-padding">{{group.name}}<br/>
             {{group.description}}</ion-label>
@@ -86,10 +98,13 @@
     <ion-item-divider class="profile-component-title">Connected to:</ion-item-divider>
     <ion-list lines="none">
       <ion-list lines="none">
-        <ion-item text-wrap *ngFor="let friend of friends" (click)="viewGroup(friend.$key)">
-          <ion-thumbnail slot="start">
-            <img src="{{friend.img}}" onError="this.src='./assets/images/default-group.png'">
-          </ion-thumbnail>
+        <ion-item  *ngIf="friends.length == 0" class="toggle-text">
+          <ion-label>You are not connected to any fellow members.</ion-label>
+        </ion-item>  
+        <ion-item text-wrap *ngFor="let friend of friends" (click)="viewUser(friend.key)">
+          <ion-avatar slot="start">
+            <ion-img src="{{friend.img}}"></ion-img>
+          </ion-avatar>
           <ion-label class="toggle-text">
               <ion-label class="ion-no-padding">{{friend.username}}<br/>
               {{friend.description}}</ion-label>
@@ -99,7 +114,7 @@
     </ion-list>
     </div>
 </ion-row>
-<ion-row>
+<ion-row *ngIf="myProfile">
   <div class="ion-padding save">
     <ion-button color="danger" expand="block" (click)="deleteAccount()">Delete Account</ion-button>
   </div>

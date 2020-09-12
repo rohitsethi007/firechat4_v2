@@ -60,7 +60,7 @@
         </ion-row>
         </ion-card-header>
         <ion-card-content class="message" *ngIf="item.type === 'general'">
-          <div (click)="viewPost(item)">
+          <div>
             <div>
               <ion-slides class="slider" pager="true" [options]="slideOptsOne" #slideWithNav>
               <ion-slide *ngFor="let s of item.postMedia">
@@ -70,7 +70,10 @@
               </ion-slide>
             </ion-slides>
             </div>
-          <ion-label><b>{{item.title}}.</b> {{item.data.message}} <br/></ion-label>
+          <ion-label  *ngIf="!item.showMore">
+            <span (click)="viewPost(item)"><b>{{item.title}}.</b> {{trimString(item.data.message, 100)}}</span> 
+            <a class="show-more" (click)="item.showMore = !item.showMore">Show more</a><br/></ion-label>
+          <ion-label (click)="viewPost(item)"  *ngIf="item.showMore"><b>{{item.title}}.</b> {{item.data.message}} <br/></ion-label>
         </div>
           <div class="tags-wrapper">
           <ion-row>
@@ -117,11 +120,16 @@
         </ion-card-content>
 
         <ion-card-content class="message" *ngIf="item.type === 'event'">
-          <div (click)="viewEvent(item)">
+          <div (click)="viewPost(item)" *ngIf="!item.showMore">
           <b>{{item.title}}.</b> <br/>{{item.data.eventDate}} at {{item.data.eventTime}}<br/><br/>
-            {{item.data.address}}<br/><br/>
-            {{item.data.link}}
+          <a class="show-more" (click)="item.showMore = !item.showMore">Show more</a>
           </div>
+          <div (click)="viewPost(item)" *ngIf="item.showMore">
+            <b>{{item.title}}.</b> <br/>{{item.data.eventDate}} at {{item.data.eventTime}}<br/><br/>
+              {{item.data.address}}<br/><br/>
+              {{item.data.link}}<br/>
+              {{item.data.message}}
+            </div>
           <div class="tags-wrapper">
             <ion-row>
               <div class="tags" *ngFor="let tag of item.postTags">
@@ -167,9 +175,9 @@
         </ion-card-content>
 
         <ion-card-content class="message" *ngIf="item.type === 'poll'" >
-          <div (click)="viewPoll(item)">
+          <div (click)="viewPost(item)">
           <b>{{item.title}}.</b><br/>
-          <ion-row  *ngFor="let pollOption of item.data.pollOptions">
+          <ion-row *ngFor="let pollOption of item.data.pollOptions">
             <ion-col >
                <div><ion-icon class="poll-icon" name="checkbox-outline"></ion-icon> <span>{{pollOption.name}}</span></div>
             </ion-col>
@@ -197,7 +205,7 @@
         </ion-card-content>
         
         <ion-card-content class="message" *ngIf="item.type === 'resource'">
-          <div (click)="viewResource(item)">
+          <div (click)="viewPost(item)">
           <b>{{item.title}}.</b><br/>
           <div *ngIf="item?.data.type == 'contact'">
             {{item.data.name}}<br/>
