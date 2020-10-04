@@ -89,8 +89,6 @@ export class DataService {
 
   getBlockedLists() {
     return this.firestore.doc('accounts/' + this.afAuth.auth.currentUser.uid).collection('conversations').ref.where('blocked','==', true);
-    // return this.afdb.list('/accounts/' + this.afAuth.auth.currentUser.uid +
-    //   '/conversations', ref => ref.orderByChild('blocked').equalTo(true));
   }
 
   // Get Polls of the logged in user.
@@ -101,7 +99,6 @@ export class DataService {
   // Get Polls of the logged in user.
   getGroupPolls(groupId) {
     return this.firestore.doc('groups/' + groupId).collection('polls');
-    // return this.afdb.object('/groups/' + groupId + '/polls/');
   }
 
   // Get Resources of the logged in user.
@@ -230,9 +227,24 @@ export class DataService {
     this.updateEventReviews(eventKey, review);
   }
  
-  updatePostReactions(postKey, reaction) {
+  addPostReactions(postKey, reaction) {
     return this.firestore.collection('posts').doc(postKey).collection('reactions').add(reaction).then(() => {
       const increment = firebase.firestore.FieldValue.increment(1);
+      this.firestore.collection('posts').doc(postKey).update({
+        totalReactionCount : increment
+      });
+    });
+  }
+
+  updatePostReactions(postKey, reaction, removed) {
+    return this.firestore.collection('posts').doc(postKey).collection('reactions').doc(reaction.key).update(reaction).then(() => {
+      let inc: number;
+      if (removed) {
+        inc = -1;
+      } else {
+        inc = 1;
+      }
+      const increment = firebase.firestore.FieldValue.increment(inc);
       this.firestore.collection('posts').doc(postKey).update({
         totalReactionCount : increment
       });

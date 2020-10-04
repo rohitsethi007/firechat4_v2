@@ -59,7 +59,7 @@ export class ProfilePage implements OnInit {
     private routerOutlet: IonRouterOutlet
   ) {
     this.userId = this.route.snapshot.params.id;
-    this.loggedInUserId = this.dataProvider.getCurrentUserId(); 
+    this.loggedInUserId = this.dataProvider.getCurrentUserId();
     if (this.userId === this.loggedInUserId) {
       this.myProfile = true;
     } else {

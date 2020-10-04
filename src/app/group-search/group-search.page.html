@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar class="filters-toolbar">
+    <ion-row class="searchbar-row" align-items-center>
+    <ion-col>
+        <ion-searchbar [(ngModel)]="searchGroup" mode="ios" (ionCancel)="onCancel($event)" class="searchbar" showCancelButton="always" placeholder="Search in {{category.name}}..."></ion-searchbar>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list class="inputs-list" lines="full">
+    <ion-list-header class="header">
+      Search in category &nbsp;<ion-label><b>{{category.name}}</b></ion-label>
+    </ion-list-header>
+    <ion-list lines="none">
+      <ion-item text-wrap *ngFor="let group of groups | groupFilter:searchGroup"  (click)="viewGroup(group.key)">
+        <ion-avatar slot="start">
+          <ion-img src="{{group.img}}"></ion-img>
+        </ion-avatar>
+        <ion-label class="toggle-text">
+            <ion-label class="ion-no-padding">{{group.name}}<br/>
+            <span class="group-subheading">{{group.members.length}} Members · <span *ngIf="group.posts">{{group.posts.length}}</span> <span *ngIf="!group.posts">0</span> posts</span></ion-label>
+          </ion-label>
+          <ion-button *ngIf="!group.isUserMember" slot="end" color="secondary" fill="outline" class="join" >Join</ion-button>
+          <ion-button *ngIf="group.isUserMember" slot="end" color="secondary" class="join" >Joined</ion-button>
+        </ion-item>
+    </ion-list>
+  </ion-list>
+</ion-content>

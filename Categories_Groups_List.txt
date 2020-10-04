@@ -1,0 +1,44 @@
+Healthcare
+	Cancer
+	GBM
+	Mental Health
+
+Music
+	Guitar
+	Drums
+	Sitar
+	Piano
+	Santoor
+
+Pets
+	Dogs
+	Cats
+	Exotic birds
+	Reptiles
+	Horses
+	
+Lifestlye
+	Cooking
+	Adoption
+	Diets
+	BBQ
+	Home Decor
+	Gardening
+	Pregnancy 
+	Books
+	Exercising
+	Yoga
+	Painting
+	
+Adventure
+	Mountain Climbing
+	Trekking
+	Camping
+	Cycling
+	Biking
+	Racing	
+	Canoeing
+	Running
+	Skiiing
+	
+	

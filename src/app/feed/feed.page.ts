@@ -12,6 +12,8 @@ import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-moda
 import * as firebase from 'firebase';
 import { FCM } from '@ionic-native/fcm/ngx';
 import { Platform } from '@ionic/angular';
+import algoliasearch from 'algoliasearch';
+import { constants } from 'perf_hooks';
 
 @Component({
   selector: 'app-feed',
@@ -31,16 +33,25 @@ export class FeedPage implements OnInit {
   conversationsInfo: any;
   userNotifications: any = [];
   userReactions: any = [];
+  searchMode = false;
+  searchTerm: any;
 
   private title: any;
   private groupId: any;
   private posts: any = [];
+  private searchPosts: any = [];
   private memberofGroups: any = [];
   private loggedInUser: any;
   private loggedInUserId: any;
   private firstDataSet: any;
   private lastDataSet: any;
   private maxNoOfPosts: any = 1000;
+
+  // algoliasearch
+  client: any;
+  index: any;
+  ALOGOLIA_APP_ID = 'DNTXC08EBF';
+  ALGOLIA_API_KEY = '4768de6e8b67959c064c0bf89443d449';
 
   slideOptsOne = {
     initialSlide: 0,
@@ -80,6 +91,10 @@ export class FeedPage implements OnInit {
           console.log('fcm token', token);
         });
       });
+
+      // this.client = algoliasearch(this.ALOGOLIA_APP_ID, this.ALGOLIA_API_KEY, {protocol: 'https'});
+      // this.index = this.client.initIndex('posts');
+    
     }
 
     subscribeToTopic() {
@@ -114,7 +129,7 @@ export class FeedPage implements OnInit {
     .where('groupId', 'in', this.loggedInUser.groups)
     .orderBy('date', 'desc')
     .limit(5);
-    this.firstDataSet.get().then((po: any) => {
+    this.firstDataSet.onSnapshot((po: any) => {
     this.lastDataSet = po.docs[po.docs.length - 1];
     this.posts = [];
     this.loadEachPostData(po);
@@ -311,38 +326,46 @@ export class FeedPage implements OnInit {
     const postIndex = this.posts.findIndex(el => el.key ===  post.key);
     const p = this.posts[postIndex];
 
-    let reaction = {
-      key: '',
-      dateCreated: new Date(),
-      addedByUser: {
-                    addedByKey: this.dataProvider.getCurrentUserId(),
-                    addedByUsername: this.loggedInUser.username,
-                    addedByImg: this.loggedInUser.img
-                  },
-      reactionType
-  };
+    const r = p.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId());
 
-    if (postIndex >= 0) {
-    this.dataProvider.updatePostReactions(post.key, reaction).then(() => {
-      // Update user notifications.
-      if (!this.userNotifications.some(p => p !== this.postId)) {
-        this.userNotifications.push(this.postId);
-        this.dataProvider.getUser(this.loggedInUserId).update({
-          userNotifications: this.userNotifications
-        });
-      }
+    if (!r) {
+      const react = {
+        dateCreated: new Date(),
+        addedByUser: {
+                      addedByKey: this.dataProvider.getCurrentUserId(),
+                      addedByUsername: this.loggedInUser.username,
+                      addedByImg: this.loggedInUser.img
+                    },
+        reactionType: [reactionType]
+      };
 
-      // Update user activity.
-      if (!this.userReactions.some(p => p !== this.postId)) {
-        this.userReactions.push(this.postId);
-        this.dataProvider.getUser(this.loggedInUserId).update({
-          userReactions: this.userReactions
-        });
-      }
+      this.dataProvider.addPostReactions(post.key, react).then(() => {
+        // Update user notifications.
+        if (!this.userNotifications.some(p => p !== this.postId)) {
+          this.userNotifications.push(this.postId);
+          this.dataProvider.getUser(this.loggedInUserId).update({
+            userNotifications: this.userNotifications
+          });
+        }
+
+        // Update user activity.
+        if (!this.userReactions && this.userReactions.some(p => p !== this.postId)) {
+          this.userReactions.push(this.postId);
+          this.dataProvider.getUser(this.loggedInUserId).update({
+            userReactions: this.userReactions
+          });
+        }
+      });
+    } else {
+      this.firestore.collection('posts').doc(post.key).collection('reactions').doc(r.key).update({
+        reactionType: firebase.firestore.FieldValue.arrayUnion(reactionType)
+    }).then(() => {
+      const increment = firebase.firestore.FieldValue.increment(1);
+      this.firestore.collection('posts').doc(post.key).update({
+        totalReactionCount : increment
+      });
     });
-    
-  }
-
+    }
   }
 
   removePostReaction(post, reactionType) {
@@ -352,16 +375,28 @@ export class FeedPage implements OnInit {
 
     const found = false;
     if (p.reactions !== undefined) {
-      let values = Object.keys(p.reactions).map(function(e) {
+      const values = Object.keys(p.reactions).map( function(e) {
         return p.reactions[e];
       });
 
-      const reaction = post.reactions.find(
-        el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
-        && el.reactionType === reactionType);
+      const reaction = p.reactions.find(
+        el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId());
 
-      console.log('reaction.key', reaction);
-      this.dataProvider.removePostReaction(post.key, reaction.key);
+      if (reaction.reactionType.length === 1 
+        && reaction.reactionType.some(e => e === reactionType)) {
+        this.dataProvider.removePostReaction(post.key, reaction.key);
+      } else {
+        // reaction.reactionType = reaction.reactionType.filter(x => x !== reactionType);
+        // this.dataProvider.updatePostReactions(post.key, reaction, true);
+        this.firestore.collection('posts').doc(post.key).collection('reactions').doc(reaction.key).update({
+          reactionType: firebase.firestore.FieldValue.arrayRemove(reactionType)
+      }).then(() => {
+        const increment = firebase.firestore.FieldValue.increment(-1);
+        this.firestore.collection('posts').doc(post.key).update({
+          totalReactionCount : increment
+        });
+      });
+      }
     }
   }
 
@@ -446,9 +481,9 @@ export class FeedPage implements OnInit {
   }
 
   createPostOptionButtons(post) {
-    let buttons = [];
+    const buttons = [];
     
-    let cancelButton = {
+    const cancelButton = {
       text: 'Cancel',
       icon: 'close',
       role: 'cancel',
@@ -457,7 +492,7 @@ export class FeedPage implements OnInit {
       }
     };
 
-    let reportButton = {
+    const reportButton = {
       text: 'Report Post',
       icon: 'flag-outline',
       handler: () => {
@@ -555,17 +590,17 @@ export class FeedPage implements OnInit {
       this.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe((reactions: any) => {
         post.reactions = [];
         reactions.forEach(element => {
-        let reaction = element.payload.doc.data();
+        const reaction = element.payload.doc.data();
         reaction.key = element.payload.doc.id;
         post.reactions.push(reaction);
       });
 
         // Check for Thanks
-        if (reactions) {
+        if (reactions.length > 0) {
         let foundSmiley = false;
-        if (post.reactions !== undefined) {
-            foundSmiley = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                          && el.reactionType === 'Thanks');
+        if (post.reactions.length > 0) {
+             const r = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId());
+             foundSmiley = r.reactionType.some(r => r === 'Thanks');
           }
         if (foundSmiley) {
             post.showSmiley = true;
@@ -575,8 +610,8 @@ export class FeedPage implements OnInit {
           // Check for Hugs
         let foundHug = false;
         if (post.reactions !== undefined) {
-            foundHug = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                        && el.reactionType === 'Hug');
+            const r = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId());
+            foundHug = r.reactionType.some(r => r === 'Hug');
           }
         if (foundHug) {
             post.showHug = true;
@@ -587,8 +622,8 @@ export class FeedPage implements OnInit {
         // Check for Checkin
         let foundCheckin = false;
         if (post.reactions !== undefined) {
-          foundCheckin = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                        && el.reactionType === 'Checkin');
+          const r = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId());
+          foundCheckin = r.reactionType.some(r => r === 'Checkin');
           }
         if (foundCheckin) {
             post.showCheckin = true;
@@ -599,8 +634,8 @@ export class FeedPage implements OnInit {
         // Check for Bookmark
         let foundBookmark = false;
         if (post.reactions !== undefined) {
-          foundBookmark = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                        && el.reactionType === 'Bookmark');
+          const r = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId())
+          foundBookmark = r.reactionType.some(r => r === 'Bookmark');
           }
         if (foundBookmark) {
             post.showBookmark = true;
@@ -623,5 +658,32 @@ export class FeedPage implements OnInit {
     return string.length > length
       ? string.substring(0, length) + "..."
       : string;
+  }
+
+  onFocus(event) {
+    if (!this.searchMode) {
+      this.searchMode = true;
+    }
+  }
+
+  onCancel(event) {
+    this.searchMode = false;
+    this.searchPosts = [];
+    this.searchTerm = '';
+  }
+
+  seachFeed(event) {
+    // console.log('searching for ..', this.searchTerm );
+    // this.index.search('', {
+    //   query: this.searchTerm
+    // }).then((data) => {
+    //   this.searchPosts = data.hits;
+    // });
+    this.searchPosts = this.posts;
+  }
+
+  searchTag(tag, post) {
+    this.searchMode = true;
+    this.searchTerm = tag.val;
   }
 }

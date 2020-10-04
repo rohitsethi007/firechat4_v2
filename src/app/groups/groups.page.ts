@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LoadingService } from '../services/loading.service';
 import { DataService } from '../services/data.service';
 import { Router } from '@angular/router';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-groups',
@@ -9,19 +10,20 @@ import { Router } from '@angular/router';
   styleUrls: ['./groups.page.scss', './groups.shell.scss'],
 })
 export class GroupsPage implements OnInit {
-
-
   groups: any;
   searchGroup: any;
+  categories: any = [];
   updateDateTime: any;
   unreadMessagesCount: any;
+  loggedInUserId: any;
   // GroupsPage
   // This is the page where the user can add, view and search for groups.
   constructor(
     private router: Router,
     public dataProvider: DataService,
-    public loadingProvider: LoadingService) {
-
+    public loadingProvider: LoadingService,
+    private firestore: AngularFirestore) {
+      this.loggedInUserId = this.dataProvider.getCurrentUserId();
   }
 
   ngOnInit() {
@@ -31,72 +33,53 @@ export class GroupsPage implements OnInit {
     // Initialize
     this.searchGroup = '';
     this.loadingProvider.show();
+    this.loadAllCategories();
     // Get groups
-    this.dataProvider.getGroups().snapshotChanges().subscribe((data: any) => {
+    this.dataProvider.getGroups().snapshotChanges().subscribe((groups: any) => {
 
-    this.groups = data.map(c => {
-        return { $key: c.payload.doc.data().groupId, ...c.payload.doc.data() };
-      });
-      // this.groups = data.map(e => {
-      //   return {
-      //     id: e.payload.doc.id,
-      //     dateCreated: e.payload.doc.data()['dateCreated'],
-      //     description: e.payload.doc.data()['description'],
-      //     groupTags: e.payload.doc.data()['groupTags'],
-      //     img: e.payload.doc.data()['img'],
-      //     members: e.payload.doc.data()['members'],
-      //     messages: e.payload.doc.data()['messages'],
-      //     name: e.payload.doc.data()['name']
-      //   };
-      // })
-
-    });
-
-    // Update groups' last active date time elapsed every minute based on Moment.js.
-    let that = this;
-    if (!that.updateDateTime) {
-      that.updateDateTime = setInterval(function() {
-        if (that.groups) {
-          that.groups.forEach((group) => {
-            const date = group.date;
-            group.date = new Date(date);
-          });
+      this.groups = [];
+      groups.forEach(element => {
+        let group = element.payload.doc.data();
+        group.key = element.payload.doc.id;
+        if (group.members.some(e => e === this.loggedInUserId )) {
+          group.isUserMember = true;
+        } else {
+          group.isUserMember = false;
         }
-      }, 60000);
-    }
+        this.groups.push(group);
+      });
+    });
   }
 
-
-  // Add or update group for real-time sync based on our observer.
-  addOrUpdateGroup(group) {
-    if (!this.groups) {
-      this.groups = [group];
-    } else {
-      let index = -1;
-      for (let i = 0; i < this.groups.length; i++) {
-        if (this.groups[i].key == group.key) {
-          index = i;
-        }
+  loadAllCategories() {
+    this.firestore.collection('categories').ref.orderBy('sort', 'asc').onSnapshot((catsRes: any) => {
+      if (catsRes) {
+        this.categories = [];
+        catsRes.forEach(cat => {
+          let category = cat.data();
+          category.key = cat.id;
+          console.log('category', category);
+          this.categories.push(category);
+        });
       }
-      if (index > -1) {
-        this.groups[index] = group;
-      } else {
-        this.groups.push(group);
-      }
-    }
+    });
   }
 
   // Open Group Chat.
-  viewGroup(groupId) {
-    this.router.navigateByUrl('group/' + groupId);
+  viewGroup(group) {
+    if (group.isUserMember) {
+      this.router.navigateByUrl('group/' + group.key);
+    }
+  }
+  
+  searchGroupByCategory(category) {
+    const groupSearch = {category};
+    // this.router.navigateByUrl('group-search/' + groupSearch);
+    this.router.navigateByUrl('/group-search', { state: groupSearch });
+    // this.router.navigateByUrl(['group-search', {state: {data: {category}}});
   }
 
-  // Return class based if group has unreadMessages or not.
-  hasUnreadMessages(group) {
-    if (group.unreadMessagesCount > 0) {
-      return 'group bold';
-    } else {
-      return 'group';
-    }
+  joinGroup(groupId) {
+    this.router.navigateByUrl('group-join/' + groupId);
   }
 }

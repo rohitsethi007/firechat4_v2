@@ -1,6 +1,6 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["blockedlist-blockedlist-module"],{
 
-/***/ "./node_modules/raw-loader/dist/cjs.js!./src/app/blockedlist/blockedlist.page.html":
+/***/ "0lt8":
 /*!*****************************************************************************************!*\
   !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/blockedlist/blockedlist.page.html ***!
   \*****************************************************************************************/
@@ -13,7 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/app/blockedlist/blockedlist.module.ts":
+/***/ "Y9ka":
 /*!***************************************************!*\
   !*** ./src/app/blockedlist/blockedlist.module.ts ***!
   \***************************************************/
@@ -23,13 +23,13 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BlockedlistPageModule", function() { return BlockedlistPageModule; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm2015/common.js");
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm2015/router.js");
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic/angular */ "./node_modules/@ionic/angular/fesm2015/ionic-angular.js");
-/* harmony import */ var _blockedlist_page__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./blockedlist.page */ "./src/app/blockedlist/blockedlist.page.ts");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _blockedlist_page__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./blockedlist.page */ "kDln");
 
 
 
@@ -45,7 +45,7 @@ const routes = [
 ];
 let BlockedlistPageModule = class BlockedlistPageModule {
 };
-BlockedlistPageModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+BlockedlistPageModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
         imports: [
             _angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"],
@@ -61,7 +61,7 @@ BlockedlistPageModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
 
 /***/ }),
 
-/***/ "./src/app/blockedlist/blockedlist.page.scss":
+/***/ "ihXx":
 /*!***************************************************!*\
   !*** ./src/app/blockedlist/blockedlist.page.scss ***!
   \***************************************************/
@@ -74,7 +74,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/app/blockedlist/blockedlist.page.ts":
+/***/ "kDln":
 /*!*************************************************!*\
   !*** ./src/app/blockedlist/blockedlist.page.ts ***!
   \*************************************************/
@@ -84,11 +84,15 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BlockedlistPage", function() { return BlockedlistPage; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
-/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/fire/auth */ "./node_modules/@angular/fire/auth/es2015/index.js");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/fire/firestore */ "./node_modules/@angular/fire/firestore/es2015/index.js");
-/* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/data.service */ "./src/app/services/data.service.ts");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _raw_loader_blockedlist_page_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! raw-loader!./blockedlist.page.html */ "0lt8");
+/* harmony import */ var _blockedlist_page_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./blockedlist.page.scss */ "ihXx");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/fire/auth */ "KDZV");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
+/* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../services/data.service */ "EnSQ");
+
+
 
 
 
@@ -127,19 +131,19 @@ let BlockedlistPage = class BlockedlistPage {
     }
 };
 BlockedlistPage.ctorParameters = () => [
-    { type: _angular_fire_auth__WEBPACK_IMPORTED_MODULE_2__["AngularFireAuth"] },
-    { type: _services_data_service__WEBPACK_IMPORTED_MODULE_4__["DataService"] },
-    { type: _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_3__["AngularFirestore"] }
+    { type: _angular_fire_auth__WEBPACK_IMPORTED_MODULE_4__["AngularFireAuth"] },
+    { type: _services_data_service__WEBPACK_IMPORTED_MODULE_6__["DataService"] },
+    { type: _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__["AngularFirestore"] }
 ];
-BlockedlistPage = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
+BlockedlistPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_3__["Component"])({
         selector: 'app-blockedlist',
-        template: tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(/*! raw-loader!./blockedlist.page.html */ "./node_modules/raw-loader/dist/cjs.js!./src/app/blockedlist/blockedlist.page.html")).default,
-        styles: [tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(/*! ./blockedlist.page.scss */ "./src/app/blockedlist/blockedlist.page.scss")).default]
+        template: _raw_loader_blockedlist_page_html__WEBPACK_IMPORTED_MODULE_1__["default"],
+        styles: [_blockedlist_page_scss__WEBPACK_IMPORTED_MODULE_2__["default"]]
     }),
-    tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_fire_auth__WEBPACK_IMPORTED_MODULE_2__["AngularFireAuth"],
-        _services_data_service__WEBPACK_IMPORTED_MODULE_4__["DataService"],
-        _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_3__["AngularFirestore"]])
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"])("design:paramtypes", [_angular_fire_auth__WEBPACK_IMPORTED_MODULE_4__["AngularFireAuth"],
+        _services_data_service__WEBPACK_IMPORTED_MODULE_6__["DataService"],
+        _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__["AngularFirestore"]])
 ], BlockedlistPage);
 
 

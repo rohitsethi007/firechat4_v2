@@ -83,17 +83,17 @@
      <ion-item-divider class="profile-component-title">Groups</ion-item-divider>
      <ion-list lines="none">
       <ion-item *ngIf="groups.length == 0" class="toggle-text">
-          <ion-label>You are not joined any groups.</ion-label>
+          <ion-label>You have not joined any groups.</ion-label>
       </ion-item>
-      <ion-item text-wrap *ngFor="let group of groups" (click)="viewGroup(group.key)">
-        <ion-avatar slot="start">
-          <ion-img src="{{group.img}}"></ion-img>
-        </ion-avatar>
-        <ion-label class="toggle-text">
-            <ion-label class="ion-no-padding">{{group.name}}<br/>
-            {{group.description}}</ion-label>
-        </ion-label>
-      </ion-item>
+        <ion-item text-wrap *ngFor="let group of groups" (click)="viewGroup(group.key)">
+          <ion-avatar slot="start">
+            <ion-img src="{{group.img}}"></ion-img>
+          </ion-avatar>
+          <ion-label class="toggle-text">
+              <ion-label class="ion-no-padding">{{group.name}}<br/>
+              {{group.description}}</ion-label>
+          </ion-label>
+        </ion-item>
     </ion-list>
     <ion-item-divider class="profile-component-title">Connected to:</ion-item-divider>
     <ion-list lines="none">

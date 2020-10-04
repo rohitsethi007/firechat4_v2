@@ -1,8 +1,35 @@
 :host {
-  --page-margin: var(--app-fair-margin);
+  --page-margin: var(--app-narrow-margin);
   --page-background: var(--app-background);
+  --ion-font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
 
-  --page-color: #00AFFF;
+.join {
+  --border-radius: 30px
+}
+
+.slides {
+  padding-left: var(--page-margin);
+}
+
+.link {
+  text-decoration: none;
+  color: var(--ion-color-secondary);
+}
+
+.no-bottom-padding {
+  --inner-padding-bottom: 0px;
+  --padding-bottom: 0px;
+}
+
+.no-top-padding {
+  --inner-padding-top: 0px;
+  --padding-top: 0px;
+}
+
+.h2 {
+  margin-top: 18px;
+  font-size: 24px;
 }
 
 .listing-item {
@@ -26,10 +53,38 @@
   padding-left: 3px;
   text-transform: capitalize !important;
 }
-.message {
+
+.toggle-text {
   font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
   font-weight: 400;
   font-size: 14px;
+  line-height: 19px;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+  overflow: hidden; 
+  text-overflow: ellipsis;
+
+  .group-subheading {
+    font-weight: 400;
+    font-size: 10px;
+  }
+}
+
+.slide-heading {
+  font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 19px;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+  overflow: hidden; 
+  text-overflow: ellipsis;
+}
+
+.slide-subheading {
+  font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+  font-weight: 400;
+  font-size: 12px;
   line-height: 19px;
   -webkit-font-smoothing: subpixel-antialiased;
   -moz-osx-font-smoothing: auto;

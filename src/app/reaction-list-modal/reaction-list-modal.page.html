@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -20,10 +20,10 @@
         <h2>{{item.addedByUser.addedByUsername}}</h2>
         <!--<p>Sneaky little hobbitses!</p> -->
       </ion-label>
-      <ion-img *ngIf="item.reactionType === 'Thanks'" class="icon" src="./assets/icon/smile-active.svg"></ion-img>
-      <ion-img *ngIf="item.reactionType === 'Hug'" class="icon" src="./assets/icon/hug-active.svg"></ion-img>
-      <ion-img *ngIf="item.reactionType === 'Bookmark'" class="icon" src="./assets/icon/bookmark-active.svg"></ion-img>
-      <ion-img *ngIf="item.reactionType === 'Checkin'" class="icon" src="./assets/icon/checkin-active.svg"></ion-img>
+      <ion-icon size="small" *ngIf="item.reactionThanks" class="icon" src="./assets/icon/smile-active.svg"></ion-icon>
+      <ion-icon size="small" *ngIf="item.reactionHug" class="icon" src="./assets/icon/hug-active.svg"></ion-icon>
+      <ion-icon size="small" *ngIf="item.reactionBookmark" class="icon" src="./assets/icon/bookmark-active.svg"></ion-icon>
+      <ion-icon size="small" *ngIf="item.reactionCheckin" class="icon" src="./assets/icon/checkin-active.svg"></ion-icon>
     </ion-item>
 
   </ion-list>

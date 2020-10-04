@@ -4,6 +4,8 @@ import { Validators, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
 import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
+import * as firebase from 'firebase/app';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-new-poll', 
@@ -12,6 +14,7 @@ import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validat
 })
 export class NewPollPage implements OnInit {
   private poll: any;
+  private user: any;
   private title: any;
   private pollForm: FormGroup;
   private groupId: any;
@@ -52,7 +55,8 @@ export class NewPollPage implements OnInit {
     public dataProvider: DataService,
     public loadingProvider: LoadingService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public firestore: AngularFirestore
   ) {
     this.groupId = this.route.snapshot.params.id;
 
@@ -85,32 +89,13 @@ export class NewPollPage implements OnInit {
       });
    }
 
-   ionViewDidEnter() {
-    if (this.step === 1) {
-    this.title = 'Select a group ...';
-    this.dataProvider.getGroups().snapshotChanges().subscribe((data: any) => {
-
-    this.groups = data.map(c => {
-          return { $key: c.payload.doc.id, ...c.payload.doc.data() };
-        });
-      });
-    } else {
-      this.title = 'Poll';
-
-      this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-        this.group = group.payload.data();
-        this.group.groupTags.forEach((element: any) => {
-          this.postTags.push({val: element, isChecked: false});
-        });
-        this.addTagControls();
-      });   
-    }
-  }
+   ionViewDidEnter() {}
 
   ngOnInit() {
      // Initialize
 
      this.dataProvider.getCurrentUser().snapshotChanges().subscribe((value: any) => {
+      this.user = value.payload.data();
       this.addedByUser = {
       addedByKey: value.payload.data().userId,
       addedByUsername: value.payload.data().username,
@@ -130,8 +115,54 @@ export class NewPollPage implements OnInit {
       totalReviewCount: 0,
       totalPollCount: 0
     };
+
+      if (this.step === 1) {
+      this.title = 'Select a group ...';
+      // Get User Groups List
+      if (this.user.groups) {
+        this.firestore.collection('groups').ref
+        .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.groups)
+        .get().then((group: any) => {
+          this.groups = [];
+          group.forEach(g => {
+            let group: any;
+            group = g.data();
+            group.key = g.id;
+            this.addOrUpdateUserGroup(group);
+          });
+        });
+        }
+      } else {
+        this.title = 'Poll';
+  
+        this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+          this.group = group.payload.data();
+          this.group.groupTags.forEach((element: any) => {
+            this.postTags.push({val: element, isChecked: false});
+          });
+          this.addTagControls();
+        });   
+      }
   });
 
+  }
+
+  addOrUpdateUserGroup(group) {
+    if (!this.groups) {
+      this.groups = [group];
+    } else {
+      let index = -1;
+      for (let i = 0; i < this.groups.length; i++) {
+        if (this.groups[i].key == group.key) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        this.groups[index] = group;
+      } else {
+        this.groups.push(group);
+      }
+    }
   }
 
   addTagControls() {

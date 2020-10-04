@@ -1,25 +1,10 @@
 
 :host {
-    --page-margin: var(--app-broad-margin);
-    --page-background: var(--app-background-shade);
-  
-    --page-highlighted-background: var(--ion-color-secondary-tint);
-  }
-  
-  // Note:  All the CSS variables defined below are overrides of Ionic elements CSS Custom Properties
-  ion-header {
-    ion-toolbar {
-      --background: var(--page-highlighted-background);
-    }
+  --page-margin: var(--app-narrow-margin);
+  --page-background: var(--app-background);
   }
   
   .icon {
     display: inline-block;
     vertical-align: middle;
-    height: 20px;
-    float: right;
-    width: 40px;
    }
-.title {
-
-}

@@ -1,6 +1,6 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[61],{
 
-/***/ "./node_modules/@ionic/core/dist/esm/ion-slide_2-ios.entry.js":
+/***/ "F/Xn":
 /*!********************************************************************!*\
   !*** ./node_modules/@ionic/core/dist/esm/ion-slide_2-ios.entry.js ***!
   \********************************************************************/
@@ -11,8 +11,8 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ion_slide", function() { return Slide; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ion_slides", function() { return Slides; });
-/* harmony import */ var _core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./core-80bde1aa.js */ "./node_modules/@ionic/core/dist/esm/core-80bde1aa.js");
-/* harmony import */ var _config_3c7f3790_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./config-3c7f3790.js */ "./node_modules/@ionic/core/dist/esm/config-3c7f3790.js");
+/* harmony import */ var _core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./core-80bde1aa.js */ "54nT");
+/* harmony import */ var _config_3c7f3790_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./config-3c7f3790.js */ "AfW+");
 
 
 
@@ -241,7 +241,7 @@ const Slides = class {
         const finalOptions = this.normalizeOptions();
         // init swiper core
         // @ts-ignore
-        const { Swiper } = await __webpack_require__.e(/*! import() | swiper-bundle-ccdaac54-js */ "swiper-bundle-ccdaac54-js").then(__webpack_require__.bind(null, /*! ./swiper.bundle-ccdaac54.js */ "./node_modules/@ionic/core/dist/esm/swiper.bundle-ccdaac54.js"));
+        const { Swiper } = await __webpack_require__.e(/*! import() | swiper-bundle-ccdaac54-js */ "swiper-bundle-ccdaac54-js").then(__webpack_require__.bind(null, /*! ./swiper.bundle-ccdaac54.js */ "E+Ut"));
         await waitForSlides(this.el);
         const swiper = new Swiper(this.el, finalOptions);
         this.swiperReady = true;

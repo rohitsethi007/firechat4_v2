@@ -8,7 +8,8 @@ import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { Validator } from 'src/environments/validator';
+import { PickerController } from '@ionic/angular';
+import { PickerOptions } from '@ionic/core';
 
 @Component({
   selector: 'app-newgroup',
@@ -24,24 +25,15 @@ export class NewgroupPage implements OnInit {
   groupMembers: any;
   alert: any;
   name: any;
+  img: any;
   description: any;
   groupTags: any;
+  category: any = {text: '', value: ''};
   account: any;
-
   myForm: FormGroup;
   submitAttempt = false;
-
-  errorMessages = {
-    groupName: [
-      { type: 'required', message: 'Name is a required field.' }
-    ],
-    groupDescription: [
-      { type: 'required', message: 'Description is a required field.' }
-    ],
-    groupTags: [
-      { type: 'required', message: 'GroupTags is a required field.' }
-    ]
-    };
+  categoriesOption: any;
+  categories: any;
 
   constructor(
     private router: Router,
@@ -52,7 +44,8 @@ export class NewgroupPage implements OnInit {
     private afAuth: AngularFireAuth,
     public loadingProvider: LoadingService,
     public camera: Camera,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private pickerController: PickerController
   ) {
     this.myForm = new FormGroup(
       {
@@ -64,7 +57,8 @@ export class NewgroupPage implements OnInit {
         ])),
         groupTags: new FormControl('', Validators.compose([
           Validators.required
-        ]))
+        ])),
+        img: new FormControl('')
       });
   }
 
@@ -90,6 +84,19 @@ export class NewgroupPage implements OnInit {
         this.groupMembers = [this.account];
       } else {
         this.friends = [];
+      }
+    });
+
+    this.firestore.collection('categories').snapshotChanges().subscribe((catsRes: any) => {
+      if (catsRes) {
+        this.categoriesOption = [];
+        this.categories = [];
+        catsRes.forEach(cat => {
+          let category = cat.payload.doc.data();
+          category.key = cat.payload.doc.id;
+          this.categories.push(category);
+          this.categoriesOption.push({text:category.name,value:category.key});
+        });
       }
     });
   }
@@ -122,43 +129,60 @@ export class NewgroupPage implements OnInit {
       this.group.name = this.name;
       this.group.description = this.description;
       this.group.groupTags = this.groupTags.split('\n');
+      this.group.categoryId = this.category.value;
+      this.group.img = '';
 
       // Add group to database.
-
       this.firestore.collection('groups').add(this.group).then((success) => {
         let groupId = success.id;
         this.router.navigateByUrl('/group/' + groupId);
-        this.account.groups.push(groupId);
+        if(this.account.groups) {
+          this.account.groups.push(groupId);
+        } else {
+          this.account.groups = [groupId];
+        }
         this.dataProvider.getCurrentUser().update({
           groups: this.account.groups
+        });
+        let cat = this.categories.find(c => c.id = this.category.value);
+        console.log('cat', cat, this.categories);
+        if (!cat.groups) {
+          cat.groups = [groupId];
+        } else {
+          cat.groups.push(groupId);
+        }
+        this.firestore.collection('categories').doc(this.category.value).update({
+          groups: cat.groups
         });
       });
     }
   }
 
-  // Set group photo.
-  setGroupPhoto() {
-    this.alert = this.alertCtrl.create({
-      header: 'Set Group Photo',
-      message: 'Do you want to take a photo or choose from your photo gallery?',
+    async showPicker() {
+    let options: PickerOptions = {
       buttons: [
         {
           text: 'Cancel',
-          handler: data => { }
+          role: 'cancel'
         },
         {
-          text: 'Choose from Gallery',
-          handler: () => {
-            this.imageProvider.setGroupPhoto(this.group, this.camera.PictureSourceType.PHOTOLIBRARY);
-          }
-        },
-        {
-          text: 'Take Photo',
-          handler: () => {
-            this.imageProvider.setGroupPhoto(this.group, this.camera.PictureSourceType.CAMERA);
+          text: 'Ok',
+          handler: (value: any) => {
+            this.category = value.Categories;
           }
         }
-      ]
-    }).then(r => r.present());
+      ],
+      columns: [{
+        name: 'Categories',
+        options: this.getColumnOptions()
+      }]
+    };
+
+    let picker = await this.pickerController.create(options);
+    picker.present();
+  }
+
+  getColumnOptions(){
+    return this.categoriesOption;
   }
 }

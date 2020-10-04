@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>New Category</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+<ion-row>
+    <ion-col>
+      <form [formGroup]="categoryForm">
+        <ion-list>
+          <ion-item>
+            <ion-label position="stacked">Name:</ion-label>
+            <ion-input formControlName="name" type="text" [(ngModel)]="name" placeHolder="Enter the Category Name"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Description:</ion-label>
+            <ion-textarea rows=6 formControlName="description" type="text" [(ngModel)]="description" placeHolder="Enter a short description"></ion-textarea>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Image:</ion-label>
+            <ion-input formControlName="img" type="text" [(ngModel)]="img" placeHolder="Enter the Image path"></ion-input>
+          </ion-item>
+        </ion-list>
+        <ion-button type="submit" color="secondary" (click)="submit()" expand="block">Create Category</ion-button>
+      </form>
+    </ion-col>
+  </ion-row>
+</ion-content>

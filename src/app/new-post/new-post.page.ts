@@ -7,6 +7,8 @@ import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
 import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
 import { Camera } from '@ionic-native/camera/ngx';
+import * as firebase from 'firebase/app';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-new-post',
@@ -24,6 +26,7 @@ export class NewPostPage implements OnInit {
   private postTags: any;
   private title: any;
   private addedByUser: any;
+  private user: any;
   private step: any = 1;
   groups: any;
   userNotifications: any = [];
@@ -53,7 +56,8 @@ export class NewPostPage implements OnInit {
     public imageProvider: ImageService,
     public loadingProvider: LoadingService,
     public camera: Camera,
-    public actionSheet: ActionSheetController
+    public actionSheet: ActionSheetController,
+    public firestore: AngularFirestore
   ) {
     this.postMedia = [];
     this.postTags = [];
@@ -81,25 +85,23 @@ export class NewPostPage implements OnInit {
     });
    }
 
-  ionViewDidEnter() {
-    if (this.step === 1) {
-    this.title = 'Select a group ...';
-    this.dataProvider.getGroups().snapshotChanges().subscribe((data: any) => {
+  ionViewDidEnter() { }
 
-    this.groups = data.map(c => {
-          return { $key: c.payload.doc.id, ...c.payload.doc.data() };
-        });
-      });
+  addOrUpdateUserGroup(group) {
+    if (!this.groups) {
+      this.groups = [group];
     } else {
-      this.title = 'Create a Post in';
-
-      this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-        this.group = group.payload.data();
-        this.group.groupTags.forEach((element: any) => {
-          this.postTags.push({val: element, isChecked: false});
-        });
-        this.addTagControls();
-      });
+      let index = -1;
+      for (let i = 0; i < this.groups.length; i++) {
+        if (this.groups[i].key == group.key) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        this.groups[index] = group;
+      } else {
+        this.groups.push(group);
+      }
     }
   }
 
@@ -112,6 +114,8 @@ export class NewPostPage implements OnInit {
 
   ngOnInit() {
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((value: any) => {
+      this.user = value.payload.data();
+
       this.addedByUser = {
       addedByKey: value.payload.data().userId,
       addedByUsername: value.payload.data().username,
@@ -133,6 +137,34 @@ export class NewPostPage implements OnInit {
           totalReviewCount: 0,
           postMedia: []
         };
+
+      if (this.step === 1) {
+          this.title = 'Select a group ...';
+              // Get User Groups List
+          if (this.user.groups) {
+            this.firestore.collection('groups').ref
+            .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.groups)
+            .get().then((group: any) => {
+              this.groups = [];
+              group.forEach(g => {
+                let group: any;
+                group = g.data();
+                group.key = g.id;
+                this.addOrUpdateUserGroup(group);
+              });
+            });
+            }
+          } else {
+            this.title = 'Create a Post in';
+
+            this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+              this.group = group.payload.data();
+              this.group.groupTags.forEach((element: any) => {
+                this.postTags.push({val: element, isChecked: false});
+              });
+              this.addTagControls();
+            });
+          }
       });
   }
 

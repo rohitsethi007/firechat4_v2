@@ -2,10 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
-import { ModalController, AlertController } from '@ionic/angular';
-import { ImageService } from '../services/image.service';
-import { Camera } from '@ionic-native/camera/ngx';
+import { AlertController } from '@ionic/angular';
 import { AngularFirestore } from '@angular/fire/firestore';
+import * as firebase from 'firebase/app';
 
 @Component({
   selector: 'app-groupinfo',
@@ -16,10 +15,11 @@ export class GroupinfoPage implements OnInit {
 
   groupId: any;
   group: any;
-  groupMembers: any;
+  groupMembers: any = [];
   alert: any;
   user: any;
-  subscription: any;
+  groupPosts: any = [];
+
   // GroupInfoPage
   // This is the page where the user can view group information, change group information, add members, and leave/delete group.
   constructor(
@@ -28,10 +28,7 @@ export class GroupinfoPage implements OnInit {
     public dataProvider: DataService,
     public firestore: AngularFirestore,
     public loadingProvider: LoadingService,
-    public modalCtrl: ModalController,
-    public alertCtrl: AlertController,
-    public imageProvider: ImageService,
-    public camera: Camera
+    public alertCtrl: AlertController
   ) { }
 
   ngOnInit() {
@@ -41,17 +38,14 @@ export class GroupinfoPage implements OnInit {
     // Initialize
 
     this.groupId = this.route.snapshot.params.id;
-    console.log(this.groupId);
 
     // Get group details.
-    this.subscription = this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((groupRes: any) => {
-      let group = { $key: groupRes.payload.id, ...groupRes.payload.data() };
-      console.log(group);
+    this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((p: any) => {
+      let group = p.payload.data();
+      group.key = p.key;
       if (group != null) {
         this.loadingProvider.show();
         this.group = group;
-        console.log('group.members', group.members);
-
         group.members.forEach((memberId) => {
             this.dataProvider.getUser(memberId).snapshotChanges().subscribe((memberRes: any) => {
               let member = { $key: memberRes.payload.id, ...memberRes.payload.data() };
@@ -59,9 +53,18 @@ export class GroupinfoPage implements OnInit {
             });
           });
 
+        // get group Posts
+        if (this.group.posts) {
+          this.firestore.collection('posts').ref
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.group.posts)
+          .get().then((po: any) => {
+            this.groupPosts = [];
+            this.loadEachPostData(po);
+          });
+        }
         this.loadingProvider.hide();
       } else {
-        this.router.navigateByUrl('/')
+        this.router.navigateByUrl('/');
       }
     });
 
@@ -72,16 +75,34 @@ export class GroupinfoPage implements OnInit {
     });
   }
 
-  // Delete subscription.
-  // ionViewDidLeave() {
-  //   if(this.deleteSubscription)
-  //
-  // }
+  loadEachPostData(po: any) {
+    po.forEach(p => {
+      let post: any;
+      post = p.data();
+      post.key = p.id;
+      post.postTags = post.postTags.filter(x => x.isChecked !== false);
+    
+      if (!this.groupPosts) {
+        this.groupPosts = [post];
+      } else {
+        let index = -1;
+        for (let i = 0; i < this.groupPosts.length; i++) {
+          if (this.groupPosts[i].key == post.key) {
+            index = i;
+          }
+        }
+        if (index > -1) {
+          this.groupPosts[index] = post;
+        } else {
+          this.groupPosts.push(post);
+        }
+      }
+    });
+  }
 
   // Check if user exists in the group then add/update user.
   // If the user has already left the group, remove user from the list.
   addUpdateOrRemoveMember(member) {
-    console.log(member);
     if (this.group) {
       if (this.group.members.indexOf(member.$key) > -1) {
         // User exists in the group.
@@ -89,7 +110,6 @@ export class GroupinfoPage implements OnInit {
           this.groupMembers = [member];
         } else {
           var index = -1;
-          console.log('this.groupMembers.length:', this.groupMembers);
           for (var i = 0; i < this.groupMembers.length; i++) {
             if (this.groupMembers[i].$key == member.$key) {
               index = i;
@@ -122,183 +142,6 @@ export class GroupinfoPage implements OnInit {
     if (this.dataProvider.getCurrentUserId !== userId) {
       this.router.navigateByUrl('/userinfo/' + userId);
     }
-  }
-
-  // Enlarge group image.
-  enlargeImage(img) {
-    // let imageModal = this.modalCtrl.create("ImageModalPage", { img: img });
-    // imageModal.present();
-  }
-
-  // Change group name.
-  setName() {
-    this.alert = this.alertCtrl.create({
-      header: 'Change Group Name',
-      message: 'Please enter a new group name.',
-      inputs: [
-        {
-          name: 'name',
-          placeholder: 'Group Name',
-          value: this.group.name
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          handler: data => { }
-        },
-        {
-          text: 'Save',
-          handler: data => {
-            let name = data['name'];
-            if (this.group.name != name) {
-              this.loadingProvider.show();
-              // Add system message.
-              this.group.messages.push({
-                date: new Date().toString(),
-                sender: this.user.$key,
-                type: 'system',
-                message: this.user.name + ' has changed the group name to: ' + name + '.',
-                icon: 'md-create'
-              });
-              // Update group on database.
-              this.dataProvider.getGroup(this.groupId).update({
-                name: name,
-                messages: this.group.messages
-              }).then((success) => {
-                this.loadingProvider.hide();
-                this.loadingProvider.showToast('Updated Succesfully');
-              }).catch((error) => {
-                this.loadingProvider.hide();
-                this.loadingProvider.showToast('Something went wrong');
-              });
-            }
-          }
-        }
-      ]
-    }).then(r => r.present());
-  }
-
-  // Change group image, the user is asked if they want to take a photo or choose from gallery.
-  setPhoto() {
-    this.alert = this.alertCtrl.create({
-      header: 'Set Group Photo',
-      message: 'Do you want to take a photo or choose from your photo gallery?',
-      buttons: [
-        {
-          text: 'Cancel',
-          handler: data => { }
-        },
-        {
-          text: 'Choose from Gallery',
-          handler: () => {
-            this.loadingProvider.show();
-            // Upload photo and set to group photo, afterwards, return the group object as promise.
-            this.imageProvider.setGroupPhotoPromise(this.group, this.camera.PictureSourceType.PHOTOLIBRARY).then((group) => {
-              // Add system message.
-              this.group.messages.push({
-                date: new Date().toString(),
-                sender: this.user.$key,
-                type: 'system',
-                message: this.user.name + ' has changed the group photo.',
-                icon: 'ios-camera'
-              });
-              // Update group image on database.
-              this.dataProvider.getGroup(this.groupId).update({
-                img: group.img,
-                messages: this.group.messages
-              }).then((success) => {
-                this.loadingProvider.hide();
-                this.loadingProvider.showToast("Updated Successfully");
-
-              }).catch((error) => {
-                this.loadingProvider.hide();
-                this.loadingProvider.showToast("Something went wrong");
-              });
-            });
-          }
-        },
-        {
-          text: 'Take Photo',
-          handler: () => {
-            this.loadingProvider.show();
-            // Upload photo and set to group photo, afterwwards, return the group object as promise.
-            this.imageProvider.setGroupPhotoPromise(this.group, this.camera.PictureSourceType.CAMERA).then((group) => {
-              // Add system message.
-              this.group.messages.push({
-                date: new Date().toString(),
-                sender: this.user.$key,
-                type: 'system',
-                message: this.user.name + ' has changed the group photo.',
-                icon: 'ios-camera'
-              });
-              // Update group image on database.
-              this.dataProvider.getGroup(this.groupId).update({
-                img: group.img,
-                messages: this.group.messages
-              }).then((success) => {
-                this.loadingProvider.hide();
-                this.loadingProvider.showToast("Updated Successfully")
-              }).catch((error) => {
-                this.loadingProvider.hide();
-                this.loadingProvider.showToast("Something went wrong")
-
-              });
-            });
-          }
-        }
-      ]
-    }).then(r => r.present());
-  }
-
-  // Change group description.
-  setDescription() {
-    this.alert = this.alertCtrl.create({
-      header: 'Change Group Description',
-      message: "Please enter a new group description.",
-      inputs: [
-        {
-          name: 'description',
-          placeholder: 'Group Description',
-          value: this.group.description
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          handler: data => { }
-        },
-        {
-          text: 'Save',
-          handler: data => {
-            let description = data["description"];
-            if (this.group.description != description) {
-              this.loadingProvider.show();
-              // Add system message.
-              this.group.messages.push({
-                date: new Date().toString(),
-                sender: this.user.$key,
-                type: 'system',
-                message: this.user.name + ' has changed the group description.',
-                icon: 'md-clipboard'
-              });
-              // Update group on database.
-              this.dataProvider.getGroup(this.groupId).update({
-                description: description,
-                messages: this.group.messages
-              }).then((success) => {
-                this.loadingProvider.hide();
-                this.loadingProvider.showToast("Updated Successfully")
-
-              }).catch((error) => {
-                this.loadingProvider.hide();
-                this.loadingProvider.showToast("Something went wrong")
-              });
-            }
-          }
-        }
-      ]
-    }).then(r => r.present());
   }
 
   // Leave group.
@@ -346,47 +189,6 @@ export class GroupinfoPage implements OnInit {
         }
       ]
     }).then(r => r.present());
-  }
-
-  // Delete group.
-  deleteGroup() {
-    this.alert = this.alertCtrl.create({
-      header: 'Confirm Delete',
-      message: 'Are you sure you want to delete this group?',
-      buttons: [
-        {
-          text: 'Cancel'
-        },
-        {
-          text: 'Delete',
-          handler: data => {
-            let group = JSON.parse(JSON.stringify(this.group));
-            console.log(group);
-            // Delete all images of image messages.
-            group.messages.forEach((message) => {
-              if (message.type == 'image') {
-                console.log("Delete: " + message.url + " of " + group.$key);
-                this.imageProvider.deleteGroupImageFile(group.$key, message.url);
-              }
-            });
-
-            this.firestore.doc('/accounts/' + this.dataProvider.getCurrentUserId + '/groups/' + group.$key).delete().then(() => {
-              this.dataProvider.getGroup(group.$key).delete();
-            });
-            // Delete group image.
-            console.log("Delete: " + group.img);
-            this.imageProvider.deleteImageFile(group.img);
-            // this.navCtrl.popToRoot();
-            this.router.navigateByUrl('/')
-          }
-        }
-      ]
-    }).then(r => r.present());
-  }
-
-  // Add members.
-  addMembers() {
-    this.router.navigateByUrl('/addmembers/' + this.groupId);
   }
 
 }

@@ -1,0 +1,43 @@
+:host {
+    --page-margin: var(--app-narrow-margin);
+    --page-background: var(--app-background);
+ }
+ 
+ ion-searchbar {
+   --border-radius: 30px;
+ }
+
+.filters-toolbar {
+   --padding-start: var(--page-margin);
+   --padding-end: var(--page-margin);
+
+   .searchbar-row {
+     --ion-grid-column-padding: 0px;
+ 
+     .searchbar {
+       padding: 0px;
+       height:30px;
+       border-radius: 20px;
+     }
+ 
+     .call-to-action-col {
+       max-width: fit-content;
+       flex-shrink: 0;
+       flex-grow: 0;
+ 
+       display: flex;
+       justify-content: flex-end;
+ 
+       .filters-btn {
+         --padding-start: 6px;
+         --padding-end: 6px;
+ 
+         margin: 0px;
+         font-size: 15px;
+         // override Ionic fixed height
+         height: initial;
+       }
+     }
+   }
+
+ }

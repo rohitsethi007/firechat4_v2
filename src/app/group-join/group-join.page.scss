@@ -1,0 +1,66 @@
+:host {
+    --page-margin: var(--app-narrow-margin);
+    --page-background: var(--app-background);
+    --ion-font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+  }
+
+  .section {
+      width: 100%;
+ 
+  .heading {
+    padding: var(--page-margin);
+    padding-top: calc(var(--page-margin) * 2) ;
+    font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 19px;
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    text-align: center;
+    width: 100%;
+  }
+
+  .kind {
+    color: blue;
+  }
+
+  .safe {
+    color: orange;
+  }
+
+  .enjoy {
+    color: turquoise
+  }
+
+  .last {
+    color: royalblue;
+  }
+
+  .section-text {
+    padding: var(--page-margin) ;
+    font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    text-align: center;
+  }
+}
+
+.agree {
+  font-weight: bold;
+}
+
+.join {
+  width: 100%;
+  height: 40px;
+  font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  text-align: center;
+}

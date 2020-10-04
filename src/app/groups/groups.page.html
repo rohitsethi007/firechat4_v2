@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-title>Groups</ion-title>
     <ion-buttons slot="end">
       <ion-button routerLink="/newgroup">Create New</ion-button>
@@ -8,7 +8,40 @@
 </ion-header>
 
 <ion-content>
-  <div *ngIf="groups && groups.length > 0">
+  <ion-item class="no-top-padding" lines="none">
+  <ion-label class="no-top-padding"><b>Popular Categories</b></ion-label>
+  <a color="secondary" slot="end" class="link" routerLink="/newgroup">See All</a>
+</ion-item>
+  <ion-slides class="slides" [options]="{ slidesPerView: 'auto', spaceBetween: 5 }">
+    <ion-slide *ngFor="let category of categories" style="width: 250px; height:150px" (click)="searchGroupByCategory(category)">
+      <ion-col>
+        <ion-img style="pointer-events:none" src="{{category.img}}"></ion-img>
+        <!-- <ion-label class="slide-heading">Music</ion-label><br/>
+        <ion-label class="slide-subheading">250 members, 100 posts a week</ion-label><br/>
+        <ion-button color="secondary" fill="outline" class="join" >Join</ion-button> -->
+      </ion-col>
+    </ion-slide>
+  </ion-slides>
+  <ion-item-divider></ion-item-divider>
+  <ion-item lines="none">
+    <ion-label class="no-top-padding"><b>Suggested Groups</b></ion-label>
+    <a color="secondary" slot="end" class="link" routerLink="/newgroup">See All</a>
+  </ion-item>
+  <ion-list lines="none">
+    <ion-item text-wrap *ngFor="let group of groups" (click)="viewGroup(group)">
+      <ion-avatar slot="start">
+        <ion-img src="{{group.img}}"></ion-img>
+      </ion-avatar>
+      <ion-label class="toggle-text">
+          <ion-label class="ion-no-padding">{{group.name}}<br/>
+          <span class="group-subheading">{{group.members.length}} Members · <span *ngIf="group.posts">{{group.posts.length}}</span> <span *ngIf="!group.posts">0</span> posts</span></ion-label>
+        </ion-label>
+        <ion-button *ngIf="!group.isUserMember" slot="end" color="secondary"  fill="outline" class="join" (click)="joinGroup(group.key)" >Join</ion-button>
+        <ion-button *ngIf="group.isUserMember" slot="end" color="secondary" class="join" >Joined</ion-button>
+      </ion-item>
+  </ion-list>
+
+<!-- <div *ngIf="groups && groups.length > 0">
     <div class="listing-item" *ngFor="let group of groups">
       <ion-card (click)="viewGroup(group.key)">
       <div>
@@ -55,5 +88,5 @@
     </ion-card>
     </div>
 
-  </div>
+  </div> -->
 </ion-content>

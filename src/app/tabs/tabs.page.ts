@@ -17,6 +17,7 @@ export class TabsPage {
   groupsInfo: any;
   conversationList: any;
   conversationsInfo: any;
+  isSuperAdmin: false;
   // TabsPage
   // This is the page where we set our tabs.
   constructor(

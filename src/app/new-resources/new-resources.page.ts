@@ -10,8 +10,10 @@ import { ImageService } from '../services/image.service';
 import { Contacts } from '@ionic-native/contacts/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
+import * as firebase from 'firebase/app';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-new-resources',
@@ -21,6 +23,7 @@ import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validat
 export class NewResourcesPage implements OnInit {
   private resource: any;
   private title: any;
+  private user: any;
   private contactForm: FormGroup;
   private uploadForm: FormGroup;
   private weblinkForm: FormGroup;
@@ -77,7 +80,8 @@ export class NewResourcesPage implements OnInit {
     public contacts: Contacts,
     public geolocation: Geolocation,
     public imageProvider: ImageService,
-    private http: HttpClient
+    private http: HttpClient,
+    public firestore: AngularFirestore
   ) {
     this.groupId = this.route.snapshot.params.id;
 
@@ -116,33 +120,7 @@ export class NewResourcesPage implements OnInit {
     });
   }
 
-  ionViewDidEnter() {
-    if (this.step === 1) {
-    this.title = 'Select a group ...';
-    this.dataProvider.getGroups().snapshotChanges().subscribe((data: any) => {
-
-    this.groups = data.map(c => {
-          return { $key: c.payload.doc.id, ...c.payload.doc.data() };
-        });
-      });
-    } else {
-      this.tab = 'contact';
-      // Get group information
-      this.groupId = this.route.snapshot.params.id;
-      console.log('this.route.snapshot.params.id', this.route.snapshot.params.id);
-      this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-          this.group = group.payload.data();
-          this.postTags = [];
-          console.log('this.group', group.payload.data());
-          this.group.groupTags.forEach((element: any) => {
-            this.postTags.push({val: element, isChecked: false});
-          });
-          this.addContactTagControls();
-          this.addLinkTagControls();
-          this.addUploadTagControls();
-      });
-    }
-  }
+  ionViewDidEnter() { }
 
   addContactTagControls() {
     this.postTags.forEach((o, i) => {
@@ -167,6 +145,7 @@ export class NewResourcesPage implements OnInit {
 
   ngOnInit() { 
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((value: any) => {
+      this.user = value.payload.data();
       this.addedByUser = {
       addedByKey: value.payload.data().userId,
       addedByUsername: value.payload.data().username,
@@ -186,7 +165,59 @@ export class NewResourcesPage implements OnInit {
       totalReactionCount: 0,
       totalReviewCount: 0
     };
+
+      if (this.step === 1) {
+      this.title = 'Select a group ...';
+      // Get User Groups List
+      if (this.user.groups) {
+        this.firestore.collection('groups').ref
+        .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.groups)
+        .get().then((group: any) => {
+          this.groups = [];
+          group.forEach(g => {
+            let group: any;
+            group = g.data();
+            group.key = g.id;
+            this.addOrUpdateUserGroup(group);
+          });
+        });
+      }
+      } else {
+        this.tab = 'contact';
+        // Get group information
+        this.groupId = this.route.snapshot.params.id;
+        console.log('this.route.snapshot.params.id', this.route.snapshot.params.id);
+        this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+            this.group = group.payload.data();
+            this.postTags = [];
+            console.log('this.group', group.payload.data());
+            this.group.groupTags.forEach((element: any) => {
+              this.postTags.push({val: element, isChecked: false});
+            });
+            this.addContactTagControls();
+            this.addLinkTagControls();
+            this.addUploadTagControls();
+        });
+      }
     });
+  }
+
+  addOrUpdateUserGroup(group) {
+    if (!this.groups) {
+      this.groups = [group];
+    } else {
+      let index = -1;
+      for (let i = 0; i < this.groups.length; i++) {
+        if (this.groups[i].key == group.key) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        this.groups[index] = group;
+      } else {
+        this.groups.push(group);
+      }
+    }
   }
 
   segmentChanged($event) {

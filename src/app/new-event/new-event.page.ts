@@ -7,6 +7,8 @@ import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
 import { HttpClient } from '@angular/common/http';
 import { Camera } from '@ionic-native/camera/ngx';
+import * as firebase from 'firebase/app';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 import * as moment from 'moment';
 import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
@@ -19,6 +21,7 @@ import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validat
 export class NewEventPage implements OnInit {
   private title: any;
   private event: any;
+  private user: any;
   private eventForm: FormGroup;
   private postTags: any = [];
   private groupId: any;
@@ -65,6 +68,7 @@ export class NewEventPage implements OnInit {
     public camera: Camera,
     public actionSheet: ActionSheetController,
     public imageProvider: ImageService,
+    public firestore: AngularFirestore
   ) {
     this.groupId = this.route.snapshot.params.id;
 
@@ -95,30 +99,11 @@ export class NewEventPage implements OnInit {
     this.minDate = new Date().toISOString();
    }
 
-   ionViewDidEnter() {
-    if (this.step === 1) {
-    this.title = 'Select a group ...';
-    this.dataProvider.getGroups().snapshotChanges().subscribe((data: any) => {
-
-    this.groups = data.map(c => {
-          return { $key: c.payload.doc.id, ...c.payload.doc.data() };
-        });
-      });
-    } else {
-      this.title = 'Post';
-
-      this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-        this.group = group.payload.data();
-        this.group.groupTags.forEach((element: any) => {
-          this.postTags.push({val: element, isChecked: false});
-        });
-        this.addTagControls();
-      });   
-    }
-  }
+   ionViewDidEnter() {}
 
    ngOnInit() {
     this.dataProvider.getCurrentUser().snapshotChanges().subscribe((value: any) => {
+      this.user = value.payload.data();
       this.addedByUser = {
       addedByKey: value.payload.data().userId,
       addedByUsername: value.payload.data().username,
@@ -139,8 +124,54 @@ export class NewEventPage implements OnInit {
         totalReviewCount: 0,
         postMedia: []
     };
-    });
 
+    
+      if (this.step === 1) {
+      this.title = 'Select a group ...';
+      // Get User Groups List
+      if (this.user.groups) {
+        this.firestore.collection('groups').ref
+        .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.groups)
+        .get().then((group: any) => {
+          this.groups = [];
+          group.forEach(g => {
+            let group: any;
+            group = g.data();
+            group.key = g.id;
+            this.addOrUpdateUserGroup(group);
+          });
+        });
+        }
+      } else {
+        this.title = 'Poll';
+  
+        this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+          this.group = group.payload.data();
+          this.group.groupTags.forEach((element: any) => {
+            this.postTags.push({val: element, isChecked: false});
+          });
+          this.addTagControls();
+        });
+      }
+    });
+  }
+
+  addOrUpdateUserGroup(group) {
+    if (!this.groups) {
+      this.groups = [group];
+    } else {
+      let index = -1;
+      for (let i = 0; i < this.groups.length; i++) {
+        if (this.groups[i].key == group.key) {
+          index = i;
+        }
+      }
+      if (index > -1) {
+        this.groups[index] = group;
+      } else {
+        this.groups.push(group);
+      }
+    }
   }
 
   addTagControls() {

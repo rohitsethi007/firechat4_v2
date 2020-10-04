@@ -1,6 +1,6 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["userinfo-userinfo-module"],{
 
-/***/ "./node_modules/raw-loader/dist/cjs.js!./src/app/userinfo/userinfo.page.html":
+/***/ "M7cr":
 /*!***********************************************************************************!*\
   !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/userinfo/userinfo.page.html ***!
   \***********************************************************************************/
@@ -13,7 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/app/userinfo/userinfo.module.ts":
+/***/ "lgMC":
 /*!*********************************************!*\
   !*** ./src/app/userinfo/userinfo.module.ts ***!
   \*********************************************/
@@ -23,13 +23,13 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UserinfoPageModule", function() { return UserinfoPageModule; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm2015/common.js");
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm2015/router.js");
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic/angular */ "./node_modules/@ionic/angular/fesm2015/ionic-angular.js");
-/* harmony import */ var _userinfo_page__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./userinfo.page */ "./src/app/userinfo/userinfo.page.ts");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _userinfo_page__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./userinfo.page */ "tHi0");
 
 
 
@@ -45,7 +45,7 @@ const routes = [
 ];
 let UserinfoPageModule = class UserinfoPageModule {
 };
-UserinfoPageModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+UserinfoPageModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
         imports: [
             _angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"],
@@ -61,7 +61,7 @@ UserinfoPageModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
 
 /***/ }),
 
-/***/ "./src/app/userinfo/userinfo.page.scss":
+/***/ "sncI":
 /*!*********************************************!*\
   !*** ./src/app/userinfo/userinfo.page.scss ***!
   \*********************************************/
@@ -70,11 +70,11 @@ UserinfoPageModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = (":host {\n  --page-margin: var(--app-narrow-margin);\n  --page-background: var(--app-background);\n}\n\n.user-info {\n  margin: var(--page-margin) var(--page-margin) var(--page-margin) var(--page-margin);\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvdXNlcmluZm8vQzpcXFVzZXJzXFxyb2hpc2V0aGlcXERvY3VtZW50c1xcaW9uaWNcXGZpcmVjaGF0NF92Mi9zcmNcXGFwcFxcdXNlcmluZm9cXHVzZXJpbmZvLnBhZ2Uuc2NzcyIsInNyYy9hcHAvdXNlcmluZm8vdXNlcmluZm8ucGFnZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksdUNBQUE7RUFDQSx3Q0FBQTtBQ0NKOztBREVBO0VBQ0ksbUZBQUE7QUNDSiIsImZpbGUiOiJzcmMvYXBwL3VzZXJpbmZvL3VzZXJpbmZvLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIjpob3N0IHtcclxuICAgIC0tcGFnZS1tYXJnaW46IHZhcigtLWFwcC1uYXJyb3ctbWFyZ2luKTtcclxuICAgIC0tcGFnZS1iYWNrZ3JvdW5kOiB2YXIoLS1hcHAtYmFja2dyb3VuZCk7XHJcbiAgfVxyXG5cclxuLnVzZXItaW5mbyB7XHJcbiAgICBtYXJnaW46IHZhcigtLXBhZ2UtbWFyZ2luKSB2YXIoLS1wYWdlLW1hcmdpbikgdmFyKC0tcGFnZS1tYXJnaW4pIHZhcigtLXBhZ2UtbWFyZ2luKTtcclxuICAgIC51c2VyLWltZyB7XHJcbiAgXHJcbiAgICB9XHJcbn0iLCI6aG9zdCB7XG4gIC0tcGFnZS1tYXJnaW46IHZhcigtLWFwcC1uYXJyb3ctbWFyZ2luKTtcbiAgLS1wYWdlLWJhY2tncm91bmQ6IHZhcigtLWFwcC1iYWNrZ3JvdW5kKTtcbn1cblxuLnVzZXItaW5mbyB7XG4gIG1hcmdpbjogdmFyKC0tcGFnZS1tYXJnaW4pIHZhcigtLXBhZ2UtbWFyZ2luKSB2YXIoLS1wYWdlLW1hcmdpbikgdmFyKC0tcGFnZS1tYXJnaW4pO1xufSJdfQ== */");
+/* harmony default export */ __webpack_exports__["default"] = (":host {\n  --page-margin: var(--app-narrow-margin);\n  --page-background: var(--app-background);\n}\n\n.user-info {\n  margin: var(--page-margin) var(--page-margin) var(--page-margin) var(--page-margin);\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvdXNlcmluZm8vdXNlcmluZm8ucGFnZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksdUNBQUE7RUFDQSx3Q0FBQTtBQUNKOztBQUVBO0VBQ0ksbUZBQUE7QUFDSiIsImZpbGUiOiJzcmMvYXBwL3VzZXJpbmZvL3VzZXJpbmZvLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIjpob3N0IHtcclxuICAgIC0tcGFnZS1tYXJnaW46IHZhcigtLWFwcC1uYXJyb3ctbWFyZ2luKTtcclxuICAgIC0tcGFnZS1iYWNrZ3JvdW5kOiB2YXIoLS1hcHAtYmFja2dyb3VuZCk7XHJcbiAgfVxyXG5cclxuLnVzZXItaW5mbyB7XHJcbiAgICBtYXJnaW46IHZhcigtLXBhZ2UtbWFyZ2luKSB2YXIoLS1wYWdlLW1hcmdpbikgdmFyKC0tcGFnZS1tYXJnaW4pIHZhcigtLXBhZ2UtbWFyZ2luKTtcclxuICAgIC51c2VyLWltZyB7XHJcbiAgXHJcbiAgICB9XHJcbn0iXX0= */");
 
 /***/ }),
 
-/***/ "./src/app/userinfo/userinfo.page.ts":
+/***/ "tHi0":
 /*!*******************************************!*\
   !*** ./src/app/userinfo/userinfo.page.ts ***!
   \*******************************************/
@@ -84,15 +84,19 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UserinfoPage", function() { return UserinfoPage; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
-/* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/data.service */ "./src/app/services/data.service.ts");
-/* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/loading.service */ "./src/app/services/loading.service.ts");
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic/angular */ "./node_modules/@ionic/angular/fesm2015/ionic-angular.js");
-/* harmony import */ var _services_firebase_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../services/firebase.service */ "./src/app/services/firebase.service.ts");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm2015/router.js");
-/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! firebase */ "./node_modules/firebase/dist/index.cjs.js");
-/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(firebase__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _raw_loader_userinfo_page_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! raw-loader!./userinfo.page.html */ "M7cr");
+/* harmony import */ var _userinfo_page_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./userinfo.page.scss */ "sncI");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/data.service */ "EnSQ");
+/* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../services/loading.service */ "7ch9");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _services_firebase_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../services/firebase.service */ "Z2Br");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! firebase */ "iqUP");
+/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(firebase__WEBPACK_IMPORTED_MODULE_9__);
+
+
 
 
 
@@ -130,12 +134,12 @@ let UserinfoPage = class UserinfoPage {
             this.loadingProvider.hide();
         });
         // Get friends of current logged in user.
-        this.dataProvider.getUser(firebase__WEBPACK_IMPORTED_MODULE_7__["auth"]().currentUser.uid).snapshotChanges().subscribe((user) => {
+        this.dataProvider.getUser(firebase__WEBPACK_IMPORTED_MODULE_9__["auth"]().currentUser.uid).snapshotChanges().subscribe((user) => {
             if (user.payload.data() != null)
                 this.friends = user.payload.data().friends;
         });
         // Get requests of current logged in user.
-        this.dataProvider.getRequests(firebase__WEBPACK_IMPORTED_MODULE_7__["auth"]().currentUser.uid).snapshotChanges().subscribe(((requests) => {
+        this.dataProvider.getRequests(firebase__WEBPACK_IMPORTED_MODULE_9__["auth"]().currentUser.uid).snapshotChanges().subscribe(((requests) => {
             console.log(requests.payload.data());
             if (requests.payload.data() != null) {
                 this.friendRequests = requests.payload.data().friendRequests;
@@ -146,7 +150,7 @@ let UserinfoPage = class UserinfoPage {
     block() {
         this.loadingProvider.show();
         console.log("block function");
-        firebase__WEBPACK_IMPORTED_MODULE_7__["database"]().ref('accounts/' + firebase__WEBPACK_IMPORTED_MODULE_7__["auth"]().currentUser.uid + '/conversations/' + this.userId).update({
+        firebase__WEBPACK_IMPORTED_MODULE_9__["database"]().ref('accounts/' + firebase__WEBPACK_IMPORTED_MODULE_9__["auth"]().currentUser.uid + '/conversations/' + this.userId).update({
             blocked: true
         }).then(() => {
             this.loadingProvider.hide();
@@ -264,27 +268,27 @@ let UserinfoPage = class UserinfoPage {
     }
 };
 UserinfoPage.ctorParameters = () => [
-    { type: _angular_router__WEBPACK_IMPORTED_MODULE_6__["Router"] },
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["ModalController"] },
-    { type: _services_data_service__WEBPACK_IMPORTED_MODULE_2__["DataService"] },
-    { type: _services_loading_service__WEBPACK_IMPORTED_MODULE_3__["LoadingService"] },
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["AlertController"] },
-    { type: _services_firebase_service__WEBPACK_IMPORTED_MODULE_5__["FirebaseService"] },
-    { type: _angular_router__WEBPACK_IMPORTED_MODULE_6__["ActivatedRoute"] }
+    { type: _angular_router__WEBPACK_IMPORTED_MODULE_8__["Router"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_6__["ModalController"] },
+    { type: _services_data_service__WEBPACK_IMPORTED_MODULE_4__["DataService"] },
+    { type: _services_loading_service__WEBPACK_IMPORTED_MODULE_5__["LoadingService"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_6__["AlertController"] },
+    { type: _services_firebase_service__WEBPACK_IMPORTED_MODULE_7__["FirebaseService"] },
+    { type: _angular_router__WEBPACK_IMPORTED_MODULE_8__["ActivatedRoute"] }
 ];
-UserinfoPage = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
+UserinfoPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_3__["Component"])({
         selector: 'app-userinfo',
-        template: tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(/*! raw-loader!./userinfo.page.html */ "./node_modules/raw-loader/dist/cjs.js!./src/app/userinfo/userinfo.page.html")).default,
-        styles: [tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(/*! ./userinfo.page.scss */ "./src/app/userinfo/userinfo.page.scss")).default]
+        template: _raw_loader_userinfo_page_html__WEBPACK_IMPORTED_MODULE_1__["default"],
+        styles: [_userinfo_page_scss__WEBPACK_IMPORTED_MODULE_2__["default"]]
     }),
-    tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_6__["Router"],
-        _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["ModalController"],
-        _services_data_service__WEBPACK_IMPORTED_MODULE_2__["DataService"],
-        _services_loading_service__WEBPACK_IMPORTED_MODULE_3__["LoadingService"],
-        _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["AlertController"],
-        _services_firebase_service__WEBPACK_IMPORTED_MODULE_5__["FirebaseService"],
-        _angular_router__WEBPACK_IMPORTED_MODULE_6__["ActivatedRoute"]])
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"])("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_8__["Router"],
+        _ionic_angular__WEBPACK_IMPORTED_MODULE_6__["ModalController"],
+        _services_data_service__WEBPACK_IMPORTED_MODULE_4__["DataService"],
+        _services_loading_service__WEBPACK_IMPORTED_MODULE_5__["LoadingService"],
+        _ionic_angular__WEBPACK_IMPORTED_MODULE_6__["AlertController"],
+        _services_firebase_service__WEBPACK_IMPORTED_MODULE_7__["FirebaseService"],
+        _angular_router__WEBPACK_IMPORTED_MODULE_8__["ActivatedRoute"]])
 ], UserinfoPage);
 
 

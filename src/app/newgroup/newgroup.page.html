@@ -24,41 +24,36 @@
         </ion-col>
         </ion-row>
       <ion-row>
-        <ion-col>
+        <ion-col> 
         <form [formGroup]="myForm">
           <ion-list style="margin:0;" lines="none">
             <ion-item class="input-item">
               <ion-label position="stacked">Title:</ion-label>
               <ion-input formControlName="groupName" type="text" [(ngModel)]="name" placeholder="Name of Group">
               </ion-input>
-              <div *ngFor="let validation of errorMessages.groupName">
-                <p class="error"
-                  *ngIf="myForm.get('groupName').hasError(validation.type) && (myForm.get('groupName').dirty || myForm.get('groupName').touched || submitAttempt) ">
-                  {{validation.message}}
-                </p>
-              </div>
+            </ion-item>
+            <ion-item class="input-item">
+              <ion-label position="stacked">Image Path:</ion-label>
+              <ion-input formControlName="img" type="text" [(ngModel)]="img" placeholder="Image Path">
+              </ion-input>
             </ion-item>
             <ion-item>
               <ion-label position="stacked">Description</ion-label>
               <ion-textarea formControlName="groupDescription" rows="3" [(ngModel)]="description"
                 placeholder="Describe this Group"></ion-textarea>
-              <div *ngFor="let validation of errorMessages.groupDescription">
-                <p class="error"
-                  *ngIf="myForm.get('groupDescription').hasError(validation.type) && (myForm.get('groupDescription').dirty || myForm.get('groupDescription').touched || submitAttempt) ">
-                  {{validation.message}}
-                </p>
-              </div>
             </ion-item>
             <ion-item>
               <ion-label position="stacked">Group Tags</ion-label>
               <ion-textarea formControlName="groupTags" rows="3" [(ngModel)]="groupTags"
                 placeholder="Add Group Tags in each line."></ion-textarea>
-              <div *ngFor="let validation of errorMessages.groupTags">
-                <p class="error"
-                  *ngIf="myForm.get('groupTags').hasError(validation.type) && (myForm.get('groupTags').dirty || myForm.get('groupTags').touched || submitAttempt) ">
-                  {{validation.message}}
-                </p>
-              </div>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked">Category</ion-label>
+              <ion-label>{{category.text}}</ion-label>
+              <ion-button (click)="showPicker()">
+                Select Category
+            </ion-button>
+
             </ion-item>
           </ion-list>
         </form>

@@ -633,8 +633,8 @@ export class GroupPage implements OnInit {
         if (reactions) {
         let foundSmiley = false;
         if (post.reactions !== undefined) {
-            foundSmiley = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                          && el.reactionType === 'Thanks');
+            foundSmiley = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()).reactionType
+            .some(r => r === 'Thanks');
           }
         if (foundSmiley) {
             post.showSmiley = true;
@@ -644,8 +644,8 @@ export class GroupPage implements OnInit {
           // Check for Hugs
         let foundHug = false;
         if (post.reactions !== undefined) {
-            foundHug = post.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                        && el.reactionType === 'Hug');
+            foundHug = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()).reactionType
+            .some(r => r === 'Hug');
           }
         if (foundHug) {
             post.showHug = true;

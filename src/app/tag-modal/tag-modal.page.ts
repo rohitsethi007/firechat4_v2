@@ -14,7 +14,7 @@ export class TagModalPage implements OnInit {
   constructor(
     private modal: ModalController,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router 
     ) { 
     this.form = [];
 

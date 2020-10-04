@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar class="filters-toolbar">
+    <ion-row class="searchbar-row" align-items-center>
+    <ion-col>
+        <ion-searchbar mode="ios" class="searchbar" placeholder="Search..."></ion-searchbar>
+      </ion-col>
+      <ion-col class="call-to-action-col">
+        <ion-button fill="clear" color="secondary" class="filters-btn" routerLink="/messages">
+          <ion-icon slot="icon-only" name="notifications-outline" ></ion-icon>
+          <ion-badge *ngIf="getUnreadMessagesCount() != null">{{getUnreadMessagesCount()}}</ion-badge>
+        </ion-button>
+      </ion-col>
+      <ion-col class="call-to-action-col">
+        <ion-button fill="clear" color="secondary" class="filters-btn" (click)="showGroupOptions()">
+          <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+
+<ion-content>
+
+</ion-content>

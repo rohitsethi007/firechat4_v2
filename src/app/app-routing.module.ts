@@ -8,6 +8,9 @@ const routes: Routes = [
     path: 'app',
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
   },
+  { path: 'tabs',
+  loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule) 
+},
   { path: 'friends', loadChildren: './friends/friends.module#FriendsPageModule', canActivate: [AuthGuardService] },
   { path: 'group/:id', loadChildren: './group/group.module#GroupPageModule', canActivate: [AuthGuardService] },
   { path: 'addmembers/:id', loadChildren: './addmembers/addmembers.module#AddmembersPageModule',canActivate: [AuthGuardService] },
@@ -41,6 +44,16 @@ const routes: Routes = [
   { path: 'feed', loadChildren: './feed/feed.module#FeedPageModule' },
   { path: 'user-profile-modal', loadChildren: './user-profile-modal/user-profile-modal.module#UserProfileModalPageModule' },
   { path: 'search-modal', loadChildren: './search-modal/search-modal.module#SearchModalPageModule' },
+  { path: 'admin-categories', loadChildren: './admin-categories/admin-categories.module#AdminCategoriesPageModule' },
+  { path: 'new-category-modal', loadChildren: './new-category-modal/new-category-modal.module#NewCategoryModalPageModule' },
+  { path: 'categories', loadChildren: './categories/categories.module#CategoriesPageModule' },
+  { path: 'group-search', loadChildren: './group-search/group-search.module#GroupSearchPageModule' },
+  { path: 'group-join/:id', loadChildren: './group-join/group-join.module#GroupJoinPageModule' },
+  { path: 'feed-search', loadChildren: './feed-search/feed-search.module#FeedSearchPageModule' },
+
+
+
+
 
 
 ];

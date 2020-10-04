@@ -14,8 +14,17 @@ export class ReactionListModalPage implements OnInit {
     private navParam: NavParams
   ) {
     let r = this.navParam.data.reactions;
+  
     this.items = Object.keys(r).map(function(e) {
       return r[e];
+    });
+    this.items.forEach(i => {
+      if (i.reactionType.some(el => el === 'Thanks')) {
+        i.reactionThanks = true;
+      }
+      if (i.reactionType.some(el => el === 'Hug')) {
+        i.reactionHug = true;
+      }
     });
   }
 
@@ -25,5 +34,6 @@ export class ReactionListModalPage implements OnInit {
   dismissModal() {
     this.modal.dismiss();
   }
+
 
 }
