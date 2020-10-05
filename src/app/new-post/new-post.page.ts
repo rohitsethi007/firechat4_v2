@@ -178,52 +178,55 @@ export class NewPostPage implements OnInit {
     this.post.postTags = this.postTags;
     this.post.groupId = this.groupId;
     this.post.groupName = this.group.name;
-    this.post.postMedia = this.postMedia;
-    // get specific data for type post
-    this.post.data = {
-        message: this.postForm.value.message
-      };
+
+    this.imageProvider.uploadPostPhotos(this.postMedia).then((imageUrls) => {
+      this.post.postMedia = imageUrls;
+      // get specific data for type post
+      this.post.data = {
+      message: this.postForm.value.message
+    };
 
 
-    // Add post to database.
-    this.dataProvider.addPost(this.post).then((success) => {
-        const postId = success.id;
-        this.postId = postId;
+  // Add post to database.
+      this.dataProvider.addPost(this.post).then((success) => {
+      const postId = success.id;
+      this.postId = postId;
 
-        // Update group data on the database.
-        if (this.group.posts === undefined) {
-          this.group.posts = [];
-        }
-        this.group.posts.push(this.postId);
-        this.dataProvider.getGroup(this.groupId).update({
-          posts: this.group.posts
-        });
+      // Update group data on the database.
+      if (this.group.posts === undefined) {
+        this.group.posts = [];
+      }
+      this.group.posts.push(this.postId);
+      this.dataProvider.getGroup(this.groupId).update({
+        posts: this.group.posts
+      });
 
-        // Update user notifications.
-        if (!this.userNotifications) {
-          this.userNotifications = [this.postId];
-        } else {
-          this.userNotifications.push(this.postId);
-        }
-        this.dataProvider.getUser(this.addedByUser.addedByKey).update({
-          userNotifications: this.userNotifications
-        });
+      // Update user notifications.
+      if (!this.userNotifications) {
+        this.userNotifications = [this.postId];
+      } else {
+        this.userNotifications.push(this.postId);
+      }
+      this.dataProvider.getUser(this.addedByUser.addedByKey).update({
+        userNotifications: this.userNotifications
+      });
 
-        // Update user activity.
-        if (!this.userPosts) {
-          this.userPosts = [this.postId];
-        } else {
-          this.userPosts.push(this.postId);
-        }
-        this.dataProvider.getUser(this.addedByUser.addedByKey).update({
-          userPosts: this.userPosts
-        });
-      }).then(() => {
-        // Back.
-        this.loadingProvider.hide();
-        this.router.navigateByUrl('tabs/tab1');
-      });;
+      // Update user activity.
+      if (!this.userPosts) {
+        this.userPosts = [this.postId];
+      } else {
+        this.userPosts.push(this.postId);
+      }
+      this.dataProvider.getUser(this.addedByUser.addedByKey).update({
+        userPosts: this.userPosts
+      });
+    }).then(() => {
+      // Back.
+      this.loadingProvider.hide();
+      this.router.navigateByUrl('tabs/tab1');
+    });;
 
+    });
    }
 
    selectGroup(groupId) {
