@@ -53,6 +53,7 @@ export class GroupPage implements OnInit {
   private eventTagsString: any;
   private alert: any;
   private loggedInUserId: any;
+  private loggedInUser: any;
   notifications: any = [];
 
   private toggled = false;
@@ -121,12 +122,15 @@ export class GroupPage implements OnInit {
     this.searchPoll = '';
     this.searchEvent = '';
 
-    // Get user information for system message sent to the group when a member was added.
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
-      this.notifications = user.payload.data().notifications;
-      this.user  = user.payload.data();
-  });
-    this.getGroupDetailsandPosts();
+    this.loggedInUserId = firebase.auth().currentUser.uid;
+    // Get Posts
+    this.dataProvider.getCurrentUser().get().subscribe((user) => {
+      // this.userReactions = user.data().userReactions;
+      // this.userNotifications = user.data().userNotifications;
+      this.loggedInUser = user.data();
+      this.getGroupDetailsandPosts();
+    });
+
 
     this.loadingProvider.hide();
   }
@@ -263,7 +267,6 @@ export class GroupPage implements OnInit {
       buttons: [{
         text: 'Camera',
         handler: () => {
-          console.log('take photo');
           this.imageProvider.uploadGroupPhotoMessage(this.groupId, this.camera.PictureSourceType.CAMERA).then((url) => {
             // Process image message.
             this.sendPhotoMessage(url);
@@ -272,7 +275,6 @@ export class GroupPage implements OnInit {
       }, {
         text: 'Photo Library',
         handler: () => {
-          console.log('Access gallery');
           this.imageProvider.uploadGroupPhotoMessage(this.groupId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
             // Process image message.
             this.sendPhotoMessage(url);
@@ -281,7 +283,6 @@ export class GroupPage implements OnInit {
       }, {
         text: 'Video',
         handler: () => {
-          console.log('Video');
           this.imageProvider.uploadGroupVideoMessage(this.groupId).then(url => {
             this.sendVideoMessage(url);
           });
@@ -289,7 +290,6 @@ export class GroupPage implements OnInit {
       }, {
         text: 'Location',
         handler: () => {
-          console.log('Location');
           this.geolocation.getCurrentPosition({
             timeout: 2000
           }).then(res => {
@@ -301,39 +301,31 @@ export class GroupPage implements OnInit {
               buttons: [{
                 text: 'cancel',
                 handler: () => {
-                  console.log('canceled');
                 }
               }, {
                 text: 'Share',
                 handler: () => {
-                  console.log('share');
                   this.message = locationMessage + '<br>' + mapUrl;
                   this.send('location');
                 }
               }]
             }).then(r => r.present());
           }, locationErr => {
-            console.log('Location Error' + JSON.stringify(locationErr));
           });
         }
       }, {
         text: 'Contact',
         handler: () => {
-          console.log('Share contact');
           this.contacts.pickContact().then(data => {
-            console.log(data.displayName);
-            console.log(data.phoneNumbers[0].value);
             this.message = '<b>Name:</b> ' + data.displayName + '<br><b>Mobile:</b> <a href=\'tel:' + data.phoneNumbers[0].value + '\'>' + data.phoneNumbers[0].value + '</a>';
             this.send('contact');
           }, err => {
-            console.log(err);
           });
         }
       }, {
         text: 'cancel',
         role: 'cancel',
         handler: () => {
-          console.log('cancelled');
         }
       }]
     }).then(r => r.present());
@@ -382,13 +374,9 @@ export class GroupPage implements OnInit {
 
   // Controller Functions
   onPress($event) {
-    console.log('onPress', $event);
   }
 
   onPressUp(event, message) {
-    console.log('onPressUp', event);
-    console.log(event.center.x);
-    console.log(event.center.y);
     this.presentPopover(event, message);
   }
 
@@ -462,8 +450,6 @@ export class GroupPage implements OnInit {
 
     this.groupId = this.route.snapshot.params.id;
     this.subscription = this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group: any) => {
-      console.log('group:', group);
-
       this.group = group.payload.data();
       this.title = group.payload.data().name;
 
@@ -484,7 +470,6 @@ export class GroupPage implements OnInit {
           let messages = messagesRes.payload.data();
           if (messages == null || messages == undefined) { messages = []; }
 
-          console.log(this.messages);
           if (this.messages != null && this.messages != undefined) {
             // Just append newly added messages to the bottom of the view.
 
@@ -503,7 +488,6 @@ export class GroupPage implements OnInit {
             // Get all messages, this will be used as reference object for messagesToShow.
             this.messages = [];
             messages.forEach((message) => {
-              console.log(message);
               this.dataProvider.getUser(message.sender).snapshotChanges().subscribe((user: any) => {
                 if (user.key != null) {
                   message.avatar = user.payload.data().img;
@@ -588,7 +572,7 @@ export class GroupPage implements OnInit {
     this.firstDataSetPost.onSnapshot((po) => {
       this.lastDataSetPost = po.docs[po.docs.length - 1];
       this.posts = [];
-        this.loadEachPostData(po);
+      this.loadEachPostData(po);
       });
     });
 
@@ -630,11 +614,11 @@ export class GroupPage implements OnInit {
       });
 
         // Check for Thanks
-        if (reactions) {
+        if (reactions.length > 0) {
         let foundSmiley = false;
         if (post.reactions !== undefined) {
-            foundSmiley = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()).reactionType
-            .some(r => r === 'Thanks');
+            let r = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId());
+            foundSmiley = r.reactionType.some(r => r === 'Thanks');
           }
         if (foundSmiley) {
             post.showSmiley = true;
@@ -644,8 +628,8 @@ export class GroupPage implements OnInit {
           // Check for Hugs
         let foundHug = false;
         if (post.reactions !== undefined) {
-            foundHug = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()).reactionType
-            .some(r => r === 'Hug');
+            let r = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId())
+            foundHug = r.reactionType.some(r => r === 'Hug');
           }
         if (foundHug) {
             post.showHug = true;
@@ -660,7 +644,6 @@ export class GroupPage implements OnInit {
   }
 
   addUpdateOrRemoveMember(member) {
-    console.log('member',member);
     if (this.group) {
       if (this.group.members.indexOf(member.$key) > -1) {
         // User exists in the group.
@@ -755,7 +738,6 @@ export class GroupPage implements OnInit {
   }
 
   viewPost(post) {
-    console.log('postID: ' + post.key);
     this.router.navigateByUrl('post/' + post.key);
 
   }
@@ -1224,24 +1206,46 @@ export class GroupPage implements OnInit {
       postIndex = this.resources.findIndex(el => el.key ===  post.key);
       p = this.resources[postIndex];
     }
-    this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-      if (account) {
-      let reaction = {
-        key: '',
+    const r = p.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId());
+
+    if (!r) {
+      const react = {
         dateCreated: new Date(),
         addedByUser: {
                       addedByKey: this.dataProvider.getCurrentUserId(),
-                      addedByUsername: account.data().username,
-                      addedByImg: account.data().img
+                      addedByUsername: this.loggedInUser.username,
+                      addedByImg: this.loggedInUser.img
                     },
-        reactionType
-    };
+        reactionType: [reactionType]
+      };
 
-      if (postIndex >= 0) {
-      this.dataProvider.updatePostReactions(post.key, reaction);
+      this.dataProvider.addPostReactions(post.key, react).then(() => {
+        // // Update user notifications.
+        // if (!this.userNotifications.some(p => p !== this.postId)) {
+        //   this.userNotifications.push(this.postId);
+        //   this.dataProvider.getUser(this.loggedInUserId).update({
+        //     userNotifications: this.userNotifications
+        //   });
+        // }
+
+        // // Update user activity.
+        // if (!this.userReactions && this.userReactions.some(p => p !== this.postId)) {
+        //   this.userReactions.push(this.postId);
+        //   this.dataProvider.getUser(this.loggedInUserId).update({
+        //     userReactions: this.userReactions
+        //   });
+        // }
+      });
+    } else {
+      this.firestore.collection('posts').doc(post.key).collection('reactions').doc(r.key).update({
+        reactionType: firebase.firestore.FieldValue.arrayUnion(reactionType)
+    }).then(() => {
+      const increment = firebase.firestore.FieldValue.increment(1);
+      this.firestore.collection('posts').doc(post.key).update({
+        totalReactionCount : increment
+      });
+    });
     }
-  }
-  });
   }
 
   removePostReaction(post, reactionType) {
@@ -1263,16 +1267,28 @@ export class GroupPage implements OnInit {
 
     const found = false;
     if (p.reactions !== undefined) {
-      let values = Object.keys(p.reactions).map(function(e) {
+      const values = Object.keys(p.reactions).map( function(e) {
         return p.reactions[e];
       });
 
-      const reaction = post.reactions.find(
-        el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
-        && el.reactionType === reactionType);
+      const reaction = p.reactions.find(
+        el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId());
 
-      console.log('reaction.key', reaction);
-      this.dataProvider.removePostReaction(post.key, reaction.key);
+      if (reaction.reactionType.length === 1 
+        && reaction.reactionType.some(e => e === reactionType)) {
+        this.dataProvider.removePostReaction(post.key, reaction.key);
+      } else {
+        // reaction.reactionType = reaction.reactionType.filter(x => x !== reactionType);
+        // this.dataProvider.updatePostReactions(post.key, reaction, true);
+        this.firestore.collection('posts').doc(post.key).collection('reactions').doc(reaction.key).update({
+          reactionType: firebase.firestore.FieldValue.arrayRemove(reactionType)
+      }).then(() => {
+        const increment = firebase.firestore.FieldValue.increment(-1);
+        this.firestore.collection('posts').doc(post.key).update({
+          totalReactionCount : increment
+        });
+      });
+      }
     }
   }
 
@@ -1375,7 +1391,6 @@ export class GroupPage implements OnInit {
       icon: 'close',
       role: 'cancel',
       handler: () => {
-        console.log('Cancel clicked');
       }
     };
 

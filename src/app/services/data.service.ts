@@ -189,9 +189,7 @@ export class DataService {
   }
 
   updateResourceReviews(resourceKey, review) {
-   // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
    this.firestore.doc('resources/' + resourceKey).collection('reviews').add(review);
-   // this.afdb.list('/resources/' + resourceKey + '/reviews/').push(review);
   }
 
   addFirstResourceReview(resourceKey, review) {
@@ -200,9 +198,6 @@ export class DataService {
     this.firestore.doc('resources/' + resourceKey).update({
       reviews: r
     });
-    // this.afdb.object('/resources/' + resourceKey).update( {
-    //   reviews: r
-    // });
     this.updateResourceReviews(resourceKey, review);
   }
 
@@ -236,15 +231,9 @@ export class DataService {
     });
   }
 
-  updatePostReactions(postKey, reaction, removed) {
+  updatePostReactions(postKey, reaction) {
     return this.firestore.collection('posts').doc(postKey).collection('reactions').doc(reaction.key).update(reaction).then(() => {
-      let inc: number;
-      if (removed) {
-        inc = -1;
-      } else {
-        inc = 1;
-      }
-      const increment = firebase.firestore.FieldValue.increment(inc);
+      const increment = firebase.firestore.FieldValue.increment(1);
       this.firestore.collection('posts').doc(postKey).update({
         totalReactionCount : increment
       });

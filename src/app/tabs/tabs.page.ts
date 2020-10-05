@@ -28,13 +28,13 @@ export class TabsPage {
   }
 
   ionViewDidEnter() {
-    // Get friend requests count.
-    this.dataProvider.getRequests(this.dataProvider.getCurrentUserId()).snapshotChanges().subscribe((requestsRes: any) => {
-      if (requestsRes.payload.exists
-        && requestsRes.payload.data().friendRequests !== null) {
-        this.friendRequestCount = requestsRes.payload.data().friendRequests.length;
-      } else { this.friendRequestCount = null; }
-      });
+    // // Get friend requests count.
+    // this.dataProvider.getRequests(this.dataProvider.getCurrentUserId()).snapshotChanges().subscribe((requestsRes: any) => {
+    //   if (requestsRes.payload.exists
+    //     && requestsRes.payload.data().friendRequests !== null) {
+    //     this.friendRequestCount = requestsRes.payload.data().friendRequests.length;
+    //   } else { this.friendRequestCount = null; }
+    //   });
   }
 
   viewProfile() {
