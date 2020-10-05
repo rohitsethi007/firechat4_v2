@@ -1,6 +1,6 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["hardware-back-button-5afe3cb0-js"],{
 
-/***/ "./node_modules/@ionic/core/dist/esm/hardware-back-button-5afe3cb0.js":
+/***/ "XRsP":
 /*!****************************************************************************!*\
   !*** ./node_modules/@ionic/core/dist/esm/hardware-back-button-5afe3cb0.js ***!
   \****************************************************************************/

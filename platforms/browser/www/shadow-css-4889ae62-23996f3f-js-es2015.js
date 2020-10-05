@@ -1,6 +1,6 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["shadow-css-4889ae62-23996f3f-js"],{
 
-/***/ "./node_modules/@ionic/core/dist/esm/shadow-css-4889ae62-23996f3f.js":
+/***/ "94vs":
 /*!***************************************************************************!*\
   !*** ./node_modules/@ionic/core/dist/esm/shadow-css-4889ae62-23996f3f.js ***!
   \***************************************************************************/

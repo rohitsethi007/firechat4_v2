@@ -65,6 +65,9 @@
     },
     "cordova-plugin-fcm-with-dependecy-updated": {
       "PACKAGE_NAME": "com.codesundar.ionicchat"
+    },
+    "cordova-plugin-telerik-imagepicker": {
+      "PACKAGE_NAME": "com.socialshare"
     }
   },
   "dependent_plugins": {

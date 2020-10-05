@@ -484,7 +484,7 @@ export class ImageService {
             let process = res.bytesTransferred / res.totalBytes * 100;
             console.log(process);
             this.loadingProvider.hide();
-            uploadRef.getDownloadURL().then(url => {
+            uploadRef.getDownloadURL().then(url => { 
               resolve(url);
             })
 

@@ -1,83 +1,6 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["addmembers-addmembers-module"],{
 
-/***/ "./node_modules/raw-loader/dist/cjs.js!./src/app/addmembers/addmembers.page.html":
-/*!***************************************************************************************!*\
-  !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/addmembers/addmembers.page.html ***!
-  \***************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-header>\r\n  <ion-toolbar color=\"primart\">\r\n    <ion-buttons slot=\"start\">\r\n      <ion-back-button></ion-back-button>\r\n    </ion-buttons>\r\n    <ion-title>Add Memebers</ion-title>\r\n    <ion-buttons slot=\"end\">\r\n      <ion-button (click)=\"done()\">Done</ion-button>\r\n    </ion-buttons>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n  <!-- All friends already in the group. -->\r\n  <div class=\"empty-list\" *ngIf=\"friends && friends.length == 0\">\r\n    <h1>\r\n      <ion-icon name=\"md-contacts\"></ion-icon>\r\n    </h1>\r\n    <p>Uh-oh! Sorry but your friends are already a member of this group.</p>\r\n  </div>\r\n  <!-- Add/Cancel Add friends to the group. -->\r\n  <ion-list lines=\"none\" *ngIf=\"friends && friends.length > 0\">\r\n    <ion-searchbar [(ngModel)]=\"searchFriend\" placeholder=\"Search for friend or username\" showCancelButton=\"true\"\r\n      cancelButtonText=\"Done\"></ion-searchbar>\r\n    <ion-item *ngFor=\"let friend of friends | friendFilter:searchFriend\" (click)=\"addOrRemove(friend)\">\r\n\r\n      <ion-avatar slot=\"start\">\r\n        <img src=\"{{friend.img}}\" onError=\"this.src='./assets/images/default-dp.png'\">\r\n      </ion-avatar>\r\n      <ion-label>\r\n        <ion-text>\r\n          <h2>{{friend.name}}</h2>\r\n        </ion-text>\r\n        <ion-text>\r\n          <p>@{{friend.username}}</p>\r\n        </ion-text>\r\n      </ion-label>\r\n      <ion-button size=\"small\" slot=\"end\" fill=\"outline\" (click)=\"add(friend); $event.stopPropagation();\"\r\n        *ngIf=\"!isAdded(friend)\">Add</ion-button>\r\n      <ion-button size=\"small\" slot=\"end\" fill=\"outline\" (click)=\"remove(friend); $event.stopPropagation();\"\r\n        *ngIf=\"isAdded(friend)\">Remove</ion-button>\r\n    </ion-item>\r\n  </ion-list>\r\n</ion-content>");
-
-/***/ }),
-
-/***/ "./src/app/addmembers/addmembers.module.ts":
-/*!*************************************************!*\
-  !*** ./src/app/addmembers/addmembers.module.ts ***!
-  \*************************************************/
-/*! exports provided: AddmembersPageModule */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddmembersPageModule", function() { return AddmembersPageModule; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm2015/common.js");
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm2015/router.js");
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic/angular */ "./node_modules/@ionic/angular/fesm2015/ionic-angular.js");
-/* harmony import */ var _addmembers_page__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./addmembers.page */ "./src/app/addmembers/addmembers.page.ts");
-/* harmony import */ var _services_share_module__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../services/share.module */ "./src/app/services/share.module.ts");
-
-
-
-
-
-
-
-
-const routes = [
-    {
-        path: '',
-        component: _addmembers_page__WEBPACK_IMPORTED_MODULE_6__["AddmembersPage"]
-    }
-];
-let AddmembersPageModule = class AddmembersPageModule {
-};
-AddmembersPageModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
-        imports: [
-            _angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"],
-            _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormsModule"],
-            _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["IonicModule"],
-            _services_share_module__WEBPACK_IMPORTED_MODULE_7__["SharedModule"],
-            _angular_router__WEBPACK_IMPORTED_MODULE_4__["RouterModule"].forChild(routes)
-        ],
-        declarations: [_addmembers_page__WEBPACK_IMPORTED_MODULE_6__["AddmembersPage"]]
-    })
-], AddmembersPageModule);
-
-
-
-/***/ }),
-
-/***/ "./src/app/addmembers/addmembers.page.scss":
-/*!*************************************************!*\
-  !*** ./src/app/addmembers/addmembers.page.scss ***!
-  \*************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2FkZG1lbWJlcnMvYWRkbWVtYmVycy5wYWdlLnNjc3MifQ== */");
-
-/***/ }),
-
-/***/ "./src/app/addmembers/addmembers.page.ts":
+/***/ "0G1C":
 /*!***********************************************!*\
   !*** ./src/app/addmembers/addmembers.page.ts ***!
   \***********************************************/
@@ -87,13 +10,17 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddmembersPage", function() { return AddmembersPage; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm2015/router.js");
-/* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/data.service */ "./src/app/services/data.service.ts");
-/* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/loading.service */ "./src/app/services/loading.service.ts");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/fire/firestore */ "./node_modules/@angular/fire/firestore/es2015/index.js");
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic/angular */ "./node_modules/@ionic/angular/fesm2015/ionic-angular.js");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _raw_loader_addmembers_page_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! raw-loader!./addmembers.page.html */ "9hWg");
+/* harmony import */ var _addmembers_page_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./addmembers.page.scss */ "VtPE");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../services/data.service */ "EnSQ");
+/* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../services/loading.service */ "7ch9");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+
+
 
 
 
@@ -297,26 +224,103 @@ let AddmembersPage = class AddmembersPage {
     }
 };
 AddmembersPage.ctorParameters = () => [
-    { type: _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"] },
-    { type: _angular_router__WEBPACK_IMPORTED_MODULE_2__["ActivatedRoute"] },
-    { type: _services_data_service__WEBPACK_IMPORTED_MODULE_3__["DataService"] },
-    { type: _services_loading_service__WEBPACK_IMPORTED_MODULE_4__["LoadingService"] },
-    { type: _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__["AngularFirestore"] },
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_6__["AlertController"] }
+    { type: _angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"] },
+    { type: _angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"] },
+    { type: _services_data_service__WEBPACK_IMPORTED_MODULE_5__["DataService"] },
+    { type: _services_loading_service__WEBPACK_IMPORTED_MODULE_6__["LoadingService"] },
+    { type: _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_7__["AngularFirestore"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_8__["AlertController"] }
 ];
-AddmembersPage = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
+AddmembersPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_3__["Component"])({
         selector: 'app-addmembers',
-        template: tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(/*! raw-loader!./addmembers.page.html */ "./node_modules/raw-loader/dist/cjs.js!./src/app/addmembers/addmembers.page.html")).default,
-        styles: [tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(/*! ./addmembers.page.scss */ "./src/app/addmembers/addmembers.page.scss")).default]
+        template: _raw_loader_addmembers_page_html__WEBPACK_IMPORTED_MODULE_1__["default"],
+        styles: [_addmembers_page_scss__WEBPACK_IMPORTED_MODULE_2__["default"]]
     }),
-    tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"],
-        _angular_router__WEBPACK_IMPORTED_MODULE_2__["ActivatedRoute"],
-        _services_data_service__WEBPACK_IMPORTED_MODULE_3__["DataService"],
-        _services_loading_service__WEBPACK_IMPORTED_MODULE_4__["LoadingService"],
-        _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__["AngularFirestore"],
-        _ionic_angular__WEBPACK_IMPORTED_MODULE_6__["AlertController"]])
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"])("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"],
+        _angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"],
+        _services_data_service__WEBPACK_IMPORTED_MODULE_5__["DataService"],
+        _services_loading_service__WEBPACK_IMPORTED_MODULE_6__["LoadingService"],
+        _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_7__["AngularFirestore"],
+        _ionic_angular__WEBPACK_IMPORTED_MODULE_8__["AlertController"]])
 ], AddmembersPage);
+
+
+
+/***/ }),
+
+/***/ "9hWg":
+/*!***************************************************************************************!*\
+  !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/addmembers/addmembers.page.html ***!
+  \***************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-header>\r\n  <ion-toolbar color=\"primart\">\r\n    <ion-buttons slot=\"start\">\r\n      <ion-back-button></ion-back-button>\r\n    </ion-buttons>\r\n    <ion-title>Add Memebers</ion-title>\r\n    <ion-buttons slot=\"end\">\r\n      <ion-button (click)=\"done()\">Done</ion-button>\r\n    </ion-buttons>\r\n  </ion-toolbar>\r\n</ion-header>\r\n\r\n<ion-content>\r\n  <!-- All friends already in the group. -->\r\n  <div class=\"empty-list\" *ngIf=\"friends && friends.length == 0\">\r\n    <h1>\r\n      <ion-icon name=\"md-contacts\"></ion-icon>\r\n    </h1>\r\n    <p>Uh-oh! Sorry but your friends are already a member of this group.</p>\r\n  </div>\r\n  <!-- Add/Cancel Add friends to the group. -->\r\n  <ion-list lines=\"none\" *ngIf=\"friends && friends.length > 0\">\r\n    <ion-searchbar [(ngModel)]=\"searchFriend\" placeholder=\"Search for friend or username\" showCancelButton=\"true\"\r\n      cancelButtonText=\"Done\"></ion-searchbar>\r\n    <ion-item *ngFor=\"let friend of friends | friendFilter:searchFriend\" (click)=\"addOrRemove(friend)\">\r\n\r\n      <ion-avatar slot=\"start\">\r\n        <img src=\"{{friend.img}}\" onError=\"this.src='./assets/images/default-dp.png'\">\r\n      </ion-avatar>\r\n      <ion-label>\r\n        <ion-text>\r\n          <h2>{{friend.name}}</h2>\r\n        </ion-text>\r\n        <ion-text>\r\n          <p>@{{friend.username}}</p>\r\n        </ion-text>\r\n      </ion-label>\r\n      <ion-button size=\"small\" slot=\"end\" fill=\"outline\" (click)=\"add(friend); $event.stopPropagation();\"\r\n        *ngIf=\"!isAdded(friend)\">Add</ion-button>\r\n      <ion-button size=\"small\" slot=\"end\" fill=\"outline\" (click)=\"remove(friend); $event.stopPropagation();\"\r\n        *ngIf=\"isAdded(friend)\">Remove</ion-button>\r\n    </ion-item>\r\n  </ion-list>\r\n</ion-content>");
+
+/***/ }),
+
+/***/ "VtPE":
+/*!*************************************************!*\
+  !*** ./src/app/addmembers/addmembers.page.scss ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ("\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2FkZG1lbWJlcnMvYWRkbWVtYmVycy5wYWdlLnNjc3MifQ== */");
+
+/***/ }),
+
+/***/ "Zxef":
+/*!*************************************************!*\
+  !*** ./src/app/addmembers/addmembers.module.ts ***!
+  \*************************************************/
+/*! exports provided: AddmembersPageModule */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddmembersPageModule", function() { return AddmembersPageModule; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _addmembers_page__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./addmembers.page */ "0G1C");
+/* harmony import */ var _services_share_module__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../services/share.module */ "vxGH");
+
+
+
+
+
+
+
+
+const routes = [
+    {
+        path: '',
+        component: _addmembers_page__WEBPACK_IMPORTED_MODULE_6__["AddmembersPage"]
+    }
+];
+let AddmembersPageModule = class AddmembersPageModule {
+};
+AddmembersPageModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
+        imports: [
+            _angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"],
+            _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormsModule"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["IonicModule"],
+            _services_share_module__WEBPACK_IMPORTED_MODULE_7__["SharedModule"],
+            _angular_router__WEBPACK_IMPORTED_MODULE_4__["RouterModule"].forChild(routes)
+        ],
+        declarations: [_addmembers_page__WEBPACK_IMPORTED_MODULE_6__["AddmembersPage"]]
+    })
+], AddmembersPageModule);
 
 
 

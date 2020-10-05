@@ -1,6 +1,6 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["swiper-bundle-ccdaac54-js"],{
 
-/***/ "./node_modules/@ionic/core/dist/esm/swiper.bundle-ccdaac54.js":
+/***/ "E+Ut":
 /*!*********************************************************************!*\
   !*** ./node_modules/@ionic/core/dist/esm/swiper.bundle-ccdaac54.js ***!
   \*********************************************************************/

@@ -59,6 +59,10 @@
             {
               "xml": "<feature name=\"Badge\"><param name=\"browser-package\" value=\"Badge\" /></feature>",
               "count": 1
+            },
+            {
+              "xml": "<feature name=\"ImagePicker\"><param name=\"browser-package\" value=\"ImagePicker\" /></feature>",
+              "count": 1
             }
           ]
         }
@@ -127,6 +131,9 @@
     },
     "cordova-plugin-fcm-with-dependecy-updated": {
       "PACKAGE_NAME": "com.codesundar.ionicchat"
+    },
+    "cordova-plugin-telerik-imagepicker": {
+      "PACKAGE_NAME": "com.socialshare"
     }
   },
   "dependent_plugins": {},
@@ -653,6 +660,26 @@
       "clobbers": [
         "FCM"
       ]
+    },
+    {
+      "file": "plugins/cordova-plugin-telerik-imagepicker/www/imagepicker.js",
+      "id": "cordova-plugin-telerik-imagepicker.ImagePicker",
+      "pluginId": "cordova-plugin-telerik-imagepicker",
+      "clobbers": [
+        "plugins.imagePicker"
+      ]
+    },
+    {
+      "file": "plugins/cordova-plugin-telerik-imagepicker/www/browser/isChrome.js",
+      "id": "cordova-plugin-telerik-imagepicker.isChrome",
+      "pluginId": "cordova-plugin-telerik-imagepicker",
+      "runs": true
+    },
+    {
+      "file": "plugins/cordova-plugin-telerik-imagepicker/src/browser/ImagePicker.js",
+      "id": "cordova-plugin-telerik-imagepicker.ImagePickerProxy",
+      "pluginId": "cordova-plugin-telerik-imagepicker",
+      "runs": true
     }
   ],
   "plugin_metadata": {
@@ -674,6 +701,7 @@
     "cordova-plugin-inappbrowser": "3.2.0",
     "cordova-plugin-badge": "0.8.8",
     "cordova-plugin-local-notification": "0.9.0-beta.2",
-    "cordova-plugin-fcm-with-dependecy-updated": "7.3.1"
+    "cordova-plugin-fcm-with-dependecy-updated": "7.3.1",
+    "cordova-plugin-telerik-imagepicker": "2.3.5"
   }
 }
