@@ -73,8 +73,9 @@
       <div class="img-wrap" *ngFor="let media of postMedia">
           <ion-thumbnail slot="start">
             <span class="close" (click)="removeMedia(media)">&times;</span>
-            <ion-img [src]="media">
-            </ion-img>
+            <!-- <ion-img [src]="media"> -->
+              <ion-img [src]="media">
+              </ion-img>
           </ion-thumbnail>
         </div>
     </ion-row>

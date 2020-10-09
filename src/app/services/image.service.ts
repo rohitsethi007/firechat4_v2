@@ -363,9 +363,16 @@ export class ImageService {
   }
 
   uploadPostVideo(): Promise<any> {
+    var options = {
+      quality: 50,
+      destinationType: this.camera.DestinationType.FILE_URI,
+      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+      mediaType: this.camera.MediaType.VIDEO
+    };
+
     return new Promise(resolve => {
       this.loadingProvider.show();
-      this.mediaCapture.captureVideo().then(data => {
+      this.camera.getPicture(options).then(data => {
         let videoUrl = data[0].fullPath;
         let x = videoUrl.split("/");
         let filepath = videoUrl.substring(0, videoUrl.lastIndexOf("/"));
@@ -392,6 +399,33 @@ export class ImageService {
         console.log("Media Err = " + err);
       });
     });
+    //   this.mediaCapture.captureVideo().then(data => {
+    //     let videoUrl = data[0].fullPath;
+    //     let x = videoUrl.split("/");
+    //     let filepath = videoUrl.substring(0, videoUrl.lastIndexOf("/"));
+    //     let name = x[x.length - 1];
+    //     this.file.readAsArrayBuffer(filepath, name).then(success => {
+    //       let blob = new Blob([success], { type: "video/mp4" });
+
+    //       let uploadRef = firebase.storage().ref().child('videos/' + name);
+    //       uploadRef.put(blob).then(res => {
+    //         let process = res.bytesTransferred / res.totalBytes * 100;
+    //         console.log(process);
+    //         this.loadingProvider.hide();
+    //         uploadRef.getDownloadURL().then(url => {
+    //           resolve(url);
+    //         })
+
+    //       }, err => {
+    //         this.loadingProvider.hide();
+    //         console.log("Failed")
+    //       });
+    //     });
+    //   }, err => {
+    //     this.loadingProvider.hide();
+    //     console.log("Media Err = " + err);
+    //   });
+
   }
 
   deletePostReactionPhoto(postId,url){
