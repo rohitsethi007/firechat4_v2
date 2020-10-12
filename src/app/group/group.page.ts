@@ -2,8 +2,8 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { Camera } from '@ionic-native/camera/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
-// tslint:disable-next-line: max-line-length
-import { NavController, ActionSheetController, AlertController, ModalController, PopoverController, IonInfiniteScroll } from '@ionic/angular';
+import { NavController, ActionSheetController, AlertController,
+  ModalController, PopoverController, IonInfiniteScroll } from '@ionic/angular';
 import { Contacts } from '@ionic-native/contacts/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LoadingService } from '../services/loading.service';
@@ -44,13 +44,8 @@ export class GroupPage implements OnInit {
   private user: any;
   private groupMembers: any;
   private loggedInUserIsMember: any = 'false';
-  private searchPoll: any;
-  private searchResource: any;
-  private searchEvent: any;
   private resourceTags: any = [];
-  private resourceTagsString: any;
   private eventTags: any;
-  private eventTagsString: any;
   private alert: any;
   private loggedInUserId: any;
   private loggedInUser: any;
@@ -118,9 +113,6 @@ export class GroupPage implements OnInit {
     this.loadingProvider.show();
     this.tab = 'posts';
     this.title = 'Posts';
-    this.searchResource = '';
-    this.searchPoll = '';
-    this.searchEvent = '';
 
     this.loggedInUserId = firebase.auth().currentUser.uid;
     // Get Posts
@@ -136,28 +128,6 @@ export class GroupPage implements OnInit {
   }
 
   ionViewDidEnter() { }
-
-  // Load previous messages in relation to numberOfMessages.
-  loadPreviousMessages() {
-    const that = this;
-    // Show loading.
-    this.loadingProvider.show();
-    setTimeout(function() {
-      // Set startIndex to load more messages.
-      if (that.startIndex - that.numberOfMessages > -1) {
-        that.startIndex -= that.numberOfMessages;
-      } else {
-        that.startIndex = 0;
-      }
-      // Refresh our messages list.
-      that.messages = null;
-      that.messagesToShow = null;
-      // Set scroll direction to top.
-      that.scrollDirection = 'top';
-      // Populate list again.
-      that.ionViewDidEnter();
-    }, 1000);
-  }
 
   // Update messagesRead when user lefts this page.
   ionViewWillLeave() {
@@ -901,48 +871,8 @@ export class GroupPage implements OnInit {
     });
   }
 
-  openResourceFilter() {
-    this.openModal();
-  }
-
-  openModal() {
-
-    this.modalCtrl.create({
-      component: TagModalPage,
-      componentProps: { groupTags: this.resourceTags }
-    }).then(res => {
-      res.present();
-    });
-
-    this.modalCtrl.dismiss((data) => {
-      this.resourceTagsString = '';
-      this.resourceTags = data;
-      this.resourceTags.forEach(element => {
-        if (element.isChecked == true) {
-          this.resourceTagsString = this.resourceTagsString + ', ' + element.val;
-        }
-      });
-      this.resourceTagsString = this.resourceTagsString.replace(', ', '');
-
-    });
-
-  }
-
   addOrUpdatePoll(poll) {
     let totalPollCount = 0;
-    poll.pollTagsString = '';
-    if (poll.pollTags && poll.pollTags) {
-
-      poll.pollTags.forEach(element => {
-        if (element.isChecked == true) {
-          poll.pollTagsString = poll.pollTagsString + ', ' + element.val;
-        }
-      });
-
-      poll.pollTagsString = poll.pollTagsString.replace(', ', '');
-    } else {
-      poll.pollTagsString = 'No tags found';
-    }
     // Add total poll count
     if (poll.pollOptions) {
       poll.pollOptions.forEach(element => {
@@ -982,20 +912,6 @@ export class GroupPage implements OnInit {
   }
 
   addOrUpdateResource(resource) {
-    resource.resourceTagsString = '';
-    if (resource.resourceTags && resource.resourceTags) {
-      resource.resourceTags.forEach(element => {
-        if (element.isChecked == true) {
-          resource.resourceTagsString = resource.resourceTagsString + ', ' + element.val;
-        }
-      });
-
-      resource.resourceTagsString = resource.resourceTagsString.replace(', ', '');
-    } else {
-      resource.resourceTagsString = 'No tags found';
-
-    }
-
     // Add NEW Icon
     const startDate = new Date(resource.dateCreated);
     const endDate   = new Date();
@@ -1025,19 +941,6 @@ export class GroupPage implements OnInit {
   }
 
   addOrUpdatePost(post) {
-    post.postTagsString = '';
-    if (post.resourceTags && post.resourceTags) {
-      post.resourceTags.forEach(element => {
-        if (element.isChecked == true) {
-          post.postTagsString = post.resourceTagsString + ', ' + element.val;
-        }
-      });
-
-      post.postTagsString = post.postTagsString.replace(', ', '');
-    } else {
-      post.postTagsString = 'No tags found';
-
-    }
     if (!this.posts) {
       this.posts = [post];
     } else {
@@ -1057,19 +960,6 @@ export class GroupPage implements OnInit {
   }
 
   addOrUpdateEvent(event) {
-    event.eventTagsString = '';
-    if (event.eventTags) {
-      event.eventTags.forEach(element => {
-        if (element.isChecked === true) {
-          event.eventTagsString = event.eventTagsString + ', ' + element.val;
-        }
-      });
-      // Remove first comma from the string
-      event.eventTagsString = event.eventTagsString.replace(', ', '');
-    } else {
-      event.eventTagsString = 'No tags found';
-    }
-
     // Add NEW Icon
     const startDate = new Date(event.dateCreated);
     const endDate   = new Date();
