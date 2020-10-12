@@ -249,15 +249,16 @@ export class NewPostPage implements OnInit {
    attach() {
     this.actionSheet.create({
       header: 'Attach images',
-      buttons: [{
-        text: 'Camera',
-        handler: () => {
-          this.imageProvider.uploadPostPhoto(this.camera.PictureSourceType.CAMERA).then((url) => {
-            this.postMedia.push(url);
-            console.log(url);
-          });
-        }
-      }, {
+      // buttons: [{
+      //   text: 'Camera',
+      //   handler: () => {
+      //     this.imageProvider.uploadPostPhoto(this.camera.PictureSourceType.CAMERA).then((url) => {
+      //       this.postMedia.push(url);
+      //       console.log(url);
+      //     });
+      //   }
+      // }, {
+     buttons: [{
         text: 'Photo Library',
         handler: () => {
           this.imageProvider.getImages().then((url) => {
@@ -289,7 +290,7 @@ export class NewPostPage implements OnInit {
     this.postMedia.splice();
     this.postMedia = this.postMedia.filter(x => x !== media);
     console.log('this.postMedia:', this.postMedia);
-    this.imageProvider.deletePostPhoto(media);
+    // this.imageProvider.deletePostPhoto(media);
   }
 
 }

@@ -210,14 +210,16 @@
         </ion-card-content>
         
         <ion-card-content class="message" *ngIf="item.type === 'resource'">
-          <div (click)="viewPost(item)">
+          <div>
           <b>{{item.title}}.</b><br/>
           <div *ngIf="item?.data.type == 'contact'">
-            {{item.data.name}}<br/>
-            {{item.data.address}}<br/><br/>
+            {{item.data.name}} <a *ngIf="!item.showMore" class="show-more" (click)="item.showMore = !item.showMore">...Show more</a>
+          <div (click)="viewPost(item)" *ngIf="item.showMore">
+            <div [innerHtml]="item.data.address"></div><br/>
             {{item.data.email}}<br/>
             {{item.data.phones}}<br/>
           </div>
+        </div>
           <div *ngIf="item?.data.type == 'upload'">
             <div *ngIf="item.data.uploadtype == 'location'" [innerHtml]="item.data.url"></div>
             <div *ngIf="item.data.uploadtype == 'contact'">

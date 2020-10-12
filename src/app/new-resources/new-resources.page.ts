@@ -320,16 +320,18 @@ export class NewResourcesPage implements OnInit {
       header: 'Choose attachments',
       backdropDismiss: true,
       mode: 'md',
-      buttons: [{
-        text: 'Camera',
-        handler: () => {
-          this.imageProvider.uploadGroupPhotoResource(this.groupId, this.camera.PictureSourceType.CAMERA).then((url) => {
-            this.resource.data.type = 'upload';
-            this.resource.data.url = url;
-            this.resource.data.uploadtype = 'image';
-          });
-        }
-      }, {
+      buttons: [
+      //   {
+      //   text: 'Camera',
+      //   handler: () => {
+      //     this.imageProvider.uploadGroupPhotoResource(this.groupId, this.camera.PictureSourceType.CAMERA).then((url) => {
+      //       this.resource.data.type = 'upload';
+      //       this.resource.data.url = url;
+      //       this.resource.data.uploadtype = 'image';
+      //     });
+      //   }
+      // },
+       {
         text: 'Photo Library',
         handler: () => {
           this.imageProvider.uploadGroupPhotoResource(this.groupId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {

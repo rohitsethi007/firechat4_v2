@@ -234,7 +234,7 @@
         <b>{{item.title}}.</b><br/>
         <div *ngIf="item?.data.type == 'contact'">
           {{item.data.name}}<br/>
-          {{item.data.address}}<br/><br/>
+          <div [innerHtml]="item.data.address"></div><br/>
           {{item.data.email}}<br/>
           {{item.data.phones}}<br/>
         </div>

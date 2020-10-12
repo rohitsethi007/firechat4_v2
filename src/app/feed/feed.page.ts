@@ -129,7 +129,7 @@ export class FeedPage implements OnInit {
     .where('groupId', 'in', this.loggedInUser.groups)
     .orderBy('date', 'desc')
     .limit(5);
-    this.firstDataSet.onSnapshot((po: any) => {
+    this.firstDataSet.get().then((po: any) => {
     this.lastDataSet = po.docs[po.docs.length - 1];
     this.posts = [];
     this.loadEachPostData(po);
@@ -152,39 +152,6 @@ export class FeedPage implements OnInit {
       }
     }
 
-  }
-
-  // Add or update conversaion for real-time sync of unreadMessagesCount.
-  addOrUpdateConversation(conversation) {
-    if (!this.conversationList) {
-      this.conversationList = [conversation];
-    } else {
-      let index = -1;
-      for (let i = 0; i < this.conversationList.length; i++) {
-        if (this.conversationList[i].$key == conversation.$key) {
-          index = i;
-        }
-      }
-      if (index > -1) {
-        this.conversationList[index] = conversation;
-      } else {
-        this.conversationList.push(conversation);
-      }
-    }
-    this.computeUnreadMessagesCount();
-  }
-
-  // Compute all conversation's unreadMessages.
-  computeUnreadMessagesCount() {
-    this.unreadMessagesCount = 0;
-    if (this.conversationList) {
-      for (let i = 0; i < this.conversationList.length; i++) {
-        this.unreadMessagesCount += this.conversationList[i].messages.length - this.conversationsInfo[i].messagesRead;
-        if (this.unreadMessagesCount == 0) {
-          this.unreadMessagesCount = null;
-        }
-      }
-    }
   }
 
   getUnreadMessagesCount() {
