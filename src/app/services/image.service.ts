@@ -373,7 +373,7 @@ export class ImageService {
     return new Promise(resolve => {
       this.loadingProvider.show();
       this.camera.getPicture(options).then(data => {
-        console.log('step1', data[0]);
+        console.log('step1', data);
         let videoUrl = data[0].fullPath;
         let x = videoUrl.split("/");
         console.log('step2',x);
