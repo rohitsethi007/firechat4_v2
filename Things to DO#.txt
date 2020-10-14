@@ -1,0 +1,8 @@
+
+Things to do:
+
+1. Fix reaction in feed page and group pages
+2. upload video and photos in posts
+3. Fix "Resources" upload functionality
+4. fix user icon/avatar while displaying reviews for posts.
+5. Notifications functionality still pending.

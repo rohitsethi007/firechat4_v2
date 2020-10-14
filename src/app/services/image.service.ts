@@ -373,12 +373,16 @@ export class ImageService {
     return new Promise(resolve => {
       this.loadingProvider.show();
       this.camera.getPicture(options).then(data => {
+        console.log('step1', data[0]);
         let videoUrl = data[0].fullPath;
         let x = videoUrl.split("/");
+        console.log('step2',x);
         let filepath = videoUrl.substring(0, videoUrl.lastIndexOf("/"));
         let name = x[x.length - 1];
+        console.log('step3', filepath, name);
         this.file.readAsArrayBuffer(filepath, name).then(success => {
           let blob = new Blob([success], { type: "video/mp4" });
+          console.log('step4', blob);
 
           let uploadRef = firebase.storage().ref().child('videos/' + name);
           uploadRef.put(blob).then(res => {
