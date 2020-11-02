@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">firechat</string>
-    <string name="title_activity_main">firechat</string>
-    <string name="package_name">SocialShare.com</string>
-    <string name="custom_url_scheme">SocialShare.com</string>
-	<string name="fb_app_id">59523234234</string>
-<string name="fb_app_name">hajmo.ba</string>
-</resources>

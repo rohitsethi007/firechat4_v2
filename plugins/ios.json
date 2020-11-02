@@ -1,0 +1,47 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-camera": {
+      "PACKAGE_NAME": "com.socialshare"
+    },
+    "cordova-plugin-chooser": {
+      "PACKAGE_NAME": "com.socialshare"
+    },
+    "cordova-plugin-contacts": {
+      "PACKAGE_NAME": "com.socialshare"
+    },
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "com.socialshare"
+    },
+    "cordova-plugin-facebook4": {
+      "APP_ID": "767580770058358",
+      "APP_NAME": "CodeSundar Labs",
+      "FACEBOOK_HYBRID_APP_EVENTS": "false",
+      "FACEBOOK_ANDROID_SDK_VERSION": "5.5.2",
+      "PACKAGE_NAME": "com.socialshare"
+    },
+    "cordova-plugin-fcm-with-dependecy-updated": {
+      "PACKAGE_NAME": "com.socialshare"
+    },
+    "cordova-plugin-file-transfer": {
+      "PACKAGE_NAME": "com.socialshare.vscode"
+    }
+  },
+  "dependent_plugins": {
+    "cordova-plugin-badge": {
+      "PACKAGE_NAME": "com.socialshare"
+    },
+    "cordova-plugin-add-swift-support": {
+      "PACKAGE_NAME": "com.socialshare"
+    },
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.socialshare.vscode"
+    }
+  }
+}

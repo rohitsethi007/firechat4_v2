@@ -4,8 +4,11 @@ import * as firebase from 'firebase';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { MediaCapture } from '@ionic-native/media-capture/ngx';
 import { File } from '@ionic-native/file/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
 import { LoadingService } from './loading.service';
 import { ImagePicker } from '@ionic-native/image-picker/ngx';
+import { Capacitor, Plugins, CameraResultType, FilesystemDirectory } from '@capacitor/core';
+const { CameraCap, Filesystem } = Plugins;
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +18,7 @@ export class ImageService {
   options: any;
   imageResponse: any;
 
+  
   private profilePhotoOptions: CameraOptions = {
     quality: 50,
     targetWidth: 384,
@@ -48,7 +52,8 @@ export class ImageService {
     public camera: Camera,
     public mediaCapture: MediaCapture,
     private imagePicker: ImagePicker,
-    public file: File) {
+    public file: File,
+    private filePath: FilePath) {
   }
 
   // Function to convert dataURI to Blob needed by Firebase
@@ -364,7 +369,6 @@ export class ImageService {
 
   uploadPostVideo(): Promise<any> {
     var options = {
-      quality: 50,
       destinationType: this.camera.DestinationType.FILE_URI,
       sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
       mediaType: this.camera.MediaType.VIDEO
@@ -372,19 +376,30 @@ export class ImageService {
 
     return new Promise(resolve => {
       this.loadingProvider.show();
-      this.camera.getPicture(options).then(data => {
-        console.log('step1', data[0]);
-        let videoUrl = data[0].fullPath;
-        let x = videoUrl.split("/");
-        console.log('step2',x);
-        let filepath = videoUrl.substring(0, videoUrl.lastIndexOf("/"));
-        let name = x[x.length - 1];
-        console.log('step3', filepath, name);
-        this.file.readAsArrayBuffer(filepath, name).then(success => {
+      this.camera.getPicture(options)
+      .then( async (videoUrl) => {          
+          var filename = videoUrl.substr(videoUrl.lastIndexOf('/') + 1);
+          var dirpath = videoUrl.substr(0, videoUrl.lastIndexOf('/') + 1);
+
+          dirpath = dirpath.includes("file://") ? dirpath : "file://" + dirpath;
+          
+          try {
+            console.log('dirpath', dirpath);
+            console.log('filename',filename);
+            console.log('file exists', this.file.checkFile(dirpath,filename).then(sd => {
+              console.log('sd:', sd);
+            
+            }));
+            const buffer = await this.file.readAsArrayBuffer(dirpath, filename);
+            console.log('buffer', buffer);
+          this.file.readAsArrayBuffer(dirpath, filename)
+          .then((success) => {
+          console.log('step4', success);
           let blob = new Blob([success], { type: "video/mp4" });
           console.log('step4', blob);
 
           let uploadRef = firebase.storage().ref().child('videos/' + name);
+         
           uploadRef.put(blob).then(res => {
             let process = res.bytesTransferred / res.totalBytes * 100;
             console.log(process);
@@ -397,40 +412,49 @@ export class ImageService {
             this.loadingProvider.hide();
             console.log("Failed")
           });
-        });
+        }).catch(err => {
+            return console.log("Error","Error in readasbuffer", err);
+          });
+          } catch(err) {
+            return console.log("Error","Something went wrong:", err);
+          }
+         console.log('im here now');
+       
       }, err => {
         this.loadingProvider.hide();
         console.log("Media Err = " + err);
       });
     });
-    //   this.mediaCapture.captureVideo().then(data => {
-    //     let videoUrl = data[0].fullPath;
-    //     let x = videoUrl.split("/");
-    //     let filepath = videoUrl.substring(0, videoUrl.lastIndexOf("/"));
-    //     let name = x[x.length - 1];
-    //     this.file.readAsArrayBuffer(filepath, name).then(success => {
-    //       let blob = new Blob([success], { type: "video/mp4" });
-
-    //       let uploadRef = firebase.storage().ref().child('videos/' + name);
-    //       uploadRef.put(blob).then(res => {
-    //         let process = res.bytesTransferred / res.totalBytes * 100;
-    //         console.log(process);
-    //         this.loadingProvider.hide();
-    //         uploadRef.getDownloadURL().then(url => {
-    //           resolve(url);
-    //         })
-
-    //       }, err => {
-    //         this.loadingProvider.hide();
-    //         console.log("Failed")
-    //       });
-    //     });
-    //   }, err => {
-    //     this.loadingProvider.hide();
-    //     console.log("Media Err = " + err);
-    //   });
+    
 
   }
+
+  async uploadPostVideoCapacitor() {
+    const options = {
+      resultType: CameraResultType.Uri
+    };
+    const originalPhoto = await CameraCap.getPhoto(options);
+    const photoInTempStorage = await Filesystem.readFile({ path: originalPhoto.path });
+
+    let date = new Date(),
+      time = date.getTime(),
+      fileName = time + ".jpeg";
+
+    await Filesystem.writeFile({
+      data: photoInTempStorage.data,
+      path: fileName,
+      directory: FilesystemDirectory.Data
+    });
+
+    const finalPhotoUri = await Filesystem.getUri({
+      directory: FilesystemDirectory.Data,
+      path: fileName
+    });
+
+    let photoPath = Capacitor.convertFileSrc(finalPhotoUri.uri);
+    console.log(photoPath);
+  }
+
 
   deletePostReactionPhoto(postId,url){
     var fileName = url.substring(url.lastIndexOf('%2F') + 3, url.lastIndexOf('?'));
@@ -472,12 +496,16 @@ export class ImageService {
       this.loadingProvider.show();
       this.mediaCapture.captureVideo().then(data => {
         let videoUrl = data[0].fullPath;
+        var filename = videoUrl.substr(videoUrl.lastIndexOf('/') + 1);
+        var dirpath = videoUrl.substr(0, videoUrl.lastIndexOf('/') + 1);
+        dirpath = dirpath.includes("file://") ? dirpath : "file://" + dirpath;
+
         console.log("video path: " + videoUrl);
         let x = videoUrl.split("/");
         let filepath = videoUrl.substring(0, videoUrl.lastIndexOf("/"));
         let name = x[x.length - 1];
         console.log(filepath + " - " + name);
-        this.file.readAsArrayBuffer(filepath, name).then(success => {
+        this.file.readAsArrayBuffer(dirpath, filename).then(success => {
           console.log(success);
           let blob = new Blob([success], { type: "video/mp4" });
           console.log(blob);

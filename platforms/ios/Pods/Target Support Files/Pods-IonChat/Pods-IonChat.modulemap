@@ -1,0 +1,6 @@
+framework module Pods_IonChat {
+  umbrella header "Pods-IonChat-umbrella.h"
+
+  export *
+  module * { export * }
+}

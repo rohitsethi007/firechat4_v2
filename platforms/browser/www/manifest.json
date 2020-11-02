@@ -3,7 +3,7 @@
   "display": "standalone",
   "name": "IonChat",
   "short_name": "IonChat",
-  "version": "com.socialshare",
+  "version": "com.socialshare.vscode",
   "description": "Social Share",
   "author": "Social Share Team",
   "icons": [],

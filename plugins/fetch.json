@@ -85,9 +85,7 @@
       "id": "cordova-plugin-camera@^4.1.0"
     },
     "is_top_level": true,
-    "variables": {
-      "ANDROID_SUPPORT_V4_VERSION": "27.+"
-    }
+    "variables": {}
   },
   "cordova-plugin-file": {
     "source": {
@@ -181,6 +179,22 @@
     "source": {
       "type": "registry",
       "id": "cordova-plugin-telerik-imagepicker"
+    },
+    "is_top_level": true,
+    "variables": {}
+  },
+  "cordova-plugin-add-swift-support": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-add-swift-support@*"
+    },
+    "is_top_level": false,
+    "variables": {}
+  },
+  "cordova-plugin-file-transfer": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-file-transfer"
     },
     "is_top_level": true,
     "variables": {}

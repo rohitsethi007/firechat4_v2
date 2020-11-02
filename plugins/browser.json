@@ -68,6 +68,9 @@
     },
     "cordova-plugin-telerik-imagepicker": {
       "PACKAGE_NAME": "com.socialshare"
+    },
+    "cordova-plugin-file-transfer": {
+      "PACKAGE_NAME": "com.socialshare"
     }
   },
   "dependent_plugins": {
