@@ -29,7 +29,7 @@ export class AppComponent {
 
       this.platform.backButton.subscribe(() => null);
 
-      this.afAuth.auth.onAuthStateChanged(user => {
+      this.afAuth.onAuthStateChanged(user => {
         if (user == null)
           this.router.navigateByUrl('walkthrough', { replaceUrl: true, skipLocationChange: true })
         else

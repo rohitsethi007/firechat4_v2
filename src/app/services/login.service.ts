@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { auth } from 'firebase/app';
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
 
 import { DataService } from './data.service';
 import { LoadingService } from './loading.service';
@@ -31,7 +32,7 @@ export class LoginService {
 
   login(email, password) {
     this.loadingProvider.show();
-    this.afAuth.auth.signInWithEmailAndPassword(email, password).then((res) => {
+    this.afAuth.signInWithEmailAndPassword(email, password).then((res) => {
       console.log(res);
       console.log("******* " + this.afAuth.user + " *********");
       //this.dataService.getUser(this.afAuth.user.)
@@ -45,8 +46,8 @@ export class LoginService {
 
   register(name, username, email, password, img) {
     this.loadingProvider.show();
-    this.afAuth.auth.createUserWithEmailAndPassword(email, password).then((res) => {
-      let user: any = this.afAuth.auth.currentUser;
+    this.afAuth.createUserWithEmailAndPassword(email, password).then((res) => {
+      let user: any = this.afAuth.currentUser;
       this.loadingProvider.hide();
       this.createNewUser(user.uid, name, username, user.email, "I am available", "Firebase", img);
     }).catch(err => {
@@ -59,7 +60,7 @@ export class LoginService {
   reset(email) {
     console.log(email);
     this.loadingProvider.show();
-    this.afAuth.auth.sendPasswordResetEmail(email).then(() => {
+    this.afAuth.sendPasswordResetEmail(email).then(() => {
       this.loadingProvider.hide();
       this.loadingProvider.showToast("Please Check your inbox");
     }).catch(err => {
@@ -71,12 +72,12 @@ export class LoginService {
   fbLogin() {
     if (this.platform.is('desktop')) {
       this.loadingProvider.show();
-      this.afAuth.auth.signInWithPopup(new auth.FacebookAuthProvider()).then((res: any) => {
+      this.afAuth.signInWithPopup(new firebase.default.auth.FacebookAuthProvider()).then((res: any) => {
         this.loadingProvider.hide();
-        let credential = auth.FacebookAuthProvider.credential(res.credential.accessToken);
-        this.afAuth.auth.signInWithCredential(credential).then(() => {
+        let credential = firebase.default.auth.FacebookAuthProvider.credential(res.credential.accessToken);
+        this.afAuth.signInWithCredential(credential).then( async () => {
           if (res.additionalUserInfo.isNewUser) {
-            let uid = this.afAuth.auth.currentUser.uid;
+            let uid = await this.afAuth.currentUser.then((data) => { return data.uid });
             let userInfo = res.additionalUserInfo.profile;
             this.createNewUser(uid, userInfo.name, uid, userInfo.email, 'Available', 'Facebook', userInfo.picture);
           }
@@ -93,14 +94,14 @@ export class LoginService {
     else {
       this.facebook.login(['public_profile', 'email']).then(res => {
         console.log(res);
-        let credential = auth.FacebookAuthProvider.credential(res.authResponse.accessToken);
+        let credential = firebase.default.auth.FacebookAuthProvider.credential(res.authResponse.accessToken);
         this.loadingProvider.show();
-        this.afAuth.auth.signInWithCredential(credential).then((res) => {
+        this.afAuth.signInWithCredential(credential).then((res) => {
           if (res.additionalUserInfo.isNewUser) {
             this.facebook.api("me/?fields=id,email,first_name,picture,gender", ["public_profile", "email"])
-              .then(data => {
+              .then(async data => {
                 console.log(data)
-                let uid = this.afAuth.auth.currentUser.uid;
+                let uid = await this.afAuth.currentUser.then((data) => { return data.uid }); 
                 this.createNewUser(uid, data.first_name, uid, data.email, 'I am available', 'Facebook', data.picture.data.url);
               })
               .catch(err => {
@@ -122,11 +123,11 @@ export class LoginService {
 
   gLogin() {
     if (this.platform.is('desktop')) {
-      this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider()).then((res: any) => {
-        let credential = auth.GoogleAuthProvider.credential(res.credential.idToken, res.credential.accessToken);
-        this.afAuth.auth.signInWithCredential(credential).then(() => {
+      this.afAuth.signInWithPopup(new firebase.default.auth.GoogleAuthProvider()).then((res: any) => {
+        let credential = firebase.default.auth.GoogleAuthProvider.credential(res.credential.idToken, res.credential.accessToken);
+        this.afAuth.signInWithCredential(credential).then(async () => {
           if (res.additionalUserInfo.isNewUser) {
-            let uid = this.afAuth.auth.currentUser.uid;
+            let uid = await this.afAuth.currentUser.then((data) => { return data.uid }); 
             let userInfo = res.additionalUserInfo.profile;
             this.createNewUser(uid, userInfo.name, uid, userInfo.email, 'Available', 'Google', userInfo.picture);
           } else {
@@ -143,10 +144,10 @@ export class LoginService {
       this.gplus.login({
         webClientId: environment.googleClientId
       }).then((result: any) => {
-        let credential = auth.GoogleAuthProvider.credential(result['token'], null);
-        this.afAuth.auth.signInWithCredential(credential).then((res: any) => {
+        let credential = firebase.default.auth.GoogleAuthProvider.credential(result['token'], null);
+        this.afAuth.signInWithCredential(credential).then(async (res: any) => {
           if (res.additionalUserInfo.isNewUser) {
-            let uid = this.afAuth.auth.currentUser.uid;
+            let uid = await this.afAuth.currentUser.then((data) => { return data.uid }); 
             let userInfo = res.additionalUserInfo.profile;
             this.createNewUser(uid, userInfo.name, uid, userInfo.email, 'Available', 'Google', userInfo.picture);
           }
@@ -172,6 +173,6 @@ export class LoginService {
   }
 
   logout() {
-    this.afAuth.auth.signOut().then(() => this.router.navigateByUrl('/login', { replaceUrl: true }));
+    this.afAuth.signOut().then(() => this.router.navigateByUrl('/login', { replaceUrl: true }));
   }
 }

@@ -114,14 +114,17 @@ export class FeedPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.loggedInUserId = firebase.auth().currentUser.uid;
+    this.loggedInUserId = firebase.default.auth().currentUser.uid;
    // Get Posts
-    this.dataProvider.getCurrentUser().get().subscribe((user) => {
-     this.userReactions = user.data().userReactions;
-     this.userNotifications = user.data().userNotifications;
-     this.loggedInUser = user.data();
-     this.getFeedData();
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.get().subscribe((user) => {
+        this.userReactions = user.data().userReactions;
+        this.userNotifications = user.data().userNotifications;
+        this.loggedInUser = user.data();
+        this.getFeedData();
+       });
     });
+    
   }
 
   getFeedData() {
@@ -325,9 +328,9 @@ export class FeedPage implements OnInit {
       });
     } else {
       this.firestore.collection('posts').doc(post.key).collection('reactions').doc(r.key).update({
-        reactionType: firebase.firestore.FieldValue.arrayUnion(reactionType)
+        reactionType: firebase.default.firestore.FieldValue.arrayUnion(reactionType)
     }).then(() => {
-      const increment = firebase.firestore.FieldValue.increment(1);
+      const increment = firebase.default.firestore.FieldValue.increment(1);
       this.firestore.collection('posts').doc(post.key).update({
         totalReactionCount : increment
       });
@@ -356,9 +359,9 @@ export class FeedPage implements OnInit {
         // reaction.reactionType = reaction.reactionType.filter(x => x !== reactionType);
         // this.dataProvider.updatePostReactions(post.key, reaction, true);
         this.firestore.collection('posts').doc(post.key).collection('reactions').doc(reaction.key).update({
-          reactionType: firebase.firestore.FieldValue.arrayRemove(reactionType)
+          reactionType: firebase.default.firestore.FieldValue.arrayRemove(reactionType)
       }).then(() => {
-        const increment = firebase.firestore.FieldValue.increment(-1);
+        const increment = firebase.default.firestore.FieldValue.increment(-1);
         this.firestore.collection('posts').doc(post.key).update({
           totalReactionCount : increment
         });

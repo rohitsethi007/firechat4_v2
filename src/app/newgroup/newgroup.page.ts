@@ -78,14 +78,16 @@ export class NewgroupPage implements OnInit {
     };
     this.searchFriend = '';
 
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accounts: any) => {
-      this.account = accounts.payload.data();
-      if (!this.groupMembers) {
-        this.groupMembers = [this.account];
-      } else {
-        this.friends = [];
-      }
-    });
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.snapshotChanges().subscribe((accounts: any) => {
+        this.account = accounts.payload.data();
+        if (!this.groupMembers) {
+          this.groupMembers = [this.account];
+        } else {
+          this.friends = [];
+        }
+      });
+    })
 
     this.firestore.collection('categories').snapshotChanges().subscribe((catsRes: any) => {
       if (catsRes) {
@@ -102,16 +104,17 @@ export class NewgroupPage implements OnInit {
   }
 
   // Proceed with group creation.
-  done() {
+  async done() {
     this.submitAttempt = true;
 
     if (this.myForm.valid) {
       this.loadingProvider.show();
       let messages = [];
+       let userId = await this.afAuth.currentUser.then((u) => { return u.uid});
       // Add system message that group is created.
       messages.push({
         date: new Date().toString(),
-        sender: this.afAuth.auth.currentUser.uid,
+        sender: userId,
         type: 'system',
         message: 'This group has been created.',
         icon: 'md-chatbubbles'
@@ -141,9 +144,11 @@ export class NewgroupPage implements OnInit {
         } else {
           this.account.groups = [groupId];
         }
-        this.dataProvider.getCurrentUser().update({
-          groups: this.account.groups
-        });
+        this.dataProvider.getCurrentUser().then((u) => {
+          u.update({
+            groups: this.account.groups
+          });
+        })
         let cat = this.categories.find(c => c.id = this.category.value);
         console.log('cat', cat, this.categories);
         if (!cat.groups) {

@@ -98,7 +98,7 @@ export class PostPage implements OnInit {
     public alertCtrl: AlertController
   ) {
    // this.reviewMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FkjD2RUnc.jpg?alt=media&token=d0073c88-58cf-4fc0-9e5c-c6a491bb2673');
-    this.post = {showSmiley: false, showHug: false, addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now(), reviewMedia: []};
+    this.post = {showSmiley: false, showHug: false, addedByUser: {}, data: {}, date: firebase.default.firestore.Timestamp.now(), reviewMedia: []};
     this.pollOptionForm = new FormGroup({
       selected_poll_option: new FormControl('', Validators.compose([
         Validators.required
@@ -109,7 +109,7 @@ export class PostPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.loggedInUserId = firebase.auth().currentUser.uid;
+    this.loggedInUserId = firebase.default.auth().currentUser.uid;
   }
 
   ngOnInit() {
@@ -316,49 +316,51 @@ export class PostPage implements OnInit {
       el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
       && el.reactionType === 'Thanks');
     if (reaction === undefined) {
-      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
+      this.dataProvider.getCurrentUser().then((u) => {
+        u.get().subscribe((account: any) => {
  
-        let userNotifications = account.data().userNotifications;
-        let userReactions = account.data().userReactions;
-
-        if (!userNotifications) { userNotifications = [] as string[]; }
-        if (!userReactions) { userReactions = [] as string[]; }
-
-        if (account) {
-          const currentUserName = account.data().username;
-          let reaction = {
-            key: '',
-            dateCreated: new Date(),
-            addedByUser: {
-                          addedByKey: this.dataProvider.getCurrentUserId(),
-                          addedByUsername: account.data().username,
-                          addedByImg: account.data().img
-                        },
-            reactionType: 'Thanks'
-          };
-
-          this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
-            this.post.showSmiley = true;
-          }).then(() => {
-            // Update user notifications.
-            if (!userNotifications.some(p => p !== this.postId)) {
-              userNotifications.push(this.postId);
-              this.dataProvider.getUser(account.data().userId).update({
-                userNotifications
-              });
-            }
-
-            // Update user activity.
-            if (!userReactions.some(p => p !== this.postId)) {
-              userReactions.push(this.postId);
-              this.dataProvider.getUser(account.data().userId).update({
-                userReactions
-              });
-            }
-          });
-
-      }
-  });
+          let userNotifications = account.data().userNotifications;
+          let userReactions = account.data().userReactions;
+  
+          if (!userNotifications) { userNotifications = [] as string[]; }
+          if (!userReactions) { userReactions = [] as string[]; }
+  
+          if (account) {
+            const currentUserName = account.data().username;
+            let reaction = {
+              key: '',
+              dateCreated: new Date(),
+              addedByUser: {
+                            addedByKey: this.dataProvider.getCurrentUserId(),
+                            addedByUsername: account.data().username,
+                            addedByImg: account.data().img
+                          },
+              reactionType: 'Thanks'
+            };
+  
+            this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+              this.post.showSmiley = true;
+            }).then(() => {
+              // Update user notifications.
+              if (!userNotifications.some(p => p !== this.postId)) {
+                userNotifications.push(this.postId);
+                this.dataProvider.getUser(account.data().userId).update({
+                  userNotifications
+                });
+              }
+  
+              // Update user activity.
+              if (!userReactions.some(p => p !== this.postId)) {
+                userReactions.push(this.postId);
+                this.dataProvider.getUser(account.data().userId).update({
+                  userReactions
+                });
+              }
+            });
+  
+        }
+    });
+      })
     } else {
       this.post.showSmiley = false;
       this.dataProvider.removePostReaction(this.post.key, reaction.key);
@@ -370,45 +372,47 @@ export class PostPage implements OnInit {
       el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
       && el.reactionType === 'Hug');
     if (reaction === undefined) {
-      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-        if (account) {
-          let userNotifications = account.data().userNotifications;
-          let userReactions = account.data().userReactions;
+      this.dataProvider.getCurrentUser().then((u) => {
+        u.get().subscribe((account: any) => {
+          if (account) {
+            let userNotifications = account.data().userNotifications;
+            let userReactions = account.data().userReactions;
+    
+            const currentUserName = account.data().username;
+            let reaction = {
+              key: '',
+              dateCreated: new Date(),
+              addedByUser: {
+                            addedByKey: this.dataProvider.getCurrentUserId(),
+                            addedByUsername: account.data().username,
+                            addedByImg: account.data().img
+                          },
+              reactionType: 'Hug'
+            };
   
-          const currentUserName = account.data().username;
-          let reaction = {
-            key: '',
-            dateCreated: new Date(),
-            addedByUser: {
-                          addedByKey: this.dataProvider.getCurrentUserId(),
-                          addedByUsername: account.data().username,
-                          addedByImg: account.data().img
-                        },
-            reactionType: 'Hug'
-          };
-
-          this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
-            this.post.showHug = true;
-          }).then(() => {
-            // Update user notifications.
-            if (!userNotifications.some(p => p !== this.postId)) {
-              userNotifications.push(this.postId);
-              this.dataProvider.getUser(account.data().userId).update({
-                userNotifications
-              });
-            }
-
-            // Update user activity.
-            if (!userReactions.some(p => p !== this.postId)) {
-              userReactions.push(this.postId);
-              this.dataProvider.getUser(account.data().userId).update({
-                userReactions
-              });
-            }
-          });
-
-      }
-  });
+            this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+              this.post.showHug = true;
+            }).then(() => {
+              // Update user notifications.
+              if (!userNotifications.some(p => p !== this.postId)) {
+                userNotifications.push(this.postId);
+                this.dataProvider.getUser(account.data().userId).update({
+                  userNotifications
+                });
+              }
+  
+              // Update user activity.
+              if (!userReactions.some(p => p !== this.postId)) {
+                userReactions.push(this.postId);
+                this.dataProvider.getUser(account.data().userId).update({
+                  userReactions
+                });
+              }
+            });
+  
+        }
+    });
+      })
     } else {
       this.post.showHug = false;
       this.dataProvider.removePostReaction(this.post.key, reaction.key);
@@ -420,44 +424,46 @@ export class PostPage implements OnInit {
       el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
       && el.reactionType === 'Checkin');
     if (reaction === undefined) {
-      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-        if (account) {
-          let userNotifications = account.data().userNotifications;
-          let userReactions = account.data().userReactions;
-          const currentUserName = account.data().username;
-          let reaction = {
-            key: '',
-            dateCreated: new Date(),
-            addedByUser: {
-                          addedByKey: this.dataProvider.getCurrentUserId(),
-                          addedByUsername: account.data().username,
-                          addedByImg: account.data().img
-                        },
-            reactionType: 'Checkin'
-          };
-
-          this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
-            this.post.showCheckin = true;
-          }).then(() => {
-            // Update user notifications.
-            if (!userNotifications.some(p => p !== this.postId)) {
-              userNotifications.push(this.postId);
-              this.dataProvider.getUser(account.data().userId).update({
-                userNotifications
-              });
-            }
-
-            // Update user activity.
-            if (!userReactions.some(p => p !== this.postId)) {
-              userReactions.push(this.postId);
-              this.dataProvider.getUser(account.data().userId).update({
-                userReactions
-              });
-            }
-          });;
-
-      }
-  });
+      this.dataProvider.getCurrentUser().then((u) => {
+        u.get().subscribe((account: any) => {
+          if (account) {
+            let userNotifications = account.data().userNotifications;
+            let userReactions = account.data().userReactions;
+            const currentUserName = account.data().username;
+            let reaction = {
+              key: '',
+              dateCreated: new Date(),
+              addedByUser: {
+                            addedByKey: this.dataProvider.getCurrentUserId(),
+                            addedByUsername: account.data().username,
+                            addedByImg: account.data().img
+                          },
+              reactionType: 'Checkin'
+            };
+  
+            this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+              this.post.showCheckin = true;
+            }).then(() => {
+              // Update user notifications.
+              if (!userNotifications.some(p => p !== this.postId)) {
+                userNotifications.push(this.postId);
+                this.dataProvider.getUser(account.data().userId).update({
+                  userNotifications
+                });
+              }
+  
+              // Update user activity.
+              if (!userReactions.some(p => p !== this.postId)) {
+                userReactions.push(this.postId);
+                this.dataProvider.getUser(account.data().userId).update({
+                  userReactions
+                });
+              }
+            });;
+  
+        }
+    });
+      })
     } else {
       this.post.showCheckin = false;
       this.dataProvider.removePostReaction(this.post.key, reaction.key);
@@ -469,44 +475,46 @@ export class PostPage implements OnInit {
       el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
       && el.reactionType === 'Bookmark');
     if (reaction === undefined) {
-      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-        if (account) {
-          let userNotifications = account.data().userNotifications;
-          let userReactions = account.data().userReactions;
-          const currentUserName = account.data().username;
-          let reaction = {
-            key: '',
-            dateCreated: new Date(),
-            addedByUser: {
-                          addedByKey: this.dataProvider.getCurrentUserId(),
-                          addedByUsername: account.data().username,
-                          addedByImg: account.data().img
-                        },
-            reactionType: 'Bookmark'
-          };
-
-          this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
-            this.post.showBookmark = true;
-          }).then(() => {
-            // Update user notifications.
-            if (!userNotifications.some(p => p !== this.postId)) {
-              userNotifications.push(this.postId);
-              this.dataProvider.getUser(account.data().userId).update({
-                userNotifications
-              });
-            }
-
-            // Update user activity.
-            if (!userReactions.some(p => p !== this.postId)) {
-              userReactions.push(this.postId);
-              this.dataProvider.getUser(account.data().userId).update({
-                userReactions
-              });
-            }
-          });;
-
-      }
-  });
+      this.dataProvider.getCurrentUser().then((u) => {
+        u.get().subscribe((account: any) => {
+          if (account) {
+            let userNotifications = account.data().userNotifications;
+            let userReactions = account.data().userReactions;
+            const currentUserName = account.data().username;
+            let reaction = {
+              key: '',
+              dateCreated: new Date(),
+              addedByUser: {
+                            addedByKey: this.dataProvider.getCurrentUserId(),
+                            addedByUsername: account.data().username,
+                            addedByImg: account.data().img
+                          },
+              reactionType: 'Bookmark'
+            };
+  
+            this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+              this.post.showBookmark = true;
+            }).then(() => {
+              // Update user notifications.
+              if (!userNotifications.some(p => p !== this.postId)) {
+                userNotifications.push(this.postId);
+                this.dataProvider.getUser(account.data().userId).update({
+                  userNotifications
+                });
+              }
+  
+              // Update user activity.
+              if (!userReactions.some(p => p !== this.postId)) {
+                userReactions.push(this.postId);
+                this.dataProvider.getUser(account.data().userId).update({
+                  userReactions
+                });
+              }
+            });;
+  
+        }
+    });
+      })
     } else {
       this.post.showBookmark = false;
       this.dataProvider.removePostReaction(this.post.key, reaction.key);
@@ -531,25 +539,27 @@ export class PostPage implements OnInit {
     this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
     let review: any;
     let currentUserName: any;
-    this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-       if (account) {
-         currentUserName = account.data().username;
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.get().subscribe((account: any) => {
+        if (account) {
+          currentUserName = account.data().username;
+  
+          review = {
+            dateCreated: new Date(),
+            addedByUser: {
+               addedByKey: this.dataProvider.getCurrentUserId(),
+               addedByUsername: account.data().username,
+               addedByImg: account.data().img
+             },
+            review: this.message,
+            reviewMedia: this.reviewMedia
+          };
  
-         review = {
-           dateCreated: new Date(),
-           addedByUser: {
-              addedByKey: this.dataProvider.getCurrentUserId(),
-              addedByUsername: account.data().username,
-              addedByImg: account.data().img
-            },
-           review: this.message,
-           reviewMedia: this.reviewMedia
-         };
-
-         this.dataProvider.updatePostReviews(this.postId, review);
-         this.message = '';
-         this.reviewMedia = [];
-        }});
+          this.dataProvider.updatePostReviews(this.postId, review);
+          this.message = '';
+          this.reviewMedia = [];
+         }});
+    })
   }
 
   attach() {

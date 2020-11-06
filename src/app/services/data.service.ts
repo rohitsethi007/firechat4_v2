@@ -33,12 +33,14 @@ export class DataService {
   }
 
   // Get logged in user data
-  getCurrentUser() {
-    return this.getUser(this.afAuth.auth.currentUser.uid);
+  async getCurrentUser() {
+    const loggedInUserId = await this.afAuth.currentUser.then((data) => { return data.uid});
+    return this.getUser(loggedInUserId);
   }
 
-  getCurrentUserId() {
-   return this.afAuth.auth.currentUser.uid;
+  async getCurrentUserId() {
+    const loggedInUserId = await this.afAuth.currentUser.then((data) => { return data.uid});
+   return loggedInUserId;
   }
 
   // Get user by their userId
@@ -68,7 +70,7 @@ export class DataService {
   // Get conversations of the current logged in user.
   getConversations() {
     return this.firestore.doc('accounts/' + this.getCurrentUserId()).collection('conversations');
-    // return this.afdb.list('/accounts/' + this.afAuth.auth.currentUser.uid + '/conversations');
+    // return this.afdb.list('/accounts/' + this.afAuth.currentUser.uid + '/conversations');
   }
 
   // Get messages of the conversation given the Id.
@@ -87,8 +89,9 @@ export class DataService {
     return this.firestore.doc('groups/' + groupId);
   }
 
-  getBlockedLists() {
-    return this.firestore.doc('accounts/' + this.afAuth.auth.currentUser.uid).collection('conversations').ref.where('blocked','==', true);
+  async getBlockedLists() {
+    const loggedInUserId = await this.afAuth.currentUser.then((data) => { return data.uid});
+    return this.firestore.doc('accounts/' + loggedInUserId).collection('conversations').ref.where('blocked','==', true);
   }
 
   // Get Polls of the logged in user.
@@ -137,7 +140,7 @@ export class DataService {
     this.firestore.doc('posts/' + pollKey).update ({
       data: pollData
     }).then(() => {
-      const increment = firebase.firestore.FieldValue.increment(1);
+      const increment = firebase.default.firestore.FieldValue.increment(1);
       this.firestore.collection('posts').doc(pollKey).update({
         totalPollCount : increment
       });
@@ -203,7 +206,7 @@ export class DataService {
 
   updatePostReviews(postKey, review) {
     return this.firestore.collection('posts').doc(postKey).collection('reviews').add(review).then(() => {
-      const increment = firebase.firestore.FieldValue.increment(1);
+      const increment = firebase.default.firestore.FieldValue.increment(1);
       this.firestore.collection('posts').doc(postKey).update({
         totalReviewCount : increment
       });
@@ -224,7 +227,7 @@ export class DataService {
  
   addPostReactions(postKey, reaction) {
     return this.firestore.collection('posts').doc(postKey).collection('reactions').add(reaction).then(() => {
-      const increment = firebase.firestore.FieldValue.increment(1);
+      const increment = firebase.default.firestore.FieldValue.increment(1);
       this.firestore.collection('posts').doc(postKey).update({
         totalReactionCount : increment
       });
@@ -233,7 +236,7 @@ export class DataService {
 
   updatePostReactions(postKey, reaction) {
     return this.firestore.collection('posts').doc(postKey).collection('reactions').doc(reaction.key).update(reaction).then(() => {
-      const increment = firebase.firestore.FieldValue.increment(1);
+      const increment = firebase.default.firestore.FieldValue.increment(1);
       this.firestore.collection('posts').doc(postKey).update({
         totalReactionCount : increment
       });
@@ -242,7 +245,7 @@ export class DataService {
 
   removePostReaction(postKey, reactionKey) {
     this.firestore.collection('posts').doc(postKey).collection('reactions').doc(reactionKey).delete().then(() => {
-      const decrement = firebase.firestore.FieldValue.increment(-1);
+      const decrement = firebase.default.firestore.FieldValue.increment(-1);
       this.firestore.collection('posts').doc(postKey).update({
         totalReactionCount : decrement
       });

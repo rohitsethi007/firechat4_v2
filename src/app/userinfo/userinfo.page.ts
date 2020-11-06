@@ -49,12 +49,12 @@ export class UserinfoPage implements OnInit {
       this.loadingProvider.hide();
     });
     // Get friends of current logged in user.
-    this.dataProvider.getUser(firebase.auth().currentUser.uid).snapshotChanges().subscribe((user: any) => {
+    this.dataProvider.getUser(firebase.default.auth().currentUser.uid).snapshotChanges().subscribe((user: any) => {
       if (user.payload.data() != null)
         this.friends = user.payload.data().friends;
     });
     // Get requests of current logged in user.
-    this.dataProvider.getRequests(firebase.auth().currentUser.uid).snapshotChanges().subscribe(((requests: any) => {
+    this.dataProvider.getRequests(firebase.default.auth().currentUser.uid).snapshotChanges().subscribe(((requests: any) => {
       console.log(requests.payload.data())
       if (requests.payload.data() != null) {
         this.friendRequests = requests.payload.data().friendRequests;
@@ -66,7 +66,7 @@ export class UserinfoPage implements OnInit {
   block() {
     this.loadingProvider.show();
     console.log("block function");
-    firebase.database().ref('accounts/' + firebase.auth().currentUser.uid + '/conversations/' + this.userId).update({
+    firebase.default.database().ref('accounts/' + firebase.default.auth().currentUser.uid + '/conversations/' + this.userId).update({
       blocked: true
     }).then(() => {
       this.loadingProvider.hide();

@@ -17,8 +17,8 @@ export class FirebaseService {
     private dataProvider: DataService) { }
 
   // Send friend request to userId.
-  sendFriendRequest(userId) {
-    const loggedInUserId = this.afAuth.auth.currentUser.uid;
+  async sendFriendRequest(userId) {
+    const loggedInUserId = await this.afAuth.currentUser.then((data) => { return data.uid});
     this.loadingProvider.show();
 
     let requestsSent;
@@ -74,8 +74,8 @@ export class FirebaseService {
   }
 
   // Cancel friend request sent to userId.
-  cancelFriendRequest(userId) {
-    const loggedInUserId = this.afAuth.auth.currentUser.uid;
+  async cancelFriendRequest(userId) {
+    const loggedInUserId = await this.afAuth.currentUser.then((data) => { return data.uid});
     this.loadingProvider.show();
 
     let requestsSent = [];
@@ -111,8 +111,8 @@ export class FirebaseService {
   }
 
   // Delete friend request.
-  deleteFriendRequest(userId) {
-    const loggedInUserId = this.afAuth.auth.currentUser.uid;
+  async deleteFriendRequest(userId) {
+    const loggedInUserId = await this.afAuth.currentUser.then((data) => { return data.uid});
     this.loadingProvider.show();
 
     let friendRequests = [];
@@ -148,8 +148,8 @@ export class FirebaseService {
   }
 
   // Accept friend request.
-  acceptFriendRequest(userId) {
-    const loggedInUserId = this.afAuth.auth.currentUser.uid;
+  async acceptFriendRequest(userId) {
+    const loggedInUserId = await this.afAuth.currentUser.then((data) => { return data.uid});
     // Delete friend request.
     this.deleteFriendRequest(userId);
 

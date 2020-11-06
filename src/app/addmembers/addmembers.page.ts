@@ -43,9 +43,11 @@ export class AddmembersPage implements OnInit {
     this.loadingProvider.show();
 
     // Get user information for system message sent to the group when a member was added.
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.snapshotChanges().subscribe((user: any) => {
         this.user = user.payload.data();
     });
+    })
 
     // Get group information
     this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group: any) => {
@@ -59,26 +61,28 @@ export class AddmembersPage implements OnInit {
             });
         });
         // Get user's friends to add
-        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
-          let account = user.payload.data();
-          if (account.friends) {
-            for (var i = 0; i < account.friends.length; i++) {
-              this.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe((friendRes: any) => {
-                // Only friends that are not yet a member of this group can be added.
-                let friend = { $key: friendRes.key, ...friendRes.payload.data() };
-                console.log(friend)
-                if (!this.isMember(friend)) {
-                  this.addOrUpdateFriend(friend);
-                }
-              });
-            }
-            if (!this.friends) {
+        this.dataProvider.getCurrentUser().then((u) => {
+          u.snapshotChanges().subscribe((user: any) => {
+            let account = user.payload.data();
+            if (account.friends) {
+              for (var i = 0; i < account.friends.length; i++) {
+                this.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe((friendRes: any) => {
+                  // Only friends that are not yet a member of this group can be added.
+                  let friend = { $key: friendRes.key, ...friendRes.payload.data() };
+                  console.log(friend)
+                  if (!this.isMember(friend)) {
+                    this.addOrUpdateFriend(friend);
+                  }
+                });
+              }
+              if (!this.friends) {
+                this.friends = [];
+              }
+            } else {
               this.friends = [];
             }
-          } else {
-            this.friends = [];
-          }
-      });
+        });
+        })
       }
       console.log(this.friends);
       this.loadingProvider.hide();

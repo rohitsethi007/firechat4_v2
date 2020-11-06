@@ -59,7 +59,7 @@ export class MessagePage implements OnInit {
 
   ionViewDidEnter() {
     this.userId = this.route.snapshot.params.id;
-    this.loggedInUserId = firebase.auth().currentUser.uid;
+    this.loggedInUserId = firebase.default.auth().currentUser.uid;
     console.log(this.userId);
 
     // Get friend details.
@@ -166,7 +166,7 @@ export class MessagePage implements OnInit {
 
   // Check if currentPage is active, then update user's messagesRead.
   setMessagesRead() {
-    firebase.database().ref('/conversations/' + this.conversationId + '/messages').once('value', snap => {
+    firebase.default.database().ref('/conversations/' + this.conversationId + '/messages').once('value', snap => {
       console.log(snap.val());
 
       if (snap.val() != null) {

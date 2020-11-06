@@ -46,7 +46,7 @@ export class MessagesPage implements OnInit {
               conversation.friend = user.data();
               // Get conversation info.
 
-              this.dataProvider.getConversation(conversation.conversationId).snapshotChanges().subscribe((obj: any) => {
+              this.dataProvider.getConversation(conversation.conversationId).snapshotChanges().subscribe(async (obj: any) => {
                 // Get last message of conversation.
                 console.log(obj.payload.data());
                 if (obj.payload.data() != null) {
@@ -57,15 +57,17 @@ export class MessagesPage implements OnInit {
                   conversation.unreadMessagesCount = obj.payload.data().messages.length - conversation.messagesRead;
                   console.log(obj.payload.data().messages.length + "-" + conversation.messagesRead);
                   console.log(conversation.unreadMessagesCount);
+                  let userId = await this.afAuth.currentUser.then((u) => { return u.uid});
                   // Process last message depending on messageType.
                   if (lastMessage.type == 'text') {
-                    if (lastMessage.sender == this.afAuth.auth.currentUser.uid) {
+
+                    if (lastMessage.sender == userId) {
                       conversation.message = 'You: ' + lastMessage.message;
                     } else {
                       conversation.message = lastMessage.message;
                     }
                   } else {
-                    if (lastMessage.sender == this.afAuth.auth.currentUser.uid) {
+                    if (lastMessage.sender == userId) {
                       conversation.message = 'You sent a photo message.';
                     } else {
                       conversation.message = 'has sent you a photo message.';

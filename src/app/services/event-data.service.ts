@@ -11,7 +11,7 @@ export class EventDataService {
   constructor(
     public file: File
   ) {
-    this.sbaList = firebase.database().ref('/sbalist');
+    this.sbaList = firebase.default.database().ref('/sbalist');
   }
 
   makeFileIntoBlob(_imagePath, name, type) {

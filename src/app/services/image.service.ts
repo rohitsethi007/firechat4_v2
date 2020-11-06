@@ -95,7 +95,7 @@ export class ImageService {
         'contentType': imgBlob.type
       };
       let name = this.generateFilename();
-      let dpStorageRef = firebase.storage().ref().child('images/' + user.userId + '/' + name);
+      let dpStorageRef = firebase.default.storage().ref().child('images/' + user.userId + '/' + name);
       // Generate filename and upload to Firebase Storage.
       dpStorageRef.put(imgBlob, metadata).then((snapshot) => {
         // Delete previous profile photo on Storage if it exists.
@@ -113,7 +113,7 @@ export class ImageService {
             photoURL: url
           };
           // Update Firebase User.
-          firebase.auth().currentUser.updateProfile(profile)
+          firebase.default.auth().currentUser.updateProfile(profile)
             .then((success) => {
               // Update User Data on Database.
               this.firestore.doc('/accounts/' + user.userId).update({
@@ -160,7 +160,7 @@ export class ImageService {
       };
 
       let name = this.generateFilename();
-      let groupStorageRef = firebase.storage().ref().child('images/' + firebase.auth().currentUser.uid + '/' + name);
+      let groupStorageRef = firebase.default.storage().ref().child('images/' + firebase.default.auth().currentUser.uid + '/' + name);
       groupStorageRef.put(imgBlob, metadata).then((snapshot) => {
         // this.deleteImageFile(group.img);
         // URL of the uploaded image!
@@ -190,7 +190,7 @@ export class ImageService {
         let metadata = {
           'contentType': imgBlob.type
         };
-        let gPPStorageRef = firebase.storage().ref().child('images/' + firebase.auth().currentUser.uid + '/' + this.generateFilename());
+        let gPPStorageRef = firebase.default.storage().ref().child('images/' + firebase.default.auth().currentUser.uid + '/' + this.generateFilename());
         gPPStorageRef.put(imgBlob, metadata).then((snapshot) => {
           this.deleteImageFile(group.img);
           // URL of the uploaded image!
@@ -214,20 +214,20 @@ export class ImageService {
   deleteImageFile(path) {
     var fileName = path.substring(path.lastIndexOf('%2F') + 3, path.lastIndexOf('?'));
     // tslint:disable-next-line: max-line-length
-    firebase.storage().ref().child('images/' + firebase.auth().currentUser.uid + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
+    firebase.default.storage().ref().child('images/' + firebase.default.auth().currentUser.uid + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
   }
 
   //Delete the user.img given the user.
   deleteUserImageFile(user) {
     var fileName = user.img.substring(user.img.lastIndexOf('%2F') + 3, user.img.lastIndexOf('?'));
     // tslint:disable-next-line: max-line-length
-    firebase.storage().ref().child('images/' + user.userId + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
+    firebase.default.storage().ref().child('images/' + user.userId + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
   }
 
   // Delete group image file on group storage reference.
   deleteGroupImageFile(groupId, path) {
     var fileName = path.substring(path.lastIndexOf('%2F') + 3, path.lastIndexOf('?'));
-    firebase.storage().ref().child('images/' + groupId + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
+    firebase.default.storage().ref().child('images/' + groupId + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
   }
 
   // Upload photo message and return the url as promise.
@@ -243,7 +243,7 @@ export class ImageService {
           'contentType': imgBlob.type
         };
         // Generate filename and upload to Firebase Storage.
-        let upRef = firebase.storage().ref().child('images/' + conversationId + '/' + this.generateFilename());
+        let upRef = firebase.default.storage().ref().child('images/' + conversationId + '/' + this.generateFilename());
         upRef.put(imgBlob, metadata).then((snapshot) => {
           // URL of the uploaded image!
           upRef.getDownloadURL().then(url => {
@@ -274,7 +274,7 @@ export class ImageService {
             'contentType': imgBlob.type
           };
           // Generate filename and upload to Firebase Storage.
-          let upRef = firebase.storage().ref().child('images/posts/' + this.generateFilename());
+          let upRef = firebase.default.storage().ref().child('images/posts/' + this.generateFilename());
           upRef.put(imgBlob, metadata).then((snapshot) => {
             // URL of the uploaded image!
             upRef.getDownloadURL().then(url => {
@@ -318,7 +318,7 @@ export class ImageService {
       };
 
       // Generate filename and upload to Firebase Storage.
-      let upRef = firebase.storage().ref().child('images/posts/' + this.generateFilename());
+      let upRef = firebase.default.storage().ref().child('images/posts/' + this.generateFilename());
       upRef.put(imgBlob, metadata).then((snapshot) => {
         // URL of the uploaded image!
         upRef.getDownloadURL().then(url => {
@@ -333,7 +333,7 @@ export class ImageService {
 
   deletePostPhoto(url) {
     var fileName = url.substring(url.lastIndexOf('%2F') + 3, url.lastIndexOf('?'));
-    firebase.storage().ref().child('images/posts/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
+    firebase.default.storage().ref().child('images/posts/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
  
   }
 
@@ -349,7 +349,7 @@ export class ImageService {
           'contentType': imgBlob.type
         };
         // Generate filename and upload to Firebase Storage.
-        let upRef = firebase.storage().ref().child('images/posts' + postId + '/' + userId + '/' + this.generateFilename());
+        let upRef = firebase.default.storage().ref().child('images/posts' + postId + '/' + userId + '/' + this.generateFilename());
         upRef.put(imgBlob, metadata).then((snapshot) => {
           // URL of the uploaded image!
           upRef.getDownloadURL().then(url => {
@@ -398,7 +398,7 @@ export class ImageService {
           let blob = new Blob([success], { type: "video/mp4" });
           console.log('step4', blob);
 
-          let uploadRef = firebase.storage().ref().child('videos/' + name);
+          let uploadRef = firebase.default.storage().ref().child('videos/' + name);
          
           uploadRef.put(blob).then(res => {
             let process = res.bytesTransferred / res.totalBytes * 100;
@@ -458,7 +458,7 @@ export class ImageService {
 
   deletePostReactionPhoto(postId,url){
     var fileName = url.substring(url.lastIndexOf('%2F') + 3, url.lastIndexOf('?'));
-    firebase.storage().ref().child('images/' + postId + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
+    firebase.default.storage().ref().child('images/' + postId + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
   }
 
   // Upload group photo message and return a promise as url.
@@ -474,7 +474,7 @@ export class ImageService {
           'contentType': imgBlob.type
         };
         // Generate filename and upload to Firebase Storage.
-        let ugpRef = firebase.storage().ref().child('images/' + groupId + '/' + this.generateFilename());
+        let ugpRef = firebase.default.storage().ref().child('images/' + groupId + '/' + this.generateFilename());
         ugpRef.put(imgBlob, metadata).then((snapshot) => {
           // URL of the uploaded image!
           ugpRef.getDownloadURL().then(url => {
@@ -509,7 +509,7 @@ export class ImageService {
           console.log(success);
           let blob = new Blob([success], { type: "video/mp4" });
           console.log(blob);
-          let upload = firebase.storage().ref().child('videos/' + groupId + "/" + name).put(blob);
+          let upload = firebase.default.storage().ref().child('videos/' + groupId + "/" + name).put(blob);
           upload.then(res => {
             let process = res.bytesTransferred / res.totalBytes * 100;
             console.log(process);
@@ -545,7 +545,7 @@ export class ImageService {
           console.log(blob);
           // let timestamp = (Math.floor(Date.now() / 1000)).toString();
 
-          let uploadRef = firebase.storage().ref().child('videos/' + name);
+          let uploadRef = firebase.default.storage().ref().child('videos/' + name);
           uploadRef.put(blob).then(res => {
             let process = res.bytesTransferred / res.totalBytes * 100;
             console.log(process);
@@ -579,7 +579,7 @@ export class ImageService {
           'contentType': imgBlob.type
         };
         // Generate filename and upload to Firebase Storage.
-        let ugpRef = firebase.storage().ref().child('images/' + groupId + '/' + this.generateFilename());
+        let ugpRef = firebase.default.storage().ref().child('images/' + groupId + '/' + this.generateFilename());
         ugpRef.put(imgBlob, metadata).then((snapshot) => {
           // URL of the uploaded image!
           ugpRef.getDownloadURL().then(url => {
@@ -611,7 +611,7 @@ export class ImageService {
           console.log(success);
           let blob = new Blob([success], { type: "video/mp4" });
           console.log(blob);
-          let upload = firebase.storage().ref().child('videos/' + groupId + "/" + name).put(blob);
+          let upload = firebase.default.storage().ref().child('videos/' + groupId + "/" + name).put(blob);
           upload.then(res => {
             let process = res.bytesTransferred / res.totalBytes * 100;
             console.log(process);
@@ -632,7 +632,7 @@ export class ImageService {
   }
 
   async getGroupVideoResource(resourceurl) {
-   return await firebase.storage().ref().child(resourceurl).getDownloadURL().then(function(url) {
+   return await firebase.default.storage().ref().child(resourceurl).getDownloadURL().then(function(url) {
     return url;  
   }).catch(function(error) {
       // Handle any errors

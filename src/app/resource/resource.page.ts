@@ -33,7 +33,7 @@ export class ResourcePage implements OnInit {
     private modalCtrl: ModalController,
     private firestore: AngularFirestore
   ) {
-    this.resource = {showSmiley: false, showBookmark: false, addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now()  };
+    this.resource = {showSmiley: false, showBookmark: false, addedByUser: {}, data: {}, date: firebase.default.firestore.Timestamp.now()  };
     this.getResourceDetails();
   }
 
@@ -53,27 +53,29 @@ export class ResourcePage implements OnInit {
       if (data !== null) {
         let review: any;
         let currentUserName: any;
-        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
-          if (account.payload.exists()) {
-            currentUserName = account.payload.data().username;
-
-            review = {
-              dateCreated: new Date().toString(),
-              addedBy: this.dataProvider.getCurrentUserId(),
-              addedByUsername: currentUserName,
-              review: data.data.review,
-              rating: data.data.rating
-            };
-
-            if (this.resource.reviews === undefined) {
-              let reviews = [];
-              reviews.push(review);
-              this.dataProvider.addFirstResourceReview(this.resourceId, review);
-            } else {
-              this.dataProvider.updateResourceReviews(this.resourceId, review);
-            }
-            //this.ngOnInit();
-          }});
+        this.dataProvider.getCurrentUser().then((u)=> {
+          u.snapshotChanges().subscribe((account: any) => {
+            if (account.payload.exists()) {
+              currentUserName = account.payload.data().username;
+  
+              review = {
+                dateCreated: new Date().toString(),
+                addedBy: this.dataProvider.getCurrentUserId(),
+                addedByUsername: currentUserName,
+                review: data.data.review,
+                rating: data.data.rating
+              };
+  
+              if (this.resource.reviews === undefined) {
+                let reviews = [];
+                reviews.push(review);
+                this.dataProvider.addFirstResourceReview(this.resourceId, review);
+              } else {
+                this.dataProvider.updateResourceReviews(this.resourceId, review);
+              }
+              //this.ngOnInit();
+            }});
+        })
       }
     });
 
@@ -162,25 +164,27 @@ export class ResourcePage implements OnInit {
       el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
       && el.reactionType === 'Thanks');
     if (reaction === undefined) {
-      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-        if (account) {
-          const currentUserName = account.data().username;
-          let reaction = {
-            key: '',
-            dateCreated: new Date(),
-            addedByUser: {
-                          addedByKey: this.dataProvider.getCurrentUserId(),
-                          addedByUsername: account.data().username,
-                          addedByImg: account.data().img
-                        },
-            reactionType: 'Thanks'
-          };
-
-          this.dataProvider.updatePostReactions(this.resource.key, reaction).then(() => {
-            this.resource.showSmiley = true;
-          });
-      }
-  });
+      this.dataProvider.getCurrentUser().then((u) => {
+        u.get().subscribe((account: any) => {
+          if (account) {
+            const currentUserName = account.data().username;
+            let reaction = {
+              key: '',
+              dateCreated: new Date(),
+              addedByUser: {
+                            addedByKey: this.dataProvider.getCurrentUserId(),
+                            addedByUsername: account.data().username,
+                            addedByImg: account.data().img
+                          },
+              reactionType: 'Thanks'
+            };
+  
+            this.dataProvider.updatePostReactions(this.resource.key, reaction).then(() => {
+              this.resource.showSmiley = true;
+            });
+        }
+    });
+      })
     } else {
       this.resource.showSmiley = false;
       this.dataProvider.removePostReaction(this.resource.key, reaction.key);
@@ -193,26 +197,28 @@ export class ResourcePage implements OnInit {
       && el.reactionType === 'Bookmark');
       console.log('reaction:', reaction);
     if (reaction === undefined) {
-      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-        if (account) {
-          const currentUserName = account.data().username;
-          let reaction = {
-            key: '',
-            dateCreated: new Date(),
-            addedByUser: {
-                          addedByKey: this.dataProvider.getCurrentUserId(),
-                          addedByUsername: account.data().username,
-                          addedByImg: account.data().img
-                        },
-            reactionType: 'Bookmark'
-          };
-
-          this.dataProvider.updatePostReactions(this.resource.key, reaction).then(() => {
-            this.resource.showBookark = true;
-          });
-
-      }
-  });
+      this.dataProvider.getCurrentUser().then((u) => {
+        u.get().subscribe((account: any) => {
+          if (account) {
+            const currentUserName = account.data().username;
+            let reaction = {
+              key: '',
+              dateCreated: new Date(),
+              addedByUser: {
+                            addedByKey: this.dataProvider.getCurrentUserId(),
+                            addedByUsername: account.data().username,
+                            addedByImg: account.data().img
+                          },
+              reactionType: 'Bookmark'
+            };
+  
+            this.dataProvider.updatePostReactions(this.resource.key, reaction).then(() => {
+              this.resource.showBookark = true;
+            });
+  
+        }
+    });
+      })
     } else {
       console.log('i exist:', this.resource.key, reaction.key);
       this.resource.showBookmark = false;
@@ -239,23 +245,25 @@ export class ResourcePage implements OnInit {
     console.log('this.message', JSON.stringify(this.message));
     let review: any;
     let currentUserName: any;
-    this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-       if (account) {
-         currentUserName = account.data().username;
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.get().subscribe((account: any) => {
+        if (account) {
+          currentUserName = account.data().username;
+  
+          review = {
+            dateCreated: new Date(),
+            addedByUser: {
+               addedByKey: this.dataProvider.getCurrentUserId(),
+               addedByUsername: account.data().username,
+               addedByImg: account.data().img
+             },
+            review: this.message
+          };
  
-         review = {
-           dateCreated: new Date(),
-           addedByUser: {
-              addedByKey: this.dataProvider.getCurrentUserId(),
-              addedByUsername: account.data().username,
-              addedByImg: account.data().img
-            },
-           review: this.message
-         };
-
-         this.dataProvider.updatePostReviews(this.resourceId, review);
-         this.message = '';
-        }});
+          this.dataProvider.updatePostReviews(this.resourceId, review);
+          this.message = '';
+         }});
+    })
   }
 
   attach() {

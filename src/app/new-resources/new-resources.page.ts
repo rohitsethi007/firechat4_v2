@@ -144,62 +144,64 @@ export class NewResourcesPage implements OnInit {
   }
 
   ngOnInit() { 
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((value: any) => {
-      this.user = value.payload.data();
-      this.addedByUser = {
-      addedByKey: value.payload.data().userId,
-      addedByUsername: value.payload.data().username,
-      addedByImg: value.payload.data().img
-    };
-
-    // Initialize
-      this.resource = {
-      addedByUser: this.addedByUser,
-      date: '',
-      title: '',
-      postTags: [],
-      groupId: '',
-      groupName: '',
-      type: 'resource',
-      data: {name: '', address: '', phones: '', email: '', type: ''},
-      totalReactionCount: 0,
-      totalReviewCount: 0
-    };
-
-      if (this.step === 1) {
-      this.title = 'Select a group ...';
-      // Get User Groups List
-      if (this.user.groups) {
-        this.firestore.collection('groups').ref
-        .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.groups)
-        .get().then((group: any) => {
-          this.groups = [];
-          group.forEach(g => {
-            let group: any;
-            group = g.data();
-            group.key = g.id;
-            this.addOrUpdateUserGroup(group);
-          });
-        });
-      }
-      } else {
-        this.tab = 'contact';
-        // Get group information
-        this.groupId = this.route.snapshot.params.id;
-        console.log('this.route.snapshot.params.id', this.route.snapshot.params.id);
-        this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-            this.group = group.payload.data();
-            this.postTags = [];
-            console.log('this.group', group.payload.data());
-            this.group.groupTags.forEach((element: any) => {
-              this.postTags.push({val: element, isChecked: false});
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.snapshotChanges().subscribe((value: any) => {
+        this.user = value.payload.data();
+        this.addedByUser = {
+        addedByKey: value.payload.data().userId,
+        addedByUsername: value.payload.data().username,
+        addedByImg: value.payload.data().img
+      };
+  
+      // Initialize
+        this.resource = {
+        addedByUser: this.addedByUser,
+        date: '',
+        title: '',
+        postTags: [],
+        groupId: '',
+        groupName: '',
+        type: 'resource',
+        data: {name: '', address: '', phones: '', email: '', type: ''},
+        totalReactionCount: 0,
+        totalReviewCount: 0
+      };
+  
+        if (this.step === 1) {
+        this.title = 'Select a group ...';
+        // Get User Groups List
+        if (this.user.groups) {
+          this.firestore.collection('groups').ref
+          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.groups)
+          .get().then((group: any) => {
+            this.groups = [];
+            group.forEach(g => {
+              let group: any;
+              group = g.data();
+              group.key = g.id;
+              this.addOrUpdateUserGroup(group);
             });
-            this.addContactTagControls();
-            this.addLinkTagControls();
-            this.addUploadTagControls();
-        });
-      }
-    });
+          });
+        }
+        } else {
+          this.tab = 'contact';
+          // Get group information
+          this.groupId = this.route.snapshot.params.id;
+          console.log('this.route.snapshot.params.id', this.route.snapshot.params.id);
+          this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+              this.group = group.payload.data();
+              this.postTags = [];
+              console.log('this.group', group.payload.data());
+              this.group.groupTags.forEach((element: any) => {
+                this.postTags.push({val: element, isChecked: false});
+              });
+              this.addContactTagControls();
+              this.addLinkTagControls();
+              this.addUploadTagControls();
+          });
+        }
+      });
+    })
   }
 
   addOrUpdateUserGroup(group) {
@@ -232,9 +234,11 @@ export class NewResourcesPage implements OnInit {
 
   // This method is required in segmentChanged call else tabs won't load properly
   getDummyData() {
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account: any) => {
-      console.log(account);
-    });
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.snapshotChanges().subscribe((account: any) => {
+        console.log(account);
+      });
+    })
   }
 
   // Proceed to userInfo page.

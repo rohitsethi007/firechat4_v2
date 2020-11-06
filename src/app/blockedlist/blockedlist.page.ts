@@ -22,27 +22,27 @@ export class BlockedlistPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.dataProvider.getBlockedLists().get().then((conversations => {
+    this.dataProvider.getBlockedLists().then((conversations => {
       let tmp = [];
-      conversations.forEach(conversation => {
-        // fetch blocked conversation & user info
-        this.dataProvider.getUser(conversation.id).snapshotChanges().subscribe((data: any) => {
-          tmp.push({ key: conversation.id, name: data.name, img: data.img });
-        });
+      conversations.get().then((conversation) => {
+        conversation.forEach(conversation => {
+          // fetch blocked conversation & user info
+          this.dataProvider.getUser(conversation.id).snapshotChanges().subscribe((data: any) => {
+            tmp.push({ key: conversation.id, name: data.name, img: data.img });
+          });
+        })
       })
       console.log(tmp);
       this.blockedList = tmp;
     }));
   }
 
-  unblock(uid) {
+  async unblock(uid) {
     console.log(uid);
-    this.firestore.doc('accounts/' + this.afAuth.auth.currentUser.uid + '/conversations/' + uid).update({
+    let fuid = await this.afAuth.currentUser.then((data) => { return data.uid });
+    this.firestore.doc('accounts/' + fuid + '/conversations/' + uid).update({
       blocked: false
     });
-    // this.afdb.object('accounts/' + this.afAuth.auth.currentUser.uid + '/conversations/' + uid).update({
-    //   blocked: false
-    // })
   }
 
 }

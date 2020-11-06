@@ -56,7 +56,7 @@ export class GroupinfoPage implements OnInit {
         // get group Posts
         if (this.group.posts) {
           this.firestore.collection('posts').ref
-          .where(firebase.firestore.FieldPath.documentId(), 'in', this.group.posts)
+          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.group.posts)
           .get().then((po: any) => {
             this.groupPosts = [];
             this.loadEachPostData(po);
@@ -69,10 +69,12 @@ export class GroupinfoPage implements OnInit {
     });
 
     // Get user details.
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accounts: any) => {
-      let account = accounts.payload.data();
-      this.user = { $key: account.userId, ...account };
-    });
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.snapshotChanges().subscribe((accounts: any) => {
+        let account = accounts.payload.data();
+        this.user = { $key: account.userId, ...account };
+      });
+    })
   }
 
   loadEachPostData(po: any) {

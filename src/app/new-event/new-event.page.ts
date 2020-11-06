@@ -102,58 +102,60 @@ export class NewEventPage implements OnInit {
    ionViewDidEnter() {}
 
    ngOnInit() {
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((value: any) => {
-      this.user = value.payload.data();
-      this.addedByUser = {
-      addedByKey: value.payload.data().userId,
-      addedByUsername: value.payload.data().username,
-      addedByImg: value.payload.data().img
-    };
-
-      // Initialize
-      this.event = { 
-        addedByUser: this.addedByUser,
-        date: '',
-        title: '',
-        postTags : [],
-        groupId: '',
-        groupName: '',
-        type: 'event',
-        data: {},
-        totalReactionCount: 0,
-        totalReviewCount: 0,
-        postMedia: []
-    };
-
-    
-      if (this.step === 1) {
-      this.title = 'Select a group ...';
-      // Get User Groups List
-      if (this.user.groups) {
-        this.firestore.collection('groups').ref
-        .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.groups)
-        .get().then((group: any) => {
-          this.groups = [];
-          group.forEach(g => {
-            let group: any;
-            group = g.data();
-            group.key = g.id;
-            this.addOrUpdateUserGroup(group);
-          });
-        });
-        }
-      } else {
-        this.title = 'Poll';
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.snapshotChanges().subscribe((value: any) => {
+        this.user = value.payload.data();
+        this.addedByUser = {
+        addedByKey: value.payload.data().userId,
+        addedByUsername: value.payload.data().username,
+        addedByImg: value.payload.data().img
+      };
   
-        this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-          this.group = group.payload.data();
-          this.group.groupTags.forEach((element: any) => {
-            this.postTags.push({val: element, isChecked: false});
+        // Initialize
+        this.event = { 
+          addedByUser: this.addedByUser,
+          date: '',
+          title: '',
+          postTags : [],
+          groupId: '',
+          groupName: '',
+          type: 'event',
+          data: {},
+          totalReactionCount: 0,
+          totalReviewCount: 0,
+          postMedia: []
+      };
+  
+      
+        if (this.step === 1) {
+        this.title = 'Select a group ...';
+        // Get User Groups List
+        if (this.user.groups) {
+          this.firestore.collection('groups').ref
+          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.groups)
+          .get().then((group: any) => {
+            this.groups = [];
+            group.forEach(g => {
+              let group: any;
+              group = g.data();
+              group.key = g.id;
+              this.addOrUpdateUserGroup(group);
+            });
           });
-          this.addTagControls();
-        });
-      }
-    });
+          }
+        } else {
+          this.title = 'Poll';
+    
+          this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+            this.group = group.payload.data();
+            this.group.groupTags.forEach((element: any) => {
+              this.postTags.push({val: element, isChecked: false});
+            });
+            this.addTagControls();
+          });
+        }
+      });
+    })
   }
 
   addOrUpdateUserGroup(group) {

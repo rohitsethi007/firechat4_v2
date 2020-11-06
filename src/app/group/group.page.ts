@@ -63,24 +63,24 @@ export class GroupPage implements OnInit {
   private firstDataSetPost: any;
   private lastDataSetPost: any;
   private maxNoOfPosts: any = 1000;
-  private nextDataSetPost: firebase.firestore.Query;
+  private nextDataSetPost: firebase.default.firestore.Query;
 
   private firstDataSetEvent: any;
   private lastDataSetEvent: any;
   private maxNoOfEvents: any = 1000;
-  private nextDataSetEvent: firebase.firestore.Query;
+  private nextDataSetEvent: firebase.default.firestore.Query;
 
 
   private firstDataSetPoll: any;
   private lastDataSetPoll: any;
   private maxNoOfPolls: any = 1000;
-  private nextDataSetPoll: firebase.firestore.Query;
+  private nextDataSetPoll: firebase.default.firestore.Query;
 
 
   private firstDataSetResources: any;
   private lastDataSetResources: any;
   private maxNoOfResources: any = 1000;
-  private nextDataSetResources: firebase.firestore.Query;
+  private nextDataSetResources: firebase.default.firestore.Query;
 
   // GroupPage
   // This is the page where the user can chat with other group members and view group info.
@@ -102,7 +102,7 @@ export class GroupPage implements OnInit {
 
     public popoverCtrl: PopoverController
   ) {
-    this.loggedInUserId = firebase.auth().currentUser.uid;
+    this.loggedInUserId = firebase.default.auth().currentUser.uid;
   }
 
   handleSelection(event) {
@@ -114,15 +114,17 @@ export class GroupPage implements OnInit {
     this.tab = 'posts';
     this.title = 'Posts';
 
-    this.loggedInUserId = firebase.auth().currentUser.uid;
+    this.loggedInUserId = firebase.default.auth().currentUser.uid;
     // Get Posts
-    this.dataProvider.getCurrentUser().get().subscribe((user) => {
-      // this.userReactions = user.data().userReactions;
-      // this.userNotifications = user.data().userNotifications;
-      this.loggedInUser = user.data();
-      this.getGroupDetailsandPosts();
-    });
-
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.get().subscribe((user) => {
+        // this.userReactions = user.data().userReactions;
+        // this.userNotifications = user.data().userNotifications;
+        this.loggedInUser = user.data();
+        this.getGroupDetailsandPosts();
+      });
+  
+    })
 
     this.loadingProvider.hide();
   }
@@ -140,7 +142,7 @@ export class GroupPage implements OnInit {
   setMessagesRead(messages) {
     // if (this.navCtrl.getActive().instance instanceof GroupPage) {
     // Update user's messagesRead on database.
-    this.firestore.doc('/accounts/' + firebase.auth().currentUser.uid + '/groups/' + this.groupId).update({
+    this.firestore.doc('/accounts/' + firebase.default.auth().currentUser.uid + '/groups/' + this.groupId).update({
       messagesRead: this.messages.length
     });
     // }
@@ -181,7 +183,7 @@ export class GroupPage implements OnInit {
 
   // Check if the user is the sender of the message.
   isSender(message) {
-    if (message.sender === firebase.auth().currentUser.uid) {
+    if (message.sender === firebase.default.auth().currentUser.uid) {
       return true;
     } else {
       return false;
@@ -210,7 +212,7 @@ export class GroupPage implements OnInit {
 
     messages.push({
       date: new Date().toString(),
-      sender: firebase.auth().currentUser.uid,
+      sender: firebase.default.auth().currentUser.uid,
       // tslint:disable-next-line: object-literal-shorthand
       type: type,
       message: this.message
@@ -313,7 +315,7 @@ export class GroupPage implements OnInit {
     const messages = JSON.parse(JSON.stringify(this.messages));
     messages.push({
       date: new Date().toString(),
-      sender: firebase.auth().currentUser.uid,
+      sender: firebase.default.auth().currentUser.uid,
       type: 'image',
       url
     });
@@ -327,7 +329,7 @@ export class GroupPage implements OnInit {
     const messages = JSON.parse(JSON.stringify(this.messages));
     messages.push({
       date: new Date().toString(),
-      sender: firebase.auth().currentUser.uid,
+      sender: firebase.default.auth().currentUser.uid,
       type: 'video',
       url
     });
@@ -365,15 +367,15 @@ export class GroupPage implements OnInit {
             this.loadingProvider.show();
 
             // Add groupInfo to each friend added to the group.
-            this.firestore.doc('/accounts/' + firebase.auth().currentUser.uid + '/groups/' + this.groupId).update({
+            this.firestore.doc('/accounts/' + firebase.default.auth().currentUser.uid + '/groups/' + this.groupId).update({
               messagesRead: 0
             });
             // Add friend as members of the group.
-            this.group.members.push(firebase.auth().currentUser.uid);
+            this.group.members.push(firebase.default.auth().currentUser.uid);
             // Add system message that the members are added to the group.
             this.group.messages.push({
               date: new Date().toString(),
-              sender: firebase.auth().currentUser.uid,
+              sender: firebase.default.auth().currentUser.uid,
               type: 'system',
               message: this.user.name + ' has joined the group.',
               icon: 'md-contacts'
@@ -487,7 +489,7 @@ export class GroupPage implements OnInit {
 
       this.dataProvider.getGroupMembers(this.groupId).snapshotChanges().subscribe((memberIdsRes: any) => {
           const memberIds = memberIdsRes.payload.data();
-          if (memberIds.includes(firebase.auth().currentUser.uid)) {
+          if (memberIds.includes(firebase.default.auth().currentUser.uid)) {
             this.loggedInUserIsMember = true;
           } else {
             this.loggedInUserIsMember = false;
@@ -1128,9 +1130,9 @@ export class GroupPage implements OnInit {
       });
     } else {
       this.firestore.collection('posts').doc(post.key).collection('reactions').doc(r.key).update({
-        reactionType: firebase.firestore.FieldValue.arrayUnion(reactionType)
+        reactionType: firebase.default.firestore.FieldValue.arrayUnion(reactionType)
     }).then(() => {
-      const increment = firebase.firestore.FieldValue.increment(1);
+      const increment = firebase.default.firestore.FieldValue.increment(1);
       this.firestore.collection('posts').doc(post.key).update({
         totalReactionCount : increment
       });
@@ -1171,9 +1173,9 @@ export class GroupPage implements OnInit {
         // reaction.reactionType = reaction.reactionType.filter(x => x !== reactionType);
         // this.dataProvider.updatePostReactions(post.key, reaction, true);
         this.firestore.collection('posts').doc(post.key).collection('reactions').doc(reaction.key).update({
-          reactionType: firebase.firestore.FieldValue.arrayRemove(reactionType)
+          reactionType: firebase.default.firestore.FieldValue.arrayRemove(reactionType)
       }).then(() => {
-        const increment = firebase.firestore.FieldValue.increment(-1);
+        const increment = firebase.default.firestore.FieldValue.increment(-1);
         this.firestore.collection('posts').doc(post.key).update({
           totalReactionCount : increment
         });

@@ -70,7 +70,7 @@ export class PollPage implements OnInit {
     public dataProvider: DataService,
     public firestore: AngularFirestore
   ) {
-    this.poll = { pollTags: [], data: { pollOptions: [{name: ''}, {name: ''}, {name: ''}, {name: ''}]}, addedByUser: {}, date: firebase.firestore.Timestamp.now() };
+    this.poll = { pollTags: [], data: { pollOptions: [{name: ''}, {name: ''}, {name: ''}, {name: ''}]}, addedByUser: {}, date: firebase.default.firestore.Timestamp.now() };
 
     this.pollOptionForm = new FormGroup({
         selected_poll_option: new FormControl('', Validators.compose([
@@ -223,22 +223,24 @@ export class PollPage implements OnInit {
     this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
     let review: any;
     let currentUserName: any;
-    this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-       if (account) {
-         currentUserName = account.data().username;
-         review = {
-           dateCreated: new Date(),
-           addedByUser: {
-              addedByKey: this.dataProvider.getCurrentUserId(),
-              addedByUsername: account.data().username,
-              addedByImg: account.data().img
-            },
-           review: this.message
-         };
-
-         this.dataProvider.updatePostReviews(this.pollId, review);
-         this.message = '';
-        }});
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.get().subscribe((account: any) => {
+        if (account) {
+          currentUserName = account.data().username;
+          review = {
+            dateCreated: new Date(),
+            addedByUser: {
+               addedByKey: this.dataProvider.getCurrentUserId(),
+               addedByUsername: account.data().username,
+               addedByImg: account.data().img
+             },
+            review: this.message
+          };
+ 
+          this.dataProvider.updatePostReviews(this.pollId, review);
+          this.message = '';
+         }});
+    })
   }
 
   

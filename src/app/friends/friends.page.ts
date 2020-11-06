@@ -47,7 +47,7 @@ export class FriendsPage implements OnInit {
     this.title = 'Friends';
     this.searchFriend = '';
 
-    if (this.afAuth.auth.currentUser != null) {
+    if (this.afAuth.currentUser != null) {
       this.dataProvider.getRequests(this.dataProvider.getCurrentUserId()).snapshotChanges().subscribe((requestsRes: any) => {
         if (requestsRes.payload != null) {
         const requests = requestsRes.payload.data();
@@ -91,23 +91,25 @@ export class FriendsPage implements OnInit {
     this.loadingProvider.show();
     this.friends = [];
     // Get user data on database and get list of friends.
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user: any) => {
-      const account = user.payload.data();
-      this.loadingProvider.hide();
-      if (account != null && account.friends != null) {
-        for (let i = 0; i < account.friends.length; i++) {
-          console.log('friends:', account.friends[i]);
-          this.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe((friend: any) => {
-            if (friend.payload != null) {
-              const friendData = { $key: friend.payload.data().userId, ...friend.payload.data() };
-              this.addOrUpdateFriend(friendData);
-            }
-          });
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.snapshotChanges().subscribe((user: any) => {
+        const account = user.payload.data();
+        this.loadingProvider.hide();
+        if (account != null && account.friends != null) {
+          for (let i = 0; i < account.friends.length; i++) {
+            console.log('friends:', account.friends[i]);
+            this.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe((friend: any) => {
+              if (friend.payload != null) {
+                const friendData = { $key: friend.payload.data().userId, ...friend.payload.data() };
+                this.addOrUpdateFriend(friendData);
+              }
+            });
+          }
+        } else {
+          this.friends = [];
         }
-      } else {
-        this.friends = [];
-      }
-  });
+    });
+    })
   }
 
   // Add or update friend data for real-time sync.
@@ -148,42 +150,44 @@ export class FriendsPage implements OnInit {
 
     this.loadingProvider.show();
     // Get user info
-    this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accountRes: any) => {
-      this.account = accountRes.payload.data();
-      // Get friendRequests and requestsSent of the user.
-      this.dataProvider.getRequests(this.account.userId).snapshotChanges().subscribe((requestsRes: any) => {
-        // friendRequests.
-        let requests = requestsRes.payload.data();
-        if (requests != null) {
-          if (requests.friendRequests != null && requests.friendRequests !== undefined) {
-            this.friendRequests = [];
-            this.friendRequestCount = requests.friendRequests.length;
-            requests.friendRequests.forEach((userId) => {
-              this.dataProvider.getUser(userId).snapshotChanges().subscribe((sender: any) => {
-                sender = { $key: sender.payload.data().userId, ...sender.payload.data() };
-                this.addOrUpdateFriendRequest(sender);
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.snapshotChanges().subscribe((accountRes: any) => {
+        this.account = accountRes.payload.data();
+        // Get friendRequests and requestsSent of the user.
+        this.dataProvider.getRequests(this.account.userId).snapshotChanges().subscribe((requestsRes: any) => {
+          // friendRequests.
+          let requests = requestsRes.payload.data();
+          if (requests != null) {
+            if (requests.friendRequests != null && requests.friendRequests !== undefined) {
+              this.friendRequests = [];
+              this.friendRequestCount = requests.friendRequests.length;
+              requests.friendRequests.forEach((userId) => {
+                this.dataProvider.getUser(userId).snapshotChanges().subscribe((sender: any) => {
+                  sender = { $key: sender.payload.data().userId, ...sender.payload.data() };
+                  this.addOrUpdateFriendRequest(sender);
+                });
               });
-            });
-          } else {
-            this.friendRequests = [];
-          }
-          // requestsSent.
-          if (requests.requestsSent != null && requests.requestsSent != undefined) {
-            this.requestsSent = [];
-            requests.requestsSent.forEach((userId) => {
-              this.dataProvider.getUser(userId).snapshotChanges().subscribe((receiver: any) => {
-                receiver = { $key: receiver.payload.data().userId, ...receiver.payload.data() };
-                this.addOrUpdateRequestSent(receiver);
+            } else {
+              this.friendRequests = [];
+            }
+            // requestsSent.
+            if (requests.requestsSent != null && requests.requestsSent != undefined) {
+              this.requestsSent = [];
+              requests.requestsSent.forEach((userId) => {
+                this.dataProvider.getUser(userId).snapshotChanges().subscribe((receiver: any) => {
+                  receiver = { $key: receiver.payload.data().userId, ...receiver.payload.data() };
+                  this.addOrUpdateRequestSent(receiver);
+                });
               });
-            });
-          } else {
-            this.requestsSent = [];
+            } else {
+              this.requestsSent = [];
+            }
           }
-        }
-        this.loadingProvider.hide();
-      });
-
-  });
+          this.loadingProvider.hide();
+        });
+  
+    });
+    })
   }
 
 
@@ -262,31 +266,33 @@ export class FriendsPage implements OnInit {
         return { $key: c.payload.doc.data().userId, ...c.payload.doc.data() }
       });
 
-      this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accountRes: any) => {
-        const account = accountRes.payload.data();
-        // Add own userId as exludedIds.
-        this.excludedIds = [];
-        if (this.excludedIds.indexOf(account.userId) === -1) {
-          this.excludedIds.push(account.userId);
-        }
-        // Get friends which will be filtered out from the list using searchFilter pipe pipes/search.ts.
-        if (account != null) {
-          if (account.friends != null) {
-            account.friends.forEach(friend => {
-              if (this.excludedIds.indexOf(friend) === -1) {
-                this.excludedIds.push(friend);
-              }
-            });
+      this.dataProvider.getCurrentUser().then((u) => {
+        u.snapshotChanges().subscribe((accountRes: any) => {
+          const account = accountRes.payload.data();
+          // Add own userId as exludedIds.
+          this.excludedIds = [];
+          if (this.excludedIds.indexOf(account.userId) === -1) {
+            this.excludedIds.push(account.userId);
           }
-        }
-        // Get requests of the currentUser.
-        this.dataProvider.getRequests(account.userId).get().subscribe((requests: any) => {
-          if (requests.payload != null) {
-            this.requestsSent = requests.payload.data().requestsSent;
-            this.friendRequests = requests.payload.data().friendRequests;
+          // Get friends which will be filtered out from the list using searchFilter pipe pipes/search.ts.
+          if (account != null) {
+            if (account.friends != null) {
+              account.friends.forEach(friend => {
+                if (this.excludedIds.indexOf(friend) === -1) {
+                  this.excludedIds.push(friend);
+                }
+              });
+            }
           }
-        });
-    });
+          // Get requests of the currentUser.
+          this.dataProvider.getRequests(account.userId).get().subscribe((requests: any) => {
+            if (requests.payload != null) {
+              this.requestsSent = requests.payload.data().requestsSent;
+              this.friendRequests = requests.payload.data().friendRequests;
+            }
+          });
+      });
+      })
     });
   }
 

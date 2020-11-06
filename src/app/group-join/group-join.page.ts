@@ -24,11 +24,13 @@ export class GroupJoinPage implements OnInit {
     public navCtrl: NavController
   ) {
     this.groupId = this.route.snapshot.params.id;
-    this.dataProvider.getCurrentUser().get().subscribe((u: any) => {
-      let user = u.data();
-      user.userId = firebase.auth().currentUser.uid;;
-      this.loggedInUser = user;
-    });
+    this.dataProvider.getCurrentUser().then((u) => {
+      u.get().subscribe((u: any) => {
+        let user = u.data();
+        user.userId = firebase.default.auth().currentUser.uid;;
+        this.loggedInUser = user;
+      });
+    })
   }
 
   ngOnInit() {
@@ -55,7 +57,7 @@ export class GroupJoinPage implements OnInit {
       groups: this.loggedInUser.groups
     }).then(() => {
       // Add friend as members of the group.
-      this.group.members.push(firebase.auth().currentUser.uid);
+      this.group.members.push(firebase.default.auth().currentUser.uid);
 
       // Update group data on the database.
       this.dataProvider.getGroup(this.groupId).update({

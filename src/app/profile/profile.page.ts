@@ -92,7 +92,7 @@ export class ProfilePage implements OnInit {
         // get user Posts
         if (this.user.userPosts) {
           this.firestore.collection('posts').ref
-          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userPosts)
+          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.userPosts)
           .get().then((po: any) => {
             this.userPosts = [];
             this.loadEachPostData(po, 'userPosts');
@@ -102,7 +102,7 @@ export class ProfilePage implements OnInit {
         // get user Reaction Posts
         if (this.user.userReactions) {
           this.firestore.collection('posts').ref
-          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userReactions)
+          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.userReactions)
           .get().then((po: any) => {
           this.userReactions = [];
           this.loadEachPostData(po, 'userReactions');
@@ -112,7 +112,7 @@ export class ProfilePage implements OnInit {
         // get user Posts
         if (this.user.userComments) {
           this.firestore.collection('posts').ref
-          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userComments)
+          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.userComments)
           .get().then((po: any) => {
           this.userComments = [];
           this.loadEachPostData(po, 'userComments');
@@ -122,7 +122,7 @@ export class ProfilePage implements OnInit {
         // Get User Friends list
         if (this.user.friends) {
           this.firestore.collection('accounts').ref
-          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.friends)
+          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.friends)
           .get().then((user: any) => {
             this.friends = [];
             user.forEach(f => {
@@ -146,7 +146,7 @@ export class ProfilePage implements OnInit {
         // Get User Groups List
         if (this.user.groups) {
           this.firestore.collection('groups').ref
-          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.groups)
+          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.groups)
           .get().then((group: any) => {
             this.groups = [];
             group.forEach(g => {
@@ -284,7 +284,8 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  changeNotification() {
+  async changeNotification() {
+    let uid = await this.afAuth.currentUser.then((u) => u.uid);
     if (this.platform.is('desktop')) {
       this.user.isPushEnabled = false;
       this.loadingProvider.showToast("Notification only working on mobile device")
@@ -300,14 +301,14 @@ export class ProfilePage implements OnInit {
           else {
             this.fcm.getToken().then(token => {
               console.log(token);
-              this.firestore.doc('/accounts/' + this.afAuth.auth.currentUser.uid).update({ isPushEnabled: true, pushToken: token });
+              this.firestore.doc('/accounts/' + uid).update({ isPushEnabled: true, pushToken: token });
               this.user.isPushEnabled = true;
             }).catch(err => {
               console.log(err);
             });
             this.fcm.onTokenRefresh().subscribe(token => {
               console.log(token);
-              this.firestore.doc('/accounts/' + this.afAuth.auth.currentUser.uid).update({ isPushEnabled: true, pushToken: token });
+              this.firestore.doc('/accounts/' + uid).update({ isPushEnabled: true, pushToken: token });
             });
           }
         });
@@ -317,7 +318,7 @@ export class ProfilePage implements OnInit {
       }
       else {
         this.user.isPushEnabled == false;
-        this.firestore.doc('/accounts/' + this.afAuth.auth.currentUser.uid).update({ isPushEnabled: false, pushToken: '' });
+        this.firestore.doc('/accounts/' + uid).update({ isPushEnabled: false, pushToken: '' });
       }
     }
   }
@@ -350,8 +351,9 @@ export class ProfilePage implements OnInit {
     }).then(r => r.present());
   }
 
-  setPassword() {
-    this.afAuth.auth.sendPasswordResetEmail(this.afAuth.auth.currentUser.email)
+  async setPassword() {
+    let email = await this.afAuth.currentUser.then((u) => {return u.email});
+    this.afAuth.sendPasswordResetEmail(email)
       .then(res => {
         this.loadingProvider.showToast("Please Check your inbox");
       }).catch(err => {
@@ -372,7 +374,8 @@ export class ProfilePage implements OnInit {
           handler: data => {
             this.loadingProvider.show();
             // Delete Firebase user
-            this.afAuth.auth.currentUser.delete()
+            this.afAuth.currentUser.then((u) => {
+              u.delete()
               .then((success) => {
                 // Delete profilePic of user on Firebase storage
                 this.imageProvider.deleteUserImageFile(this.user);
@@ -386,7 +389,8 @@ export class ProfilePage implements OnInit {
               .catch((error) => {
                 this.loadingProvider.hide();
                 this.loadingProvider.showToast("Something went wrong");
-              });
+              }); 
+            });
           }
         }
       ]

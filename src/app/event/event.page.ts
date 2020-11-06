@@ -40,7 +40,7 @@ export class EventPage implements OnInit {
     public geolocation: Geolocation,
     public alertCtrl: AlertController
   ) {
-    this.post = {showSmiley: false, showCheckin: false, addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now()  };
+    this.post = {showSmiley: false, showCheckin: false, addedByUser: {}, data: {}, date: firebase.default.firestore.Timestamp.now()  };
     this.getPostDetails();
   }
 
@@ -141,26 +141,28 @@ export class EventPage implements OnInit {
       el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
       && el.reactionType === 'Thanks');
     if (reaction === undefined) {
-      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-        if (account) {
-          const currentUserName = account.data().username;
-          let reaction = {
-            key: '',
-            dateCreated: new Date(),
-            addedByUser: {
-                          addedByKey: this.dataProvider.getCurrentUserId(),
-                          addedByUsername: account.data().username,
-                          addedByImg: account.data().img
-                        },
-            reactionType: 'Thanks'
-          };
-
-          this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
-            this.post.showSmiley = true;
-          });
-
-      }
-  });
+      this.dataProvider.getCurrentUser().then((u) => {
+        u.get().subscribe((account: any) => {
+          if (account) {
+            const currentUserName = account.data().username;
+            let reaction = {
+              key: '',
+              dateCreated: new Date(),
+              addedByUser: {
+                            addedByKey: this.dataProvider.getCurrentUserId(),
+                            addedByUsername: account.data().username,
+                            addedByImg: account.data().img
+                          },
+              reactionType: 'Thanks'
+            };
+  
+            this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+              this.post.showSmiley = true;
+            });
+  
+        }
+    });
+      })
     } else {
       this.post.showSmiley = false;
       this.dataProvider.removePostReaction(this.post.key, reaction.key);
@@ -172,26 +174,28 @@ export class EventPage implements OnInit {
       el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
       && el.reactionType === 'Checkin');
     if (reaction === undefined) {
-      this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-        if (account) {
-          const currentUserName = account.data().username;
-          let reaction = {
-            key: '',
-            dateCreated: new Date(),
-            addedByUser: {
-                          addedByKey: this.dataProvider.getCurrentUserId(),
-                          addedByUsername: account.data().username,
-                          addedByImg: account.data().img
-                        },
-            reactionType: 'Checkin'
-          };
-
-          this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
-            this.post.showCheckin = true;
-          });
-
-      }
-  });
+      this.dataProvider.getCurrentUser().then((u) => {
+        u.get().subscribe((account: any) => {
+          if (account) {
+            const currentUserName = account.data().username;
+            let reaction = {
+              key: '',
+              dateCreated: new Date(),
+              addedByUser: {
+                            addedByKey: this.dataProvider.getCurrentUserId(),
+                            addedByUsername: account.data().username,
+                            addedByImg: account.data().img
+                          },
+              reactionType: 'Checkin'
+            };
+  
+            this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+              this.post.showCheckin = true;
+            });
+  
+        }
+    });
+      })
     } else {
       this.post.showCheckin = false;
       this.dataProvider.removePostReaction(this.post.key, reaction.key);
@@ -217,23 +221,25 @@ export class EventPage implements OnInit {
     console.log('this.message', JSON.stringify(this.message));
      let review: any;
      let currentUserName: any;
-     this.dataProvider.getCurrentUser().get().subscribe((account: any) => {
-       if (account) {
-         currentUserName = account.data().username;
+     this.dataProvider.getCurrentUser().then((u) => {
+      u.get().subscribe((account: any) => {
+        if (account) {
+          currentUserName = account.data().username;
+  
+          review = {
+            dateCreated: new Date(),
+            addedByUser: {
+               addedByKey: this.dataProvider.getCurrentUserId(),
+               addedByUsername: account.data().username,
+               addedByImg: account.data().img
+             },
+            review: this.message
+          };
  
-         review = {
-           dateCreated: new Date(),
-           addedByUser: {
-              addedByKey: this.dataProvider.getCurrentUserId(),
-              addedByUsername: account.data().username,
-              addedByImg: account.data().img
-            },
-           review: this.message
-         };
-
-         this.dataProvider.updatePostReviews(this.postId, review);
-         this.message = '';
-        }});
+          this.dataProvider.updatePostReviews(this.postId, review);
+          this.message = '';
+         }});
+     })
   }
 
   attach() {
