@@ -172,13 +172,13 @@
 
       var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
       /*! @angular/fire/auth */
-      "KDZV");
+      "UbJi");
       /* harmony import */
 
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
       /* harmony import */
 
 
@@ -204,15 +204,17 @@
           value: function ionViewDidEnter() {
             var _this = this;
 
-            this.dataProvider.getBlockedLists().get().then(function (conversations) {
+            this.dataProvider.getBlockedLists().then(function (conversations) {
               var tmp = [];
-              conversations.forEach(function (conversation) {
-                // fetch blocked conversation & user info
-                _this.dataProvider.getUser(conversation.id).snapshotChanges().subscribe(function (data) {
-                  tmp.push({
-                    key: conversation.id,
-                    name: data.name,
-                    img: data.img
+              conversations.get().then(function (conversation) {
+                conversation.forEach(function (conversation) {
+                  // fetch blocked conversation & user info
+                  _this.dataProvider.getUser(conversation.id).snapshotChanges().subscribe(function (data) {
+                    tmp.push({
+                      key: conversation.id,
+                      name: data.name,
+                      img: data.img
+                    });
                   });
                 });
               });
@@ -223,12 +225,31 @@
         }, {
           key: "unblock",
           value: function unblock(uid) {
-            console.log(uid);
-            this.firestore.doc('accounts/' + this.afAuth.auth.currentUser.uid + '/conversations/' + uid).update({
-              blocked: false
-            }); // this.afdb.object('accounts/' + this.afAuth.auth.currentUser.uid + '/conversations/' + uid).update({
-            //   blocked: false
-            // })
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+              var fuid;
+              return regeneratorRuntime.wrap(function _callee$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      console.log(uid);
+                      _context.next = 3;
+                      return this.afAuth.currentUser.then(function (data) {
+                        return data.uid;
+                      });
+
+                    case 3:
+                      fuid = _context.sent;
+                      this.firestore.doc('accounts/' + fuid + '/conversations/' + uid).update({
+                        blocked: false
+                      });
+
+                    case 5:
+                    case "end":
+                      return _context.stop();
+                  }
+                }
+              }, _callee, this);
+            }));
           }
         }]);
 

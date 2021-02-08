@@ -66,7 +66,7 @@
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
       /* harmony import */
 
 
@@ -78,11 +78,7 @@
 
       var firebase_app__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
       /*! firebase/app */
-      "Wcq6");
-      /* harmony import */
-
-
-      var firebase_app__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_8__);
+      "Jgta");
 
       var GroupJoinPage = /*#__PURE__*/function () {
         function GroupJoinPage(dataProvider, route, firestore, navCtrl) {
@@ -97,11 +93,13 @@
           this.group = {};
           this.termsAgreed = false;
           this.groupId = this.route.snapshot.params.id;
-          this.dataProvider.getCurrentUser().get().subscribe(function (u) {
-            var user = u.data();
-            user.userId = firebase_app__WEBPACK_IMPORTED_MODULE_8__["auth"]().currentUser.uid;
-            ;
-            _this.loggedInUser = user;
+          this.dataProvider.getCurrentUser().then(function (u) {
+            u.get().subscribe(function (u) {
+              var user = u.data();
+              user.userId = firebase_app__WEBPACK_IMPORTED_MODULE_8__["default"].auth().currentUser.uid;
+              ;
+              _this.loggedInUser = user;
+            });
           });
         }
 
@@ -137,7 +135,7 @@
               groups: this.loggedInUser.groups
             }).then(function () {
               // Add friend as members of the group.
-              _this3.group.members.push(firebase_app__WEBPACK_IMPORTED_MODULE_8__["auth"]().currentUser.uid); // Update group data on the database.
+              _this3.group.members.push(firebase_app__WEBPACK_IMPORTED_MODULE_8__["default"].auth().currentUser.uid); // Update group data on the database.
 
 
               _this3.dataProvider.getGroup(_this3.groupId).update({

@@ -92,7 +92,7 @@
 
       var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
       /*! @angular/fire/auth */
-      "KDZV");
+      "UbJi");
       /* harmony import */
 
 
@@ -137,7 +137,7 @@
             this.title = 'Friends';
             this.searchFriend = '';
 
-            if (this.afAuth.auth.currentUser != null) {
+            if (this.afAuth.currentUser != null) {
               this.dataProvider.getRequests(this.dataProvider.getCurrentUserId()).snapshotChanges().subscribe(function (requestsRes) {
                 if (requestsRes.payload != null) {
                   var requests = requestsRes.payload.data();
@@ -192,28 +192,30 @@
             this.loadingProvider.show();
             this.friends = []; // Get user data on database and get list of friends.
 
-            this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (user) {
-              var account = user.payload.data();
+            this.dataProvider.getCurrentUser().then(function (u) {
+              u.snapshotChanges().subscribe(function (user) {
+                var account = user.payload.data();
 
-              _this2.loadingProvider.hide();
+                _this2.loadingProvider.hide();
 
-              if (account != null && account.friends != null) {
-                for (var i = 0; i < account.friends.length; i++) {
-                  console.log('friends:', account.friends[i]);
+                if (account != null && account.friends != null) {
+                  for (var i = 0; i < account.friends.length; i++) {
+                    console.log('friends:', account.friends[i]);
 
-                  _this2.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe(function (friend) {
-                    if (friend.payload != null) {
-                      var friendData = Object.assign({
-                        $key: friend.payload.data().userId
-                      }, friend.payload.data());
+                    _this2.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe(function (friend) {
+                      if (friend.payload != null) {
+                        var friendData = Object.assign({
+                          $key: friend.payload.data().userId
+                        }, friend.payload.data());
 
-                      _this2.addOrUpdateFriend(friendData);
-                    }
-                  });
+                        _this2.addOrUpdateFriend(friendData);
+                      }
+                    });
+                  }
+                } else {
+                  _this2.friends = [];
                 }
-              } else {
-                _this2.friends = [];
-              }
+              });
             });
           } // Add or update friend data for real-time sync.
 
@@ -260,48 +262,50 @@
             this.requestsSent = [];
             this.loadingProvider.show(); // Get user info
 
-            this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (accountRes) {
-              _this3.account = accountRes.payload.data(); // Get friendRequests and requestsSent of the user.
+            this.dataProvider.getCurrentUser().then(function (u) {
+              u.snapshotChanges().subscribe(function (accountRes) {
+                _this3.account = accountRes.payload.data(); // Get friendRequests and requestsSent of the user.
 
-              _this3.dataProvider.getRequests(_this3.account.userId).snapshotChanges().subscribe(function (requestsRes) {
-                // friendRequests.
-                var requests = requestsRes.payload.data();
+                _this3.dataProvider.getRequests(_this3.account.userId).snapshotChanges().subscribe(function (requestsRes) {
+                  // friendRequests.
+                  var requests = requestsRes.payload.data();
 
-                if (requests != null) {
-                  if (requests.friendRequests != null && requests.friendRequests !== undefined) {
-                    _this3.friendRequests = [];
-                    _this3.friendRequestCount = requests.friendRequests.length;
-                    requests.friendRequests.forEach(function (userId) {
-                      _this3.dataProvider.getUser(userId).snapshotChanges().subscribe(function (sender) {
-                        sender = Object.assign({
-                          $key: sender.payload.data().userId
-                        }, sender.payload.data());
+                  if (requests != null) {
+                    if (requests.friendRequests != null && requests.friendRequests !== undefined) {
+                      _this3.friendRequests = [];
+                      _this3.friendRequestCount = requests.friendRequests.length;
+                      requests.friendRequests.forEach(function (userId) {
+                        _this3.dataProvider.getUser(userId).snapshotChanges().subscribe(function (sender) {
+                          sender = Object.assign({
+                            $key: sender.payload.data().userId
+                          }, sender.payload.data());
 
-                        _this3.addOrUpdateFriendRequest(sender);
+                          _this3.addOrUpdateFriendRequest(sender);
+                        });
                       });
-                    });
-                  } else {
-                    _this3.friendRequests = [];
-                  } // requestsSent.
+                    } else {
+                      _this3.friendRequests = [];
+                    } // requestsSent.
 
 
-                  if (requests.requestsSent != null && requests.requestsSent != undefined) {
-                    _this3.requestsSent = [];
-                    requests.requestsSent.forEach(function (userId) {
-                      _this3.dataProvider.getUser(userId).snapshotChanges().subscribe(function (receiver) {
-                        receiver = Object.assign({
-                          $key: receiver.payload.data().userId
-                        }, receiver.payload.data());
+                    if (requests.requestsSent != null && requests.requestsSent != undefined) {
+                      _this3.requestsSent = [];
+                      requests.requestsSent.forEach(function (userId) {
+                        _this3.dataProvider.getUser(userId).snapshotChanges().subscribe(function (receiver) {
+                          receiver = Object.assign({
+                            $key: receiver.payload.data().userId
+                          }, receiver.payload.data());
 
-                        _this3.addOrUpdateRequestSent(receiver);
+                          _this3.addOrUpdateRequestSent(receiver);
+                        });
                       });
-                    });
-                  } else {
-                    _this3.requestsSent = [];
+                    } else {
+                      _this3.requestsSent = [];
+                    }
                   }
-                }
 
-                _this3.loadingProvider.hide();
+                  _this3.loadingProvider.hide();
+                });
               });
             });
           } // Add or update friend request only if not yet friends.
@@ -394,32 +398,34 @@
                 }, c.payload.doc.data());
               });
 
-              _this4.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (accountRes) {
-                var account = accountRes.payload.data(); // Add own userId as exludedIds.
+              _this4.dataProvider.getCurrentUser().then(function (u) {
+                u.snapshotChanges().subscribe(function (accountRes) {
+                  var account = accountRes.payload.data(); // Add own userId as exludedIds.
 
-                _this4.excludedIds = [];
+                  _this4.excludedIds = [];
 
-                if (_this4.excludedIds.indexOf(account.userId) === -1) {
-                  _this4.excludedIds.push(account.userId);
-                } // Get friends which will be filtered out from the list using searchFilter pipe pipes/search.ts.
-
-
-                if (account != null) {
-                  if (account.friends != null) {
-                    account.friends.forEach(function (friend) {
-                      if (_this4.excludedIds.indexOf(friend) === -1) {
-                        _this4.excludedIds.push(friend);
-                      }
-                    });
-                  }
-                } // Get requests of the currentUser.
+                  if (_this4.excludedIds.indexOf(account.userId) === -1) {
+                    _this4.excludedIds.push(account.userId);
+                  } // Get friends which will be filtered out from the list using searchFilter pipe pipes/search.ts.
 
 
-                _this4.dataProvider.getRequests(account.userId).get().subscribe(function (requests) {
-                  if (requests.payload != null) {
-                    _this4.requestsSent = requests.payload.data().requestsSent;
-                    _this4.friendRequests = requests.payload.data().friendRequests;
-                  }
+                  if (account != null) {
+                    if (account.friends != null) {
+                      account.friends.forEach(function (friend) {
+                        if (_this4.excludedIds.indexOf(friend) === -1) {
+                          _this4.excludedIds.push(friend);
+                        }
+                      });
+                    }
+                  } // Get requests of the currentUser.
+
+
+                  _this4.dataProvider.getRequests(account.userId).get().subscribe(function (requests) {
+                    if (requests.payload != null) {
+                      _this4.requestsSent = requests.payload.data().requestsSent;
+                      _this4.friendRequests = requests.payload.data().friendRequests;
+                    }
+                  });
                 });
               });
             });

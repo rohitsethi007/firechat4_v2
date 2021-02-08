@@ -98,17 +98,13 @@
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
       /* harmony import */
 
 
       var firebase_app__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(
       /*! firebase/app */
-      "Wcq6");
-      /* harmony import */
-
-
-      var firebase_app__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_9__);
+      "Jgta");
 
       var GroupinfoPage = /*#__PURE__*/function () {
         // GroupInfoPage
@@ -156,7 +152,7 @@
                 }); // get group Posts
 
                 if (_this.group.posts) {
-                  _this.firestore.collection('posts').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_9__["firestore"].FieldPath.documentId(), 'in', _this.group.posts).get().then(function (po) {
+                  _this.firestore.collection('posts').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_9__["default"].firestore.FieldPath.documentId(), 'in', _this.group.posts).get().then(function (po) {
                     _this.groupPosts = [];
 
                     _this.loadEachPostData(po);
@@ -169,11 +165,13 @@
               }
             }); // Get user details.
 
-            this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (accounts) {
-              var account = accounts.payload.data();
-              _this.user = Object.assign({
-                $key: account.userId
-              }, account);
+            this.dataProvider.getCurrentUser().then(function (u) {
+              u.snapshotChanges().subscribe(function (accounts) {
+                var account = accounts.payload.data();
+                _this.user = Object.assign({
+                  $key: account.userId
+                }, account);
+              });
             });
           }
         }, {

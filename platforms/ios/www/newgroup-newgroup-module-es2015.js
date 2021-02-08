@@ -70,10 +70,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../services/data.service */ "EnSQ");
 /* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
 /* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../services/loading.service */ "7ch9");
-/* harmony import */ var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic-native/camera/ngx */ "Pn9U");
+/* harmony import */ var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic-native/camera/ngx */ "a/9d");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/router */ "tyNb");
-/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/fire/auth */ "KDZV");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
+/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/fire/auth */ "UbJi");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
 
 
@@ -130,14 +130,16 @@ let NewgroupPage = class NewgroupPage {
             groupTags: []
         };
         this.searchFriend = '';
-        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accounts) => {
-            this.account = accounts.payload.data();
-            if (!this.groupMembers) {
-                this.groupMembers = [this.account];
-            }
-            else {
-                this.friends = [];
-            }
+        this.dataProvider.getCurrentUser().then((u) => {
+            u.snapshotChanges().subscribe((accounts) => {
+                this.account = accounts.payload.data();
+                if (!this.groupMembers) {
+                    this.groupMembers = [this.account];
+                }
+                else {
+                    this.friends = [];
+                }
+            });
         });
         this.firestore.collection('categories').snapshotChanges().subscribe((catsRes) => {
             if (catsRes) {
@@ -154,58 +156,63 @@ let NewgroupPage = class NewgroupPage {
     }
     // Proceed with group creation.
     done() {
-        this.submitAttempt = true;
-        if (this.myForm.valid) {
-            this.loadingProvider.show();
-            let messages = [];
-            // Add system message that group is created.
-            messages.push({
-                date: new Date().toString(),
-                sender: this.afAuth.auth.currentUser.uid,
-                type: 'system',
-                message: 'This group has been created.',
-                icon: 'md-chatbubbles'
-            });
-            // Add members of the group.
-            let members = [];
-            for (let i = 0; i < this.groupMembers.length; i++) {
-                members.push(this.groupMembers[i].userId);
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            this.submitAttempt = true;
+            if (this.myForm.valid) {
+                this.loadingProvider.show();
+                let messages = [];
+                let userId = yield this.afAuth.currentUser.then((u) => { return u.uid; });
+                // Add system message that group is created.
+                messages.push({
+                    date: new Date().toString(),
+                    sender: userId,
+                    type: 'system',
+                    message: 'This group has been created.',
+                    icon: 'md-chatbubbles'
+                });
+                // Add members of the group.
+                let members = [];
+                for (let i = 0; i < this.groupMembers.length; i++) {
+                    members.push(this.groupMembers[i].userId);
+                }
+                // Add group info and date.
+                this.group.dateCreated = new Date().toString();
+                this.group.messages = messages;
+                this.group.members = members;
+                this.group.name = this.name;
+                this.group.description = this.description;
+                this.group.groupTags = this.groupTags.split('\n');
+                this.group.categoryId = this.category.value;
+                this.group.img = '';
+                // Add group to database.
+                this.firestore.collection('groups').add(this.group).then((success) => {
+                    let groupId = success.id;
+                    this.router.navigateByUrl('/group/' + groupId);
+                    if (this.account.groups) {
+                        this.account.groups.push(groupId);
+                    }
+                    else {
+                        this.account.groups = [groupId];
+                    }
+                    this.dataProvider.getCurrentUser().then((u) => {
+                        u.update({
+                            groups: this.account.groups
+                        });
+                    });
+                    let cat = this.categories.find(c => c.id = this.category.value);
+                    console.log('cat', cat, this.categories);
+                    if (!cat.groups) {
+                        cat.groups = [groupId];
+                    }
+                    else {
+                        cat.groups.push(groupId);
+                    }
+                    this.firestore.collection('categories').doc(this.category.value).update({
+                        groups: cat.groups
+                    });
+                });
             }
-            // Add group info and date.
-            this.group.dateCreated = new Date().toString();
-            this.group.messages = messages;
-            this.group.members = members;
-            this.group.name = this.name;
-            this.group.description = this.description;
-            this.group.groupTags = this.groupTags.split('\n');
-            this.group.categoryId = this.category.value;
-            this.group.img = '';
-            // Add group to database.
-            this.firestore.collection('groups').add(this.group).then((success) => {
-                let groupId = success.id;
-                this.router.navigateByUrl('/group/' + groupId);
-                if (this.account.groups) {
-                    this.account.groups.push(groupId);
-                }
-                else {
-                    this.account.groups = [groupId];
-                }
-                this.dataProvider.getCurrentUser().update({
-                    groups: this.account.groups
-                });
-                let cat = this.categories.find(c => c.id = this.category.value);
-                console.log('cat', cat, this.categories);
-                if (!cat.groups) {
-                    cat.groups = [groupId];
-                }
-                else {
-                    cat.groups.push(groupId);
-                }
-                this.firestore.collection('categories').doc(this.category.value).update({
-                    groups: cat.groups
-                });
-            });
-        }
+        });
     }
     showPicker() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {

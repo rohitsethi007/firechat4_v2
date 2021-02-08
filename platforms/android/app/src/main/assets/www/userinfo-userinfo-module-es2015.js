@@ -93,8 +93,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
 /* harmony import */ var _services_firebase_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../services/firebase.service */ "Z2Br");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/router */ "tyNb");
-/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! firebase */ "iqUP");
-/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(firebase__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! firebase */ "JZFu");
 
 
 
@@ -134,12 +133,12 @@ let UserinfoPage = class UserinfoPage {
             this.loadingProvider.hide();
         });
         // Get friends of current logged in user.
-        this.dataProvider.getUser(firebase__WEBPACK_IMPORTED_MODULE_9__["auth"]().currentUser.uid).snapshotChanges().subscribe((user) => {
+        this.dataProvider.getUser(firebase__WEBPACK_IMPORTED_MODULE_9__["default"].auth().currentUser.uid).snapshotChanges().subscribe((user) => {
             if (user.payload.data() != null)
                 this.friends = user.payload.data().friends;
         });
         // Get requests of current logged in user.
-        this.dataProvider.getRequests(firebase__WEBPACK_IMPORTED_MODULE_9__["auth"]().currentUser.uid).snapshotChanges().subscribe(((requests) => {
+        this.dataProvider.getRequests(firebase__WEBPACK_IMPORTED_MODULE_9__["default"].auth().currentUser.uid).snapshotChanges().subscribe(((requests) => {
             console.log(requests.payload.data());
             if (requests.payload.data() != null) {
                 this.friendRequests = requests.payload.data().friendRequests;
@@ -150,7 +149,7 @@ let UserinfoPage = class UserinfoPage {
     block() {
         this.loadingProvider.show();
         console.log("block function");
-        firebase__WEBPACK_IMPORTED_MODULE_9__["database"]().ref('accounts/' + firebase__WEBPACK_IMPORTED_MODULE_9__["auth"]().currentUser.uid + '/conversations/' + this.userId).update({
+        firebase__WEBPACK_IMPORTED_MODULE_9__["default"].database().ref('accounts/' + firebase__WEBPACK_IMPORTED_MODULE_9__["default"].auth().currentUser.uid + '/conversations/' + this.userId).update({
             blocked: true
         }).then(() => {
             this.loadingProvider.hide();

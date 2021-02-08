@@ -162,7 +162,7 @@
 
       var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
       /*! @angular/fire/auth */
-      "KDZV");
+      "UbJi");
       /* harmony import */
 
 
@@ -180,7 +180,7 @@
 
       var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(
       /*! @ionic-native/camera/ngx */
-      "Pn9U");
+      "a/9d");
       /* harmony import */
 
 
@@ -192,7 +192,7 @@
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
       /* harmony import */
 
 
@@ -210,11 +210,7 @@
 
       var firebase_app__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(
       /*! firebase/app */
-      "Wcq6");
-      /* harmony import */
-
-
-      var firebase_app__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_15__);
+      "Jgta");
       /* harmony import */
 
 
@@ -307,7 +303,7 @@
                 _this.title = _this.user.username; // get user Posts
 
                 if (_this.user.userPosts) {
-                  _this.firestore.collection('posts').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["firestore"].FieldPath.documentId(), 'in', _this.user.userPosts).get().then(function (po) {
+                  _this.firestore.collection('posts').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["default"].firestore.FieldPath.documentId(), 'in', _this.user.userPosts).get().then(function (po) {
                     _this.userPosts = [];
 
                     _this.loadEachPostData(po, 'userPosts');
@@ -316,7 +312,7 @@
 
 
                 if (_this.user.userReactions) {
-                  _this.firestore.collection('posts').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["firestore"].FieldPath.documentId(), 'in', _this.user.userReactions).get().then(function (po) {
+                  _this.firestore.collection('posts').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["default"].firestore.FieldPath.documentId(), 'in', _this.user.userReactions).get().then(function (po) {
                     _this.userReactions = [];
 
                     _this.loadEachPostData(po, 'userReactions');
@@ -325,7 +321,7 @@
 
 
                 if (_this.user.userComments) {
-                  _this.firestore.collection('posts').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["firestore"].FieldPath.documentId(), 'in', _this.user.userComments).get().then(function (po) {
+                  _this.firestore.collection('posts').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["default"].firestore.FieldPath.documentId(), 'in', _this.user.userComments).get().then(function (po) {
                     _this.userComments = [];
 
                     _this.loadEachPostData(po, 'userComments');
@@ -334,7 +330,7 @@
 
 
                 if (_this.user.friends) {
-                  _this.firestore.collection('accounts').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["firestore"].FieldPath.documentId(), 'in', _this.user.friends).get().then(function (user) {
+                  _this.firestore.collection('accounts').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["default"].firestore.FieldPath.documentId(), 'in', _this.user.friends).get().then(function (user) {
                     _this.friends = [];
                     user.forEach(function (f) {
                       var friend;
@@ -359,7 +355,7 @@
 
 
                 if (_this.user.groups) {
-                  _this.firestore.collection('groups').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["firestore"].FieldPath.documentId(), 'in', _this.user.groups).get().then(function (group) {
+                  _this.firestore.collection('groups').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["default"].firestore.FieldPath.documentId(), 'in', _this.user.groups).get().then(function (group) {
                     _this.groups = [];
                     group.forEach(function (g) {
                       var group;
@@ -541,56 +537,78 @@
         }, {
           key: "changeNotification",
           value: function changeNotification() {
-            var _this4 = this;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+              var _this4 = this;
 
-            if (this.platform.is('desktop')) {
-              this.user.isPushEnabled = false;
-              this.loadingProvider.showToast("Notification only working on mobile device");
-            } else {
-              console.log(this.user.isPushEnabled);
-
-              if (this.user.isPushEnabled == true) {
-                //Registering for push notification
-                this.fcm.hasPermission().then(function (hasPermission) {
-                  if (!hasPermission) {
-                    _this4.fcm.grantPermission().then(function (data) {
-                      return console.log(data);
-                    });
-                  } else {
-                    _this4.fcm.getToken().then(function (token) {
-                      console.log(token);
-
-                      _this4.firestore.doc('/accounts/' + _this4.afAuth.auth.currentUser.uid).update({
-                        isPushEnabled: true,
-                        pushToken: token
+              var uid;
+              return regeneratorRuntime.wrap(function _callee$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      _context.next = 2;
+                      return this.afAuth.currentUser.then(function (u) {
+                        return u.uid;
                       });
 
-                      _this4.user.isPushEnabled = true;
-                    })["catch"](function (err) {
-                      console.log(err);
-                    });
+                    case 2:
+                      uid = _context.sent;
 
-                    _this4.fcm.onTokenRefresh().subscribe(function (token) {
-                      console.log(token);
+                      if (this.platform.is('desktop')) {
+                        this.user.isPushEnabled = false;
+                        this.loadingProvider.showToast("Notification only working on mobile device");
+                      } else {
+                        console.log(this.user.isPushEnabled);
 
-                      _this4.firestore.doc('/accounts/' + _this4.afAuth.auth.currentUser.uid).update({
-                        isPushEnabled: true,
-                        pushToken: token
-                      });
-                    });
+                        if (this.user.isPushEnabled == true) {
+                          //Registering for push notification
+                          this.fcm.hasPermission().then(function (hasPermission) {
+                            if (!hasPermission) {
+                              _this4.fcm.grantPermission().then(function (data) {
+                                return console.log(data);
+                              });
+                            } else {
+                              _this4.fcm.getToken().then(function (token) {
+                                console.log(token);
+
+                                _this4.firestore.doc('/accounts/' + uid).update({
+                                  isPushEnabled: true,
+                                  pushToken: token
+                                });
+
+                                _this4.user.isPushEnabled = true;
+                              })["catch"](function (err) {
+                                console.log(err);
+                              });
+
+                              _this4.fcm.onTokenRefresh().subscribe(function (token) {
+                                console.log(token);
+
+                                _this4.firestore.doc('/accounts/' + uid).update({
+                                  isPushEnabled: true,
+                                  pushToken: token
+                                });
+                              });
+                            }
+                          });
+                          this.fcm.onMessageReceived().subscribe(function (data) {
+                            console.log(data);
+                          });
+                        } else {
+                          this.user.isPushEnabled == false;
+                          this.firestore.doc('/accounts/' + uid).update({
+                            isPushEnabled: false,
+                            pushToken: ''
+                          });
+                        }
+                      }
+
+                    case 4:
+                    case "end":
+                      return _context.stop();
                   }
-                });
-                this.fcm.onMessageReceived().subscribe(function (data) {
-                  console.log(data);
-                });
-              } else {
-                this.user.isPushEnabled == false;
-                this.firestore.doc('/accounts/' + this.afAuth.auth.currentUser.uid).update({
-                  isPushEnabled: false,
-                  pushToken: ''
-                });
-              }
-            }
+                }
+              }, _callee, this);
+            }));
           }
         }, {
           key: "setPhoto",
@@ -623,13 +641,34 @@
         }, {
           key: "setPassword",
           value: function setPassword() {
-            var _this6 = this;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+              var _this6 = this;
 
-            this.afAuth.auth.sendPasswordResetEmail(this.afAuth.auth.currentUser.email).then(function (res) {
-              _this6.loadingProvider.showToast("Please Check your inbox");
-            })["catch"](function (err) {
-              _this6.loadingProvider.showToast(err.message);
-            });
+              var email;
+              return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                while (1) {
+                  switch (_context2.prev = _context2.next) {
+                    case 0:
+                      _context2.next = 2;
+                      return this.afAuth.currentUser.then(function (u) {
+                        return u.email;
+                      });
+
+                    case 2:
+                      email = _context2.sent;
+                      this.afAuth.sendPasswordResetEmail(email).then(function (res) {
+                        _this6.loadingProvider.showToast("Please Check your inbox");
+                      })["catch"](function (err) {
+                        _this6.loadingProvider.showToast(err.message);
+                      });
+
+                    case 4:
+                    case "end":
+                      return _context2.stop();
+                  }
+                }
+              }, _callee2, this);
+            }));
           } // Delete the user account. After deleting the Firebase user, the userData along with their profile pic uploaded on the storage will be deleted as well.
           // If you added some other info or traces for the account, make sure to account for them when deleting the account.
 
@@ -649,22 +688,24 @@
                   _this7.loadingProvider.show(); // Delete Firebase user
 
 
-                  _this7.afAuth.auth.currentUser["delete"]().then(function (success) {
-                    // Delete profilePic of user on Firebase storage
-                    _this7.imageProvider.deleteUserImageFile(_this7.user); // Delete user data on Database
+                  _this7.afAuth.currentUser.then(function (u) {
+                    u["delete"]().then(function (success) {
+                      // Delete profilePic of user on Firebase storage
+                      _this7.imageProvider.deleteUserImageFile(_this7.user); // Delete user data on Database
 
 
-                    _this7.firestore.doc('/accounts/' + _this7.user.userId)["delete"]().then(function () {
+                      _this7.firestore.doc('/accounts/' + _this7.user.userId)["delete"]().then(function () {
+                        _this7.loadingProvider.hide();
+
+                        _this7.loadingProvider.showToast("Your Account Deleted Successfully");
+
+                        _this7.loginService.logout();
+                      });
+                    })["catch"](function (error) {
                       _this7.loadingProvider.hide();
 
-                      _this7.loadingProvider.showToast("Your Account Deleted Successfully");
-
-                      _this7.loginService.logout();
+                      _this7.loadingProvider.showToast("Something went wrong");
                     });
-                  })["catch"](function (error) {
-                    _this7.loadingProvider.hide();
-
-                    _this7.loadingProvider.showToast("Something went wrong");
                   });
                 }
               }]
@@ -695,13 +736,13 @@
         }, {
           key: "editProfile",
           value: function editProfile() {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
               var modal;
-              return regeneratorRuntime.wrap(function _callee$(_context) {
+              return regeneratorRuntime.wrap(function _callee3$(_context3) {
                 while (1) {
-                  switch (_context.prev = _context.next) {
+                  switch (_context3.prev = _context3.next) {
                     case 0:
-                      _context.next = 2;
+                      _context3.next = 2;
                       return this.modalCtrl.create({
                         component: _user_profile_modal_user_profile_modal_page__WEBPACK_IMPORTED_MODULE_18__["UserProfileModalPage"],
                         componentProps: {
@@ -710,19 +751,19 @@
                       });
 
                     case 2:
-                      modal = _context.sent;
-                      _context.next = 5;
+                      modal = _context3.sent;
+                      _context3.next = 5;
                       return modal.present();
 
                     case 5:
-                      return _context.abrupt("return", _context.sent);
+                      return _context3.abrupt("return", _context3.sent);
 
                     case 6:
                     case "end":
-                      return _context.stop();
+                      return _context3.stop();
                   }
                 }
-              }, _callee, this);
+              }, _callee3, this);
             }));
           }
         }, {

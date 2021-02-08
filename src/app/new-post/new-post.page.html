@@ -69,8 +69,16 @@
 </ion-content>
 <ion-footer *ngIf="step==2">
   <ion-toolbar>
-    <ion-row lines="none" class="uploads item-text-wrap" *ngIf="postMedia && postMedia.length > 0">
-      <div class="img-wrap" *ngFor="let media of postMedia">
+    <ion-row lines="none" class="uploads item-text-wrap" *ngIf="postMediaImgs.length > 0 || postMediaVideo.length > 0">
+      <div class="img-wrap" *ngFor="let media of postMediaImgs">
+          <ion-thumbnail slot="start">
+            <span class="close" (click)="removeMedia(media)">&times;</span>
+            <!-- <ion-img [src]="media"> -->
+              <ion-img [src]="media">
+              </ion-img>
+          </ion-thumbnail>
+        </div>
+        <div class="img-wrap" *ngFor="let media of postMediaVideo">
           <ion-thumbnail slot="start">
             <span class="close" (click)="removeMedia(media)">&times;</span>
             <!-- <ion-img [src]="media"> -->

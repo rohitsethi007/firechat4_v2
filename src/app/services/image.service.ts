@@ -292,13 +292,13 @@ export class ImageService {
       });
     }
 
-  uploadPostPhotos(postMedia): Promise<any> {
+  uploadPostPhotos(postId, postMedia): Promise<any> {
       let promises = [];
       return new Promise(resolve => {
         if (postMedia && postMedia.length > 0) {
         // tslint:disable-next-line: prefer-for-of
         for (let i = 0; i < postMedia.length; i++) {
-            promises.push(this.getDownloadUrlImage(postMedia[i]));
+            promises.push(this.getDownloadUrlImage(postId, postMedia[i]));
         }
         Promise.all(promises).then((results) => {
           resolve(results);
@@ -309,7 +309,7 @@ export class ImageService {
     });
   }
 
-  getDownloadUrlImage(imageBase64: any): Promise<any> {
+  getDownloadUrlImage(postId, imageBase64: any): Promise<any> {
     return new Promise(resolve => {
       // Process the returned imageURI.
       let imgBlob = this.imgURItoBlob(imageBase64);
@@ -318,7 +318,7 @@ export class ImageService {
       };
 
       // Generate filename and upload to Firebase Storage.
-      let upRef = firebase.default.storage().ref().child('images/posts/' + this.generateFilename());
+      let upRef = firebase.default.storage().ref().child('images/posts/' + postId + this.generateFilename());
       upRef.put(imgBlob, metadata).then((snapshot) => {
         // URL of the uploaded image!
         upRef.getDownloadURL().then(url => {
@@ -382,39 +382,36 @@ export class ImageService {
           var dirpath = videoUrl.substr(0, videoUrl.lastIndexOf('/') + 1);
 
           dirpath = dirpath.includes("file://") ? dirpath : "file://" + dirpath;
-          
           try {
-            console.log('dirpath', dirpath);
-            console.log('filename',filename);
-            console.log('file exists', this.file.checkFile(dirpath,filename).then(sd => {
-              console.log('sd:', sd);
+          //   console.log('dirpath', dirpath);
+          //   console.log('filename',filename);
+          //   console.log('file exists', this.file.checkFile(dirpath,filename).then(sd => {
+          //     console.log('sd:', sd);
             
-            }));
-            const buffer = await this.file.readAsArrayBuffer(dirpath, filename);
-            console.log('buffer', buffer);
-          this.file.readAsArrayBuffer(dirpath, filename)
-          .then((success) => {
-          console.log('step4', success);
-          let blob = new Blob([success], { type: "video/mp4" });
-          console.log('step4', blob);
+          //   }));
+          console.log('Capacitor.convertFileSrc(dirpath+filename)',Capacitor.convertFileSrc(dirpath+filename));
+          resolve(Capacitor.convertFileSrc(dirpath+filename));
+        //   this.file.readAsArrayBuffer(dirpath, filename)
+        //   .then((success) => {
+        //   let blob = new Blob([success], { type: "video/mp4" });
 
-          let uploadRef = firebase.default.storage().ref().child('videos/' + name);
+        //   let uploadRef = firebase.default.storage().ref().child('videos/' + filename);
          
-          uploadRef.put(blob).then(res => {
-            let process = res.bytesTransferred / res.totalBytes * 100;
-            console.log(process);
-            this.loadingProvider.hide();
-            uploadRef.getDownloadURL().then(url => {
-              resolve(url);
-            })
+        //   uploadRef.put(blob).then(res => {
+        //     let process = res.bytesTransferred / res.totalBytes * 100;
+        //     uploadRef.getDownloadURL().then(url => {
+        //       console.log('downloaded url', url);
+        //       resolve(url);
+        //       this.loadingProvider.hide();
+        //     })
 
-          }, err => {
-            this.loadingProvider.hide();
-            console.log("Failed")
-          });
-        }).catch(err => {
-            return console.log("Error","Error in readasbuffer", err);
-          });
+        //   }, err => {
+        //     this.loadingProvider.hide();
+        //     console.log("Failed")
+        //   });
+        // }).catch(err => {
+        //     return console.log("Error","Error in readasbuffer", err);
+        //   });
           } catch(err) {
             return console.log("Error","Something went wrong:", err);
           }
@@ -428,33 +425,6 @@ export class ImageService {
     
 
   }
-
-  async uploadPostVideoCapacitor() {
-    const options = {
-      resultType: CameraResultType.Uri
-    };
-    const originalPhoto = await CameraCap.getPhoto(options);
-    const photoInTempStorage = await Filesystem.readFile({ path: originalPhoto.path });
-
-    let date = new Date(),
-      time = date.getTime(),
-      fileName = time + ".jpeg";
-
-    await Filesystem.writeFile({
-      data: photoInTempStorage.data,
-      path: fileName,
-      directory: FilesystemDirectory.Data
-    });
-
-    const finalPhotoUri = await Filesystem.getUri({
-      directory: FilesystemDirectory.Data,
-      path: fileName
-    });
-
-    let photoPath = Capacitor.convertFileSrc(finalPhotoUri.uri);
-    console.log(photoPath);
-  }
-
 
   deletePostReactionPhoto(postId,url){
     var fileName = url.substring(url.lastIndexOf('%2F') + 3, url.lastIndexOf('?'));
@@ -659,12 +629,18 @@ export class ImageService {
       // available options are
       // window.imagePicker.OutputType.FILE_URI (0) or 
       // window.imagePicker.OutputType.BASE64_STRING (1)
-      outputType: 1
+      outputType: 0
     };
     this.imageResponse = [];
     this.imagePicker.getPictures(this.options).then((results) => {
       for (let i = 0; i < results.length; i++) {
-        this.imageResponse.push('data:image/jpeg;base64,' + results[i]);
+        console.log('results[i]', results[i]);
+        console.log('Capacitor', Capacitor.convertFileSrc(results[i]));
+        Capacitor.convertFileSrc(results[i]);
+        this.imageResponse.push(Capacitor.convertFileSrc(results[i]));
+        // this.imageResponse.push('data:image/jpeg;base64,' + results[i]);
+        // var filename = results[i].substr(results[i].lastIndexOf('/') + 1);
+        // var dirpath = results[i].substr(0, results[i].lastIndexOf('/') + 1);
       }
 
       resolve(this.imageResponse);

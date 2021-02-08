@@ -39,6 +39,9 @@
     <feature name="FileTransfer">
         <param name="android-package" value="org.apache.cordova.filetransfer.FileTransfer" />
     </feature>
+    <feature name="VideoCapturePlus">
+        <param name="android-package" value="nl.xservices.plugins.videocaptureplus.VideoCapturePlus" />
+    </feature>
     <name>IonChat</name>
     <description>Social Share</description>
     <author email="contact@socialshare.com" href="https://socialshare.com/">Social Share Team</author>
@@ -75,6 +78,8 @@
     <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
     <preference name="loglevel" value="DEBUG" />
     <preference name="android-minSdkVersion" value="19" />
+    <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
+    <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,root" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="BackupWebStorage" value="none" />
     <preference name="SplashMaintainAspectRatio" value="true" />

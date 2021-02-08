@@ -202,11 +202,7 @@
 
       var firebase__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(
       /*! firebase */
-      "iqUP");
-      /* harmony import */
-
-
-      var firebase__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(firebase__WEBPACK_IMPORTED_MODULE_9__);
+      "JZFu");
 
       var UserinfoPage = /*#__PURE__*/function () {
         // UserInfoPage
@@ -247,11 +243,11 @@
               _this.loadingProvider.hide();
             }); // Get friends of current logged in user.
 
-            this.dataProvider.getUser(firebase__WEBPACK_IMPORTED_MODULE_9__["auth"]().currentUser.uid).snapshotChanges().subscribe(function (user) {
+            this.dataProvider.getUser(firebase__WEBPACK_IMPORTED_MODULE_9__["default"].auth().currentUser.uid).snapshotChanges().subscribe(function (user) {
               if (user.payload.data() != null) _this.friends = user.payload.data().friends;
             }); // Get requests of current logged in user.
 
-            this.dataProvider.getRequests(firebase__WEBPACK_IMPORTED_MODULE_9__["auth"]().currentUser.uid).snapshotChanges().subscribe(function (requests) {
+            this.dataProvider.getRequests(firebase__WEBPACK_IMPORTED_MODULE_9__["default"].auth().currentUser.uid).snapshotChanges().subscribe(function (requests) {
               console.log(requests.payload.data());
 
               if (requests.payload.data() != null) {
@@ -267,7 +263,7 @@
 
             this.loadingProvider.show();
             console.log("block function");
-            firebase__WEBPACK_IMPORTED_MODULE_9__["database"]().ref('accounts/' + firebase__WEBPACK_IMPORTED_MODULE_9__["auth"]().currentUser.uid + '/conversations/' + this.userId).update({
+            firebase__WEBPACK_IMPORTED_MODULE_9__["default"].database().ref('accounts/' + firebase__WEBPACK_IMPORTED_MODULE_9__["default"].auth().currentUser.uid + '/conversations/' + this.userId).update({
               blocked: true
             }).then(function () {
               _this2.loadingProvider.hide();

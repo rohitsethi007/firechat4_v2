@@ -45,11 +45,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../services/loading.service */ "7ch9");
 /* harmony import */ var _ionic_native_local_notifications_ngx__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic-native/local-notifications/ngx */ "Bg0J");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/router */ "tyNb");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
-/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/fire/auth */ "KDZV");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
+/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/fire/auth */ "UbJi");
 /* harmony import */ var _reaction_list_modal_reaction_list_modal_page__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../reaction-list-modal/reaction-list-modal.page */ "7ONW");
-/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! firebase */ "iqUP");
-/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(firebase__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! firebase */ "JZFu");
 /* harmony import */ var _ionic_native_fcm_ngx__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @ionic-native/fcm/ngx */ "XqOP");
 
 
@@ -133,13 +132,15 @@ let FeedPage = class FeedPage {
     ngOnInit() {
     }
     ionViewDidEnter() {
-        this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_12__["auth"]().currentUser.uid;
+        this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_12__["default"].auth().currentUser.uid;
         // Get Posts
-        this.dataProvider.getCurrentUser().get().subscribe((user) => {
-            this.userReactions = user.data().userReactions;
-            this.userNotifications = user.data().userNotifications;
-            this.loggedInUser = user.data();
-            this.getFeedData();
+        this.dataProvider.getCurrentUser().then((u) => {
+            u.get().subscribe((user) => {
+                this.userReactions = user.data().userReactions;
+                this.userNotifications = user.data().userNotifications;
+                this.loggedInUser = user.data();
+                this.getFeedData();
+            });
         });
     }
     getFeedData() {
@@ -333,9 +334,9 @@ let FeedPage = class FeedPage {
         }
         else {
             this.firestore.collection('posts').doc(post.key).collection('reactions').doc(r.key).update({
-                reactionType: firebase__WEBPACK_IMPORTED_MODULE_12__["firestore"].FieldValue.arrayUnion(reactionType)
+                reactionType: firebase__WEBPACK_IMPORTED_MODULE_12__["default"].firestore.FieldValue.arrayUnion(reactionType)
             }).then(() => {
-                const increment = firebase__WEBPACK_IMPORTED_MODULE_12__["firestore"].FieldValue.increment(1);
+                const increment = firebase__WEBPACK_IMPORTED_MODULE_12__["default"].firestore.FieldValue.increment(1);
                 this.firestore.collection('posts').doc(post.key).update({
                     totalReactionCount: increment
                 });
@@ -360,9 +361,9 @@ let FeedPage = class FeedPage {
                 // reaction.reactionType = reaction.reactionType.filter(x => x !== reactionType);
                 // this.dataProvider.updatePostReactions(post.key, reaction, true);
                 this.firestore.collection('posts').doc(post.key).collection('reactions').doc(reaction.key).update({
-                    reactionType: firebase__WEBPACK_IMPORTED_MODULE_12__["firestore"].FieldValue.arrayRemove(reactionType)
+                    reactionType: firebase__WEBPACK_IMPORTED_MODULE_12__["default"].firestore.FieldValue.arrayRemove(reactionType)
                 }).then(() => {
-                    const increment = firebase__WEBPACK_IMPORTED_MODULE_12__["firestore"].FieldValue.increment(-1);
+                    const increment = firebase__WEBPACK_IMPORTED_MODULE_12__["default"].firestore.FieldValue.increment(-1);
                     this.firestore.collection('posts').doc(post.key).update({
                         totalReactionCount: increment
                     });

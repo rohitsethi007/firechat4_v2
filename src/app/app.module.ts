@@ -94,3 +94,13 @@ import { FCM } from '@ionic-native/fcm/ngx';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+export class FileReaderA extends window.FileReader {
+	constructor() {
+		super();
+		const zoneOriginalInstance = (this as any)['__zone_symbol__originalInstance'];
+		return zoneOriginalInstance || this;
+	}
+}
+
+window.FileReader = FileReaderA;

@@ -100,6 +100,10 @@
             {
               "xml": "<feature name=\"FileTransfer\"><param name=\"android-package\" value=\"org.apache.cordova.filetransfer.FileTransfer\" /></feature>",
               "count": 1
+            },
+            {
+              "xml": "<feature name=\"VideoCapturePlus\"><param name=\"android-package\" value=\"nl.xservices.plugins.videocaptureplus.VideoCapturePlus\" /></feature>",
+              "count": 1
             }
           ]
         }
@@ -109,7 +113,7 @@
           "/*": [
             {
               "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
-              "count": 3
+              "count": 4
             },
             {
               "xml": "<uses-permission android:name=\"android.permission.READ_CONTACTS\" />",
@@ -121,6 +125,18 @@
             },
             {
               "xml": "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\" />",
+              "count": 1
+            },
+            {
+              "xml": "<uses-permission android:name=\"android.permission.RECORD_AUDIO\" />",
+              "count": 1
+            },
+            {
+              "xml": "<uses-permission android:name=\"android.permission.CAMERA\" />",
+              "count": 1
+            },
+            {
+              "xml": "<provider android:authorities=\"nl.x-services.plugins.videocaptureplus.provider\" android:exported=\"false\" android:grantUriPermissions=\"true\" android:name=\"android.support.v4.content.FileProvider\"><meta-data android:name=\"android.support.FILE_PROVIDER_PATHS\" android:resource=\"@xml/provider_paths\" /></provider>",
               "count": 1
             }
           ],
@@ -234,6 +250,9 @@
       "PACKAGE_NAME": "com.socialshare.vscode"
     },
     "cordova-plugin-file-transfer": {
+      "PACKAGE_NAME": "com.socialshare.vscode"
+    },
+    "nl.x-services.plugins.videocaptureplus": {
       "PACKAGE_NAME": "com.socialshare.vscode"
     }
   },
@@ -576,6 +595,14 @@
       "clobbers": [
         "window.FileTransfer"
       ]
+    },
+    {
+      "id": "nl.x-services.plugins.videocaptureplus.VideoCapturePlus",
+      "file": "plugins/nl.x-services.plugins.videocaptureplus/www/VideoCapturePlus.js",
+      "pluginId": "nl.x-services.plugins.videocaptureplus",
+      "clobbers": [
+        "window.plugins.videocaptureplus"
+      ]
     }
   ],
   "plugin_metadata": {
@@ -588,6 +615,7 @@
     "cordova-plugin-facebook4": "6.2.0",
     "cordova-plugin-fcm-with-dependecy-updated": "7.3.1",
     "cordova-plugin-file": "6.0.2",
-    "cordova-plugin-file-transfer": "1.7.1"
+    "cordova-plugin-file-transfer": "1.7.1",
+    "nl.x-services.plugins.videocaptureplus": "1.0.0"
   }
 }

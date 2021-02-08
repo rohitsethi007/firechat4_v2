@@ -17,8 +17,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "tyNb");
 /* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../services/loading.service */ "7ch9");
 /* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../services/data.service */ "EnSQ");
-/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/fire/auth */ "KDZV");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
+/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/fire/auth */ "UbJi");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
 
 
 
@@ -55,7 +55,7 @@ let MessagesPage = class MessagesPage {
                         this.dataProvider.getUser(conversation.key).get().subscribe((user) => {
                             conversation.friend = user.data();
                             // Get conversation info.
-                            this.dataProvider.getConversation(conversation.conversationId).snapshotChanges().subscribe((obj) => {
+                            this.dataProvider.getConversation(conversation.conversationId).snapshotChanges().subscribe((obj) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
                                 // Get last message of conversation.
                                 console.log(obj.payload.data());
                                 if (obj.payload.data() != null) {
@@ -66,9 +66,10 @@ let MessagesPage = class MessagesPage {
                                     conversation.unreadMessagesCount = obj.payload.data().messages.length - conversation.messagesRead;
                                     console.log(obj.payload.data().messages.length + "-" + conversation.messagesRead);
                                     console.log(conversation.unreadMessagesCount);
+                                    let userId = yield this.afAuth.currentUser.then((u) => { return u.uid; });
                                     // Process last message depending on messageType.
                                     if (lastMessage.type == 'text') {
-                                        if (lastMessage.sender == this.afAuth.auth.currentUser.uid) {
+                                        if (lastMessage.sender == userId) {
                                             conversation.message = 'You: ' + lastMessage.message;
                                         }
                                         else {
@@ -76,7 +77,7 @@ let MessagesPage = class MessagesPage {
                                         }
                                     }
                                     else {
-                                        if (lastMessage.sender == this.afAuth.auth.currentUser.uid) {
+                                        if (lastMessage.sender == userId) {
                                             conversation.message = 'You sent a photo message.';
                                         }
                                         else {
@@ -86,7 +87,7 @@ let MessagesPage = class MessagesPage {
                                     // Add or update conversation.
                                     this.addOrUpdateConversation(conversation);
                                 }
-                            });
+                            }));
                         });
                     }
                 });

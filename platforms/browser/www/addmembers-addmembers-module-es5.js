@@ -72,7 +72,7 @@
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
       /* harmony import */
 
 
@@ -109,8 +109,10 @@
             this.toAdd = [];
             this.loadingProvider.show(); // Get user information for system message sent to the group when a member was added.
 
-            this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (user) {
-              _this.user = user.payload.data();
+            this.dataProvider.getCurrentUser().then(function (u) {
+              u.snapshotChanges().subscribe(function (user) {
+                _this.user = user.payload.data();
+              });
             }); // Get group information
 
             this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe(function (group) {
@@ -124,30 +126,32 @@
                   });
                 }); // Get user's friends to add
 
-                _this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (user) {
-                  var account = user.payload.data();
+                _this.dataProvider.getCurrentUser().then(function (u) {
+                  u.snapshotChanges().subscribe(function (user) {
+                    var account = user.payload.data();
 
-                  if (account.friends) {
-                    for (var i = 0; i < account.friends.length; i++) {
-                      _this.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe(function (friendRes) {
-                        // Only friends that are not yet a member of this group can be added.
-                        var friend = Object.assign({
-                          $key: friendRes.key
-                        }, friendRes.payload.data());
-                        console.log(friend);
+                    if (account.friends) {
+                      for (var i = 0; i < account.friends.length; i++) {
+                        _this.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe(function (friendRes) {
+                          // Only friends that are not yet a member of this group can be added.
+                          var friend = Object.assign({
+                            $key: friendRes.key
+                          }, friendRes.payload.data());
+                          console.log(friend);
 
-                        if (!_this.isMember(friend)) {
-                          _this.addOrUpdateFriend(friend);
-                        }
-                      });
-                    }
+                          if (!_this.isMember(friend)) {
+                            _this.addOrUpdateFriend(friend);
+                          }
+                        });
+                      }
 
-                    if (!_this.friends) {
+                      if (!_this.friends) {
+                        _this.friends = [];
+                      }
+                    } else {
                       _this.friends = [];
                     }
-                  } else {
-                    _this.friends = [];
-                  }
+                  });
                 });
               }
 

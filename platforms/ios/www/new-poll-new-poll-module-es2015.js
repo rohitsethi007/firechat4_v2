@@ -97,9 +97,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../services/data.service */ "EnSQ");
 /* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../services/loading.service */ "7ch9");
 /* harmony import */ var _validators_checkbox_checked_validator__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../validators/checkbox-checked.validator */ "ypRl");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! firebase/app */ "Wcq6");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! firebase/app */ "Jgta");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
 
 
 
@@ -177,53 +176,55 @@ let NewPollPage = class NewPollPage {
     ionViewDidEnter() { }
     ngOnInit() {
         // Initialize
-        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((value) => {
-            this.user = value.payload.data();
-            this.addedByUser = {
-                addedByKey: value.payload.data().userId,
-                addedByUsername: value.payload.data().username,
-                addedByImg: value.payload.data().img
-            };
-            this.poll = {
-                addedByUser: this.addedByUser,
-                date: '',
-                title: '',
-                postTags: [],
-                groupId: '',
-                groupName: '',
-                type: 'poll',
-                data: {},
-                totalReactionCount: 0,
-                totalReviewCount: 0,
-                totalPollCount: 0
-            };
-            if (this.step === 1) {
-                this.title = 'Select a group ...';
-                // Get User Groups List
-                if (this.user.groups) {
-                    this.firestore.collection('groups').ref
-                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_9__["firestore"].FieldPath.documentId(), 'in', this.user.groups)
-                        .get().then((group) => {
-                        this.groups = [];
-                        group.forEach(g => {
-                            let group;
-                            group = g.data();
-                            group.key = g.id;
-                            this.addOrUpdateUserGroup(group);
+        this.dataProvider.getCurrentUser().then((u) => {
+            u.snapshotChanges().subscribe((value) => {
+                this.user = value.payload.data();
+                this.addedByUser = {
+                    addedByKey: value.payload.data().userId,
+                    addedByUsername: value.payload.data().username,
+                    addedByImg: value.payload.data().img
+                };
+                this.poll = {
+                    addedByUser: this.addedByUser,
+                    date: '',
+                    title: '',
+                    postTags: [],
+                    groupId: '',
+                    groupName: '',
+                    type: 'poll',
+                    data: {},
+                    totalReactionCount: 0,
+                    totalReviewCount: 0,
+                    totalPollCount: 0
+                };
+                if (this.step === 1) {
+                    this.title = 'Select a group ...';
+                    // Get User Groups List
+                    if (this.user.groups) {
+                        this.firestore.collection('groups').ref
+                            .where(firebase_app__WEBPACK_IMPORTED_MODULE_9__["default"].firestore.FieldPath.documentId(), 'in', this.user.groups)
+                            .get().then((group) => {
+                            this.groups = [];
+                            group.forEach(g => {
+                                let group;
+                                group = g.data();
+                                group.key = g.id;
+                                this.addOrUpdateUserGroup(group);
+                            });
                         });
+                    }
+                }
+                else {
+                    this.title = 'Poll';
+                    this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+                        this.group = group.payload.data();
+                        this.group.groupTags.forEach((element) => {
+                            this.postTags.push({ val: element, isChecked: false });
+                        });
+                        this.addTagControls();
                     });
                 }
-            }
-            else {
-                this.title = 'Poll';
-                this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-                    this.group = group.payload.data();
-                    this.group.groupTags.forEach((element) => {
-                        this.postTags.push({ val: element, isChecked: false });
-                    });
-                    this.addTagControls();
-                });
-            }
+            });
         });
     }
     addOrUpdateUserGroup(group) {

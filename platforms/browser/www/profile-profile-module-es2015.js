@@ -72,16 +72,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_login_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/login.service */ "EFyh");
 /* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../services/data.service */ "EnSQ");
 /* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../services/loading.service */ "7ch9");
-/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/fire/auth */ "KDZV");
+/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/fire/auth */ "UbJi");
 /* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
 /* harmony import */ var _services_image_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../services/image.service */ "mnRn");
-/* harmony import */ var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ionic-native/camera/ngx */ "Pn9U");
+/* harmony import */ var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ionic-native/camera/ngx */ "a/9d");
 /* harmony import */ var _ionic_native_firebase_x_ngx__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @ionic-native/firebase-x/ngx */ "cGva");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
 /* harmony import */ var src_environments_validator__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! src/environments/validator */ "ZvGz");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! firebase/app */ "Wcq6");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! firebase/app */ "Jgta");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/router */ "tyNb");
 /* harmony import */ var _services_firebase_service__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../services/firebase.service */ "Z2Br");
 /* harmony import */ var _user_profile_modal_user_profile_modal_page__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../user-profile-modal/user-profile-modal.page */ "l0GK");
@@ -165,7 +164,7 @@ let ProfilePage = class ProfilePage {
                 // get user Posts
                 if (this.user.userPosts) {
                     this.firestore.collection('posts').ref
-                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["firestore"].FieldPath.documentId(), 'in', this.user.userPosts)
+                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["default"].firestore.FieldPath.documentId(), 'in', this.user.userPosts)
                         .get().then((po) => {
                         this.userPosts = [];
                         this.loadEachPostData(po, 'userPosts');
@@ -174,7 +173,7 @@ let ProfilePage = class ProfilePage {
                 // get user Reaction Posts
                 if (this.user.userReactions) {
                     this.firestore.collection('posts').ref
-                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["firestore"].FieldPath.documentId(), 'in', this.user.userReactions)
+                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["default"].firestore.FieldPath.documentId(), 'in', this.user.userReactions)
                         .get().then((po) => {
                         this.userReactions = [];
                         this.loadEachPostData(po, 'userReactions');
@@ -183,7 +182,7 @@ let ProfilePage = class ProfilePage {
                 // get user Posts
                 if (this.user.userComments) {
                     this.firestore.collection('posts').ref
-                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["firestore"].FieldPath.documentId(), 'in', this.user.userComments)
+                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["default"].firestore.FieldPath.documentId(), 'in', this.user.userComments)
                         .get().then((po) => {
                         this.userComments = [];
                         this.loadEachPostData(po, 'userComments');
@@ -192,7 +191,7 @@ let ProfilePage = class ProfilePage {
                 // Get User Friends list
                 if (this.user.friends) {
                     this.firestore.collection('accounts').ref
-                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["firestore"].FieldPath.documentId(), 'in', this.user.friends)
+                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["default"].firestore.FieldPath.documentId(), 'in', this.user.friends)
                         .get().then((user) => {
                         this.friends = [];
                         user.forEach(f => {
@@ -215,7 +214,7 @@ let ProfilePage = class ProfilePage {
                 // Get User Groups List
                 if (this.user.groups) {
                     this.firestore.collection('groups').ref
-                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["firestore"].FieldPath.documentId(), 'in', this.user.groups)
+                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_15__["default"].firestore.FieldPath.documentId(), 'in', this.user.groups)
                         .get().then((group) => {
                         this.groups = [];
                         group.forEach(g => {
@@ -361,41 +360,44 @@ let ProfilePage = class ProfilePage {
         }
     }
     changeNotification() {
-        if (this.platform.is('desktop')) {
-            this.user.isPushEnabled = false;
-            this.loadingProvider.showToast("Notification only working on mobile device");
-        }
-        else {
-            console.log(this.user.isPushEnabled);
-            if (this.user.isPushEnabled == true) {
-                //Registering for push notification
-                this.fcm.hasPermission().then(hasPermission => {
-                    if (!hasPermission) {
-                        this.fcm.grantPermission().then(data => console.log(data));
-                    }
-                    else {
-                        this.fcm.getToken().then(token => {
-                            console.log(token);
-                            this.firestore.doc('/accounts/' + this.afAuth.auth.currentUser.uid).update({ isPushEnabled: true, pushToken: token });
-                            this.user.isPushEnabled = true;
-                        }).catch(err => {
-                            console.log(err);
-                        });
-                        this.fcm.onTokenRefresh().subscribe(token => {
-                            console.log(token);
-                            this.firestore.doc('/accounts/' + this.afAuth.auth.currentUser.uid).update({ isPushEnabled: true, pushToken: token });
-                        });
-                    }
-                });
-                this.fcm.onMessageReceived().subscribe(data => {
-                    console.log(data);
-                });
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            let uid = yield this.afAuth.currentUser.then((u) => u.uid);
+            if (this.platform.is('desktop')) {
+                this.user.isPushEnabled = false;
+                this.loadingProvider.showToast("Notification only working on mobile device");
             }
             else {
-                this.user.isPushEnabled == false;
-                this.firestore.doc('/accounts/' + this.afAuth.auth.currentUser.uid).update({ isPushEnabled: false, pushToken: '' });
+                console.log(this.user.isPushEnabled);
+                if (this.user.isPushEnabled == true) {
+                    //Registering for push notification
+                    this.fcm.hasPermission().then(hasPermission => {
+                        if (!hasPermission) {
+                            this.fcm.grantPermission().then(data => console.log(data));
+                        }
+                        else {
+                            this.fcm.getToken().then(token => {
+                                console.log(token);
+                                this.firestore.doc('/accounts/' + uid).update({ isPushEnabled: true, pushToken: token });
+                                this.user.isPushEnabled = true;
+                            }).catch(err => {
+                                console.log(err);
+                            });
+                            this.fcm.onTokenRefresh().subscribe(token => {
+                                console.log(token);
+                                this.firestore.doc('/accounts/' + uid).update({ isPushEnabled: true, pushToken: token });
+                            });
+                        }
+                    });
+                    this.fcm.onMessageReceived().subscribe(data => {
+                        console.log(data);
+                    });
+                }
+                else {
+                    this.user.isPushEnabled == false;
+                    this.firestore.doc('/accounts/' + uid).update({ isPushEnabled: false, pushToken: '' });
+                }
             }
-        }
+        });
     }
     setPhoto() {
         this.alertCtrl.create({
@@ -424,11 +426,14 @@ let ProfilePage = class ProfilePage {
         }).then(r => r.present());
     }
     setPassword() {
-        this.afAuth.auth.sendPasswordResetEmail(this.afAuth.auth.currentUser.email)
-            .then(res => {
-            this.loadingProvider.showToast("Please Check your inbox");
-        }).catch(err => {
-            this.loadingProvider.showToast(err.message);
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            let email = yield this.afAuth.currentUser.then((u) => { return u.email; });
+            this.afAuth.sendPasswordResetEmail(email)
+                .then(res => {
+                this.loadingProvider.showToast("Please Check your inbox");
+            }).catch(err => {
+                this.loadingProvider.showToast(err.message);
+            });
         });
     }
     // Delete the user account. After deleting the Firebase user, the userData along with their profile pic uploaded on the storage will be deleted as well.
@@ -444,20 +449,22 @@ let ProfilePage = class ProfilePage {
                     handler: data => {
                         this.loadingProvider.show();
                         // Delete Firebase user
-                        this.afAuth.auth.currentUser.delete()
-                            .then((success) => {
-                            // Delete profilePic of user on Firebase storage
-                            this.imageProvider.deleteUserImageFile(this.user);
-                            // Delete user data on Database
-                            this.firestore.doc('/accounts/' + this.user.userId).delete().then(() => {
+                        this.afAuth.currentUser.then((u) => {
+                            u.delete()
+                                .then((success) => {
+                                // Delete profilePic of user on Firebase storage
+                                this.imageProvider.deleteUserImageFile(this.user);
+                                // Delete user data on Database
+                                this.firestore.doc('/accounts/' + this.user.userId).delete().then(() => {
+                                    this.loadingProvider.hide();
+                                    this.loadingProvider.showToast("Your Account Deleted Successfully");
+                                    this.loginService.logout();
+                                });
+                            })
+                                .catch((error) => {
                                 this.loadingProvider.hide();
-                                this.loadingProvider.showToast("Your Account Deleted Successfully");
-                                this.loginService.logout();
+                                this.loadingProvider.showToast("Something went wrong");
                             });
-                        })
-                            .catch((error) => {
-                            this.loadingProvider.hide();
-                            this.loadingProvider.showToast("Something went wrong");
                         });
                     }
                 }

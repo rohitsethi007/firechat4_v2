@@ -2741,41 +2741,6 @@ function hashDelete(key) {
 
 /***/ }),
 
-/***/ "3UD+":
-/*!*******************************************!*\
-  !*** (webpack)/buildin/harmony-module.js ***!
-  \*******************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = function(originalModule) {
-	if (!originalModule.webpackPolyfill) {
-		var module = Object.create(originalModule);
-		// module.parent = undefined by default
-		if (!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function() {
-				return module.i;
-			}
-		});
-		Object.defineProperty(module, "exports", {
-			enumerable: true
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-
-/***/ }),
-
 /***/ "3VFT":
 /*!********************************************!*\
   !*** ./node_modules/lodash-es/_hashGet.js ***!
@@ -6146,13 +6111,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_image_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../services/image.service */ "mnRn");
 /* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../services/loading.service */ "7ch9");
 /* harmony import */ var _reaction_list_modal_reaction_list_modal_page__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../reaction-list-modal/reaction-list-modal.page */ "7ONW");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
 /* harmony import */ var _ionic_native_contacts_ngx__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @ionic-native/contacts/ngx */ "41F/");
 /* harmony import */ var _ionic_native_keyboard_ngx__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @ionic-native/keyboard/ngx */ "Zr1d");
 /* harmony import */ var _ionic_native_geolocation_ngx__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @ionic-native/geolocation/ngx */ "gTw3");
-/* harmony import */ var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @ionic-native/camera/ngx */ "Pn9U");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! firebase/app */ "Wcq6");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @ionic-native/camera/ngx */ "a/9d");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! firebase/app */ "Jgta");
 
 
 
@@ -6225,7 +6189,7 @@ let PostPage = class PostPage {
             autoplay: false
         };
         // this.reviewMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FkjD2RUnc.jpg?alt=media&token=d0073c88-58cf-4fc0-9e5c-c6a491bb2673');
-        this.post = { showSmiley: false, showHug: false, addedByUser: {}, data: {}, date: firebase_app__WEBPACK_IMPORTED_MODULE_16__["firestore"].Timestamp.now(), reviewMedia: [] };
+        this.post = { showSmiley: false, showHug: false, addedByUser: {}, data: {}, date: firebase_app__WEBPACK_IMPORTED_MODULE_16__["default"].firestore.Timestamp.now(), reviewMedia: [] };
         this.pollOptionForm = new _angular_forms__WEBPACK_IMPORTED_MODULE_6__["FormGroup"]({
             selected_poll_option: new _angular_forms__WEBPACK_IMPORTED_MODULE_6__["FormControl"]('', _angular_forms__WEBPACK_IMPORTED_MODULE_6__["Validators"].compose([
                 _angular_forms__WEBPACK_IMPORTED_MODULE_6__["Validators"].required
@@ -6234,7 +6198,7 @@ let PostPage = class PostPage {
         this.getPostDetails();
     }
     ionViewDidEnter() {
-        this.loggedInUserId = firebase_app__WEBPACK_IMPORTED_MODULE_16__["auth"]().currentUser.uid;
+        this.loggedInUserId = firebase_app__WEBPACK_IMPORTED_MODULE_16__["default"].auth().currentUser.uid;
     }
     ngOnInit() {
     }
@@ -6424,46 +6388,48 @@ let PostPage = class PostPage {
         const reaction = this.post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
             && el.reactionType === 'Thanks');
         if (reaction === undefined) {
-            this.dataProvider.getCurrentUser().get().subscribe((account) => {
-                let userNotifications = account.data().userNotifications;
-                let userReactions = account.data().userReactions;
-                if (!userNotifications) {
-                    userNotifications = [];
-                }
-                if (!userReactions) {
-                    userReactions = [];
-                }
-                if (account) {
-                    const currentUserName = account.data().username;
-                    let reaction = {
-                        key: '',
-                        dateCreated: new Date(),
-                        addedByUser: {
-                            addedByKey: this.dataProvider.getCurrentUserId(),
-                            addedByUsername: account.data().username,
-                            addedByImg: account.data().img
-                        },
-                        reactionType: 'Thanks'
-                    };
-                    this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
-                        this.post.showSmiley = true;
-                    }).then(() => {
-                        // Update user notifications.
-                        if (!userNotifications.some(p => p !== this.postId)) {
-                            userNotifications.push(this.postId);
-                            this.dataProvider.getUser(account.data().userId).update({
-                                userNotifications
-                            });
-                        }
-                        // Update user activity.
-                        if (!userReactions.some(p => p !== this.postId)) {
-                            userReactions.push(this.postId);
-                            this.dataProvider.getUser(account.data().userId).update({
-                                userReactions
-                            });
-                        }
-                    });
-                }
+            this.dataProvider.getCurrentUser().then((u) => {
+                u.get().subscribe((account) => {
+                    let userNotifications = account.data().userNotifications;
+                    let userReactions = account.data().userReactions;
+                    if (!userNotifications) {
+                        userNotifications = [];
+                    }
+                    if (!userReactions) {
+                        userReactions = [];
+                    }
+                    if (account) {
+                        const currentUserName = account.data().username;
+                        let reaction = {
+                            key: '',
+                            dateCreated: new Date(),
+                            addedByUser: {
+                                addedByKey: this.dataProvider.getCurrentUserId(),
+                                addedByUsername: account.data().username,
+                                addedByImg: account.data().img
+                            },
+                            reactionType: 'Thanks'
+                        };
+                        this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+                            this.post.showSmiley = true;
+                        }).then(() => {
+                            // Update user notifications.
+                            if (!userNotifications.some(p => p !== this.postId)) {
+                                userNotifications.push(this.postId);
+                                this.dataProvider.getUser(account.data().userId).update({
+                                    userNotifications
+                                });
+                            }
+                            // Update user activity.
+                            if (!userReactions.some(p => p !== this.postId)) {
+                                userReactions.push(this.postId);
+                                this.dataProvider.getUser(account.data().userId).update({
+                                    userReactions
+                                });
+                            }
+                        });
+                    }
+                });
             });
         }
         else {
@@ -6475,40 +6441,42 @@ let PostPage = class PostPage {
         const reaction = this.post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
             && el.reactionType === 'Hug');
         if (reaction === undefined) {
-            this.dataProvider.getCurrentUser().get().subscribe((account) => {
-                if (account) {
-                    let userNotifications = account.data().userNotifications;
-                    let userReactions = account.data().userReactions;
-                    const currentUserName = account.data().username;
-                    let reaction = {
-                        key: '',
-                        dateCreated: new Date(),
-                        addedByUser: {
-                            addedByKey: this.dataProvider.getCurrentUserId(),
-                            addedByUsername: account.data().username,
-                            addedByImg: account.data().img
-                        },
-                        reactionType: 'Hug'
-                    };
-                    this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
-                        this.post.showHug = true;
-                    }).then(() => {
-                        // Update user notifications.
-                        if (!userNotifications.some(p => p !== this.postId)) {
-                            userNotifications.push(this.postId);
-                            this.dataProvider.getUser(account.data().userId).update({
-                                userNotifications
-                            });
-                        }
-                        // Update user activity.
-                        if (!userReactions.some(p => p !== this.postId)) {
-                            userReactions.push(this.postId);
-                            this.dataProvider.getUser(account.data().userId).update({
-                                userReactions
-                            });
-                        }
-                    });
-                }
+            this.dataProvider.getCurrentUser().then((u) => {
+                u.get().subscribe((account) => {
+                    if (account) {
+                        let userNotifications = account.data().userNotifications;
+                        let userReactions = account.data().userReactions;
+                        const currentUserName = account.data().username;
+                        let reaction = {
+                            key: '',
+                            dateCreated: new Date(),
+                            addedByUser: {
+                                addedByKey: this.dataProvider.getCurrentUserId(),
+                                addedByUsername: account.data().username,
+                                addedByImg: account.data().img
+                            },
+                            reactionType: 'Hug'
+                        };
+                        this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+                            this.post.showHug = true;
+                        }).then(() => {
+                            // Update user notifications.
+                            if (!userNotifications.some(p => p !== this.postId)) {
+                                userNotifications.push(this.postId);
+                                this.dataProvider.getUser(account.data().userId).update({
+                                    userNotifications
+                                });
+                            }
+                            // Update user activity.
+                            if (!userReactions.some(p => p !== this.postId)) {
+                                userReactions.push(this.postId);
+                                this.dataProvider.getUser(account.data().userId).update({
+                                    userReactions
+                                });
+                            }
+                        });
+                    }
+                });
             });
         }
         else {
@@ -6520,41 +6488,43 @@ let PostPage = class PostPage {
         const reaction = this.post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
             && el.reactionType === 'Checkin');
         if (reaction === undefined) {
-            this.dataProvider.getCurrentUser().get().subscribe((account) => {
-                if (account) {
-                    let userNotifications = account.data().userNotifications;
-                    let userReactions = account.data().userReactions;
-                    const currentUserName = account.data().username;
-                    let reaction = {
-                        key: '',
-                        dateCreated: new Date(),
-                        addedByUser: {
-                            addedByKey: this.dataProvider.getCurrentUserId(),
-                            addedByUsername: account.data().username,
-                            addedByImg: account.data().img
-                        },
-                        reactionType: 'Checkin'
-                    };
-                    this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
-                        this.post.showCheckin = true;
-                    }).then(() => {
-                        // Update user notifications.
-                        if (!userNotifications.some(p => p !== this.postId)) {
-                            userNotifications.push(this.postId);
-                            this.dataProvider.getUser(account.data().userId).update({
-                                userNotifications
-                            });
-                        }
-                        // Update user activity.
-                        if (!userReactions.some(p => p !== this.postId)) {
-                            userReactions.push(this.postId);
-                            this.dataProvider.getUser(account.data().userId).update({
-                                userReactions
-                            });
-                        }
-                    });
-                    ;
-                }
+            this.dataProvider.getCurrentUser().then((u) => {
+                u.get().subscribe((account) => {
+                    if (account) {
+                        let userNotifications = account.data().userNotifications;
+                        let userReactions = account.data().userReactions;
+                        const currentUserName = account.data().username;
+                        let reaction = {
+                            key: '',
+                            dateCreated: new Date(),
+                            addedByUser: {
+                                addedByKey: this.dataProvider.getCurrentUserId(),
+                                addedByUsername: account.data().username,
+                                addedByImg: account.data().img
+                            },
+                            reactionType: 'Checkin'
+                        };
+                        this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+                            this.post.showCheckin = true;
+                        }).then(() => {
+                            // Update user notifications.
+                            if (!userNotifications.some(p => p !== this.postId)) {
+                                userNotifications.push(this.postId);
+                                this.dataProvider.getUser(account.data().userId).update({
+                                    userNotifications
+                                });
+                            }
+                            // Update user activity.
+                            if (!userReactions.some(p => p !== this.postId)) {
+                                userReactions.push(this.postId);
+                                this.dataProvider.getUser(account.data().userId).update({
+                                    userReactions
+                                });
+                            }
+                        });
+                        ;
+                    }
+                });
             });
         }
         else {
@@ -6566,41 +6536,43 @@ let PostPage = class PostPage {
         const reaction = this.post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
             && el.reactionType === 'Bookmark');
         if (reaction === undefined) {
-            this.dataProvider.getCurrentUser().get().subscribe((account) => {
-                if (account) {
-                    let userNotifications = account.data().userNotifications;
-                    let userReactions = account.data().userReactions;
-                    const currentUserName = account.data().username;
-                    let reaction = {
-                        key: '',
-                        dateCreated: new Date(),
-                        addedByUser: {
-                            addedByKey: this.dataProvider.getCurrentUserId(),
-                            addedByUsername: account.data().username,
-                            addedByImg: account.data().img
-                        },
-                        reactionType: 'Bookmark'
-                    };
-                    this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
-                        this.post.showBookmark = true;
-                    }).then(() => {
-                        // Update user notifications.
-                        if (!userNotifications.some(p => p !== this.postId)) {
-                            userNotifications.push(this.postId);
-                            this.dataProvider.getUser(account.data().userId).update({
-                                userNotifications
-                            });
-                        }
-                        // Update user activity.
-                        if (!userReactions.some(p => p !== this.postId)) {
-                            userReactions.push(this.postId);
-                            this.dataProvider.getUser(account.data().userId).update({
-                                userReactions
-                            });
-                        }
-                    });
-                    ;
-                }
+            this.dataProvider.getCurrentUser().then((u) => {
+                u.get().subscribe((account) => {
+                    if (account) {
+                        let userNotifications = account.data().userNotifications;
+                        let userReactions = account.data().userReactions;
+                        const currentUserName = account.data().username;
+                        let reaction = {
+                            key: '',
+                            dateCreated: new Date(),
+                            addedByUser: {
+                                addedByKey: this.dataProvider.getCurrentUserId(),
+                                addedByUsername: account.data().username,
+                                addedByImg: account.data().img
+                            },
+                            reactionType: 'Bookmark'
+                        };
+                        this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+                            this.post.showBookmark = true;
+                        }).then(() => {
+                            // Update user notifications.
+                            if (!userNotifications.some(p => p !== this.postId)) {
+                                userNotifications.push(this.postId);
+                                this.dataProvider.getUser(account.data().userId).update({
+                                    userNotifications
+                                });
+                            }
+                            // Update user activity.
+                            if (!userReactions.some(p => p !== this.postId)) {
+                                userReactions.push(this.postId);
+                                this.dataProvider.getUser(account.data().userId).update({
+                                    userReactions
+                                });
+                            }
+                        });
+                        ;
+                    }
+                });
             });
         }
         else {
@@ -6627,23 +6599,25 @@ let PostPage = class PostPage {
         this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
         let review;
         let currentUserName;
-        this.dataProvider.getCurrentUser().get().subscribe((account) => {
-            if (account) {
-                currentUserName = account.data().username;
-                review = {
-                    dateCreated: new Date(),
-                    addedByUser: {
-                        addedByKey: this.dataProvider.getCurrentUserId(),
-                        addedByUsername: account.data().username,
-                        addedByImg: account.data().img
-                    },
-                    review: this.message,
-                    reviewMedia: this.reviewMedia
-                };
-                this.dataProvider.updatePostReviews(this.postId, review);
-                this.message = '';
-                this.reviewMedia = [];
-            }
+        this.dataProvider.getCurrentUser().then((u) => {
+            u.get().subscribe((account) => {
+                if (account) {
+                    currentUserName = account.data().username;
+                    review = {
+                        dateCreated: new Date(),
+                        addedByUser: {
+                            addedByKey: this.dataProvider.getCurrentUserId(),
+                            addedByUsername: account.data().username,
+                            addedByImg: account.data().img
+                        },
+                        review: this.message,
+                        reviewMedia: this.reviewMedia
+                    };
+                    this.dataProvider.updatePostReviews(this.postId, review);
+                    this.message = '';
+                    this.reviewMedia = [];
+                }
+            });
         });
     }
     attach() {

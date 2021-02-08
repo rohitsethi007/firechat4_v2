@@ -1,5 +1,21 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["common"],{
 
+/***/ "6nsN":
+/*!******************************************************!*\
+  !*** ./node_modules/firebase/auth/dist/index.esm.js ***!
+  \******************************************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _firebase_auth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @firebase/auth */ "t6oF");
+
+//# sourceMappingURL=index.esm.js.map
+
+
+/***/ }),
+
 /***/ "Dl6n":
 /*!*************************************************************!*\
   !*** ./node_modules/@ionic/core/dist/esm/theme-18cbe2cc.js ***!
@@ -71,17 +87,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LoginService", function() { return LoginService; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/fire/auth */ "KDZV");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! firebase/app */ "Wcq6");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _data_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./data.service */ "EnSQ");
-/* harmony import */ var _loading_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./loading.service */ "7ch9");
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
-/* harmony import */ var _ionic_native_google_plus_ngx__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic-native/google-plus/ngx */ "NzdG");
-/* harmony import */ var _ionic_native_facebook_ngx__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @ionic-native/facebook/ngx */ "SPri");
-/* harmony import */ var src_environments_environment_prod__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/environments/environment.prod */ "cxbk");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/fire/auth */ "UbJi");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! firebase/app */ "Jgta");
+/* harmony import */ var firebase_auth__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! firebase/auth */ "6nsN");
+/* harmony import */ var _data_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./data.service */ "EnSQ");
+/* harmony import */ var _loading_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./loading.service */ "7ch9");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _ionic_native_google_plus_ngx__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @ionic-native/google-plus/ngx */ "NzdG");
+/* harmony import */ var _ionic_native_facebook_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ionic-native/facebook/ngx */ "SPri");
+/* harmony import */ var src_environments_environment_prod__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! src/environments/environment.prod */ "cxbk");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/router */ "tyNb");
+
 
 
 
@@ -107,7 +124,7 @@ let LoginService = class LoginService {
     }
     login(email, password) {
         this.loadingProvider.show();
-        this.afAuth.auth.signInWithEmailAndPassword(email, password).then((res) => {
+        this.afAuth.signInWithEmailAndPassword(email, password).then((res) => {
             console.log(res);
             console.log("******* " + this.afAuth.user + " *********");
             //this.dataService.getUser(this.afAuth.user.)
@@ -120,8 +137,8 @@ let LoginService = class LoginService {
     }
     register(name, username, email, password, img) {
         this.loadingProvider.show();
-        this.afAuth.auth.createUserWithEmailAndPassword(email, password).then((res) => {
-            let user = this.afAuth.auth.currentUser;
+        this.afAuth.createUserWithEmailAndPassword(email, password).then((res) => {
+            let user = this.afAuth.currentUser;
             this.loadingProvider.hide();
             this.createNewUser(user.uid, name, username, user.email, "I am available", "Firebase", img);
         }).catch(err => {
@@ -133,7 +150,7 @@ let LoginService = class LoginService {
     reset(email) {
         console.log(email);
         this.loadingProvider.show();
-        this.afAuth.auth.sendPasswordResetEmail(email).then(() => {
+        this.afAuth.sendPasswordResetEmail(email).then(() => {
             this.loadingProvider.hide();
             this.loadingProvider.showToast("Please Check your inbox");
         }).catch(err => {
@@ -144,19 +161,19 @@ let LoginService = class LoginService {
     fbLogin() {
         if (this.platform.is('desktop')) {
             this.loadingProvider.show();
-            this.afAuth.auth.signInWithPopup(new firebase_app__WEBPACK_IMPORTED_MODULE_4__["auth"].FacebookAuthProvider()).then((res) => {
+            this.afAuth.signInWithPopup(new firebase_app__WEBPACK_IMPORTED_MODULE_4__["default"].auth.FacebookAuthProvider()).then((res) => {
                 this.loadingProvider.hide();
-                let credential = firebase_app__WEBPACK_IMPORTED_MODULE_4__["auth"].FacebookAuthProvider.credential(res.credential.accessToken);
-                this.afAuth.auth.signInWithCredential(credential).then(() => {
+                let credential = firebase_app__WEBPACK_IMPORTED_MODULE_4__["default"].auth.FacebookAuthProvider.credential(res.credential.accessToken);
+                this.afAuth.signInWithCredential(credential).then(() => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
                     if (res.additionalUserInfo.isNewUser) {
-                        let uid = this.afAuth.auth.currentUser.uid;
+                        let uid = yield this.afAuth.currentUser.then((data) => { return data.uid; });
                         let userInfo = res.additionalUserInfo.profile;
                         this.createNewUser(uid, userInfo.name, uid, userInfo.email, 'Available', 'Facebook', userInfo.picture);
                     }
                     else {
                         this.router.navigateByUrl('tabs');
                     }
-                }).catch(err => console.log(err));
+                })).catch(err => console.log(err));
             }).catch(err => {
                 console.log(err);
                 this.loadingProvider.hide();
@@ -165,16 +182,16 @@ let LoginService = class LoginService {
         else {
             this.facebook.login(['public_profile', 'email']).then(res => {
                 console.log(res);
-                let credential = firebase_app__WEBPACK_IMPORTED_MODULE_4__["auth"].FacebookAuthProvider.credential(res.authResponse.accessToken);
+                let credential = firebase_app__WEBPACK_IMPORTED_MODULE_4__["default"].auth.FacebookAuthProvider.credential(res.authResponse.accessToken);
                 this.loadingProvider.show();
-                this.afAuth.auth.signInWithCredential(credential).then((res) => {
+                this.afAuth.signInWithCredential(credential).then((res) => {
                     if (res.additionalUserInfo.isNewUser) {
                         this.facebook.api("me/?fields=id,email,first_name,picture,gender", ["public_profile", "email"])
-                            .then(data => {
+                            .then((data) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
                             console.log(data);
-                            let uid = this.afAuth.auth.currentUser.uid;
+                            let uid = yield this.afAuth.currentUser.then((data) => { return data.uid; });
                             this.createNewUser(uid, data.first_name, uid, data.email, 'I am available', 'Facebook', data.picture.data.url);
-                        })
+                        }))
                             .catch(err => {
                             console.log(err);
                             this.loadingProvider.hide();
@@ -192,18 +209,18 @@ let LoginService = class LoginService {
     }
     gLogin() {
         if (this.platform.is('desktop')) {
-            this.afAuth.auth.signInWithPopup(new firebase_app__WEBPACK_IMPORTED_MODULE_4__["auth"].GoogleAuthProvider()).then((res) => {
-                let credential = firebase_app__WEBPACK_IMPORTED_MODULE_4__["auth"].GoogleAuthProvider.credential(res.credential.idToken, res.credential.accessToken);
-                this.afAuth.auth.signInWithCredential(credential).then(() => {
+            this.afAuth.signInWithPopup(new firebase_app__WEBPACK_IMPORTED_MODULE_4__["default"].auth.GoogleAuthProvider()).then((res) => {
+                let credential = firebase_app__WEBPACK_IMPORTED_MODULE_4__["default"].auth.GoogleAuthProvider.credential(res.credential.idToken, res.credential.accessToken);
+                this.afAuth.signInWithCredential(credential).then(() => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
                     if (res.additionalUserInfo.isNewUser) {
-                        let uid = this.afAuth.auth.currentUser.uid;
+                        let uid = yield this.afAuth.currentUser.then((data) => { return data.uid; });
                         let userInfo = res.additionalUserInfo.profile;
                         this.createNewUser(uid, userInfo.name, uid, userInfo.email, 'Available', 'Google', userInfo.picture);
                     }
                     else {
                         this.router.navigateByUrl('tabs');
                     }
-                }).catch((err) => {
+                })).catch((err) => {
                     console.log("Err! signInWithCredential" + err);
                 });
             }).catch(err => {
@@ -212,19 +229,19 @@ let LoginService = class LoginService {
         }
         else {
             this.gplus.login({
-                webClientId: src_environments_environment_prod__WEBPACK_IMPORTED_MODULE_10__["environment"].googleClientId
+                webClientId: src_environments_environment_prod__WEBPACK_IMPORTED_MODULE_11__["environment"].googleClientId
             }).then((result) => {
-                let credential = firebase_app__WEBPACK_IMPORTED_MODULE_4__["auth"].GoogleAuthProvider.credential(result['token'], null);
-                this.afAuth.auth.signInWithCredential(credential).then((res) => {
+                let credential = firebase_app__WEBPACK_IMPORTED_MODULE_4__["default"].auth.GoogleAuthProvider.credential(result['token'], null);
+                this.afAuth.signInWithCredential(credential).then((res) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
                     if (res.additionalUserInfo.isNewUser) {
-                        let uid = this.afAuth.auth.currentUser.uid;
+                        let uid = yield this.afAuth.currentUser.then((data) => { return data.uid; });
                         let userInfo = res.additionalUserInfo.profile;
                         this.createNewUser(uid, userInfo.name, uid, userInfo.email, 'Available', 'Google', userInfo.picture);
                     }
                     else {
                         this.router.navigateByUrl('tabs');
                     }
-                }).catch((err) => {
+                })).catch((err) => {
                     console.log("Err! signInWithCredential" + err);
                 });
             }).catch((err) => {
@@ -241,18 +258,18 @@ let LoginService = class LoginService {
         });
     }
     logout() {
-        this.afAuth.auth.signOut().then(() => this.router.navigateByUrl('/login', { replaceUrl: true }));
+        this.afAuth.signOut().then(() => this.router.navigateByUrl('/login', { replaceUrl: true }));
     }
 };
 LoginService.ctorParameters = () => [
     { type: _angular_fire_auth__WEBPACK_IMPORTED_MODULE_2__["AngularFireAuth"] },
     { type: _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_3__["AngularFirestore"] },
-    { type: _data_service__WEBPACK_IMPORTED_MODULE_5__["DataService"] },
-    { type: _loading_service__WEBPACK_IMPORTED_MODULE_6__["LoadingService"] },
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_7__["Platform"] },
-    { type: _ionic_native_google_plus_ngx__WEBPACK_IMPORTED_MODULE_8__["GooglePlus"] },
-    { type: _ionic_native_facebook_ngx__WEBPACK_IMPORTED_MODULE_9__["Facebook"] },
-    { type: _angular_router__WEBPACK_IMPORTED_MODULE_11__["Router"] }
+    { type: _data_service__WEBPACK_IMPORTED_MODULE_6__["DataService"] },
+    { type: _loading_service__WEBPACK_IMPORTED_MODULE_7__["LoadingService"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_8__["Platform"] },
+    { type: _ionic_native_google_plus_ngx__WEBPACK_IMPORTED_MODULE_9__["GooglePlus"] },
+    { type: _ionic_native_facebook_ngx__WEBPACK_IMPORTED_MODULE_10__["Facebook"] },
+    { type: _angular_router__WEBPACK_IMPORTED_MODULE_12__["Router"] }
 ];
 LoginService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
@@ -260,12 +277,12 @@ LoginService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     }),
     Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"])("design:paramtypes", [_angular_fire_auth__WEBPACK_IMPORTED_MODULE_2__["AngularFireAuth"],
         _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_3__["AngularFirestore"],
-        _data_service__WEBPACK_IMPORTED_MODULE_5__["DataService"],
-        _loading_service__WEBPACK_IMPORTED_MODULE_6__["LoadingService"],
-        _ionic_angular__WEBPACK_IMPORTED_MODULE_7__["Platform"],
-        _ionic_native_google_plus_ngx__WEBPACK_IMPORTED_MODULE_8__["GooglePlus"],
-        _ionic_native_facebook_ngx__WEBPACK_IMPORTED_MODULE_9__["Facebook"],
-        _angular_router__WEBPACK_IMPORTED_MODULE_11__["Router"]])
+        _data_service__WEBPACK_IMPORTED_MODULE_6__["DataService"],
+        _loading_service__WEBPACK_IMPORTED_MODULE_7__["LoadingService"],
+        _ionic_angular__WEBPACK_IMPORTED_MODULE_8__["Platform"],
+        _ionic_native_google_plus_ngx__WEBPACK_IMPORTED_MODULE_9__["GooglePlus"],
+        _ionic_native_facebook_ngx__WEBPACK_IMPORTED_MODULE_10__["Facebook"],
+        _angular_router__WEBPACK_IMPORTED_MODULE_12__["Router"]])
 ], LoginService);
 
 
@@ -753,8 +770,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _loading_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./loading.service */ "7ch9");
 /* harmony import */ var _data_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./data.service */ "EnSQ");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
-/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/fire/auth */ "KDZV");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
+/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/fire/auth */ "UbJi");
 
 
 
@@ -770,163 +787,171 @@ let FirebaseService = class FirebaseService {
     }
     // Send friend request to userId.
     sendFriendRequest(userId) {
-        const loggedInUserId = this.afAuth.auth.currentUser.uid;
-        this.loadingProvider.show();
-        let requestsSent;
-        // Use take(1) so that subscription will only trigger once.
-        this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests) => {
-            if (requests.data() != null
-                && requests.data().requestsSent != null) {
-                requestsSent = requests.data().requestsSent;
-            }
-            if (requestsSent == null || requestsSent === undefined) {
-                requestsSent = [userId];
-            }
-            else {
-                if (requestsSent.indexOf(userId) === -1) {
-                    requestsSent.push(userId);
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            const loggedInUserId = yield this.afAuth.currentUser.then((data) => { return data.uid; });
+            this.loadingProvider.show();
+            let requestsSent;
+            // Use take(1) so that subscription will only trigger once.
+            this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests) => {
+                if (requests.data() != null
+                    && requests.data().requestsSent != null) {
+                    requestsSent = requests.data().requestsSent;
                 }
-            }
-            // Add requestsSent information.
-            this.firestore.collection('requests').doc(loggedInUserId).set({
-                requestsSent
-            }).then((success) => {
-                let friendRequests;
-                // tslint:disable-next-line: no-shadowed-variable
-                this.dataProvider.getRequests(userId).get().subscribe((requests) => {
-                    if (requests.data() != null
-                        && requests.data().friendRequests != null) {
-                        friendRequests = requests.data().friendRequests;
+                if (requestsSent == null || requestsSent === undefined) {
+                    requestsSent = [userId];
+                }
+                else {
+                    if (requestsSent.indexOf(userId) === -1) {
+                        requestsSent.push(userId);
                     }
-                    if (friendRequests == null) {
-                        friendRequests = [loggedInUserId];
-                    }
-                    else {
-                        if (friendRequests.indexOf(userId) === -1) {
-                            friendRequests.push(loggedInUserId);
+                }
+                // Add requestsSent information.
+                this.firestore.collection('requests').doc(loggedInUserId).set({
+                    requestsSent
+                }).then((success) => {
+                    let friendRequests;
+                    // tslint:disable-next-line: no-shadowed-variable
+                    this.dataProvider.getRequests(userId).get().subscribe((requests) => {
+                        if (requests.data() != null
+                            && requests.data().friendRequests != null) {
+                            friendRequests = requests.data().friendRequests;
                         }
-                    }
-                    // Add friendRequest information.
-                    this.firestore.collection('requests').doc(userId).set({
-                        friendRequests
-                    }).then((succ) => {
-                        this.loadingProvider.hide();
-                        this.loadingProvider.showToast('Friend Request Sent');
-                    }).catch((error) => {
-                        this.loadingProvider.hide();
+                        if (friendRequests == null) {
+                            friendRequests = [loggedInUserId];
+                        }
+                        else {
+                            if (friendRequests.indexOf(userId) === -1) {
+                                friendRequests.push(loggedInUserId);
+                            }
+                        }
+                        // Add friendRequest information.
+                        this.firestore.collection('requests').doc(userId).set({
+                            friendRequests
+                        }).then((succ) => {
+                            this.loadingProvider.hide();
+                            this.loadingProvider.showToast('Friend Request Sent');
+                        }).catch((error) => {
+                            this.loadingProvider.hide();
+                        });
                     });
+                }).catch((error) => {
+                    console.log('error', error);
+                    this.loadingProvider.hide();
                 });
-            }).catch((error) => {
-                console.log('error', error);
-                this.loadingProvider.hide();
             });
         });
     }
     // Cancel friend request sent to userId.
     cancelFriendRequest(userId) {
-        const loggedInUserId = this.afAuth.auth.currentUser.uid;
-        this.loadingProvider.show();
-        let requestsSent = [];
-        this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests) => {
-            requestsSent = requests.data().requestsSent;
-            requestsSent.splice(requestsSent.indexOf(userId), 1);
-            // Update requestSent information.
-            this.firestore.collection('requests').doc(loggedInUserId).set({
-                requestsSent
-            }).then((success) => {
-                let friendRequests;
-                this.dataProvider.getRequests(userId).get().subscribe((req) => {
-                    friendRequests = req.data().friendRequests;
-                    console.log(friendRequests);
-                    friendRequests.splice(friendRequests.indexOf(loggedInUserId), 1);
-                    // Update friendRequests information.
-                    this.firestore.collection('requests').doc(userId).set({
-                        friendRequests
-                    }).then((succ) => {
-                        console.log(succ);
-                        this.loadingProvider.hide();
-                        this.loadingProvider.showToast('Removed Friend Request');
-                    }).catch((error) => {
-                        console.log(error);
-                        this.loadingProvider.hide();
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            const loggedInUserId = yield this.afAuth.currentUser.then((data) => { return data.uid; });
+            this.loadingProvider.show();
+            let requestsSent = [];
+            this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests) => {
+                requestsSent = requests.data().requestsSent;
+                requestsSent.splice(requestsSent.indexOf(userId), 1);
+                // Update requestSent information.
+                this.firestore.collection('requests').doc(loggedInUserId).set({
+                    requestsSent
+                }).then((success) => {
+                    let friendRequests;
+                    this.dataProvider.getRequests(userId).get().subscribe((req) => {
+                        friendRequests = req.data().friendRequests;
+                        console.log(friendRequests);
+                        friendRequests.splice(friendRequests.indexOf(loggedInUserId), 1);
+                        // Update friendRequests information.
+                        this.firestore.collection('requests').doc(userId).set({
+                            friendRequests
+                        }).then((succ) => {
+                            console.log(succ);
+                            this.loadingProvider.hide();
+                            this.loadingProvider.showToast('Removed Friend Request');
+                        }).catch((error) => {
+                            console.log(error);
+                            this.loadingProvider.hide();
+                        });
                     });
+                }).catch((error) => {
+                    console.log(error);
+                    this.loadingProvider.hide();
                 });
-            }).catch((error) => {
-                console.log(error);
-                this.loadingProvider.hide();
             });
         });
     }
     // Delete friend request.
     deleteFriendRequest(userId) {
-        const loggedInUserId = this.afAuth.auth.currentUser.uid;
-        this.loadingProvider.show();
-        let friendRequests = [];
-        this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests) => {
-            friendRequests = requests.data().friendRequests;
-            friendRequests = friendRequests.filter(u => u !== userId);
-            // Update friendRequests information.
-            this.firestore.collection('requests').doc(loggedInUserId).set({
-                friendRequests
-            }).then((success) => {
-                let requestsSent;
-                this.dataProvider.getRequests(userId).get().subscribe((req) => {
-                    requestsSent = req.data().requestsSent;
-                    requestsSent.splice(requestsSent.indexOf(loggedInUserId), 1);
-                    console.log('requestsSent:', requestsSent, loggedInUserId, requestsSent.indexOf(userId), 1);
-                    // Update requestsSent information.
-                    this.firestore.collection('requests').doc(userId).set({
-                        requestsSent
-                    }).then((succ) => {
-                        console.log(succ);
-                        this.loadingProvider.hide();
-                    }).catch((error) => {
-                        console.log(error);
-                        this.loadingProvider.hide();
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            const loggedInUserId = yield this.afAuth.currentUser.then((data) => { return data.uid; });
+            this.loadingProvider.show();
+            let friendRequests = [];
+            this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests) => {
+                friendRequests = requests.data().friendRequests;
+                friendRequests = friendRequests.filter(u => u !== userId);
+                // Update friendRequests information.
+                this.firestore.collection('requests').doc(loggedInUserId).set({
+                    friendRequests
+                }).then((success) => {
+                    let requestsSent;
+                    this.dataProvider.getRequests(userId).get().subscribe((req) => {
+                        requestsSent = req.data().requestsSent;
+                        requestsSent.splice(requestsSent.indexOf(loggedInUserId), 1);
+                        console.log('requestsSent:', requestsSent, loggedInUserId, requestsSent.indexOf(userId), 1);
+                        // Update requestsSent information.
+                        this.firestore.collection('requests').doc(userId).set({
+                            requestsSent
+                        }).then((succ) => {
+                            console.log(succ);
+                            this.loadingProvider.hide();
+                        }).catch((error) => {
+                            console.log(error);
+                            this.loadingProvider.hide();
+                        });
                     });
+                }).catch((err) => {
+                    console.log(err);
+                    this.loadingProvider.hide();
                 });
-            }).catch((err) => {
-                console.log(err);
-                this.loadingProvider.hide();
             });
         });
     }
     // Accept friend request.
     acceptFriendRequest(userId) {
-        const loggedInUserId = this.afAuth.auth.currentUser.uid;
-        // Delete friend request.
-        this.deleteFriendRequest(userId);
-        this.loadingProvider.show();
-        this.dataProvider.getUser(loggedInUserId).get().subscribe((account) => {
-            let friends = account.data().friends;
-            if (!friends) {
-                friends = [userId];
-            }
-            else {
-                friends.push(userId);
-            }
-            // Add both users as friends.
-            this.dataProvider.getUser(loggedInUserId).update({
-                friends
-            }).then((success) => {
-                this.dataProvider.getUser(userId).get().subscribe((acc) => {
-                    let friends = acc.data().friends;
-                    if (!friends) {
-                        friends = [loggedInUserId];
-                    }
-                    else {
-                        friends.push(loggedInUserId);
-                    }
-                    this.dataProvider.getUser(userId).update({
-                        friends
-                    }).then((succ) => {
-                        this.loadingProvider.hide();
-                    }).catch((error) => {
-                        this.loadingProvider.hide();
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            const loggedInUserId = yield this.afAuth.currentUser.then((data) => { return data.uid; });
+            // Delete friend request.
+            this.deleteFriendRequest(userId);
+            this.loadingProvider.show();
+            this.dataProvider.getUser(loggedInUserId).get().subscribe((account) => {
+                let friends = account.data().friends;
+                if (!friends) {
+                    friends = [userId];
+                }
+                else {
+                    friends.push(userId);
+                }
+                // Add both users as friends.
+                this.dataProvider.getUser(loggedInUserId).update({
+                    friends
+                }).then((success) => {
+                    this.dataProvider.getUser(userId).get().subscribe((acc) => {
+                        let friends = acc.data().friends;
+                        if (!friends) {
+                            friends = [loggedInUserId];
+                        }
+                        else {
+                            friends.push(loggedInUserId);
+                        }
+                        this.dataProvider.getUser(userId).update({
+                            friends
+                        }).then((succ) => {
+                            this.loadingProvider.hide();
+                        }).catch((error) => {
+                            this.loadingProvider.hide();
+                        });
                     });
+                }).catch((error) => {
+                    this.loadingProvider.hide();
                 });
-            }).catch((error) => {
-                this.loadingProvider.hide();
             });
         });
     }

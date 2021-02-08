@@ -170,7 +170,7 @@
 
       var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
       /*! @ionic-native/camera/ngx */
-      "Pn9U");
+      "a/9d");
       /* harmony import */
 
 
@@ -212,7 +212,7 @@
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
       /* harmony import */
 
 
@@ -224,11 +224,7 @@
 
       var firebase__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(
       /*! firebase */
-      "iqUP");
-      /* harmony import */
-
-
-      var firebase__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(firebase__WEBPACK_IMPORTED_MODULE_14__);
+      "JZFu");
       /* harmony import */
 
 
@@ -281,7 +277,7 @@
           this.maxNoOfEvents = 1000;
           this.maxNoOfPolls = 1000;
           this.maxNoOfResources = 1000;
-          this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid;
+          this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid;
         }
 
         _createClass(GroupPage, [{
@@ -297,14 +293,16 @@
             this.loadingProvider.show();
             this.tab = 'posts';
             this.title = 'Posts';
-            this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid; // Get Posts
+            this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid; // Get Posts
 
-            this.dataProvider.getCurrentUser().get().subscribe(function (user) {
-              // this.userReactions = user.data().userReactions;
-              // this.userNotifications = user.data().userNotifications;
-              _this.loggedInUser = user.data();
+            this.dataProvider.getCurrentUser().then(function (u) {
+              u.get().subscribe(function (user) {
+                // this.userReactions = user.data().userReactions;
+                // this.userNotifications = user.data().userNotifications;
+                _this.loggedInUser = user.data();
 
-              _this.getGroupDetailsandPosts();
+                _this.getGroupDetailsandPosts();
+              });
             });
             this.loadingProvider.hide();
           }
@@ -325,7 +323,7 @@
           value: function setMessagesRead(messages) {
             // if (this.navCtrl.getActive().instance instanceof GroupPage) {
             // Update user's messagesRead on database.
-            this.firestore.doc('/accounts/' + firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid + '/groups/' + this.groupId).update({
+            this.firestore.doc('/accounts/' + firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid + '/groups/' + this.groupId).update({
               messagesRead: this.messages.length
             }); // }
           } // Check if 'return' button is pressed and send the message.
@@ -369,7 +367,7 @@
         }, {
           key: "isSender",
           value: function isSender(message) {
-            if (message.sender === firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid) {
+            if (message.sender === firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid) {
               return true;
             } else {
               return false;
@@ -400,7 +398,7 @@
             var messages = JSON.parse(JSON.stringify(this.messages));
             messages.push({
               date: new Date().toString(),
-              sender: firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid,
+              sender: firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid,
               // tslint:disable-next-line: object-literal-shorthand
               type: type,
               message: this.message
@@ -512,7 +510,7 @@
             var messages = JSON.parse(JSON.stringify(this.messages));
             messages.push({
               date: new Date().toString(),
-              sender: firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid,
+              sender: firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid,
               type: 'image',
               url: url
             });
@@ -527,7 +525,7 @@
             var messages = JSON.parse(JSON.stringify(this.messages));
             messages.push({
               date: new Date().toString(),
-              sender: firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid,
+              sender: firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid,
               type: 'video',
               url: url
             });
@@ -573,17 +571,17 @@
                             _this4.loadingProvider.show(); // Add groupInfo to each friend added to the group.
 
 
-                            _this4.firestore.doc('/accounts/' + firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid + '/groups/' + _this4.groupId).update({
+                            _this4.firestore.doc('/accounts/' + firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid + '/groups/' + _this4.groupId).update({
                               messagesRead: 0
                             }); // Add friend as members of the group.
 
 
-                            _this4.group.members.push(firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid); // Add system message that the members are added to the group.
+                            _this4.group.members.push(firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid); // Add system message that the members are added to the group.
 
 
                             _this4.group.messages.push({
                               date: new Date().toString(),
-                              sender: firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid,
+                              sender: firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid,
                               type: 'system',
                               message: _this4.user.name + ' has joined the group.',
                               icon: 'md-contacts'
@@ -747,7 +745,7 @@
               _this5.dataProvider.getGroupMembers(_this5.groupId).snapshotChanges().subscribe(function (memberIdsRes) {
                 var memberIds = memberIdsRes.payload.data();
 
-                if (memberIds.includes(firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid)) {
+                if (memberIds.includes(firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid)) {
                   _this5.loggedInUserIsMember = true;
                 } else {
                   _this5.loggedInUserIsMember = false;
@@ -1498,9 +1496,9 @@
               });
             } else {
               this.firestore.collection('posts').doc(post.key).collection('reactions').doc(r.key).update({
-                reactionType: firebase__WEBPACK_IMPORTED_MODULE_14__["firestore"].FieldValue.arrayUnion(reactionType)
+                reactionType: firebase__WEBPACK_IMPORTED_MODULE_14__["default"].firestore.FieldValue.arrayUnion(reactionType)
               }).then(function () {
-                var increment = firebase__WEBPACK_IMPORTED_MODULE_14__["firestore"].FieldValue.increment(1);
+                var increment = firebase__WEBPACK_IMPORTED_MODULE_14__["default"].firestore.FieldValue.increment(1);
 
                 _this15.firestore.collection('posts').doc(post.key).update({
                   totalReactionCount: increment
@@ -1556,9 +1554,9 @@
                 // reaction.reactionType = reaction.reactionType.filter(x => x !== reactionType);
                 // this.dataProvider.updatePostReactions(post.key, reaction, true);
                 this.firestore.collection('posts').doc(post.key).collection('reactions').doc(reaction.key).update({
-                  reactionType: firebase__WEBPACK_IMPORTED_MODULE_14__["firestore"].FieldValue.arrayRemove(reactionType)
+                  reactionType: firebase__WEBPACK_IMPORTED_MODULE_14__["default"].firestore.FieldValue.arrayRemove(reactionType)
                 }).then(function () {
-                  var increment = firebase__WEBPACK_IMPORTED_MODULE_14__["firestore"].FieldValue.increment(-1);
+                  var increment = firebase__WEBPACK_IMPORTED_MODULE_14__["default"].firestore.FieldValue.increment(-1);
 
                   _this16.firestore.collection('posts').doc(post.key).update({
                     totalReactionCount: increment

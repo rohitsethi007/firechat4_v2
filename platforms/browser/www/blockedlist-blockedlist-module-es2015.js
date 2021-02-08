@@ -88,8 +88,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _raw_loader_blockedlist_page_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! raw-loader!./blockedlist.page.html */ "0lt8");
 /* harmony import */ var _blockedlist_page_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./blockedlist.page.scss */ "ihXx");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/fire/auth */ "KDZV");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
+/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/fire/auth */ "UbJi");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
 /* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../services/data.service */ "EnSQ");
 
 
@@ -108,12 +108,14 @@ let BlockedlistPage = class BlockedlistPage {
     ngOnInit() {
     }
     ionViewDidEnter() {
-        this.dataProvider.getBlockedLists().get().then((conversations => {
+        this.dataProvider.getBlockedLists().then((conversations => {
             let tmp = [];
-            conversations.forEach(conversation => {
-                // fetch blocked conversation & user info
-                this.dataProvider.getUser(conversation.id).snapshotChanges().subscribe((data) => {
-                    tmp.push({ key: conversation.id, name: data.name, img: data.img });
+            conversations.get().then((conversation) => {
+                conversation.forEach(conversation => {
+                    // fetch blocked conversation & user info
+                    this.dataProvider.getUser(conversation.id).snapshotChanges().subscribe((data) => {
+                        tmp.push({ key: conversation.id, name: data.name, img: data.img });
+                    });
                 });
             });
             console.log(tmp);
@@ -121,13 +123,13 @@ let BlockedlistPage = class BlockedlistPage {
         }));
     }
     unblock(uid) {
-        console.log(uid);
-        this.firestore.doc('accounts/' + this.afAuth.auth.currentUser.uid + '/conversations/' + uid).update({
-            blocked: false
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            console.log(uid);
+            let fuid = yield this.afAuth.currentUser.then((data) => { return data.uid; });
+            this.firestore.doc('accounts/' + fuid + '/conversations/' + uid).update({
+                blocked: false
+            });
         });
-        // this.afdb.object('accounts/' + this.afAuth.auth.currentUser.uid + '/conversations/' + uid).update({
-        //   blocked: false
-        // })
     }
 };
 BlockedlistPage.ctorParameters = () => [

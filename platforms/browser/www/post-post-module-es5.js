@@ -3696,45 +3696,6 @@
     },
 
     /***/
-    "3UD+":
-    /*!*******************************************!*\
-      !*** (webpack)/buildin/harmony-module.js ***!
-      \*******************************************/
-
-    /*! no static exports found */
-
-    /***/
-    function UD(module, exports) {
-      module.exports = function (originalModule) {
-        if (!originalModule.webpackPolyfill) {
-          var module = Object.create(originalModule); // module.parent = undefined by default
-
-          if (!module.children) module.children = [];
-          Object.defineProperty(module, "loaded", {
-            enumerable: true,
-            get: function get() {
-              return module.l;
-            }
-          });
-          Object.defineProperty(module, "id", {
-            enumerable: true,
-            get: function get() {
-              return module.i;
-            }
-          });
-          Object.defineProperty(module, "exports", {
-            enumerable: true
-          });
-          module.webpackPolyfill = 1;
-        }
-
-        return module;
-      };
-      /***/
-
-    },
-
-    /***/
     "3VFT":
     /*!********************************************!*\
       !*** ./node_modules/lodash-es/_hashGet.js ***!
@@ -8377,7 +8338,7 @@
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
       /* harmony import */
 
 
@@ -8401,17 +8362,13 @@
 
       var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(
       /*! @ionic-native/camera/ngx */
-      "Pn9U");
+      "a/9d");
       /* harmony import */
 
 
       var firebase_app__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(
       /*! firebase/app */
-      "Wcq6");
-      /* harmony import */
-
-
-      var firebase_app__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_16__);
+      "Jgta");
 
       var PostPage = /*#__PURE__*/function () {
         function PostPage(dataProvider, loadingProvider, route, router, firestore, actionSheet, modalCtrl, imageProvider, camera, keyboard, contacts, geolocation, alertCtrl) {
@@ -8475,7 +8432,7 @@
             showHug: false,
             addedByUser: {},
             data: {},
-            date: firebase_app__WEBPACK_IMPORTED_MODULE_16__["firestore"].Timestamp.now(),
+            date: firebase_app__WEBPACK_IMPORTED_MODULE_16__["default"].firestore.Timestamp.now(),
             reviewMedia: []
           };
           this.pollOptionForm = new _angular_forms__WEBPACK_IMPORTED_MODULE_6__["FormGroup"]({
@@ -8487,7 +8444,7 @@
         _createClass(PostPage, [{
           key: "ionViewDidEnter",
           value: function ionViewDidEnter() {
-            this.loggedInUserId = firebase_app__WEBPACK_IMPORTED_MODULE_16__["auth"]().currentUser.uid;
+            this.loggedInUserId = firebase_app__WEBPACK_IMPORTED_MODULE_16__["default"].auth().currentUser.uid;
           }
         }, {
           key: "ngOnInit",
@@ -8722,57 +8679,59 @@
             });
 
             if (reaction === undefined) {
-              this.dataProvider.getCurrentUser().get().subscribe(function (account) {
-                var userNotifications = account.data().userNotifications;
-                var userReactions = account.data().userReactions;
+              this.dataProvider.getCurrentUser().then(function (u) {
+                u.get().subscribe(function (account) {
+                  var userNotifications = account.data().userNotifications;
+                  var userReactions = account.data().userReactions;
 
-                if (!userNotifications) {
-                  userNotifications = [];
-                }
+                  if (!userNotifications) {
+                    userNotifications = [];
+                  }
 
-                if (!userReactions) {
-                  userReactions = [];
-                }
+                  if (!userReactions) {
+                    userReactions = [];
+                  }
 
-                if (account) {
-                  var currentUserName = account.data().username;
-                  var _reaction = {
-                    key: '',
-                    dateCreated: new Date(),
-                    addedByUser: {
-                      addedByKey: _this2.dataProvider.getCurrentUserId(),
-                      addedByUsername: account.data().username,
-                      addedByImg: account.data().img
-                    },
-                    reactionType: 'Thanks'
-                  };
+                  if (account) {
+                    var currentUserName = account.data().username;
+                    var _reaction = {
+                      key: '',
+                      dateCreated: new Date(),
+                      addedByUser: {
+                        addedByKey: _this2.dataProvider.getCurrentUserId(),
+                        addedByUsername: account.data().username,
+                        addedByImg: account.data().img
+                      },
+                      reactionType: 'Thanks'
+                    };
 
-                  _this2.dataProvider.updatePostReactions(_this2.post.key, _reaction).then(function () {
-                    _this2.post.showSmiley = true;
-                  }).then(function () {
-                    // Update user notifications.
-                    if (!userNotifications.some(function (p) {
-                      return p !== _this2.postId;
-                    })) {
-                      userNotifications.push(_this2.postId);
+                    _this2.dataProvider.updatePostReactions(_this2.post.key, _reaction).then(function () {
+                      _this2.post.showSmiley = true;
+                    }).then(function () {
+                      // Update user notifications.
+                      if (!userNotifications.some(function (p) {
+                        return p !== _this2.postId;
+                      })) {
+                        userNotifications.push(_this2.postId);
 
-                      _this2.dataProvider.getUser(account.data().userId).update({
-                        userNotifications: userNotifications
-                      });
-                    } // Update user activity.
+                        _this2.dataProvider.getUser(account.data().userId).update({
+                          userNotifications: userNotifications
+                        });
+                      } // Update user activity.
 
 
-                    if (!userReactions.some(function (p) {
-                      return p !== _this2.postId;
-                    })) {
-                      userReactions.push(_this2.postId);
+                      if (!userReactions.some(function (p) {
+                        return p !== _this2.postId;
+                      })) {
+                        userReactions.push(_this2.postId);
 
-                      _this2.dataProvider.getUser(account.data().userId).update({
-                        userReactions: userReactions
-                      });
-                    }
-                  });
-                }
+                        _this2.dataProvider.getUser(account.data().userId).update({
+                          userReactions: userReactions
+                        });
+                      }
+                    });
+                  }
+                });
               });
             } else {
               this.post.showSmiley = false;
@@ -8789,48 +8748,50 @@
             });
 
             if (reaction === undefined) {
-              this.dataProvider.getCurrentUser().get().subscribe(function (account) {
-                if (account) {
-                  var userNotifications = account.data().userNotifications;
-                  var userReactions = account.data().userReactions;
-                  var currentUserName = account.data().username;
-                  var _reaction2 = {
-                    key: '',
-                    dateCreated: new Date(),
-                    addedByUser: {
-                      addedByKey: _this3.dataProvider.getCurrentUserId(),
-                      addedByUsername: account.data().username,
-                      addedByImg: account.data().img
-                    },
-                    reactionType: 'Hug'
-                  };
+              this.dataProvider.getCurrentUser().then(function (u) {
+                u.get().subscribe(function (account) {
+                  if (account) {
+                    var userNotifications = account.data().userNotifications;
+                    var userReactions = account.data().userReactions;
+                    var currentUserName = account.data().username;
+                    var _reaction2 = {
+                      key: '',
+                      dateCreated: new Date(),
+                      addedByUser: {
+                        addedByKey: _this3.dataProvider.getCurrentUserId(),
+                        addedByUsername: account.data().username,
+                        addedByImg: account.data().img
+                      },
+                      reactionType: 'Hug'
+                    };
 
-                  _this3.dataProvider.updatePostReactions(_this3.post.key, _reaction2).then(function () {
-                    _this3.post.showHug = true;
-                  }).then(function () {
-                    // Update user notifications.
-                    if (!userNotifications.some(function (p) {
-                      return p !== _this3.postId;
-                    })) {
-                      userNotifications.push(_this3.postId);
+                    _this3.dataProvider.updatePostReactions(_this3.post.key, _reaction2).then(function () {
+                      _this3.post.showHug = true;
+                    }).then(function () {
+                      // Update user notifications.
+                      if (!userNotifications.some(function (p) {
+                        return p !== _this3.postId;
+                      })) {
+                        userNotifications.push(_this3.postId);
 
-                      _this3.dataProvider.getUser(account.data().userId).update({
-                        userNotifications: userNotifications
-                      });
-                    } // Update user activity.
+                        _this3.dataProvider.getUser(account.data().userId).update({
+                          userNotifications: userNotifications
+                        });
+                      } // Update user activity.
 
 
-                    if (!userReactions.some(function (p) {
-                      return p !== _this3.postId;
-                    })) {
-                      userReactions.push(_this3.postId);
+                      if (!userReactions.some(function (p) {
+                        return p !== _this3.postId;
+                      })) {
+                        userReactions.push(_this3.postId);
 
-                      _this3.dataProvider.getUser(account.data().userId).update({
-                        userReactions: userReactions
-                      });
-                    }
-                  });
-                }
+                        _this3.dataProvider.getUser(account.data().userId).update({
+                          userReactions: userReactions
+                        });
+                      }
+                    });
+                  }
+                });
               });
             } else {
               this.post.showHug = false;
@@ -8847,50 +8808,52 @@
             });
 
             if (reaction === undefined) {
-              this.dataProvider.getCurrentUser().get().subscribe(function (account) {
-                if (account) {
-                  var userNotifications = account.data().userNotifications;
-                  var userReactions = account.data().userReactions;
-                  var currentUserName = account.data().username;
-                  var _reaction3 = {
-                    key: '',
-                    dateCreated: new Date(),
-                    addedByUser: {
-                      addedByKey: _this4.dataProvider.getCurrentUserId(),
-                      addedByUsername: account.data().username,
-                      addedByImg: account.data().img
-                    },
-                    reactionType: 'Checkin'
-                  };
+              this.dataProvider.getCurrentUser().then(function (u) {
+                u.get().subscribe(function (account) {
+                  if (account) {
+                    var userNotifications = account.data().userNotifications;
+                    var userReactions = account.data().userReactions;
+                    var currentUserName = account.data().username;
+                    var _reaction3 = {
+                      key: '',
+                      dateCreated: new Date(),
+                      addedByUser: {
+                        addedByKey: _this4.dataProvider.getCurrentUserId(),
+                        addedByUsername: account.data().username,
+                        addedByImg: account.data().img
+                      },
+                      reactionType: 'Checkin'
+                    };
 
-                  _this4.dataProvider.updatePostReactions(_this4.post.key, _reaction3).then(function () {
-                    _this4.post.showCheckin = true;
-                  }).then(function () {
-                    // Update user notifications.
-                    if (!userNotifications.some(function (p) {
-                      return p !== _this4.postId;
-                    })) {
-                      userNotifications.push(_this4.postId);
+                    _this4.dataProvider.updatePostReactions(_this4.post.key, _reaction3).then(function () {
+                      _this4.post.showCheckin = true;
+                    }).then(function () {
+                      // Update user notifications.
+                      if (!userNotifications.some(function (p) {
+                        return p !== _this4.postId;
+                      })) {
+                        userNotifications.push(_this4.postId);
 
-                      _this4.dataProvider.getUser(account.data().userId).update({
-                        userNotifications: userNotifications
-                      });
-                    } // Update user activity.
+                        _this4.dataProvider.getUser(account.data().userId).update({
+                          userNotifications: userNotifications
+                        });
+                      } // Update user activity.
 
 
-                    if (!userReactions.some(function (p) {
-                      return p !== _this4.postId;
-                    })) {
-                      userReactions.push(_this4.postId);
+                      if (!userReactions.some(function (p) {
+                        return p !== _this4.postId;
+                      })) {
+                        userReactions.push(_this4.postId);
 
-                      _this4.dataProvider.getUser(account.data().userId).update({
-                        userReactions: userReactions
-                      });
-                    }
-                  });
+                        _this4.dataProvider.getUser(account.data().userId).update({
+                          userReactions: userReactions
+                        });
+                      }
+                    });
 
-                  ;
-                }
+                    ;
+                  }
+                });
               });
             } else {
               this.post.showCheckin = false;
@@ -8907,50 +8870,52 @@
             });
 
             if (reaction === undefined) {
-              this.dataProvider.getCurrentUser().get().subscribe(function (account) {
-                if (account) {
-                  var userNotifications = account.data().userNotifications;
-                  var userReactions = account.data().userReactions;
-                  var currentUserName = account.data().username;
-                  var _reaction4 = {
-                    key: '',
-                    dateCreated: new Date(),
-                    addedByUser: {
-                      addedByKey: _this5.dataProvider.getCurrentUserId(),
-                      addedByUsername: account.data().username,
-                      addedByImg: account.data().img
-                    },
-                    reactionType: 'Bookmark'
-                  };
+              this.dataProvider.getCurrentUser().then(function (u) {
+                u.get().subscribe(function (account) {
+                  if (account) {
+                    var userNotifications = account.data().userNotifications;
+                    var userReactions = account.data().userReactions;
+                    var currentUserName = account.data().username;
+                    var _reaction4 = {
+                      key: '',
+                      dateCreated: new Date(),
+                      addedByUser: {
+                        addedByKey: _this5.dataProvider.getCurrentUserId(),
+                        addedByUsername: account.data().username,
+                        addedByImg: account.data().img
+                      },
+                      reactionType: 'Bookmark'
+                    };
 
-                  _this5.dataProvider.updatePostReactions(_this5.post.key, _reaction4).then(function () {
-                    _this5.post.showBookmark = true;
-                  }).then(function () {
-                    // Update user notifications.
-                    if (!userNotifications.some(function (p) {
-                      return p !== _this5.postId;
-                    })) {
-                      userNotifications.push(_this5.postId);
+                    _this5.dataProvider.updatePostReactions(_this5.post.key, _reaction4).then(function () {
+                      _this5.post.showBookmark = true;
+                    }).then(function () {
+                      // Update user notifications.
+                      if (!userNotifications.some(function (p) {
+                        return p !== _this5.postId;
+                      })) {
+                        userNotifications.push(_this5.postId);
 
-                      _this5.dataProvider.getUser(account.data().userId).update({
-                        userNotifications: userNotifications
-                      });
-                    } // Update user activity.
+                        _this5.dataProvider.getUser(account.data().userId).update({
+                          userNotifications: userNotifications
+                        });
+                      } // Update user activity.
 
 
-                    if (!userReactions.some(function (p) {
-                      return p !== _this5.postId;
-                    })) {
-                      userReactions.push(_this5.postId);
+                      if (!userReactions.some(function (p) {
+                        return p !== _this5.postId;
+                      })) {
+                        userReactions.push(_this5.postId);
 
-                      _this5.dataProvider.getUser(account.data().userId).update({
-                        userReactions: userReactions
-                      });
-                    }
-                  });
+                        _this5.dataProvider.getUser(account.data().userId).update({
+                          userReactions: userReactions
+                        });
+                      }
+                    });
 
-                  ;
-                }
+                    ;
+                  }
+                });
               });
             } else {
               this.post.showBookmark = false;
@@ -9007,25 +8972,27 @@
             this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
             var review;
             var currentUserName;
-            this.dataProvider.getCurrentUser().get().subscribe(function (account) {
-              if (account) {
-                currentUserName = account.data().username;
-                review = {
-                  dateCreated: new Date(),
-                  addedByUser: {
-                    addedByKey: _this6.dataProvider.getCurrentUserId(),
-                    addedByUsername: account.data().username,
-                    addedByImg: account.data().img
-                  },
-                  review: _this6.message,
-                  reviewMedia: _this6.reviewMedia
-                };
+            this.dataProvider.getCurrentUser().then(function (u) {
+              u.get().subscribe(function (account) {
+                if (account) {
+                  currentUserName = account.data().username;
+                  review = {
+                    dateCreated: new Date(),
+                    addedByUser: {
+                      addedByKey: _this6.dataProvider.getCurrentUserId(),
+                      addedByUsername: account.data().username,
+                      addedByImg: account.data().img
+                    },
+                    review: _this6.message,
+                    reviewMedia: _this6.reviewMedia
+                  };
 
-                _this6.dataProvider.updatePostReviews(_this6.postId, review);
+                  _this6.dataProvider.updatePostReviews(_this6.postId, review);
 
-                _this6.message = '';
-                _this6.reviewMedia = [];
-              }
+                  _this6.message = '';
+                  _this6.reviewMedia = [];
+                }
+              });
             });
           }
         }, {

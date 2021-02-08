@@ -67,12 +67,13 @@
         <ion-card-content class="message" *ngIf="item.type === 'general'">
           <div>
             <div>
-              <ion-slides class="slider" pager="true" [options]="slideOptsOne" #slideWithNav>
-              <ion-slide *ngFor="let s of item.postMedia">
+              <video *ngIf="item.postMediaVideo" controls preload="auto" height=200px width="100%" src="https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/videos%2Fcdv_photo_1604937924.MOV?alt=media&token=a757e495-8dc8-4540-84c9-33c7a6d50c9e" ></video>
+              <ion-slides *ngIf="item.postMediaImages" class="slider" pager="true" [options]="slideOptsOne" #slideWithNav>
+              <ion-slide *ngFor="let s of item.postMediaImages">
                 <div class="bgSizeContain" 
                 [ngStyle]="{'background-image':'url('+s+')'}">
               </div>
-              </ion-slide>
+               </ion-slide>
             </ion-slides>
             </div>
           <ion-label  *ngIf="!item.showMore">

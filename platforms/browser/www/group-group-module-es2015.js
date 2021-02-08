@@ -82,17 +82,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _group_page_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./group.page.scss */ "8xUH");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/data.service */ "EnSQ");
-/* harmony import */ var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic-native/camera/ngx */ "Pn9U");
+/* harmony import */ var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic-native/camera/ngx */ "a/9d");
 /* harmony import */ var _ionic_native_keyboard_ngx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic-native/keyboard/ngx */ "Zr1d");
 /* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
 /* harmony import */ var _ionic_native_contacts_ngx__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic-native/contacts/ngx */ "41F/");
 /* harmony import */ var _ionic_native_geolocation_ngx__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @ionic-native/geolocation/ngx */ "gTw3");
 /* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../services/loading.service */ "7ch9");
 /* harmony import */ var _services_image_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../services/image.service */ "mnRn");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/router */ "tyNb");
-/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! firebase */ "iqUP");
-/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(firebase__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! firebase */ "JZFu");
 /* harmony import */ var _popover_popover_page__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../popover/popover.page */ "M0Xy");
 /* harmony import */ var _reaction_list_modal_reaction_list_modal_page__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../reaction-list-modal/reaction-list-modal.page */ "7ONW");
 
@@ -149,7 +148,7 @@ let GroupPage = class GroupPage {
         this.maxNoOfEvents = 1000;
         this.maxNoOfPolls = 1000;
         this.maxNoOfResources = 1000;
-        this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid;
+        this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid;
     }
     handleSelection(event) {
         this.emojitext = this.emojitext + ' ' + event.char;
@@ -158,13 +157,15 @@ let GroupPage = class GroupPage {
         this.loadingProvider.show();
         this.tab = 'posts';
         this.title = 'Posts';
-        this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid;
+        this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid;
         // Get Posts
-        this.dataProvider.getCurrentUser().get().subscribe((user) => {
-            // this.userReactions = user.data().userReactions;
-            // this.userNotifications = user.data().userNotifications;
-            this.loggedInUser = user.data();
-            this.getGroupDetailsandPosts();
+        this.dataProvider.getCurrentUser().then((u) => {
+            u.get().subscribe((user) => {
+                // this.userReactions = user.data().userReactions;
+                // this.userNotifications = user.data().userNotifications;
+                this.loggedInUser = user.data();
+                this.getGroupDetailsandPosts();
+            });
         });
         this.loadingProvider.hide();
     }
@@ -179,7 +180,7 @@ let GroupPage = class GroupPage {
     setMessagesRead(messages) {
         // if (this.navCtrl.getActive().instance instanceof GroupPage) {
         // Update user's messagesRead on database.
-        this.firestore.doc('/accounts/' + firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid + '/groups/' + this.groupId).update({
+        this.firestore.doc('/accounts/' + firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid + '/groups/' + this.groupId).update({
             messagesRead: this.messages.length
         });
         // }
@@ -216,7 +217,7 @@ let GroupPage = class GroupPage {
     }
     // Check if the user is the sender of the message.
     isSender(message) {
-        if (message.sender === firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid) {
+        if (message.sender === firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid) {
             return true;
         }
         else {
@@ -243,7 +244,7 @@ let GroupPage = class GroupPage {
         const messages = JSON.parse(JSON.stringify(this.messages));
         messages.push({
             date: new Date().toString(),
-            sender: firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid,
+            sender: firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid,
             // tslint:disable-next-line: object-literal-shorthand
             type: type,
             message: this.message
@@ -341,7 +342,7 @@ let GroupPage = class GroupPage {
         const messages = JSON.parse(JSON.stringify(this.messages));
         messages.push({
             date: new Date().toString(),
-            sender: firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid,
+            sender: firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid,
             type: 'image',
             url
         });
@@ -354,7 +355,7 @@ let GroupPage = class GroupPage {
         const messages = JSON.parse(JSON.stringify(this.messages));
         messages.push({
             date: new Date().toString(),
-            sender: firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid,
+            sender: firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid,
             type: 'video',
             url
         });
@@ -388,15 +389,15 @@ let GroupPage = class GroupPage {
                             // Proceed
                             this.loadingProvider.show();
                             // Add groupInfo to each friend added to the group.
-                            this.firestore.doc('/accounts/' + firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid + '/groups/' + this.groupId).update({
+                            this.firestore.doc('/accounts/' + firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid + '/groups/' + this.groupId).update({
                                 messagesRead: 0
                             });
                             // Add friend as members of the group.
-                            this.group.members.push(firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid);
+                            this.group.members.push(firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid);
                             // Add system message that the members are added to the group.
                             this.group.messages.push({
                                 date: new Date().toString(),
-                                sender: firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid,
+                                sender: firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid,
                                 type: 'system',
                                 message: this.user.name + ' has joined the group.',
                                 icon: 'md-contacts'
@@ -508,7 +509,7 @@ let GroupPage = class GroupPage {
             });
             this.dataProvider.getGroupMembers(this.groupId).snapshotChanges().subscribe((memberIdsRes) => {
                 const memberIds = memberIdsRes.payload.data();
-                if (memberIds.includes(firebase__WEBPACK_IMPORTED_MODULE_14__["auth"]().currentUser.uid)) {
+                if (memberIds.includes(firebase__WEBPACK_IMPORTED_MODULE_14__["default"].auth().currentUser.uid)) {
                     this.loggedInUserIsMember = true;
                 }
                 else {
@@ -1140,9 +1141,9 @@ let GroupPage = class GroupPage {
         }
         else {
             this.firestore.collection('posts').doc(post.key).collection('reactions').doc(r.key).update({
-                reactionType: firebase__WEBPACK_IMPORTED_MODULE_14__["firestore"].FieldValue.arrayUnion(reactionType)
+                reactionType: firebase__WEBPACK_IMPORTED_MODULE_14__["default"].firestore.FieldValue.arrayUnion(reactionType)
             }).then(() => {
-                const increment = firebase__WEBPACK_IMPORTED_MODULE_14__["firestore"].FieldValue.increment(1);
+                const increment = firebase__WEBPACK_IMPORTED_MODULE_14__["default"].firestore.FieldValue.increment(1);
                 this.firestore.collection('posts').doc(post.key).update({
                     totalReactionCount: increment
                 });
@@ -1182,9 +1183,9 @@ let GroupPage = class GroupPage {
                 // reaction.reactionType = reaction.reactionType.filter(x => x !== reactionType);
                 // this.dataProvider.updatePostReactions(post.key, reaction, true);
                 this.firestore.collection('posts').doc(post.key).collection('reactions').doc(reaction.key).update({
-                    reactionType: firebase__WEBPACK_IMPORTED_MODULE_14__["firestore"].FieldValue.arrayRemove(reactionType)
+                    reactionType: firebase__WEBPACK_IMPORTED_MODULE_14__["default"].firestore.FieldValue.arrayRemove(reactionType)
                 }).then(() => {
-                    const increment = firebase__WEBPACK_IMPORTED_MODULE_14__["firestore"].FieldValue.increment(-1);
+                    const increment = firebase__WEBPACK_IMPORTED_MODULE_14__["default"].firestore.FieldValue.increment(-1);
                     this.firestore.collection('posts').doc(post.key).update({
                         totalReactionCount: increment
                     });

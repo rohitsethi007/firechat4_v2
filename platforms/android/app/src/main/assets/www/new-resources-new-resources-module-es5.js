@@ -118,7 +118,7 @@
 
       var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
       /*! @angular/fire/auth */
-      "KDZV");
+      "UbJi");
       /* harmony import */
 
 
@@ -130,7 +130,7 @@
 
       var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(
       /*! @ionic-native/camera/ngx */
-      "Pn9U");
+      "a/9d");
       /* harmony import */
 
 
@@ -172,17 +172,13 @@
 
       var firebase_app__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(
       /*! firebase/app */
-      "Wcq6");
-      /* harmony import */
-
-
-      var firebase_app__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_17__);
+      "Jgta");
       /* harmony import */
 
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
 
       var NewResourcesPage = /*#__PURE__*/function () {
         function NewResourcesPage(route, dataProvider, loadingProvider, alertCtrl, afAuth, router, camera, keyboard, actionSheet, contacts, geolocation, imageProvider, http, firestore) {
@@ -308,73 +304,75 @@
           value: function ngOnInit() {
             var _this4 = this;
 
-            this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (value) {
-              _this4.user = value.payload.data();
-              _this4.addedByUser = {
-                addedByKey: value.payload.data().userId,
-                addedByUsername: value.payload.data().username,
-                addedByImg: value.payload.data().img
-              }; // Initialize
+            this.dataProvider.getCurrentUser().then(function (u) {
+              u.snapshotChanges().subscribe(function (value) {
+                _this4.user = value.payload.data();
+                _this4.addedByUser = {
+                  addedByKey: value.payload.data().userId,
+                  addedByUsername: value.payload.data().username,
+                  addedByImg: value.payload.data().img
+                }; // Initialize
 
-              _this4.resource = {
-                addedByUser: _this4.addedByUser,
-                date: '',
-                title: '',
-                postTags: [],
-                groupId: '',
-                groupName: '',
-                type: 'resource',
-                data: {
-                  name: '',
-                  address: '',
-                  phones: '',
-                  email: '',
-                  type: ''
-                },
-                totalReactionCount: 0,
-                totalReviewCount: 0
-              };
+                _this4.resource = {
+                  addedByUser: _this4.addedByUser,
+                  date: '',
+                  title: '',
+                  postTags: [],
+                  groupId: '',
+                  groupName: '',
+                  type: 'resource',
+                  data: {
+                    name: '',
+                    address: '',
+                    phones: '',
+                    email: '',
+                    type: ''
+                  },
+                  totalReactionCount: 0,
+                  totalReviewCount: 0
+                };
 
-              if (_this4.step === 1) {
-                _this4.title = 'Select a group ...'; // Get User Groups List
+                if (_this4.step === 1) {
+                  _this4.title = 'Select a group ...'; // Get User Groups List
 
-                if (_this4.user.groups) {
-                  _this4.firestore.collection('groups').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_17__["firestore"].FieldPath.documentId(), 'in', _this4.user.groups).get().then(function (group) {
-                    _this4.groups = [];
-                    group.forEach(function (g) {
-                      var group;
-                      group = g.data();
-                      group.key = g.id;
+                  if (_this4.user.groups) {
+                    _this4.firestore.collection('groups').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_17__["default"].firestore.FieldPath.documentId(), 'in', _this4.user.groups).get().then(function (group) {
+                      _this4.groups = [];
+                      group.forEach(function (g) {
+                        var group;
+                        group = g.data();
+                        group.key = g.id;
 
-                      _this4.addOrUpdateUserGroup(group);
+                        _this4.addOrUpdateUserGroup(group);
+                      });
                     });
+                  }
+                } else {
+                  _this4.tab = 'contact'; // Get group information
+
+                  _this4.groupId = _this4.route.snapshot.params.id;
+                  console.log('this.route.snapshot.params.id', _this4.route.snapshot.params.id);
+
+                  _this4.dataProvider.getGroup(_this4.groupId).snapshotChanges().subscribe(function (group) {
+                    _this4.group = group.payload.data();
+                    _this4.postTags = [];
+                    console.log('this.group', group.payload.data());
+
+                    _this4.group.groupTags.forEach(function (element) {
+                      _this4.postTags.push({
+                        val: element,
+                        isChecked: false
+                      });
+                    });
+
+                    _this4.addContactTagControls();
+
+                    _this4.addLinkTagControls();
+
+                    _this4.addUploadTagControls();
                   });
                 }
-              } else {
-                _this4.tab = 'contact'; // Get group information
-
-                _this4.groupId = _this4.route.snapshot.params.id;
-                console.log('this.route.snapshot.params.id', _this4.route.snapshot.params.id);
-
-                _this4.dataProvider.getGroup(_this4.groupId).snapshotChanges().subscribe(function (group) {
-                  _this4.group = group.payload.data();
-                  _this4.postTags = [];
-                  console.log('this.group', group.payload.data());
-
-                  _this4.group.groupTags.forEach(function (element) {
-                    _this4.postTags.push({
-                      val: element,
-                      isChecked: false
-                    });
-                  });
-
-                  _this4.addContactTagControls();
-
-                  _this4.addLinkTagControls();
-
-                  _this4.addUploadTagControls();
-                });
-              }
+              });
             });
           }
         }, {
@@ -413,8 +411,10 @@
         }, {
           key: "getDummyData",
           value: function getDummyData() {
-            this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (account) {
-              console.log(account);
+            this.dataProvider.getCurrentUser().then(function (u) {
+              u.snapshotChanges().subscribe(function (account) {
+                console.log(account);
+              });
             });
           } // Proceed to userInfo page.
 

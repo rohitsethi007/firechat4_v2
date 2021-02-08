@@ -31,9 +31,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../services/data.service */ "EnSQ");
 /* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../services/loading.service */ "7ch9");
 /* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! firebase/app */ "Wcq6");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! firebase/app */ "Jgta");
 
 
 
@@ -78,7 +77,7 @@ let GroupinfoPage = class GroupinfoPage {
                 // get group Posts
                 if (this.group.posts) {
                     this.firestore.collection('posts').ref
-                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_9__["firestore"].FieldPath.documentId(), 'in', this.group.posts)
+                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_9__["default"].firestore.FieldPath.documentId(), 'in', this.group.posts)
                         .get().then((po) => {
                         this.groupPosts = [];
                         this.loadEachPostData(po);
@@ -91,9 +90,11 @@ let GroupinfoPage = class GroupinfoPage {
             }
         });
         // Get user details.
-        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((accounts) => {
-            let account = accounts.payload.data();
-            this.user = Object.assign({ $key: account.userId }, account);
+        this.dataProvider.getCurrentUser().then((u) => {
+            u.snapshotChanges().subscribe((accounts) => {
+                let account = accounts.payload.data();
+                this.user = Object.assign({ $key: account.userId }, account);
+            });
         });
     }
     loadEachPostData(po) {

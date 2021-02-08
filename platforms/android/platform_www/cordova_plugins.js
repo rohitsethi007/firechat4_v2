@@ -337,6 +337,22 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "window.FileTransfer"
       ]
+    },
+    {
+      "id": "nl.x-services.plugins.videocaptureplus.VideoCapturePlus",
+      "file": "plugins/nl.x-services.plugins.videocaptureplus/www/VideoCapturePlus.js",
+      "pluginId": "nl.x-services.plugins.videocaptureplus",
+      "clobbers": [
+        "window.plugins.videocaptureplus"
+      ]
+    },
+    {
+      "id": "cordova-plugin-ionic-webview.IonicWebView",
+      "file": "plugins/cordova-plugin-ionic-webview/src/www/util.js",
+      "pluginId": "cordova-plugin-ionic-webview",
+      "clobbers": [
+        "Ionic.WebView"
+      ]
     }
   ];
   module.exports.metadata = {
@@ -349,6 +365,8 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-facebook4": "6.2.0",
     "cordova-plugin-fcm-with-dependecy-updated": "7.3.1",
     "cordova-plugin-file": "6.0.2",
-    "cordova-plugin-file-transfer": "1.7.1"
+    "cordova-plugin-file-transfer": "1.7.1",
+    "nl.x-services.plugins.videocaptureplus": "1.0.0",
+    "cordova-plugin-ionic-webview": "4.1.3"
   };
 });

@@ -124,13 +124,13 @@
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
       /* harmony import */
 
 
       var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(
       /*! @angular/fire/auth */
-      "KDZV");
+      "UbJi");
       /* harmony import */
 
 
@@ -142,11 +142,7 @@
 
       var firebase__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(
       /*! firebase */
-      "iqUP");
-      /* harmony import */
-
-
-      var firebase__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(firebase__WEBPACK_IMPORTED_MODULE_12__);
+      "JZFu");
       /* harmony import */
 
 
@@ -236,14 +232,16 @@
           value: function ionViewDidEnter() {
             var _this2 = this;
 
-            this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_12__["auth"]().currentUser.uid; // Get Posts
+            this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_12__["default"].auth().currentUser.uid; // Get Posts
 
-            this.dataProvider.getCurrentUser().get().subscribe(function (user) {
-              _this2.userReactions = user.data().userReactions;
-              _this2.userNotifications = user.data().userNotifications;
-              _this2.loggedInUser = user.data();
+            this.dataProvider.getCurrentUser().then(function (u) {
+              u.get().subscribe(function (user) {
+                _this2.userReactions = user.data().userReactions;
+                _this2.userNotifications = user.data().userNotifications;
+                _this2.loggedInUser = user.data();
 
-              _this2.getFeedData();
+                _this2.getFeedData();
+              });
             });
           }
         }, {
@@ -486,9 +484,9 @@
               });
             } else {
               this.firestore.collection('posts').doc(post.key).collection('reactions').doc(r.key).update({
-                reactionType: firebase__WEBPACK_IMPORTED_MODULE_12__["firestore"].FieldValue.arrayUnion(reactionType)
+                reactionType: firebase__WEBPACK_IMPORTED_MODULE_12__["default"].firestore.FieldValue.arrayUnion(reactionType)
               }).then(function () {
-                var increment = firebase__WEBPACK_IMPORTED_MODULE_12__["firestore"].FieldValue.increment(1);
+                var increment = firebase__WEBPACK_IMPORTED_MODULE_12__["default"].firestore.FieldValue.increment(1);
 
                 _this5.firestore.collection('posts').doc(post.key).update({
                   totalReactionCount: increment
@@ -524,9 +522,9 @@
                 // reaction.reactionType = reaction.reactionType.filter(x => x !== reactionType);
                 // this.dataProvider.updatePostReactions(post.key, reaction, true);
                 this.firestore.collection('posts').doc(post.key).collection('reactions').doc(reaction.key).update({
-                  reactionType: firebase__WEBPACK_IMPORTED_MODULE_12__["firestore"].FieldValue.arrayRemove(reactionType)
+                  reactionType: firebase__WEBPACK_IMPORTED_MODULE_12__["default"].firestore.FieldValue.arrayRemove(reactionType)
                 }).then(function () {
-                  var increment = firebase__WEBPACK_IMPORTED_MODULE_12__["firestore"].FieldValue.increment(-1);
+                  var increment = firebase__WEBPACK_IMPORTED_MODULE_12__["default"].firestore.FieldValue.increment(-1);
 
                   _this6.firestore.collection('posts').doc(post.key).update({
                     totalReactionCount: increment

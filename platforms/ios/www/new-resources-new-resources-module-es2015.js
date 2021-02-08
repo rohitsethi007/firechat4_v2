@@ -44,18 +44,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../services/data.service */ "EnSQ");
 /* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../services/loading.service */ "7ch9");
 /* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
-/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/fire/auth */ "KDZV");
+/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/fire/auth */ "UbJi");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/router */ "tyNb");
-/* harmony import */ var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ionic-native/camera/ngx */ "Pn9U");
+/* harmony import */ var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ionic-native/camera/ngx */ "a/9d");
 /* harmony import */ var _services_image_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../services/image.service */ "mnRn");
 /* harmony import */ var _ionic_native_contacts_ngx__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @ionic-native/contacts/ngx */ "41F/");
 /* harmony import */ var _ionic_native_keyboard_ngx__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @ionic-native/keyboard/ngx */ "Zr1d");
 /* harmony import */ var _ionic_native_geolocation_ngx__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @ionic-native/geolocation/ngx */ "gTw3");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
 /* harmony import */ var _validators_checkbox_checked_validator__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../validators/checkbox-checked.validator */ "ypRl");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! firebase/app */ "Wcq6");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_17__);
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! firebase/app */ "Jgta");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
 
 
 
@@ -169,60 +168,62 @@ let NewResourcesPage = class NewResourcesPage {
         });
     }
     ngOnInit() {
-        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((value) => {
-            this.user = value.payload.data();
-            this.addedByUser = {
-                addedByKey: value.payload.data().userId,
-                addedByUsername: value.payload.data().username,
-                addedByImg: value.payload.data().img
-            };
-            // Initialize
-            this.resource = {
-                addedByUser: this.addedByUser,
-                date: '',
-                title: '',
-                postTags: [],
-                groupId: '',
-                groupName: '',
-                type: 'resource',
-                data: { name: '', address: '', phones: '', email: '', type: '' },
-                totalReactionCount: 0,
-                totalReviewCount: 0
-            };
-            if (this.step === 1) {
-                this.title = 'Select a group ...';
-                // Get User Groups List
-                if (this.user.groups) {
-                    this.firestore.collection('groups').ref
-                        .where(firebase_app__WEBPACK_IMPORTED_MODULE_17__["firestore"].FieldPath.documentId(), 'in', this.user.groups)
-                        .get().then((group) => {
-                        this.groups = [];
-                        group.forEach(g => {
-                            let group;
-                            group = g.data();
-                            group.key = g.id;
-                            this.addOrUpdateUserGroup(group);
+        this.dataProvider.getCurrentUser().then((u) => {
+            u.snapshotChanges().subscribe((value) => {
+                this.user = value.payload.data();
+                this.addedByUser = {
+                    addedByKey: value.payload.data().userId,
+                    addedByUsername: value.payload.data().username,
+                    addedByImg: value.payload.data().img
+                };
+                // Initialize
+                this.resource = {
+                    addedByUser: this.addedByUser,
+                    date: '',
+                    title: '',
+                    postTags: [],
+                    groupId: '',
+                    groupName: '',
+                    type: 'resource',
+                    data: { name: '', address: '', phones: '', email: '', type: '' },
+                    totalReactionCount: 0,
+                    totalReviewCount: 0
+                };
+                if (this.step === 1) {
+                    this.title = 'Select a group ...';
+                    // Get User Groups List
+                    if (this.user.groups) {
+                        this.firestore.collection('groups').ref
+                            .where(firebase_app__WEBPACK_IMPORTED_MODULE_17__["default"].firestore.FieldPath.documentId(), 'in', this.user.groups)
+                            .get().then((group) => {
+                            this.groups = [];
+                            group.forEach(g => {
+                                let group;
+                                group = g.data();
+                                group.key = g.id;
+                                this.addOrUpdateUserGroup(group);
+                            });
                         });
+                    }
+                }
+                else {
+                    this.tab = 'contact';
+                    // Get group information
+                    this.groupId = this.route.snapshot.params.id;
+                    console.log('this.route.snapshot.params.id', this.route.snapshot.params.id);
+                    this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+                        this.group = group.payload.data();
+                        this.postTags = [];
+                        console.log('this.group', group.payload.data());
+                        this.group.groupTags.forEach((element) => {
+                            this.postTags.push({ val: element, isChecked: false });
+                        });
+                        this.addContactTagControls();
+                        this.addLinkTagControls();
+                        this.addUploadTagControls();
                     });
                 }
-            }
-            else {
-                this.tab = 'contact';
-                // Get group information
-                this.groupId = this.route.snapshot.params.id;
-                console.log('this.route.snapshot.params.id', this.route.snapshot.params.id);
-                this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-                    this.group = group.payload.data();
-                    this.postTags = [];
-                    console.log('this.group', group.payload.data());
-                    this.group.groupTags.forEach((element) => {
-                        this.postTags.push({ val: element, isChecked: false });
-                    });
-                    this.addContactTagControls();
-                    this.addLinkTagControls();
-                    this.addUploadTagControls();
-                });
-            }
+            });
         });
     }
     addOrUpdateUserGroup(group) {
@@ -257,8 +258,10 @@ let NewResourcesPage = class NewResourcesPage {
     }
     // This method is required in segmentChanged call else tabs won't load properly
     getDummyData() {
-        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((account) => {
-            console.log(account);
+        this.dataProvider.getCurrentUser().then((u) => {
+            u.snapshotChanges().subscribe((account) => {
+                console.log(account);
+            });
         });
     }
     // Proceed to userInfo page.

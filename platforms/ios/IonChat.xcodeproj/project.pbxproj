@@ -38,6 +38,7 @@
 		A0D43870E356420BA5B707E5 /* CDVLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B57B7941CD944B5A25D600C /* CDVLocalFilesystem.m */; };
 		067447C986134E23B3F80D0D /* CDVAssetLibraryFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DCE3A95CC3E4C63AC47EB47 /* CDVAssetLibraryFilesystem.m */; };
 		3F89DE18790D4BDE9517823B /* CDVFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 18151BE495CD45D59E2F53D9 /* CDVFileTransfer.m */; };
+		A3638AFC402B497B835CB089 /* VideoCapturePlus.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E99B2C87FAD4B738BEF86A5 /* VideoCapturePlus.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -128,6 +129,8 @@
 		DDC26459B92847AC887C869F /* CDVAssetLibraryFilesystem.h */ = {isa = PBXFileReference; name = "CDVAssetLibraryFilesystem.h"; path = "cordova-plugin-file/CDVAssetLibraryFilesystem.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 		18151BE495CD45D59E2F53D9 /* CDVFileTransfer.m */ = {isa = PBXFileReference; name = "CDVFileTransfer.m"; path = "cordova-plugin-file-transfer/CDVFileTransfer.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
 		910758B8AF0D49C1AA8DB545 /* CDVFileTransfer.h */ = {isa = PBXFileReference; name = "CDVFileTransfer.h"; path = "cordova-plugin-file-transfer/CDVFileTransfer.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		7E99B2C87FAD4B738BEF86A5 /* VideoCapturePlus.m */ = {isa = PBXFileReference; name = "VideoCapturePlus.m"; path = "nl.x-services.plugins.videocaptureplus/VideoCapturePlus.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		CCB82F0EDA69423B896E0FF5 /* VideoCapturePlus.h */ = {isa = PBXFileReference; name = "VideoCapturePlus.h"; path = "nl.x-services.plugins.videocaptureplus/VideoCapturePlus.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -280,6 +283,8 @@
 				DDC26459B92847AC887C869F /* CDVAssetLibraryFilesystem.h */,
 				18151BE495CD45D59E2F53D9 /* CDVFileTransfer.m */,
 				910758B8AF0D49C1AA8DB545 /* CDVFileTransfer.h */,
+				7E99B2C87FAD4B738BEF86A5 /* VideoCapturePlus.m */,
+				CCB82F0EDA69423B896E0FF5 /* VideoCapturePlus.h */,
 			);
 			name = Plugins;
 			path = IonChat/Plugins;
@@ -472,6 +477,7 @@
 				A0D43870E356420BA5B707E5 /* CDVLocalFilesystem.m in Sources */,
 				067447C986134E23B3F80D0D /* CDVAssetLibraryFilesystem.m in Sources */,
 				3F89DE18790D4BDE9517823B /* CDVFileTransfer.m in Sources */,
+				A3638AFC402B497B835CB089 /* VideoCapturePlus.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

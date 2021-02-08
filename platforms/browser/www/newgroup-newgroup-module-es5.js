@@ -162,7 +162,7 @@
 
       var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
       /*! @ionic-native/camera/ngx */
-      "Pn9U");
+      "a/9d");
       /* harmony import */
 
 
@@ -174,13 +174,13 @@
 
       var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(
       /*! @angular/fire/auth */
-      "KDZV");
+      "UbJi");
       /* harmony import */
 
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
       /* harmony import */
 
 
@@ -234,14 +234,16 @@
               groupTags: []
             };
             this.searchFriend = '';
-            this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (accounts) {
-              _this.account = accounts.payload.data();
+            this.dataProvider.getCurrentUser().then(function (u) {
+              u.snapshotChanges().subscribe(function (accounts) {
+                _this.account = accounts.payload.data();
 
-              if (!_this.groupMembers) {
-                _this.groupMembers = [_this.account];
-              } else {
-                _this.friends = [];
-              }
+                if (!_this.groupMembers) {
+                  _this.groupMembers = [_this.account];
+                } else {
+                  _this.friends = [];
+                }
+              });
             });
             this.firestore.collection('categories').snapshotChanges().subscribe(function (catsRes) {
               if (catsRes) {
@@ -265,81 +267,107 @@
         }, {
           key: "done",
           value: function done() {
-            var _this2 = this;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+              var _this2 = this;
 
-            this.submitAttempt = true;
+              var messages, userId, members, i;
+              return regeneratorRuntime.wrap(function _callee$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      this.submitAttempt = true;
 
-            if (this.myForm.valid) {
-              this.loadingProvider.show();
-              var messages = []; // Add system message that group is created.
+                      if (!this.myForm.valid) {
+                        _context.next = 19;
+                        break;
+                      }
 
-              messages.push({
-                date: new Date().toString(),
-                sender: this.afAuth.auth.currentUser.uid,
-                type: 'system',
-                message: 'This group has been created.',
-                icon: 'md-chatbubbles'
-              }); // Add members of the group.
+                      this.loadingProvider.show();
+                      messages = [];
+                      _context.next = 6;
+                      return this.afAuth.currentUser.then(function (u) {
+                        return u.uid;
+                      });
 
-              var members = [];
+                    case 6:
+                      userId = _context.sent;
+                      // Add system message that group is created.
+                      messages.push({
+                        date: new Date().toString(),
+                        sender: userId,
+                        type: 'system',
+                        message: 'This group has been created.',
+                        icon: 'md-chatbubbles'
+                      }); // Add members of the group.
 
-              for (var i = 0; i < this.groupMembers.length; i++) {
-                members.push(this.groupMembers[i].userId);
-              } // Add group info and date.
+                      members = [];
+
+                      for (i = 0; i < this.groupMembers.length; i++) {
+                        members.push(this.groupMembers[i].userId);
+                      } // Add group info and date.
 
 
-              this.group.dateCreated = new Date().toString();
-              this.group.messages = messages;
-              this.group.members = members;
-              this.group.name = this.name;
-              this.group.description = this.description;
-              this.group.groupTags = this.groupTags.split('\n');
-              this.group.categoryId = this.category.value;
-              this.group.img = ''; // Add group to database.
+                      this.group.dateCreated = new Date().toString();
+                      this.group.messages = messages;
+                      this.group.members = members;
+                      this.group.name = this.name;
+                      this.group.description = this.description;
+                      this.group.groupTags = this.groupTags.split('\n');
+                      this.group.categoryId = this.category.value;
+                      this.group.img = ''; // Add group to database.
 
-              this.firestore.collection('groups').add(this.group).then(function (success) {
-                var groupId = success.id;
+                      this.firestore.collection('groups').add(this.group).then(function (success) {
+                        var groupId = success.id;
 
-                _this2.router.navigateByUrl('/group/' + groupId);
+                        _this2.router.navigateByUrl('/group/' + groupId);
 
-                if (_this2.account.groups) {
-                  _this2.account.groups.push(groupId);
-                } else {
-                  _this2.account.groups = [groupId];
+                        if (_this2.account.groups) {
+                          _this2.account.groups.push(groupId);
+                        } else {
+                          _this2.account.groups = [groupId];
+                        }
+
+                        _this2.dataProvider.getCurrentUser().then(function (u) {
+                          u.update({
+                            groups: _this2.account.groups
+                          });
+                        });
+
+                        var cat = _this2.categories.find(function (c) {
+                          return c.id = _this2.category.value;
+                        });
+
+                        console.log('cat', cat, _this2.categories);
+
+                        if (!cat.groups) {
+                          cat.groups = [groupId];
+                        } else {
+                          cat.groups.push(groupId);
+                        }
+
+                        _this2.firestore.collection('categories').doc(_this2.category.value).update({
+                          groups: cat.groups
+                        });
+                      });
+
+                    case 19:
+                    case "end":
+                      return _context.stop();
+                  }
                 }
-
-                _this2.dataProvider.getCurrentUser().update({
-                  groups: _this2.account.groups
-                });
-
-                var cat = _this2.categories.find(function (c) {
-                  return c.id = _this2.category.value;
-                });
-
-                console.log('cat', cat, _this2.categories);
-
-                if (!cat.groups) {
-                  cat.groups = [groupId];
-                } else {
-                  cat.groups.push(groupId);
-                }
-
-                _this2.firestore.collection('categories').doc(_this2.category.value).update({
-                  groups: cat.groups
-                });
-              });
-            }
+              }, _callee, this);
+            }));
           }
         }, {
           key: "showPicker",
           value: function showPicker() {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
               var _this3 = this;
 
               var options, picker;
-              return regeneratorRuntime.wrap(function _callee$(_context) {
+              return regeneratorRuntime.wrap(function _callee2$(_context2) {
                 while (1) {
-                  switch (_context.prev = _context.next) {
+                  switch (_context2.prev = _context2.next) {
                     case 0:
                       options = {
                         buttons: [{
@@ -356,19 +384,19 @@
                           options: this.getColumnOptions()
                         }]
                       };
-                      _context.next = 3;
+                      _context2.next = 3;
                       return this.pickerController.create(options);
 
                     case 3:
-                      picker = _context.sent;
+                      picker = _context2.sent;
                       picker.present();
 
                     case 5:
                     case "end":
-                      return _context.stop();
+                      return _context2.stop();
                   }
                 }
-              }, _callee, this);
+              }, _callee2, this);
             }));
           }
         }, {

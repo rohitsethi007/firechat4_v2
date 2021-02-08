@@ -172,7 +172,7 @@
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
 
       var AdminCategoriesPage = /*#__PURE__*/function () {
         function AdminCategoriesPage(firestore) {

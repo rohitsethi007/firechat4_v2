@@ -72,13 +72,13 @@
 
       var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
       /*! @angular/fire/auth */
-      "KDZV");
+      "UbJi");
       /* harmony import */
 
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
 
       var MessagesPage = /*#__PURE__*/function () {
         function MessagesPage(router, afAuth, firestore, loadingProvider, dataProvider) {
@@ -122,35 +122,60 @@
                       conversation.friend = user.data(); // Get conversation info.
 
                       _this.dataProvider.getConversation(conversation.conversationId).snapshotChanges().subscribe(function (obj) {
-                        // Get last message of conversation.
-                        console.log(obj.payload.data());
+                        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+                          var lastMessage, userId;
+                          return regeneratorRuntime.wrap(function _callee$(_context) {
+                            while (1) {
+                              switch (_context.prev = _context.next) {
+                                case 0:
+                                  // Get last message of conversation.
+                                  console.log(obj.payload.data());
 
-                        if (obj.payload.data() != null) {
-                          var lastMessage = obj.payload.data().messages[obj.payload.data().messages.length - 1];
-                          conversation.date = lastMessage.date;
-                          conversation.sender = lastMessage.sender; // Set unreadMessagesCount
+                                  if (!(obj.payload.data() != null)) {
+                                    _context.next = 13;
+                                    break;
+                                  }
 
-                          conversation.unreadMessagesCount = obj.payload.data().messages.length - conversation.messagesRead;
-                          console.log(obj.payload.data().messages.length + "-" + conversation.messagesRead);
-                          console.log(conversation.unreadMessagesCount); // Process last message depending on messageType.
+                                  lastMessage = obj.payload.data().messages[obj.payload.data().messages.length - 1];
+                                  conversation.date = lastMessage.date;
+                                  conversation.sender = lastMessage.sender; // Set unreadMessagesCount
 
-                          if (lastMessage.type == 'text') {
-                            if (lastMessage.sender == _this.afAuth.auth.currentUser.uid) {
-                              conversation.message = 'You: ' + lastMessage.message;
-                            } else {
-                              conversation.message = lastMessage.message;
+                                  conversation.unreadMessagesCount = obj.payload.data().messages.length - conversation.messagesRead;
+                                  console.log(obj.payload.data().messages.length + "-" + conversation.messagesRead);
+                                  console.log(conversation.unreadMessagesCount);
+                                  _context.next = 10;
+                                  return this.afAuth.currentUser.then(function (u) {
+                                    return u.uid;
+                                  });
+
+                                case 10:
+                                  userId = _context.sent;
+
+                                  // Process last message depending on messageType.
+                                  if (lastMessage.type == 'text') {
+                                    if (lastMessage.sender == userId) {
+                                      conversation.message = 'You: ' + lastMessage.message;
+                                    } else {
+                                      conversation.message = lastMessage.message;
+                                    }
+                                  } else {
+                                    if (lastMessage.sender == userId) {
+                                      conversation.message = 'You sent a photo message.';
+                                    } else {
+                                      conversation.message = 'has sent you a photo message.';
+                                    }
+                                  } // Add or update conversation.
+
+
+                                  this.addOrUpdateConversation(conversation);
+
+                                case 13:
+                                case "end":
+                                  return _context.stop();
+                              }
                             }
-                          } else {
-                            if (lastMessage.sender == _this.afAuth.auth.currentUser.uid) {
-                              conversation.message = 'You sent a photo message.';
-                            } else {
-                              conversation.message = 'has sent you a photo message.';
-                            }
-                          } // Add or update conversation.
-
-
-                          _this.addOrUpdateConversation(conversation);
-                        }
+                          }, _callee, this);
+                        }));
                       });
                     });
                   }

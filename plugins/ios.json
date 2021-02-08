@@ -31,6 +31,9 @@
     },
     "cordova-plugin-file-transfer": {
       "PACKAGE_NAME": "com.socialshare.vscode"
+    },
+    "nl.x-services.plugins.videocaptureplus": {
+      "PACKAGE_NAME": "com.socialshare.vscode"
     }
   },
   "dependent_plugins": {
@@ -41,6 +44,9 @@
       "PACKAGE_NAME": "com.socialshare"
     },
     "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.socialshare.vscode"
+    },
+    "cordova-plugin-compat": {
       "PACKAGE_NAME": "com.socialshare.vscode"
     }
   }

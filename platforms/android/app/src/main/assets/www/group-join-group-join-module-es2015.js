@@ -16,10 +16,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/data.service */ "EnSQ");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ "tyNb");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
 /* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! firebase/app */ "Wcq6");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! firebase/app */ "Jgta");
 
 
 
@@ -38,11 +37,13 @@ let GroupJoinPage = class GroupJoinPage {
         this.group = {};
         this.termsAgreed = false;
         this.groupId = this.route.snapshot.params.id;
-        this.dataProvider.getCurrentUser().get().subscribe((u) => {
-            let user = u.data();
-            user.userId = firebase_app__WEBPACK_IMPORTED_MODULE_8__["auth"]().currentUser.uid;
-            ;
-            this.loggedInUser = user;
+        this.dataProvider.getCurrentUser().then((u) => {
+            u.get().subscribe((u) => {
+                let user = u.data();
+                user.userId = firebase_app__WEBPACK_IMPORTED_MODULE_8__["default"].auth().currentUser.uid;
+                ;
+                this.loggedInUser = user;
+            });
         });
     }
     ngOnInit() {
@@ -67,7 +68,7 @@ let GroupJoinPage = class GroupJoinPage {
             groups: this.loggedInUser.groups
         }).then(() => {
             // Add friend as members of the group.
-            this.group.members.push(firebase_app__WEBPACK_IMPORTED_MODULE_8__["auth"]().currentUser.uid);
+            this.group.members.push(firebase_app__WEBPACK_IMPORTED_MODULE_8__["default"].auth().currentUser.uid);
             // Update group data on the database.
             this.dataProvider.getGroup(this.groupId).update({
                 members: this.group.members,

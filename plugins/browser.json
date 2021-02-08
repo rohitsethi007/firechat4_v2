@@ -26,9 +26,6 @@
     "cordova-plugin-splashscreen": {
       "PACKAGE_NAME": "com.codesundar.ionicchat"
     },
-    "cordova-plugin-ionic-webview": {
-      "PACKAGE_NAME": "com.codesundar.ionicchat"
-    },
     "cordova-plugin-ionic-keyboard": {
       "PACKAGE_NAME": "com.codesundar.ionicchat"
     },
@@ -71,11 +68,17 @@
     },
     "cordova-plugin-file-transfer": {
       "PACKAGE_NAME": "com.socialshare"
+    },
+    "nl.x-services.plugins.videocaptureplus": {
+      "PACKAGE_NAME": "com.socialshare.vscode"
     }
   },
   "dependent_plugins": {
     "cordova-plugin-badge": {
       "PACKAGE_NAME": "com.codesundar.ionicchat"
+    },
+    "cordova-plugin-compat": {
+      "PACKAGE_NAME": "com.socialshare.vscode"
     }
   }
 }

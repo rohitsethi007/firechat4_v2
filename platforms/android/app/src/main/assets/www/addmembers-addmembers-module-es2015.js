@@ -17,7 +17,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "tyNb");
 /* harmony import */ var _services_data_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../services/data.service */ "EnSQ");
 /* harmony import */ var _services_loading_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../services/loading.service */ "7ch9");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/fire/firestore */ "mrps");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
 /* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
 
 
@@ -49,8 +49,10 @@ let AddmembersPage = class AddmembersPage {
         this.toAdd = [];
         this.loadingProvider.show();
         // Get user information for system message sent to the group when a member was added.
-        this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user) => {
-            this.user = user.payload.data();
+        this.dataProvider.getCurrentUser().then((u) => {
+            u.snapshotChanges().subscribe((user) => {
+                this.user = user.payload.data();
+            });
         });
         // Get group information
         this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
@@ -64,26 +66,28 @@ let AddmembersPage = class AddmembersPage {
                     });
                 });
                 // Get user's friends to add
-                this.dataProvider.getCurrentUser().snapshotChanges().subscribe((user) => {
-                    let account = user.payload.data();
-                    if (account.friends) {
-                        for (var i = 0; i < account.friends.length; i++) {
-                            this.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe((friendRes) => {
-                                // Only friends that are not yet a member of this group can be added.
-                                let friend = Object.assign({ $key: friendRes.key }, friendRes.payload.data());
-                                console.log(friend);
-                                if (!this.isMember(friend)) {
-                                    this.addOrUpdateFriend(friend);
-                                }
-                            });
+                this.dataProvider.getCurrentUser().then((u) => {
+                    u.snapshotChanges().subscribe((user) => {
+                        let account = user.payload.data();
+                        if (account.friends) {
+                            for (var i = 0; i < account.friends.length; i++) {
+                                this.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe((friendRes) => {
+                                    // Only friends that are not yet a member of this group can be added.
+                                    let friend = Object.assign({ $key: friendRes.key }, friendRes.payload.data());
+                                    console.log(friend);
+                                    if (!this.isMember(friend)) {
+                                        this.addOrUpdateFriend(friend);
+                                    }
+                                });
+                            }
+                            if (!this.friends) {
+                                this.friends = [];
+                            }
                         }
-                        if (!this.friends) {
+                        else {
                             this.friends = [];
                         }
-                    }
-                    else {
-                        this.friends = [];
-                    }
+                    });
                 });
             }
             console.log(this.friends);

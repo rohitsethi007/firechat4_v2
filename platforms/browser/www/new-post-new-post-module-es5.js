@@ -96,23 +96,19 @@
 
       var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(
       /*! @ionic-native/camera/ngx */
-      "Pn9U");
+      "a/9d");
       /* harmony import */
 
 
       var firebase_app__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(
       /*! firebase/app */
-      "Wcq6");
-      /* harmony import */
-
-
-      var firebase_app__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_12__);
+      "Jgta");
       /* harmony import */
 
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
 
       var NewPostPage = /*#__PURE__*/function () {
         function NewPostPage(route, router, dataProvider, imageProvider, loadingProvider, camera, actionSheet, firestore) {
@@ -221,60 +217,62 @@
           value: function ngOnInit() {
             var _this2 = this;
 
-            this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (value) {
-              _this2.user = value.payload.data();
-              _this2.addedByUser = {
-                addedByKey: value.payload.data().userId,
-                addedByUsername: value.payload.data().username,
-                addedByImg: value.payload.data().img
-              };
-              _this2.userNotifications = value.payload.data().userNotifications;
-              _this2.userPosts = value.payload.data().userPosts;
-              _this2.post = {
-                addedByUser: _this2.addedByUser,
-                date: '',
-                title: '',
-                postTags: [],
-                groupId: '',
-                groupName: '',
-                type: 'general',
-                data: {},
-                totalReactionCount: 0,
-                totalReviewCount: 0,
-                postMedia: []
-              };
+            this.dataProvider.getCurrentUser().then(function (u) {
+              u.snapshotChanges().subscribe(function (value) {
+                _this2.user = value.payload.data();
+                _this2.addedByUser = {
+                  addedByKey: value.payload.data().userId,
+                  addedByUsername: value.payload.data().username,
+                  addedByImg: value.payload.data().img
+                };
+                _this2.userNotifications = value.payload.data().userNotifications;
+                _this2.userPosts = value.payload.data().userPosts;
+                _this2.post = {
+                  addedByUser: _this2.addedByUser,
+                  date: '',
+                  title: '',
+                  postTags: [],
+                  groupId: '',
+                  groupName: '',
+                  type: 'general',
+                  data: {},
+                  totalReactionCount: 0,
+                  totalReviewCount: 0,
+                  postMedia: []
+                };
 
-              if (_this2.step === 1) {
-                _this2.title = 'Select a group ...'; // Get User Groups List
+                if (_this2.step === 1) {
+                  _this2.title = 'Select a group ...'; // Get User Groups List
 
-                if (_this2.user.groups) {
-                  _this2.firestore.collection('groups').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_12__["firestore"].FieldPath.documentId(), 'in', _this2.user.groups).get().then(function (group) {
-                    _this2.groups = [];
-                    group.forEach(function (g) {
-                      var group;
-                      group = g.data();
-                      group.key = g.id;
+                  if (_this2.user.groups) {
+                    _this2.firestore.collection('groups').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_12__["default"].firestore.FieldPath.documentId(), 'in', _this2.user.groups).get().then(function (group) {
+                      _this2.groups = [];
+                      group.forEach(function (g) {
+                        var group;
+                        group = g.data();
+                        group.key = g.id;
 
-                      _this2.addOrUpdateUserGroup(group);
+                        _this2.addOrUpdateUserGroup(group);
+                      });
                     });
+                  }
+                } else {
+                  _this2.title = 'Create a Post in';
+
+                  _this2.dataProvider.getGroup(_this2.groupId).snapshotChanges().subscribe(function (group) {
+                    _this2.group = group.payload.data();
+
+                    _this2.group.groupTags.forEach(function (element) {
+                      _this2.postTags.push({
+                        val: element,
+                        isChecked: false
+                      });
+                    });
+
+                    _this2.addTagControls();
                   });
                 }
-              } else {
-                _this2.title = 'Create a Post in';
-
-                _this2.dataProvider.getGroup(_this2.groupId).snapshotChanges().subscribe(function (group) {
-                  _this2.group = group.payload.data();
-
-                  _this2.group.groupTags.forEach(function (element) {
-                    _this2.postTags.push({
-                      val: element,
-                      isChecked: false
-                    });
-                  });
-
-                  _this2.addTagControls();
-                });
-              }
+              });
             });
           }
         }, {
@@ -392,8 +390,7 @@
                 text: 'Video',
                 handler: function handler() {
                   _this5.imageProvider.uploadPostVideo().then(function (url) {
-                    _this5.postMedia(url);
-
+                    _this5.postMedia = _this5.postMedia.concat(url);
                     console.log(url);
                   });
                 }

@@ -138,11 +138,7 @@
 
       var firebase__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
       /*! firebase */
-      "iqUP");
-      /* harmony import */
-
-
-      var firebase__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(firebase__WEBPACK_IMPORTED_MODULE_4__);
+      "JZFu");
       /* harmony import */
 
 
@@ -154,7 +150,7 @@
 
       var _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
       /*! @ionic-native/camera/ngx */
-      "Pn9U");
+      "a/9d");
       /* harmony import */
 
 
@@ -208,7 +204,7 @@
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
 
       var MessagePage = /*#__PURE__*/function () {
         // MessagePage
@@ -247,7 +243,7 @@
             var _this = this;
 
             this.userId = this.route.snapshot.params.id;
-            this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_4__["auth"]().currentUser.uid;
+            this.loggedInUserId = firebase__WEBPACK_IMPORTED_MODULE_4__["default"].auth().currentUser.uid;
             console.log(this.userId); // Get friend details.
 
             this.dataProvider.getUser(this.userId).snapshotChanges().subscribe(function (user) {
@@ -365,7 +361,7 @@
           value: function setMessagesRead() {
             var _this2 = this;
 
-            firebase__WEBPACK_IMPORTED_MODULE_4__["database"]().ref('/conversations/' + this.conversationId + '/messages').once('value', function (snap) {
+            firebase__WEBPACK_IMPORTED_MODULE_4__["default"].database().ref('/conversations/' + this.conversationId + '/messages').once('value', function (snap) {
               console.log(snap.val());
 
               if (snap.val() != null) {

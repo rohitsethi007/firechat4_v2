@@ -67,14 +67,6 @@ module.exports = [
         "runs": true
     },
     {
-        "file": "plugins/cordova-plugin-ionic-webview/src/www/util.js",
-        "id": "cordova-plugin-ionic-webview.IonicWebView",
-        "pluginId": "cordova-plugin-ionic-webview",
-        "clobbers": [
-            "Ionic.WebView"
-        ]
-    },
-    {
         "file": "plugins/cordova-plugin-facebook4/www/facebook-browser.js",
         "id": "cordova-plugin-facebook4.FacebookConnectPluginBrowser",
         "pluginId": "cordova-plugin-facebook4",
@@ -566,6 +558,14 @@ module.exports = [
         "clobbers": [
             "window.FileTransfer"
         ]
+    },
+    {
+        "file": "plugins/nl.x-services.plugins.videocaptureplus/www/VideoCapturePlus.js",
+        "id": "nl.x-services.plugins.videocaptureplus.VideoCapturePlus",
+        "pluginId": "nl.x-services.plugins.videocaptureplus",
+        "clobbers": [
+            "window.plugins.videocaptureplus"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -577,7 +577,6 @@ module.exports.metadata =
     "cordova-plugin-statusbar": "2.4.2",
     "cordova-plugin-device": "2.0.2",
     "cordova-plugin-splashscreen": "5.0.2",
-    "cordova-plugin-ionic-webview": "4.1.3",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-facebook4": "6.2.0",
     "cordova-plugin-camera": "4.1.0",
@@ -591,7 +590,9 @@ module.exports.metadata =
     "cordova-plugin-local-notification": "0.9.0-beta.2",
     "cordova-plugin-fcm-with-dependecy-updated": "7.3.1",
     "cordova-plugin-telerik-imagepicker": "2.3.5",
-    "cordova-plugin-file-transfer": "1.7.1"
+    "cordova-plugin-file-transfer": "1.7.1",
+    "cordova-plugin-compat": "1.2.0",
+    "nl.x-services.plugins.videocaptureplus": "1.0.0"
 }
 // BOTTOM OF METADATA
 });

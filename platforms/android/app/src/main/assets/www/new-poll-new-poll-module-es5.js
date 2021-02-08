@@ -208,17 +208,13 @@
 
       var firebase_app__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(
       /*! firebase/app */
-      "Wcq6");
-      /* harmony import */
-
-
-      var firebase_app__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_9__);
+      "Jgta");
       /* harmony import */
 
 
       var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(
       /*! @angular/fire/firestore */
-      "mrps");
+      "I/3d");
 
       var NewPollPage = /*#__PURE__*/function () {
         function NewPollPage(dataProvider, loadingProvider, route, router, firestore) {
@@ -313,58 +309,60 @@
             var _this = this;
 
             // Initialize
-            this.dataProvider.getCurrentUser().snapshotChanges().subscribe(function (value) {
-              _this.user = value.payload.data();
-              _this.addedByUser = {
-                addedByKey: value.payload.data().userId,
-                addedByUsername: value.payload.data().username,
-                addedByImg: value.payload.data().img
-              };
-              _this.poll = {
-                addedByUser: _this.addedByUser,
-                date: '',
-                title: '',
-                postTags: [],
-                groupId: '',
-                groupName: '',
-                type: 'poll',
-                data: {},
-                totalReactionCount: 0,
-                totalReviewCount: 0,
-                totalPollCount: 0
-              };
+            this.dataProvider.getCurrentUser().then(function (u) {
+              u.snapshotChanges().subscribe(function (value) {
+                _this.user = value.payload.data();
+                _this.addedByUser = {
+                  addedByKey: value.payload.data().userId,
+                  addedByUsername: value.payload.data().username,
+                  addedByImg: value.payload.data().img
+                };
+                _this.poll = {
+                  addedByUser: _this.addedByUser,
+                  date: '',
+                  title: '',
+                  postTags: [],
+                  groupId: '',
+                  groupName: '',
+                  type: 'poll',
+                  data: {},
+                  totalReactionCount: 0,
+                  totalReviewCount: 0,
+                  totalPollCount: 0
+                };
 
-              if (_this.step === 1) {
-                _this.title = 'Select a group ...'; // Get User Groups List
+                if (_this.step === 1) {
+                  _this.title = 'Select a group ...'; // Get User Groups List
 
-                if (_this.user.groups) {
-                  _this.firestore.collection('groups').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_9__["firestore"].FieldPath.documentId(), 'in', _this.user.groups).get().then(function (group) {
-                    _this.groups = [];
-                    group.forEach(function (g) {
-                      var group;
-                      group = g.data();
-                      group.key = g.id;
+                  if (_this.user.groups) {
+                    _this.firestore.collection('groups').ref.where(firebase_app__WEBPACK_IMPORTED_MODULE_9__["default"].firestore.FieldPath.documentId(), 'in', _this.user.groups).get().then(function (group) {
+                      _this.groups = [];
+                      group.forEach(function (g) {
+                        var group;
+                        group = g.data();
+                        group.key = g.id;
 
-                      _this.addOrUpdateUserGroup(group);
+                        _this.addOrUpdateUserGroup(group);
+                      });
                     });
+                  }
+                } else {
+                  _this.title = 'Poll';
+
+                  _this.dataProvider.getGroup(_this.groupId).snapshotChanges().subscribe(function (group) {
+                    _this.group = group.payload.data();
+
+                    _this.group.groupTags.forEach(function (element) {
+                      _this.postTags.push({
+                        val: element,
+                        isChecked: false
+                      });
+                    });
+
+                    _this.addTagControls();
                   });
                 }
-              } else {
-                _this.title = 'Poll';
-
-                _this.dataProvider.getGroup(_this.groupId).snapshotChanges().subscribe(function (group) {
-                  _this.group = group.payload.data();
-
-                  _this.group.groupTags.forEach(function (element) {
-                    _this.postTags.push({
-                      val: element,
-                      isChecked: false
-                    });
-                  });
-
-                  _this.addTagControls();
-                });
-              }
+              });
             });
           }
         }, {

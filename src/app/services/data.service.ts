@@ -176,15 +176,22 @@ export class DataService {
 
   addPost(post): Promise<any> {
     return new Promise(resolve => {
-    this.imageProvider.uploadPostPhotos(post.postMedia).then((postMediaUrls) => {
-      post.postMedia = [];
-
-      if (postMediaUrls) {
-        post.postMedia = postMediaUrls;
-      }
-      return resolve(this.firestore.collection('posts').add(post));
-      });
+     this.firestore.collection('posts').add(post).then(success => {
+        let postId = success.id;
+        if (post.postMediaImgs.length > 0) {
+          this.imageProvider.uploadPostPhotos(postId, post.postMediaImgs).then((postMediaUrls) => {
+            post.postMediaImgs = [];
+            if (postMediaUrls) {
+              post.postMediaImgs = postMediaUrls;
+              this.firestore.doc('posts/' + postId).update({
+                postMediaImgs: postMediaUrls
+              })
+            }
+            resolve(success);
+            });
+          }
     });
+  });
   }
 
   addEvent(event) {
