@@ -180,6 +180,7 @@ export class NewPostPage implements OnInit {
     // Add post info and date.
     this.post.date = new Date();
     this.post.title = this.postForm.value.title;
+    this.post.data.message = this.postForm.value.message;
     this.post.postTags = [];
     this.post.postTags = this.postTags;
     this.post.groupId = this.groupId;
@@ -221,7 +222,7 @@ export class NewPostPage implements OnInit {
     }).then(() => {
       // Back.
       this.loadingProvider.hide();
-      this.router.navigateByUrl('tabs/tab1');
+      this.router.navigateByUrl('app/tabs/tab1');
     });;
 
     

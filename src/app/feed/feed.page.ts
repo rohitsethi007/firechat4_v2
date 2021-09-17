@@ -625,10 +625,12 @@ export class FeedPage implements OnInit {
   }
 
   trimString(string, length) {
+    if ( string) {
     return string.length > length
       ? string.substring(0, length) + "..."
       : string;
   }
+}
 
   onFocus(event) {
     if (!this.searchMode) {

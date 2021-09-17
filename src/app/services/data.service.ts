@@ -178,7 +178,7 @@ export class DataService {
     return new Promise(resolve => {
      this.firestore.collection('posts').add(post).then(success => {
         let postId = success.id;
-        if (post.postMediaImgs.length > 0) {
+        if (post.postMediaImgs && post.postMediaImgs.length > 0) {
           this.imageProvider.uploadPostPhotos(postId, post.postMediaImgs).then((postMediaUrls) => {
             post.postMediaImgs = [];
             if (postMediaUrls) {

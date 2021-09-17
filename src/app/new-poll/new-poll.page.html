@@ -12,9 +12,9 @@
 
 <ion-content class="forms-validations-content">
   <div *ngIf="step==1"> 
-    <div *ngIf="groups && groups.length > 0">
+    <div *ngIf="groups && groups.length > 0"> 
       <ion-list>
-        <ion-item text-wrap *ngFor="let group of groups" (click)="selectGroup(group.$key)">
+        <ion-item text-wrap *ngFor="let group of groups" (click)="selectGroup(group.key)">
           <ion-thumbnail slot="start">
             <img src="{{group.img}}" onError="this.src='./assets/images/default-group.png'">
           </ion-thumbnail>
