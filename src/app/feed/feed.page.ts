@@ -9,11 +9,24 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { NgAnalyzeModulesHost } from '@angular/compiler';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
-import * as firebase from 'firebase';
+
 import { FCM } from '@ionic-native/fcm/ngx';
 import { Platform } from '@ionic/angular';
 import algoliasearch from 'algoliasearch';
 import { constants } from 'perf_hooks';
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+
+// Add interface for user data
+interface UserDocument {
+  userReactions: any[];
+  userNotifications: any[];
+  username: string;
+  img: string;
+  groups: string[];
+  // add other properties as needed
+}
 
 @Component({
   selector: 'app-feed',
@@ -22,6 +35,9 @@ import { constants } from 'perf_hooks';
 })
 export class FeedPage implements OnInit {
   @ViewChild(IonInfiniteScroll, {static: true}) infiniteScroll: IonInfiniteScroll;
+  userReactions: any[] = [];
+  userNotifications: any[] = [];
+  loggedInUser: UserDocument | null = null;
   [x: string]: any;
   pushes: any = [];
   unreadMessagesCount: any;
@@ -31,8 +47,6 @@ export class FeedPage implements OnInit {
   groupsInfo: any;
   conversationList: any;
   conversationsInfo: any;
-  userNotifications: any = [];
-  userReactions: any = [];
   searchMode = false;
   searchTerm: any;
 
@@ -41,7 +55,7 @@ export class FeedPage implements OnInit {
   private posts: any = [];
   private searchPosts: any = [];
   private memberofGroups: any = [];
-  private loggedInUser: any;
+
   private loggedInUserId: any;
   private firstDataSet: any;
   private lastDataSet: any;
@@ -73,6 +87,7 @@ export class FeedPage implements OnInit {
     private localNotifications: LocalNotifications,
     private fcm: FCM,
     public plt: Platform
+
     ) {
       this.plt.ready()
       .then(() => {
@@ -114,17 +129,22 @@ export class FeedPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.loggedInUserId = firebase.default.auth().currentUser.uid;
-   // Get Posts
-    this.dataProvider.getCurrentUser().then((u) => {
-      u.get().subscribe((user) => {
-        this.userReactions = user.data().userReactions;
-        this.userNotifications = user.data().userNotifications;
-        this.loggedInUser = user.data();
-        this.getFeedData();
-       });
+    // Replace the firebase.auth() call with AngularFireAuth
+    this.afAuth.currentUser.then(user => {
+      this.loggedInUserId = user?.uid;
+      // Get Posts
+      this.dataProvider.getCurrentUser().then((u) => {
+        u.get().subscribe((user) => {
+          const userData = user.data() as UserDocument;
+          if (userData) {
+            this.userReactions = userData.userReactions || [];
+            this.userNotifications = userData.userNotifications || [];
+            this.loggedInUser = userData;
+            this.getFeedData();
+          }
+        });
+      });
     });
-    
   }
 
   getFeedData() {

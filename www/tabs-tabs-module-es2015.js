@@ -43,7 +43,7 @@ const routes = [
                 children: [
                     {
                         path: '',
-                        loadChildren: () => __webpack_require__.e(/*! import() | feed-feed-module */ "feed-feed-module").then(__webpack_require__.bind(null, /*! ../feed/feed.module */ "xQww")).then(m => m.FeedPageModule)
+                        loadChildren: () => Promise.all(/*! import() | feed-feed-module */[__webpack_require__.e("common"), __webpack_require__.e("feed-feed-module")]).then(__webpack_require__.bind(null, /*! ../feed/feed.module */ "xQww")).then(m => m.FeedPageModule)
                         // canActivate: [AuthGuardService]
                     }
                 ]

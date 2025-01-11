@@ -1,9 +1,13 @@
 (function () {
-  function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+  function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 
-  function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+  function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+
+  function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+  function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 
   (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["feed-search-feed-search-module"], {
     /***/
@@ -15,7 +19,7 @@
     /*! exports provided: FeedSearchPageModule */
 
     /***/
-    function OJ1(module, __webpack_exports__, __webpack_require__) {
+    function _OJ1(module, __webpack_exports__, __webpack_require__) {
       "use strict";
 
       __webpack_require__.r(__webpack_exports__);
@@ -73,9 +77,9 @@
         component: _feed_search_page__WEBPACK_IMPORTED_MODULE_6__["FeedSearchPage"]
       }];
 
-      var FeedSearchPageModule = function FeedSearchPageModule() {
+      var FeedSearchPageModule = /*#__PURE__*/_createClass(function FeedSearchPageModule() {
         _classCallCheck(this, FeedSearchPageModule);
-      };
+      });
 
       FeedSearchPageModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
         imports: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormsModule"], _ionic_angular__WEBPACK_IMPORTED_MODULE_5__["IonicModule"], _angular_router__WEBPACK_IMPORTED_MODULE_4__["RouterModule"].forChild(routes)],
@@ -100,7 +104,7 @@
       /* harmony default export */
 
 
-      __webpack_exports__["default"] = ":host {\n  --page-margin: var(--app-narrow-margin);\n  --page-background: var(--app-background);\n}\n\nion-searchbar {\n  --border-radius: 30px;\n}\n\n.filters-toolbar {\n  --padding-start: var(--page-margin);\n  --padding-end: var(--page-margin);\n}\n\n.filters-toolbar .searchbar-row {\n  --ion-grid-column-padding: 0px;\n}\n\n.filters-toolbar .searchbar-row .searchbar {\n  padding: 0px;\n  height: 30px;\n  border-radius: 20px;\n}\n\n.filters-toolbar .searchbar-row .call-to-action-col {\n  max-width: -webkit-fit-content;\n  max-width: -moz-fit-content;\n  max-width: fit-content;\n  flex-shrink: 0;\n  flex-grow: 0;\n  display: flex;\n  justify-content: flex-end;\n}\n\n.filters-toolbar .searchbar-row .call-to-action-col .filters-btn {\n  --padding-start: 6px;\n  --padding-end: 6px;\n  margin: 0px;\n  font-size: 15px;\n  height: initial;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvZmVlZC1zZWFyY2gvZmVlZC1zZWFyY2gucGFnZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksdUNBQUE7RUFDQSx3Q0FBQTtBQUNKOztBQUVDO0VBQ0UscUJBQUE7QUFDSDs7QUFFQTtFQUNHLG1DQUFBO0VBQ0EsaUNBQUE7QUFDSDs7QUFDRztFQUNFLDhCQUFBO0FBQ0w7O0FBQ0s7RUFDRSxZQUFBO0VBQ0EsWUFBQTtFQUNBLG1CQUFBO0FBQ1A7O0FBRUs7RUFDRSw4QkFBQTtFQUFBLDJCQUFBO0VBQUEsc0JBQUE7RUFDQSxjQUFBO0VBQ0EsWUFBQTtFQUVBLGFBQUE7RUFDQSx5QkFBQTtBQURQOztBQUdPO0VBQ0Usb0JBQUE7RUFDQSxrQkFBQTtFQUVBLFdBQUE7RUFDQSxlQUFBO0VBRUEsZUFBQTtBQUhUIiwiZmlsZSI6InNyYy9hcHAvZmVlZC1zZWFyY2gvZmVlZC1zZWFyY2gucGFnZS5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiOmhvc3Qge1xuICAgIC0tcGFnZS1tYXJnaW46IHZhcigtLWFwcC1uYXJyb3ctbWFyZ2luKTtcbiAgICAtLXBhZ2UtYmFja2dyb3VuZDogdmFyKC0tYXBwLWJhY2tncm91bmQpO1xuIH1cbiBcbiBpb24tc2VhcmNoYmFyIHtcbiAgIC0tYm9yZGVyLXJhZGl1czogMzBweDtcbiB9XG5cbi5maWx0ZXJzLXRvb2xiYXIge1xuICAgLS1wYWRkaW5nLXN0YXJ0OiB2YXIoLS1wYWdlLW1hcmdpbik7XG4gICAtLXBhZGRpbmctZW5kOiB2YXIoLS1wYWdlLW1hcmdpbik7XG5cbiAgIC5zZWFyY2hiYXItcm93IHtcbiAgICAgLS1pb24tZ3JpZC1jb2x1bW4tcGFkZGluZzogMHB4O1xuIFxuICAgICAuc2VhcmNoYmFyIHtcbiAgICAgICBwYWRkaW5nOiAwcHg7XG4gICAgICAgaGVpZ2h0OjMwcHg7XG4gICAgICAgYm9yZGVyLXJhZGl1czogMjBweDtcbiAgICAgfVxuIFxuICAgICAuY2FsbC10by1hY3Rpb24tY29sIHtcbiAgICAgICBtYXgtd2lkdGg6IGZpdC1jb250ZW50O1xuICAgICAgIGZsZXgtc2hyaW5rOiAwO1xuICAgICAgIGZsZXgtZ3JvdzogMDtcbiBcbiAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgIGp1c3RpZnktY29udGVudDogZmxleC1lbmQ7XG4gXG4gICAgICAgLmZpbHRlcnMtYnRuIHtcbiAgICAgICAgIC0tcGFkZGluZy1zdGFydDogNnB4O1xuICAgICAgICAgLS1wYWRkaW5nLWVuZDogNnB4O1xuIFxuICAgICAgICAgbWFyZ2luOiAwcHg7XG4gICAgICAgICBmb250LXNpemU6IDE1cHg7XG4gICAgICAgICAvLyBvdmVycmlkZSBJb25pYyBmaXhlZCBoZWlnaHRcbiAgICAgICAgIGhlaWdodDogaW5pdGlhbDtcbiAgICAgICB9XG4gICAgIH1cbiAgIH1cblxuIH0iXX0= */";
+      __webpack_exports__["default"] = ":host {\n  --page-margin: var(--app-narrow-margin);\n  --page-background: var(--app-background);\n}\n\nion-searchbar {\n  --border-radius: 30px;\n}\n\n.filters-toolbar {\n  --padding-start: var(--page-margin);\n  --padding-end: var(--page-margin);\n}\n\n.filters-toolbar .searchbar-row {\n  --ion-grid-column-padding: 0px;\n}\n\n.filters-toolbar .searchbar-row .searchbar {\n  padding: 0px;\n  height: 30px;\n  border-radius: 20px;\n}\n\n.filters-toolbar .searchbar-row .call-to-action-col {\n  max-width: -moz-fit-content;\n  max-width: fit-content;\n  flex-shrink: 0;\n  flex-grow: 0;\n  display: flex;\n  justify-content: flex-end;\n}\n\n.filters-toolbar .searchbar-row .call-to-action-col .filters-btn {\n  --padding-start: 6px;\n  --padding-end: 6px;\n  margin: 0px;\n  font-size: 15px;\n  height: initial;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvZmVlZC1zZWFyY2gvZmVlZC1zZWFyY2gucGFnZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksdUNBQUE7RUFDQSx3Q0FBQTtBQUNKOztBQUVDO0VBQ0UscUJBQUE7QUFDSDs7QUFFQTtFQUNHLG1DQUFBO0VBQ0EsaUNBQUE7QUFDSDs7QUFDRztFQUNFLDhCQUFBO0FBQ0w7O0FBQ0s7RUFDRSxZQUFBO0VBQ0EsWUFBQTtFQUNBLG1CQUFBO0FBQ1A7O0FBRUs7RUFDRSwyQkFBQTtFQUFBLHNCQUFBO0VBQ0EsY0FBQTtFQUNBLFlBQUE7RUFFQSxhQUFBO0VBQ0EseUJBQUE7QUFEUDs7QUFHTztFQUNFLG9CQUFBO0VBQ0Esa0JBQUE7RUFFQSxXQUFBO0VBQ0EsZUFBQTtFQUVBLGVBQUE7QUFIVCIsImZpbGUiOiJzcmMvYXBwL2ZlZWQtc2VhcmNoL2ZlZWQtc2VhcmNoLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIjpob3N0IHtcbiAgICAtLXBhZ2UtbWFyZ2luOiB2YXIoLS1hcHAtbmFycm93LW1hcmdpbik7XG4gICAgLS1wYWdlLWJhY2tncm91bmQ6IHZhcigtLWFwcC1iYWNrZ3JvdW5kKTtcbiB9XG4gXG4gaW9uLXNlYXJjaGJhciB7XG4gICAtLWJvcmRlci1yYWRpdXM6IDMwcHg7XG4gfVxuXG4uZmlsdGVycy10b29sYmFyIHtcbiAgIC0tcGFkZGluZy1zdGFydDogdmFyKC0tcGFnZS1tYXJnaW4pO1xuICAgLS1wYWRkaW5nLWVuZDogdmFyKC0tcGFnZS1tYXJnaW4pO1xuXG4gICAuc2VhcmNoYmFyLXJvdyB7XG4gICAgIC0taW9uLWdyaWQtY29sdW1uLXBhZGRpbmc6IDBweDtcbiBcbiAgICAgLnNlYXJjaGJhciB7XG4gICAgICAgcGFkZGluZzogMHB4O1xuICAgICAgIGhlaWdodDozMHB4O1xuICAgICAgIGJvcmRlci1yYWRpdXM6IDIwcHg7XG4gICAgIH1cbiBcbiAgICAgLmNhbGwtdG8tYWN0aW9uLWNvbCB7XG4gICAgICAgbWF4LXdpZHRoOiBmaXQtY29udGVudDtcbiAgICAgICBmbGV4LXNocmluazogMDtcbiAgICAgICBmbGV4LWdyb3c6IDA7XG4gXG4gICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGZsZXgtZW5kO1xuIFxuICAgICAgIC5maWx0ZXJzLWJ0biB7XG4gICAgICAgICAtLXBhZGRpbmctc3RhcnQ6IDZweDtcbiAgICAgICAgIC0tcGFkZGluZy1lbmQ6IDZweDtcbiBcbiAgICAgICAgIG1hcmdpbjogMHB4O1xuICAgICAgICAgZm9udC1zaXplOiAxNXB4O1xuICAgICAgICAgLy8gb3ZlcnJpZGUgSW9uaWMgZml4ZWQgaGVpZ2h0XG4gICAgICAgICBoZWlnaHQ6IGluaXRpYWw7XG4gICAgICAgfVxuICAgICB9XG4gICB9XG5cbiB9Il19 */";
       /***/
     },
 
@@ -168,7 +172,7 @@
           this.router = router;
         }
 
-        _createClass(FeedSearchPage, [{
+        return _createClass(FeedSearchPage, [{
           key: "ngOnInit",
           value: function ngOnInit() {}
         }, {
@@ -177,8 +181,6 @@
             this.router.navigateByUrl('/app/tabs/tab1');
           }
         }]);
-
-        return FeedSearchPage;
       }();
 
       FeedSearchPage.ctorParameters = function () {

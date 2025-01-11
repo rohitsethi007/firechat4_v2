@@ -1,344 +1,151 @@
 (function () {
-  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+  function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 
-  function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+  function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 
-  function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+  function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 
-  function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+  function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 
-  function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+  function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
   (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[34], {
     /***/
-    "J3Yu":
-    /*!********************************************************************!*\
-      !*** ./node_modules/@ionic/core/dist/esm/ion-loading-ios.entry.js ***!
-      \********************************************************************/
+    "nI0H":
+    /*!****************************************************************!*\
+      !*** ./node_modules/@ionic/core/dist/esm/ion-spinner.entry.js ***!
+      \****************************************************************/
 
-    /*! exports provided: ion_loading */
+    /*! exports provided: ion_spinner */
 
     /***/
-    function J3Yu(module, __webpack_exports__, __webpack_require__) {
+    function nI0H(module, __webpack_exports__, __webpack_require__) {
       "use strict";
 
       __webpack_require__.r(__webpack_exports__);
       /* harmony export (binding) */
 
 
-      __webpack_require__.d(__webpack_exports__, "ion_loading", function () {
-        return Loading;
+      __webpack_require__.d(__webpack_exports__, "ion_spinner", function () {
+        return Spinner;
       });
       /* harmony import */
 
 
-      var _core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
-      /*! ./core-80bde1aa.js */
-      "54nT");
+      var _index_7a8b7a1c_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
+      /*! ./index-7a8b7a1c.js */
+      "wEJo");
       /* harmony import */
 
 
-      var _config_3c7f3790_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
-      /*! ./config-3c7f3790.js */
-      "AfW+");
+      var _ionic_global_63a97a32_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
+      /*! ./ionic-global-63a97a32.js */
+      "E/Mt");
       /* harmony import */
 
 
-      var _helpers_46f4a262_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
-      /*! ./helpers-46f4a262.js */
-      "aiEM");
+      var _theme_ff3fc52f_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
+      /*! ./theme-ff3fc52f.js */
+      "74mu");
       /* harmony import */
 
 
-      var _animation_0084d55f_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
-      /*! ./animation-0084d55f.js */
-      "iAHb");
-      /* harmony import */
+      var _spinner_configs_cd7845af_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+      /*! ./spinner-configs-cd7845af.js */
+      "h3R7");
 
+      var spinnerCss = ":host{display:inline-block;position:relative;width:28px;height:28px;color:var(--color);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}:host(.ion-color){color:var(--ion-color-base)}svg{left:0;top:0;-webkit-transform-origin:center;transform-origin:center;position:absolute;width:100%;height:100%;-webkit-transform:translateZ(0);transform:translateZ(0)}[dir=rtl] svg,:host-context([dir=rtl]) svg{left:unset;right:unset;right:0}[dir=rtl] svg,:host-context([dir=rtl]) svg{-webkit-transform-origin:calc(100% - center);transform-origin:calc(100% - center)}:host(.spinner-lines) line,:host(.spinner-lines-small) line{stroke-width:4px;stroke-linecap:round;stroke:currentColor}:host(.spinner-lines) svg,:host(.spinner-lines-small) svg{-webkit-animation:spinner-fade-out 1s linear infinite;animation:spinner-fade-out 1s linear infinite}:host(.spinner-bubbles) svg{-webkit-animation:spinner-scale-out 1s linear infinite;animation:spinner-scale-out 1s linear infinite;fill:currentColor}:host(.spinner-circles) svg{-webkit-animation:spinner-fade-out 1s linear infinite;animation:spinner-fade-out 1s linear infinite;fill:currentColor}:host(.spinner-crescent) circle{fill:transparent;stroke-width:4px;stroke-dasharray:128px;stroke-dashoffset:82px;stroke:currentColor}:host(.spinner-crescent) svg{-webkit-animation:spinner-rotate 1s linear infinite;animation:spinner-rotate 1s linear infinite}:host(.spinner-dots) circle{stroke-width:0;fill:currentColor}:host(.spinner-dots) svg{-webkit-animation:spinner-dots 1s linear infinite;animation:spinner-dots 1s linear infinite}:host(.spinner-circular){-webkit-animation:spinner-circular linear infinite;animation:spinner-circular linear infinite}:host(.spinner-circular) circle{-webkit-animation:spinner-circular-inner ease-in-out infinite;animation:spinner-circular-inner ease-in-out infinite;stroke:currentColor;stroke-dasharray:80px, 200px;stroke-dashoffset:0px;stroke-width:5.6;fill:none}:host(.spinner-paused),:host(.spinner-paused) svg,:host(.spinner-paused) circle{-webkit-animation-play-state:paused;animation-play-state:paused}@-webkit-keyframes spinner-fade-out{0%{opacity:1}100%{opacity:0}}@keyframes spinner-fade-out{0%{opacity:1}100%{opacity:0}}@-webkit-keyframes spinner-scale-out{0%{-webkit-transform:scale(1, 1);transform:scale(1, 1)}100%{-webkit-transform:scale(0, 0);transform:scale(0, 0)}}@keyframes spinner-scale-out{0%{-webkit-transform:scale(1, 1);transform:scale(1, 1)}100%{-webkit-transform:scale(0, 0);transform:scale(0, 0)}}@-webkit-keyframes spinner-rotate{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes spinner-rotate{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes spinner-dots{0%{-webkit-transform:scale(1, 1);transform:scale(1, 1);opacity:0.9}50%{-webkit-transform:scale(0.4, 0.4);transform:scale(0.4, 0.4);opacity:0.3}100%{-webkit-transform:scale(1, 1);transform:scale(1, 1);opacity:0.9}}@keyframes spinner-dots{0%{-webkit-transform:scale(1, 1);transform:scale(1, 1);opacity:0.9}50%{-webkit-transform:scale(0.4, 0.4);transform:scale(0.4, 0.4);opacity:0.3}100%{-webkit-transform:scale(1, 1);transform:scale(1, 1);opacity:0.9}}@-webkit-keyframes spinner-circular{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes spinner-circular{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes spinner-circular-inner{0%{stroke-dasharray:1px, 200px;stroke-dashoffset:0px}50%{stroke-dasharray:100px, 200px;stroke-dashoffset:-15px}100%{stroke-dasharray:100px, 200px;stroke-dashoffset:-125px}}@keyframes spinner-circular-inner{0%{stroke-dasharray:1px, 200px;stroke-dashoffset:0px}50%{stroke-dasharray:100px, 200px;stroke-dashoffset:-15px}100%{stroke-dasharray:100px, 200px;stroke-dashoffset:-125px}}";
 
-      var _overlays_992cb809_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
-      /*! ./overlays-992cb809.js */
-      "u6aj");
-      /* harmony import */
+      var Spinner = /*#__PURE__*/function () {
+        function Spinner(hostRef) {
+          _classCallCheck(this, Spinner);
 
-
-      var _theme_18cbe2cc_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
-      /*! ./theme-18cbe2cc.js */
-      "Dl6n");
-      /* harmony import */
-
-
-      var _index_3476b023_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
-      /*! ./index-3476b023.js */
-      "YtD4");
-      /**
-       * iOS Loading Enter Animation
-       */
-
-
-      var iosEnterAnimation = function iosEnterAnimation(baseEl) {
-        var baseAnimation = Object(_animation_0084d55f_js__WEBPACK_IMPORTED_MODULE_3__["c"])();
-        var backdropAnimation = Object(_animation_0084d55f_js__WEBPACK_IMPORTED_MODULE_3__["c"])();
-        var wrapperAnimation = Object(_animation_0084d55f_js__WEBPACK_IMPORTED_MODULE_3__["c"])();
-        backdropAnimation.addElement(baseEl.querySelector('ion-backdrop')).fromTo('opacity', 0.01, 'var(--backdrop-opacity)');
-        wrapperAnimation.addElement(baseEl.querySelector('.loading-wrapper')).keyframes([{
-          offset: 0,
-          opacity: 0.01,
-          transform: 'scale(1.1)'
-        }, {
-          offset: 1,
-          opacity: 1,
-          transform: 'scale(1)'
-        }]);
-        return baseAnimation.addElement(baseEl).easing('ease-in-out').duration(200).addAnimation([backdropAnimation, wrapperAnimation]);
-      };
-      /**
-       * iOS Loading Leave Animation
-       */
-
-
-      var iosLeaveAnimation = function iosLeaveAnimation(baseEl) {
-        var baseAnimation = Object(_animation_0084d55f_js__WEBPACK_IMPORTED_MODULE_3__["c"])();
-        var backdropAnimation = Object(_animation_0084d55f_js__WEBPACK_IMPORTED_MODULE_3__["c"])();
-        var wrapperAnimation = Object(_animation_0084d55f_js__WEBPACK_IMPORTED_MODULE_3__["c"])();
-        backdropAnimation.addElement(baseEl.querySelector('ion-backdrop')).fromTo('opacity', 'var(--backdrop-opacity)', 0);
-        wrapperAnimation.addElement(baseEl.querySelector('.loading-wrapper')).keyframes([{
-          offset: 0,
-          opacity: 0.99,
-          transform: 'scale(1)'
-        }, {
-          offset: 1,
-          opacity: 0,
-          transform: 'scale(0.9)'
-        }]);
-        return baseAnimation.addElement(baseEl).easing('ease-in-out').duration(200).addAnimation([backdropAnimation, wrapperAnimation]);
-      };
-      /**
-       * Md Loading Enter Animation
-       */
-
-
-      var mdEnterAnimation = function mdEnterAnimation(baseEl) {
-        var baseAnimation = Object(_animation_0084d55f_js__WEBPACK_IMPORTED_MODULE_3__["c"])();
-        var backdropAnimation = Object(_animation_0084d55f_js__WEBPACK_IMPORTED_MODULE_3__["c"])();
-        var wrapperAnimation = Object(_animation_0084d55f_js__WEBPACK_IMPORTED_MODULE_3__["c"])();
-        backdropAnimation.addElement(baseEl.querySelector('ion-backdrop')).fromTo('opacity', 0.01, 'var(--backdrop-opacity)');
-        wrapperAnimation.addElement(baseEl.querySelector('.loading-wrapper')).keyframes([{
-          offset: 0,
-          opacity: 0.01,
-          transform: 'scale(1.1)'
-        }, {
-          offset: 1,
-          opacity: 1,
-          transform: 'scale(1)'
-        }]);
-        return baseAnimation.addElement(baseEl).easing('ease-in-out').duration(200).addAnimation([backdropAnimation, wrapperAnimation]);
-      };
-      /**
-       * Md Loading Leave Animation
-       */
-
-
-      var mdLeaveAnimation = function mdLeaveAnimation(baseEl) {
-        var baseAnimation = Object(_animation_0084d55f_js__WEBPACK_IMPORTED_MODULE_3__["c"])();
-        var backdropAnimation = Object(_animation_0084d55f_js__WEBPACK_IMPORTED_MODULE_3__["c"])();
-        var wrapperAnimation = Object(_animation_0084d55f_js__WEBPACK_IMPORTED_MODULE_3__["c"])();
-        backdropAnimation.addElement(baseEl.querySelector('ion-backdrop')).fromTo('opacity', 'var(--backdrop-opacity)', 0);
-        wrapperAnimation.addElement(baseEl.querySelector('.loading-wrapper')).keyframes([{
-          offset: 0,
-          opacity: 0.99,
-          transform: 'scale(1)'
-        }, {
-          offset: 1,
-          opacity: 0,
-          transform: 'scale(0.9)'
-        }]);
-        return baseAnimation.addElement(baseEl).easing('ease-in-out').duration(200).addAnimation([backdropAnimation, wrapperAnimation]);
-      };
-
-      var Loading = /*#__PURE__*/function () {
-        function Loading(hostRef) {
-          var _this = this;
-
-          _classCallCheck(this, Loading);
-
-          Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["r"])(this, hostRef);
-          this.presented = false;
-          this.mode = Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["c"])(this);
+          Object(_index_7a8b7a1c_js__WEBPACK_IMPORTED_MODULE_0__["r"])(this, hostRef);
           /**
-           * If `true`, the keyboard will be automatically dismissed when the overlay is presented.
+           * If `true`, the spinner's animation will be paused.
            */
 
-          this.keyboardClose = true;
-          /**
-           * Number of milliseconds to wait before dismissing the loading indicator.
-           */
-
-          this.duration = 0;
-          /**
-           * If `true`, the loading indicator will be dismissed when the backdrop is clicked.
-           */
-
-          this.backdropDismiss = false;
-          /**
-           * If `true`, a backdrop will be displayed behind the loading indicator.
-           */
-
-          this.showBackdrop = true;
-          /**
-           * If `true`, the loading indicator will be translucent.
-           * Only applies when the mode is `"ios"` and the device supports
-           * [`backdrop-filter`](https://developer.mozilla.org/en-US/docs/Web/CSS/backdrop-filter#Browser_compatibility).
-           */
-
-          this.translucent = false;
-          /**
-           * If `true`, the loading indicator will animate.
-           */
-
-          this.animated = true;
-
-          this.onBackdropTap = function () {
-            _this.dismiss(undefined, _overlays_992cb809_js__WEBPACK_IMPORTED_MODULE_4__["B"]);
-          };
-
-          Object(_overlays_992cb809_js__WEBPACK_IMPORTED_MODULE_4__["d"])(this.el);
-          this.didPresent = Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["d"])(this, "ionLoadingDidPresent", 7);
-          this.willPresent = Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["d"])(this, "ionLoadingWillPresent", 7);
-          this.willDismiss = Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["d"])(this, "ionLoadingWillDismiss", 7);
-          this.didDismiss = Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["d"])(this, "ionLoadingDidDismiss", 7);
+          this.paused = false;
         }
 
-        _createClass(Loading, [{
-          key: "componentWillLoad",
-          value: function componentWillLoad() {
-            if (this.spinner === undefined) {
-              var mode = Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["c"])(this);
-              this.spinner = _config_3c7f3790_js__WEBPACK_IMPORTED_MODULE_1__["b"].get('loadingSpinner', _config_3c7f3790_js__WEBPACK_IMPORTED_MODULE_1__["b"].get('spinner', mode === 'ios' ? 'lines' : 'crescent'));
-            }
-          }
-          /**
-           * Present the loading overlay after it has been created.
-           */
+        return _createClass(Spinner, [{
+          key: "getName",
+          value: function getName() {
+            var spinnerName = this.name || _ionic_global_63a97a32_js__WEBPACK_IMPORTED_MODULE_1__["c"].get('spinner');
 
-        }, {
-          key: "present",
-          value: function () {
-            var _present = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-              var _this2 = this;
+            var mode = Object(_ionic_global_63a97a32_js__WEBPACK_IMPORTED_MODULE_1__["b"])(this);
 
-              return regeneratorRuntime.wrap(function _callee$(_context) {
-                while (1) {
-                  switch (_context.prev = _context.next) {
-                    case 0:
-                      _context.next = 2;
-                      return Object(_overlays_992cb809_js__WEBPACK_IMPORTED_MODULE_4__["e"])(this, 'loadingEnter', iosEnterAnimation, mdEnterAnimation, undefined);
-
-                    case 2:
-                      if (this.duration > 0) {
-                        this.durationTimeout = setTimeout(function () {
-                          return _this2.dismiss();
-                        }, this.duration + 10);
-                      }
-
-                    case 3:
-                    case "end":
-                      return _context.stop();
-                  }
-                }
-              }, _callee, this);
-            }));
-
-            function present() {
-              return _present.apply(this, arguments);
+            if (spinnerName) {
+              return spinnerName;
             }
 
-            return present;
-          }()
-          /**
-           * Dismiss the loading overlay after it has been presented.
-           *
-           * @param data Any data to emit in the dismiss events.
-           * @param role The role of the element that is dismissing the loading.
-           * This can be useful in a button handler for determining which button was
-           * clicked to dismiss the loading.
-           * Some examples include: ``"cancel"`, `"destructive"`, "selected"`, and `"backdrop"`.
-           */
-
-        }, {
-          key: "dismiss",
-          value: function dismiss(data, role) {
-            if (this.durationTimeout) {
-              clearTimeout(this.durationTimeout);
-            }
-
-            return Object(_overlays_992cb809_js__WEBPACK_IMPORTED_MODULE_4__["f"])(this, data, role, 'loadingLeave', iosLeaveAnimation, mdLeaveAnimation);
-          }
-          /**
-           * Returns a promise that resolves when the loading did dismiss.
-           */
-
-        }, {
-          key: "onDidDismiss",
-          value: function onDidDismiss() {
-            return Object(_overlays_992cb809_js__WEBPACK_IMPORTED_MODULE_4__["g"])(this.el, 'ionLoadingDidDismiss');
-          }
-          /**
-           * Returns a promise that resolves when the loading will dismiss.
-           */
-
-        }, {
-          key: "onWillDismiss",
-          value: function onWillDismiss() {
-            return Object(_overlays_992cb809_js__WEBPACK_IMPORTED_MODULE_4__["g"])(this.el, 'ionLoadingWillDismiss');
+            return mode === 'ios' ? 'lines' : 'circular';
           }
         }, {
           key: "render",
           value: function render() {
-            var _Object$assign;
+            var self = this;
+            var mode = Object(_ionic_global_63a97a32_js__WEBPACK_IMPORTED_MODULE_1__["b"])(self);
+            var spinnerName = self.getName();
+            var spinner = _spinner_configs_cd7845af_js__WEBPACK_IMPORTED_MODULE_3__["S"][spinnerName] || _spinner_configs_cd7845af_js__WEBPACK_IMPORTED_MODULE_3__["S"]['lines'];
+            var duration = typeof self.duration === 'number' && self.duration > 10 ? self.duration : spinner.dur;
+            var svgs = [];
 
-            var message = this.message,
-                spinner = this.spinner;
-            var mode = Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["c"])(this);
-            return Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["h"])(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["H"], {
-              onIonBackdropTap: this.onBackdropTap,
-              style: {
-                zIndex: "".concat(40000 + this.overlayIndex)
-              },
-              "class": Object.assign(Object.assign({}, Object(_theme_18cbe2cc_js__WEBPACK_IMPORTED_MODULE_5__["g"])(this.cssClass)), (_Object$assign = {}, _defineProperty(_Object$assign, mode, true), _defineProperty(_Object$assign, 'loading-translucent', this.translucent), _Object$assign))
-            }, Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["h"])("ion-backdrop", {
-              visible: this.showBackdrop,
-              tappable: this.backdropDismiss
-            }), Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["h"])("div", {
-              "class": "loading-wrapper",
-              role: "dialog"
-            }, spinner && Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["h"])("div", {
-              "class": "loading-spinner"
-            }, Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["h"])("ion-spinner", {
-              name: spinner
-            })), message && Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["h"])("div", {
-              "class": "loading-content",
-              innerHTML: Object(_index_3476b023_js__WEBPACK_IMPORTED_MODULE_6__["s"])(message)
-            })));
-          }
-        }, {
-          key: "el",
-          get: function get() {
-            return Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["e"])(this);
-          }
-        }], [{
-          key: "style",
-          get: function get() {
-            return ".sc-ion-loading-ios-h{--min-width:auto;--width:auto;--min-height:auto;--height:auto;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased;left:0;right:0;top:0;bottom:0;display:-ms-flexbox;display:flex;position:fixed;-ms-flex-align:center;align-items:center;-ms-flex-pack:center;justify-content:center;font-family:var(--ion-font-family,inherit);contain:strict;-ms-touch-action:none;touch-action:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;z-index:1001}.overlay-hidden.sc-ion-loading-ios-h{display:none}.loading-wrapper.sc-ion-loading-ios{display:-ms-flexbox;display:flex;-ms-flex-align:inherit;align-items:inherit;-ms-flex-pack:inherit;justify-content:inherit;width:var(--width);min-width:var(--min-width);max-width:var(--max-width);height:var(--height);min-height:var(--min-height);max-height:var(--max-height);background:var(--background);opacity:0;z-index:10}.spinner-bubbles.sc-ion-loading-ios, .spinner-circles.sc-ion-loading-ios, .spinner-crescent.sc-ion-loading-ios, .spinner-dots.sc-ion-loading-ios, .spinner-lines.sc-ion-loading-ios, .spinner-lines-small.sc-ion-loading-ios{color:var(--spinner-color)}.sc-ion-loading-ios-h{--background:var(--ion-overlay-background-color,var(--ion-color-step-100,#f9f9f9));--max-width:270px;--max-height:90%;--spinner-color:var(--ion-color-step-600,#666);--backdrop-opacity:var(--ion-backdrop-opacity,0.3);color:var(--ion-text-color,#000);font-size:14px}.loading-wrapper.sc-ion-loading-ios{border-radius:8px;padding-left:34px;padding-right:34px;padding-top:24px;padding-bottom:24px}\@supports ((-webkit-margin-start:0) or (margin-inline-start:0)) or (-webkit-margin-start:0){.loading-wrapper.sc-ion-loading-ios{padding-left:unset;padding-right:unset;-webkit-padding-start:34px;padding-inline-start:34px;-webkit-padding-end:34px;padding-inline-end:34px}}\@supports ((-webkit-backdrop-filter:blur(0)) or (backdrop-filter:blur(0))){.loading-translucent.sc-ion-loading-ios-h .loading-wrapper.sc-ion-loading-ios{background-color:rgba(var(--ion-background-color-rgb,255,255,255),.8);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}}.loading-content.sc-ion-loading-ios{font-weight:700}.loading-spinner.sc-ion-loading-ios + .loading-content.sc-ion-loading-ios{margin-left:16px}\@supports ((-webkit-margin-start:0) or (margin-inline-start:0)) or (-webkit-margin-start:0){.loading-spinner.sc-ion-loading-ios + .loading-content.sc-ion-loading-ios{margin-left:unset;-webkit-margin-start:16px;margin-inline-start:16px}}";
+            if (spinner.circles !== undefined) {
+              for (var i = 0; i < spinner.circles; i++) {
+                svgs.push(buildCircle(spinner, duration, i, spinner.circles));
+              }
+            } else if (spinner.lines !== undefined) {
+              for (var _i = 0; _i < spinner.lines; _i++) {
+                svgs.push(buildLine(spinner, duration, _i, spinner.lines));
+              }
+            }
+
+            return Object(_index_7a8b7a1c_js__WEBPACK_IMPORTED_MODULE_0__["h"])(_index_7a8b7a1c_js__WEBPACK_IMPORTED_MODULE_0__["H"], {
+              "class": Object(_theme_ff3fc52f_js__WEBPACK_IMPORTED_MODULE_2__["c"])(self.color, _defineProperty(_defineProperty(_defineProperty({}, mode, true), "spinner-".concat(spinnerName), true), 'spinner-paused', !!self.paused || _ionic_global_63a97a32_js__WEBPACK_IMPORTED_MODULE_1__["c"].getBoolean('_testing'))),
+              role: "progressbar",
+              style: spinner.elmDuration ? {
+                animationDuration: duration + 'ms'
+              } : {}
+            }, svgs);
           }
         }]);
-
-        return Loading;
       }();
-      /***/
 
+      var buildCircle = function buildCircle(spinner, duration, index, total) {
+        var data = spinner.fn(duration, index, total);
+        data.style['animation-duration'] = duration + 'ms';
+        return Object(_index_7a8b7a1c_js__WEBPACK_IMPORTED_MODULE_0__["h"])("svg", {
+          viewBox: data.viewBox || '0 0 64 64',
+          style: data.style
+        }, Object(_index_7a8b7a1c_js__WEBPACK_IMPORTED_MODULE_0__["h"])("circle", {
+          transform: data.transform || 'translate(32,32)',
+          cx: data.cx,
+          cy: data.cy,
+          r: data.r,
+          style: spinner.elmDuration ? {
+            animationDuration: duration + 'ms'
+          } : {}
+        }));
+      };
+
+      var buildLine = function buildLine(spinner, duration, index, total) {
+        var data = spinner.fn(duration, index, total);
+        data.style['animation-duration'] = duration + 'ms';
+        return Object(_index_7a8b7a1c_js__WEBPACK_IMPORTED_MODULE_0__["h"])("svg", {
+          viewBox: data.viewBox || '0 0 64 64',
+          style: data.style
+        }, Object(_index_7a8b7a1c_js__WEBPACK_IMPORTED_MODULE_0__["h"])("line", {
+          transform: "translate(32,32)",
+          y1: data.y1,
+          y2: data.y2
+        }));
+      };
+
+      Spinner.style = spinnerCss;
+      /***/
     }
   }]);
 })();

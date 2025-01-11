@@ -1,15 +1,21 @@
 (function () {
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 
-  function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+  function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 
-  function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+  function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 
-  function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+  function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == typeof h && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(typeof e + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
 
-  function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+  function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 
-  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+  function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+
+  function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+
+  function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+
+  function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
   (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["common"], {
     /***/
@@ -37,15 +43,15 @@
     },
 
     /***/
-    "Dl6n":
+    "74mu":
     /*!*************************************************************!*\
-      !*** ./node_modules/@ionic/core/dist/esm/theme-18cbe2cc.js ***!
+      !*** ./node_modules/@ionic/core/dist/esm/theme-ff3fc52f.js ***!
       \*************************************************************/
 
     /*! exports provided: c, g, h, o */
 
     /***/
-    function Dl6n(module, __webpack_exports__, __webpack_require__) {
+    function mu(module, __webpack_exports__, __webpack_require__) {
       "use strict";
 
       __webpack_require__.r(__webpack_exports__);
@@ -82,10 +88,10 @@
        */
 
 
-      var createColorClasses = function createColorClasses(color) {
-        return typeof color === 'string' && color.length > 0 ? _defineProperty({
+      var createColorClasses = function createColorClasses(color, cssClassMap) {
+        return typeof color === 'string' && color.length > 0 ? Object.assign(_defineProperty({
           'ion-color': true
-        }, "ion-color-".concat(color), true) : undefined;
+        }, "ion-color-".concat(color), true), cssClassMap) : cssClassMap;
       };
 
       var getClassList = function getClassList(classes) {
@@ -114,43 +120,41 @@
       var SCHEME = /^[a-z][a-z0-9+\-.]*:/;
 
       var openURL = /*#__PURE__*/function () {
-        var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(url, ev, direction) {
+        var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(url, ev, direction, animation) {
           var router;
-          return regeneratorRuntime.wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  if (!(url != null && url[0] !== '#' && !SCHEME.test(url))) {
-                    _context.next = 5;
-                    break;
-                  }
+          return _regeneratorRuntime().wrap(function _callee$(_context) {
+            while (1) switch (_context.prev = _context.next) {
+              case 0:
+                if (!(url != null && url[0] !== '#' && !SCHEME.test(url))) {
+                  _context.next = 5;
+                  break;
+                }
 
-                  router = document.querySelector('ion-router');
+                router = document.querySelector('ion-router');
 
-                  if (!router) {
-                    _context.next = 5;
-                    break;
-                  }
+                if (!router) {
+                  _context.next = 5;
+                  break;
+                }
 
-                  if (ev != null) {
-                    ev.preventDefault();
-                  }
+                if (ev != null) {
+                  ev.preventDefault();
+                }
 
-                  return _context.abrupt("return", router.push(url, direction));
+                return _context.abrupt("return", router.push(url, direction, animation));
 
-                case 5:
-                  return _context.abrupt("return", false);
+              case 5:
+                return _context.abrupt("return", false);
 
-                case 6:
-                case "end":
-                  return _context.stop();
-              }
+              case 6:
+              case "end":
+                return _context.stop();
             }
           }, _callee);
         }));
 
-        return function openURL(_x, _x2, _x3) {
-          return _ref2.apply(this, arguments);
+        return function openURL(_x, _x2, _x3, _x4) {
+          return _ref.apply(this, arguments);
         };
       }();
       /***/
@@ -235,13 +239,13 @@
 
       var _ionic_native_google_plus_ngx__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(
       /*! @ionic-native/google-plus/ngx */
-      "NzdG");
+      "up+p");
       /* harmony import */
 
 
       var _ionic_native_facebook_ngx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(
       /*! @ionic-native/facebook/ngx */
-      "SPri");
+      "GGTb");
       /* harmony import */
 
 
@@ -269,7 +273,7 @@
           this.router = router;
         }
 
-        _createClass(LoginService, [{
+        return _createClass(LoginService, [{
           key: "login",
           value: function login(email, password) {
             var _this = this;
@@ -338,36 +342,34 @@
                 var credential = firebase_app__WEBPACK_IMPORTED_MODULE_4__["default"].auth.FacebookAuthProvider.credential(res.credential.accessToken);
 
                 _this4.afAuth.signInWithCredential(credential).then(function () {
-                  return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this4, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+                  return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this4, void 0, void 0, /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
                     var uid, userInfo;
-                    return regeneratorRuntime.wrap(function _callee2$(_context2) {
-                      while (1) {
-                        switch (_context2.prev = _context2.next) {
-                          case 0:
-                            if (!res.additionalUserInfo.isNewUser) {
-                              _context2.next = 8;
-                              break;
-                            }
-
-                            _context2.next = 3;
-                            return this.afAuth.currentUser.then(function (data) {
-                              return data.uid;
-                            });
-
-                          case 3:
-                            uid = _context2.sent;
-                            userInfo = res.additionalUserInfo.profile;
-                            this.createNewUser(uid, userInfo.name, uid, userInfo.email, 'Available', 'Facebook', userInfo.picture);
-                            _context2.next = 9;
+                    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+                      while (1) switch (_context2.prev = _context2.next) {
+                        case 0:
+                          if (!res.additionalUserInfo.isNewUser) {
+                            _context2.next = 8;
                             break;
+                          }
 
-                          case 8:
-                            this.router.navigateByUrl('tabs');
+                          _context2.next = 3;
+                          return this.afAuth.currentUser.then(function (data) {
+                            return data.uid;
+                          });
 
-                          case 9:
-                          case "end":
-                            return _context2.stop();
-                        }
+                        case 3:
+                          uid = _context2.sent;
+                          userInfo = res.additionalUserInfo.profile;
+                          this.createNewUser(uid, userInfo.name, uid, userInfo.email, 'Available', 'Facebook', userInfo.picture);
+                          _context2.next = 9;
+                          break;
+
+                        case 8:
+                          this.router.navigateByUrl('tabs');
+
+                        case 9:
+                        case "end":
+                          return _context2.stop();
                       }
                     }, _callee2, this);
                   }));
@@ -389,26 +391,24 @@
                 _this4.afAuth.signInWithCredential(credential).then(function (res) {
                   if (res.additionalUserInfo.isNewUser) {
                     _this4.facebook.api("me/?fields=id,email,first_name,picture,gender", ["public_profile", "email"]).then(function (data) {
-                      return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this4, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+                      return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this4, void 0, void 0, /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
                         var uid;
-                        return regeneratorRuntime.wrap(function _callee3$(_context3) {
-                          while (1) {
-                            switch (_context3.prev = _context3.next) {
-                              case 0:
-                                console.log(data);
-                                _context3.next = 3;
-                                return this.afAuth.currentUser.then(function (data) {
-                                  return data.uid;
-                                });
+                        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+                          while (1) switch (_context3.prev = _context3.next) {
+                            case 0:
+                              console.log(data);
+                              _context3.next = 3;
+                              return this.afAuth.currentUser.then(function (data) {
+                                return data.uid;
+                              });
 
-                              case 3:
-                                uid = _context3.sent;
-                                this.createNewUser(uid, data.first_name, uid, data.email, 'I am available', 'Facebook', data.picture.data.url);
+                            case 3:
+                              uid = _context3.sent;
+                              this.createNewUser(uid, data.first_name, uid, data.email, 'I am available', 'Facebook', data.picture.data.url);
 
-                              case 5:
-                              case "end":
-                                return _context3.stop();
-                            }
+                            case 5:
+                            case "end":
+                              return _context3.stop();
                           }
                         }, _callee3, this);
                       }));
@@ -438,36 +438,34 @@
                 var credential = firebase_app__WEBPACK_IMPORTED_MODULE_4__["default"].auth.GoogleAuthProvider.credential(res.credential.idToken, res.credential.accessToken);
 
                 _this5.afAuth.signInWithCredential(credential).then(function () {
-                  return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this5, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+                  return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this5, void 0, void 0, /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
                     var uid, userInfo;
-                    return regeneratorRuntime.wrap(function _callee4$(_context4) {
-                      while (1) {
-                        switch (_context4.prev = _context4.next) {
-                          case 0:
-                            if (!res.additionalUserInfo.isNewUser) {
-                              _context4.next = 8;
-                              break;
-                            }
-
-                            _context4.next = 3;
-                            return this.afAuth.currentUser.then(function (data) {
-                              return data.uid;
-                            });
-
-                          case 3:
-                            uid = _context4.sent;
-                            userInfo = res.additionalUserInfo.profile;
-                            this.createNewUser(uid, userInfo.name, uid, userInfo.email, 'Available', 'Google', userInfo.picture);
-                            _context4.next = 9;
+                    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+                      while (1) switch (_context4.prev = _context4.next) {
+                        case 0:
+                          if (!res.additionalUserInfo.isNewUser) {
+                            _context4.next = 8;
                             break;
+                          }
 
-                          case 8:
-                            this.router.navigateByUrl('tabs');
+                          _context4.next = 3;
+                          return this.afAuth.currentUser.then(function (data) {
+                            return data.uid;
+                          });
 
-                          case 9:
-                          case "end":
-                            return _context4.stop();
-                        }
+                        case 3:
+                          uid = _context4.sent;
+                          userInfo = res.additionalUserInfo.profile;
+                          this.createNewUser(uid, userInfo.name, uid, userInfo.email, 'Available', 'Google', userInfo.picture);
+                          _context4.next = 9;
+                          break;
+
+                        case 8:
+                          this.router.navigateByUrl('tabs');
+
+                        case 9:
+                        case "end":
+                          return _context4.stop();
                       }
                     }, _callee4, this);
                   }));
@@ -484,36 +482,34 @@
                 var credential = firebase_app__WEBPACK_IMPORTED_MODULE_4__["default"].auth.GoogleAuthProvider.credential(result['token'], null);
 
                 _this5.afAuth.signInWithCredential(credential).then(function (res) {
-                  return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this5, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
+                  return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this5, void 0, void 0, /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
                     var uid, userInfo;
-                    return regeneratorRuntime.wrap(function _callee5$(_context5) {
-                      while (1) {
-                        switch (_context5.prev = _context5.next) {
-                          case 0:
-                            if (!res.additionalUserInfo.isNewUser) {
-                              _context5.next = 8;
-                              break;
-                            }
-
-                            _context5.next = 3;
-                            return this.afAuth.currentUser.then(function (data) {
-                              return data.uid;
-                            });
-
-                          case 3:
-                            uid = _context5.sent;
-                            userInfo = res.additionalUserInfo.profile;
-                            this.createNewUser(uid, userInfo.name, uid, userInfo.email, 'Available', 'Google', userInfo.picture);
-                            _context5.next = 9;
+                    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+                      while (1) switch (_context5.prev = _context5.next) {
+                        case 0:
+                          if (!res.additionalUserInfo.isNewUser) {
+                            _context5.next = 8;
                             break;
+                          }
 
-                          case 8:
-                            this.router.navigateByUrl('tabs');
+                          _context5.next = 3;
+                          return this.afAuth.currentUser.then(function (data) {
+                            return data.uid;
+                          });
 
-                          case 9:
-                          case "end":
-                            return _context5.stop();
-                        }
+                        case 3:
+                          uid = _context5.sent;
+                          userInfo = res.additionalUserInfo.profile;
+                          this.createNewUser(uid, userInfo.name, uid, userInfo.email, 'Available', 'Google', userInfo.picture);
+                          _context5.next = 9;
+                          break;
+
+                        case 8:
+                          this.router.navigateByUrl('tabs');
+
+                        case 9:
+                        case "end":
+                          return _context5.stop();
                       }
                     }, _callee5, this);
                   }));
@@ -559,8 +555,6 @@
             });
           }
         }]);
-
-        return LoginService;
       }();
 
       LoginService.ctorParameters = function () {
@@ -590,15 +584,488 @@
     },
 
     /***/
-    "TMBv":
+    "Z2Br":
+    /*!**********************************************!*\
+      !*** ./src/app/services/firebase.service.ts ***!
+      \**********************************************/
+
+    /*! exports provided: FirebaseService */
+
+    /***/
+    function Z2Br(module, __webpack_exports__, __webpack_require__) {
+      "use strict";
+
+      __webpack_require__.r(__webpack_exports__);
+      /* harmony export (binding) */
+
+
+      __webpack_require__.d(__webpack_exports__, "FirebaseService", function () {
+        return FirebaseService;
+      });
+      /* harmony import */
+
+
+      var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
+      /*! tslib */
+      "mrSG");
+      /* harmony import */
+
+
+      var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
+      /*! @angular/core */
+      "fXoL");
+      /* harmony import */
+
+
+      var _loading_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
+      /*! ./loading.service */
+      "7ch9");
+      /* harmony import */
+
+
+      var _data_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+      /*! ./data.service */
+      "EnSQ");
+      /* harmony import */
+
+
+      var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+      /*! @angular/fire/firestore */
+      "I/3d");
+      /* harmony import */
+
+
+      var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+      /*! @angular/fire/auth */
+      "UbJi");
+
+      var FirebaseService = /*#__PURE__*/function () {
+        function FirebaseService(firestore, loadingProvider, afAuth, dataProvider) {
+          _classCallCheck(this, FirebaseService);
+
+          this.firestore = firestore;
+          this.loadingProvider = loadingProvider;
+          this.afAuth = afAuth;
+          this.dataProvider = dataProvider;
+        } // Send friend request to userId.
+
+
+        return _createClass(FirebaseService, [{
+          key: "sendFriendRequest",
+          value: function sendFriendRequest(userId) {
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+              var _this8 = this;
+
+              var loggedInUserId, requestsSent;
+              return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+                while (1) switch (_context6.prev = _context6.next) {
+                  case 0:
+                    _context6.next = 2;
+                    return this.afAuth.currentUser.then(function (data) {
+                      return data.uid;
+                    });
+
+                  case 2:
+                    loggedInUserId = _context6.sent;
+                    this.loadingProvider.show();
+                    // Use take(1) so that subscription will only trigger once.
+                    this.dataProvider.getRequests(loggedInUserId).get().subscribe(function (requests) {
+                      if (requests.data() != null && requests.data().requestsSent != null) {
+                        requestsSent = requests.data().requestsSent;
+                      }
+
+                      if (requestsSent == null || requestsSent === undefined) {
+                        requestsSent = [userId];
+                      } else {
+                        if (requestsSent.indexOf(userId) === -1) {
+                          requestsSent.push(userId);
+                        }
+                      } // Add requestsSent information.
+
+
+                      _this8.firestore.collection('requests').doc(loggedInUserId).set({
+                        requestsSent: requestsSent
+                      }).then(function (success) {
+                        var friendRequests; // tslint:disable-next-line: no-shadowed-variable
+
+                        _this8.dataProvider.getRequests(userId).get().subscribe(function (requests) {
+                          if (requests.data() != null && requests.data().friendRequests != null) {
+                            friendRequests = requests.data().friendRequests;
+                          }
+
+                          if (friendRequests == null) {
+                            friendRequests = [loggedInUserId];
+                          } else {
+                            if (friendRequests.indexOf(userId) === -1) {
+                              friendRequests.push(loggedInUserId);
+                            }
+                          } // Add friendRequest information.
+
+
+                          _this8.firestore.collection('requests').doc(userId).set({
+                            friendRequests: friendRequests
+                          }).then(function (succ) {
+                            _this8.loadingProvider.hide();
+
+                            _this8.loadingProvider.showToast('Friend Request Sent');
+                          })["catch"](function (error) {
+                            _this8.loadingProvider.hide();
+                          });
+                        });
+                      })["catch"](function (error) {
+                        console.log('error', error);
+
+                        _this8.loadingProvider.hide();
+                      });
+                    });
+
+                  case 5:
+                  case "end":
+                    return _context6.stop();
+                }
+              }, _callee6, this);
+            }));
+          } // Cancel friend request sent to userId.
+
+        }, {
+          key: "cancelFriendRequest",
+          value: function cancelFriendRequest(userId) {
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
+              var _this9 = this;
+
+              var loggedInUserId, requestsSent;
+              return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+                while (1) switch (_context7.prev = _context7.next) {
+                  case 0:
+                    _context7.next = 2;
+                    return this.afAuth.currentUser.then(function (data) {
+                      return data.uid;
+                    });
+
+                  case 2:
+                    loggedInUserId = _context7.sent;
+                    this.loadingProvider.show();
+                    requestsSent = [];
+                    this.dataProvider.getRequests(loggedInUserId).get().subscribe(function (requests) {
+                      requestsSent = requests.data().requestsSent;
+                      requestsSent.splice(requestsSent.indexOf(userId), 1); // Update requestSent information.
+
+                      _this9.firestore.collection('requests').doc(loggedInUserId).set({
+                        requestsSent: requestsSent
+                      }).then(function (success) {
+                        var friendRequests;
+
+                        _this9.dataProvider.getRequests(userId).get().subscribe(function (req) {
+                          friendRequests = req.data().friendRequests;
+                          console.log(friendRequests);
+                          friendRequests.splice(friendRequests.indexOf(loggedInUserId), 1); // Update friendRequests information.
+
+                          _this9.firestore.collection('requests').doc(userId).set({
+                            friendRequests: friendRequests
+                          }).then(function (succ) {
+                            console.log(succ);
+
+                            _this9.loadingProvider.hide();
+
+                            _this9.loadingProvider.showToast('Removed Friend Request');
+                          })["catch"](function (error) {
+                            console.log(error);
+
+                            _this9.loadingProvider.hide();
+                          });
+                        });
+                      })["catch"](function (error) {
+                        console.log(error);
+
+                        _this9.loadingProvider.hide();
+                      });
+                    });
+
+                  case 6:
+                  case "end":
+                    return _context7.stop();
+                }
+              }, _callee7, this);
+            }));
+          } // Delete friend request.
+
+        }, {
+          key: "deleteFriendRequest",
+          value: function deleteFriendRequest(userId) {
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
+              var _this10 = this;
+
+              var loggedInUserId, friendRequests;
+              return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+                while (1) switch (_context8.prev = _context8.next) {
+                  case 0:
+                    _context8.next = 2;
+                    return this.afAuth.currentUser.then(function (data) {
+                      return data.uid;
+                    });
+
+                  case 2:
+                    loggedInUserId = _context8.sent;
+                    this.loadingProvider.show();
+                    friendRequests = [];
+                    this.dataProvider.getRequests(loggedInUserId).get().subscribe(function (requests) {
+                      friendRequests = requests.data().friendRequests;
+                      friendRequests = friendRequests.filter(function (u) {
+                        return u !== userId;
+                      }); // Update friendRequests information.
+
+                      _this10.firestore.collection('requests').doc(loggedInUserId).set({
+                        friendRequests: friendRequests
+                      }).then(function (success) {
+                        var requestsSent;
+
+                        _this10.dataProvider.getRequests(userId).get().subscribe(function (req) {
+                          requestsSent = req.data().requestsSent;
+                          requestsSent.splice(requestsSent.indexOf(loggedInUserId), 1);
+                          console.log('requestsSent:', requestsSent, loggedInUserId, requestsSent.indexOf(userId), 1); // Update requestsSent information.
+
+                          _this10.firestore.collection('requests').doc(userId).set({
+                            requestsSent: requestsSent
+                          }).then(function (succ) {
+                            console.log(succ);
+
+                            _this10.loadingProvider.hide();
+                          })["catch"](function (error) {
+                            console.log(error);
+
+                            _this10.loadingProvider.hide();
+                          });
+                        });
+                      })["catch"](function (err) {
+                        console.log(err);
+
+                        _this10.loadingProvider.hide();
+                      });
+                    });
+
+                  case 6:
+                  case "end":
+                    return _context8.stop();
+                }
+              }, _callee8, this);
+            }));
+          } // Accept friend request.
+
+        }, {
+          key: "acceptFriendRequest",
+          value: function acceptFriendRequest(userId) {
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
+              var _this11 = this;
+
+              var loggedInUserId;
+              return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+                while (1) switch (_context9.prev = _context9.next) {
+                  case 0:
+                    _context9.next = 2;
+                    return this.afAuth.currentUser.then(function (data) {
+                      return data.uid;
+                    });
+
+                  case 2:
+                    loggedInUserId = _context9.sent;
+                    // Delete friend request.
+                    this.deleteFriendRequest(userId);
+                    this.loadingProvider.show();
+                    this.dataProvider.getUser(loggedInUserId).get().subscribe(function (account) {
+                      var friends = account.data().friends;
+
+                      if (!friends) {
+                        friends = [userId];
+                      } else {
+                        friends.push(userId);
+                      } // Add both users as friends.
+
+
+                      _this11.dataProvider.getUser(loggedInUserId).update({
+                        friends: friends
+                      }).then(function (success) {
+                        _this11.dataProvider.getUser(userId).get().subscribe(function (acc) {
+                          var friends = acc.data().friends;
+
+                          if (!friends) {
+                            friends = [loggedInUserId];
+                          } else {
+                            friends.push(loggedInUserId);
+                          }
+
+                          _this11.dataProvider.getUser(userId).update({
+                            friends: friends
+                          }).then(function (succ) {
+                            _this11.loadingProvider.hide();
+                          })["catch"](function (error) {
+                            _this11.loadingProvider.hide();
+                          });
+                        });
+                      })["catch"](function (error) {
+                        _this11.loadingProvider.hide();
+                      });
+                    });
+
+                  case 6:
+                  case "end":
+                    return _context9.stop();
+                }
+              }, _callee9, this);
+            }));
+          }
+        }]);
+      }();
+
+      FirebaseService.ctorParameters = function () {
+        return [{
+          type: _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__["AngularFirestore"]
+        }, {
+          type: _loading_service__WEBPACK_IMPORTED_MODULE_2__["LoadingService"]
+        }, {
+          type: _angular_fire_auth__WEBPACK_IMPORTED_MODULE_5__["AngularFireAuth"]
+        }, {
+          type: _data_service__WEBPACK_IMPORTED_MODULE_3__["DataService"]
+        }];
+      };
+
+      FirebaseService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
+        providedIn: 'root'
+      }), Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"])("design:paramtypes", [_angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__["AngularFirestore"], _loading_service__WEBPACK_IMPORTED_MODULE_2__["LoadingService"], _angular_fire_auth__WEBPACK_IMPORTED_MODULE_5__["AngularFireAuth"], _data_service__WEBPACK_IMPORTED_MODULE_3__["DataService"]])], FirebaseService);
+      /***/
+    },
+
+    /***/
+    "Zcj0":
+    /*!*********************************************************************!*\
+      !*** ./node_modules/@ionic/core/dist/esm/button-active-d4bd4f74.js ***!
+      \*********************************************************************/
+
+    /*! exports provided: c */
+
+    /***/
+    function Zcj0(module, __webpack_exports__, __webpack_require__) {
+      "use strict";
+
+      __webpack_require__.r(__webpack_exports__);
+      /* harmony export (binding) */
+
+
+      __webpack_require__.d(__webpack_exports__, "c", function () {
+        return createButtonActiveGesture;
+      });
+      /* harmony import */
+
+
+      var _index_7a8b7a1c_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
+      /*! ./index-7a8b7a1c.js */
+      "wEJo");
+      /* harmony import */
+
+
+      var _haptic_27b3f981_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
+      /*! ./haptic-27b3f981.js */
+      "qULd");
+      /* harmony import */
+
+
+      var _index_34cb2743_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
+      /*! ./index-34cb2743.js */
+      "KF81");
+
+      var createButtonActiveGesture = function createButtonActiveGesture(el, isButton) {
+        var currentTouchedButton;
+        var initialTouchedButton;
+
+        var activateButtonAtPoint = function activateButtonAtPoint(x, y, hapticFeedbackFn) {
+          if (typeof document === 'undefined') {
+            return;
+          }
+
+          var target = document.elementFromPoint(x, y);
+
+          if (!target || !isButton(target)) {
+            clearActiveButton();
+            return;
+          }
+
+          if (target !== currentTouchedButton) {
+            clearActiveButton();
+            setActiveButton(target, hapticFeedbackFn);
+          }
+        };
+
+        var setActiveButton = function setActiveButton(button, hapticFeedbackFn) {
+          currentTouchedButton = button;
+
+          if (!initialTouchedButton) {
+            initialTouchedButton = currentTouchedButton;
+          }
+
+          var buttonToModify = currentTouchedButton;
+          Object(_index_7a8b7a1c_js__WEBPACK_IMPORTED_MODULE_0__["c"])(function () {
+            return buttonToModify.classList.add('ion-activated');
+          });
+          hapticFeedbackFn();
+        };
+
+        var clearActiveButton = function clearActiveButton() {
+          var dispatchClick = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+          if (!currentTouchedButton) {
+            return;
+          }
+
+          var buttonToModify = currentTouchedButton;
+          Object(_index_7a8b7a1c_js__WEBPACK_IMPORTED_MODULE_0__["c"])(function () {
+            return buttonToModify.classList.remove('ion-activated');
+          });
+          /**
+           * Clicking on one button, but releasing on another button
+           * does not dispatch a click event in browsers, so we
+           * need to do it manually here. Some browsers will
+           * dispatch a click if clicking on one button, dragging over
+           * another button, and releasing on the original button. In that
+           * case, we need to make sure we do not cause a double click there.
+           */
+
+          if (dispatchClick && initialTouchedButton !== currentTouchedButton) {
+            currentTouchedButton.click();
+          }
+
+          currentTouchedButton = undefined;
+        };
+
+        return Object(_index_34cb2743_js__WEBPACK_IMPORTED_MODULE_2__["createGesture"])({
+          el: el,
+          gestureName: 'buttonActiveDrag',
+          threshold: 0,
+          onStart: function onStart(ev) {
+            return activateButtonAtPoint(ev.currentX, ev.currentY, _haptic_27b3f981_js__WEBPACK_IMPORTED_MODULE_1__["a"]);
+          },
+          onMove: function onMove(ev) {
+            return activateButtonAtPoint(ev.currentX, ev.currentY, _haptic_27b3f981_js__WEBPACK_IMPORTED_MODULE_1__["b"]);
+          },
+          onEnd: function onEnd() {
+            clearActiveButton(true);
+            Object(_haptic_27b3f981_js__WEBPACK_IMPORTED_MODULE_1__["h"])();
+            initialTouchedButton = undefined;
+          }
+        });
+      };
+      /***/
+
+    },
+
+    /***/
+    "h3R7":
     /*!***********************************************************************!*\
-      !*** ./node_modules/@ionic/core/dist/esm/spinner-configs-28520d80.js ***!
+      !*** ./node_modules/@ionic/core/dist/esm/spinner-configs-cd7845af.js ***!
       \***********************************************************************/
 
     /*! exports provided: S */
 
     /***/
-    function TMBv(module, __webpack_exports__, __webpack_require__) {
+    function h3R7(module, __webpack_exports__, __webpack_require__) {
       "use strict";
 
       __webpack_require__.r(__webpack_exports__);
@@ -721,1114 +1188,15 @@
     },
 
     /***/
-    "Uch9":
-    /*!*************************************************************!*\
-      !*** ./node_modules/@ionic/core/dist/esm/index-3528f139.js ***!
-      \*************************************************************/
-
-    /*! exports provided: d, g, l, s, t */
-
-    /***/
-    function Uch9(module, __webpack_exports__, __webpack_require__) {
-      "use strict";
-
-      __webpack_require__.r(__webpack_exports__);
-      /* harmony export (binding) */
-
-
-      __webpack_require__.d(__webpack_exports__, "d", function () {
-        return deepReady;
-      });
-      /* harmony export (binding) */
-
-
-      __webpack_require__.d(__webpack_exports__, "g", function () {
-        return getIonPageElement;
-      });
-      /* harmony export (binding) */
-
-
-      __webpack_require__.d(__webpack_exports__, "l", function () {
-        return lifecycle;
-      });
-      /* harmony export (binding) */
-
-
-      __webpack_require__.d(__webpack_exports__, "s", function () {
-        return setPageHidden;
-      });
-      /* harmony export (binding) */
-
-
-      __webpack_require__.d(__webpack_exports__, "t", function () {
-        return transition;
-      });
-      /* harmony import */
-
-
-      var _core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
-      /*! ./core-80bde1aa.js */
-      "54nT");
-      /* harmony import */
-
-
-      var _constants_3c3e1099_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
-      /*! ./constants-3c3e1099.js */
-      "kBU6");
-
-      var iosTransitionAnimation = function iosTransitionAnimation() {
-        return __webpack_require__.e(
-        /*! import() | ios-transition-1850e475-js */
-        "ios-transition-1850e475-js").then(__webpack_require__.bind(null,
-        /*! ./ios.transition-1850e475.js */
-        "QtHV"));
-      };
-
-      var mdTransitionAnimation = function mdTransitionAnimation() {
-        return __webpack_require__.e(
-        /*! import() | md-transition-083fcf52-js */
-        "md-transition-083fcf52-js").then(__webpack_require__.bind(null,
-        /*! ./md.transition-083fcf52.js */
-        "cmQl"));
-      };
-
-      var transition = function transition(opts) {
-        return new Promise(function (resolve, reject) {
-          Object(_core_80bde1aa_js__WEBPACK_IMPORTED_MODULE_0__["w"])(function () {
-            beforeTransition(opts);
-            runTransition(opts).then(function (result) {
-              if (result.animation) {
-                result.animation.destroy();
-              }
-
-              afterTransition(opts);
-              resolve(result);
-            }, function (error) {
-              afterTransition(opts);
-              reject(error);
-            });
-          });
-        });
-      };
-
-      var beforeTransition = function beforeTransition(opts) {
-        var enteringEl = opts.enteringEl;
-        var leavingEl = opts.leavingEl;
-        setZIndex(enteringEl, leavingEl, opts.direction);
-
-        if (opts.showGoBack) {
-          enteringEl.classList.add('can-go-back');
-        } else {
-          enteringEl.classList.remove('can-go-back');
-        }
-
-        setPageHidden(enteringEl, false);
-
-        if (leavingEl) {
-          setPageHidden(leavingEl, false);
-        }
-      };
-
-      var runTransition = /*#__PURE__*/function () {
-        var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(opts) {
-          var animationBuilder, ani;
-          return regeneratorRuntime.wrap(function _callee6$(_context6) {
-            while (1) {
-              switch (_context6.prev = _context6.next) {
-                case 0:
-                  _context6.next = 2;
-                  return getAnimationBuilder(opts);
-
-                case 2:
-                  animationBuilder = _context6.sent;
-                  ani = animationBuilder ? animation(animationBuilder, opts) : noAnimation(opts); // fast path for no animation
-
-                  return _context6.abrupt("return", ani);
-
-                case 5:
-                case "end":
-                  return _context6.stop();
-              }
-            }
-          }, _callee6);
-        }));
-
-        return function runTransition(_x4) {
-          return _ref3.apply(this, arguments);
-        };
-      }();
-
-      var afterTransition = function afterTransition(opts) {
-        var enteringEl = opts.enteringEl;
-        var leavingEl = opts.leavingEl;
-        enteringEl.classList.remove('ion-page-invisible');
-
-        if (leavingEl !== undefined) {
-          leavingEl.classList.remove('ion-page-invisible');
-        }
-      };
-
-      var getAnimationBuilder = /*#__PURE__*/function () {
-        var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(opts) {
-          var getAnimation;
-          return regeneratorRuntime.wrap(function _callee7$(_context7) {
-            while (1) {
-              switch (_context7.prev = _context7.next) {
-                case 0:
-                  if (!(!opts.leavingEl || !opts.animated || opts.duration === 0)) {
-                    _context7.next = 2;
-                    break;
-                  }
-
-                  return _context7.abrupt("return", undefined);
-
-                case 2:
-                  if (!opts.animationBuilder) {
-                    _context7.next = 4;
-                    break;
-                  }
-
-                  return _context7.abrupt("return", opts.animationBuilder);
-
-                case 4:
-                  if (!(opts.mode === 'ios')) {
-                    _context7.next = 10;
-                    break;
-                  }
-
-                  _context7.next = 7;
-                  return iosTransitionAnimation();
-
-                case 7:
-                  _context7.t0 = _context7.sent.iosTransitionAnimation;
-                  _context7.next = 13;
-                  break;
-
-                case 10:
-                  _context7.next = 12;
-                  return mdTransitionAnimation();
-
-                case 12:
-                  _context7.t0 = _context7.sent.mdTransitionAnimation;
-
-                case 13:
-                  getAnimation = _context7.t0;
-                  return _context7.abrupt("return", getAnimation);
-
-                case 15:
-                case "end":
-                  return _context7.stop();
-              }
-            }
-          }, _callee7);
-        }));
-
-        return function getAnimationBuilder(_x5) {
-          return _ref4.apply(this, arguments);
-        };
-      }();
-
-      var animation = /*#__PURE__*/function () {
-        var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(animationBuilder, opts) {
-          var trans, didComplete;
-          return regeneratorRuntime.wrap(function _callee8$(_context8) {
-            while (1) {
-              switch (_context8.prev = _context8.next) {
-                case 0:
-                  _context8.next = 2;
-                  return waitForReady(opts, true);
-
-                case 2:
-                  trans = animationBuilder(opts.baseEl, opts);
-                  fireWillEvents(opts.enteringEl, opts.leavingEl);
-                  _context8.next = 6;
-                  return playTransition(trans, opts);
-
-                case 6:
-                  didComplete = _context8.sent;
-
-                  if (opts.progressCallback) {
-                    opts.progressCallback(undefined);
-                  }
-
-                  if (didComplete) {
-                    fireDidEvents(opts.enteringEl, opts.leavingEl);
-                  }
-
-                  return _context8.abrupt("return", {
-                    hasCompleted: didComplete,
-                    animation: trans
-                  });
-
-                case 10:
-                case "end":
-                  return _context8.stop();
-              }
-            }
-          }, _callee8);
-        }));
-
-        return function animation(_x6, _x7) {
-          return _ref5.apply(this, arguments);
-        };
-      }();
-
-      var noAnimation = /*#__PURE__*/function () {
-        var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(opts) {
-          var enteringEl, leavingEl;
-          return regeneratorRuntime.wrap(function _callee9$(_context9) {
-            while (1) {
-              switch (_context9.prev = _context9.next) {
-                case 0:
-                  enteringEl = opts.enteringEl;
-                  leavingEl = opts.leavingEl;
-                  _context9.next = 4;
-                  return waitForReady(opts, false);
-
-                case 4:
-                  fireWillEvents(enteringEl, leavingEl);
-                  fireDidEvents(enteringEl, leavingEl);
-                  return _context9.abrupt("return", {
-                    hasCompleted: true
-                  });
-
-                case 7:
-                case "end":
-                  return _context9.stop();
-              }
-            }
-          }, _callee9);
-        }));
-
-        return function noAnimation(_x8) {
-          return _ref6.apply(this, arguments);
-        };
-      }();
-
-      var waitForReady = /*#__PURE__*/function () {
-        var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(opts, defaultDeep) {
-          var deep, promises;
-          return regeneratorRuntime.wrap(function _callee10$(_context10) {
-            while (1) {
-              switch (_context10.prev = _context10.next) {
-                case 0:
-                  deep = opts.deepWait !== undefined ? opts.deepWait : defaultDeep;
-                  promises = deep ? [deepReady(opts.enteringEl), deepReady(opts.leavingEl)] : [shallowReady(opts.enteringEl), shallowReady(opts.leavingEl)];
-                  _context10.next = 4;
-                  return Promise.all(promises);
-
-                case 4:
-                  _context10.next = 6;
-                  return notifyViewReady(opts.viewIsReady, opts.enteringEl);
-
-                case 6:
-                case "end":
-                  return _context10.stop();
-              }
-            }
-          }, _callee10);
-        }));
-
-        return function waitForReady(_x9, _x10) {
-          return _ref7.apply(this, arguments);
-        };
-      }();
-
-      var notifyViewReady = /*#__PURE__*/function () {
-        var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(viewIsReady, enteringEl) {
-          return regeneratorRuntime.wrap(function _callee11$(_context11) {
-            while (1) {
-              switch (_context11.prev = _context11.next) {
-                case 0:
-                  if (!viewIsReady) {
-                    _context11.next = 3;
-                    break;
-                  }
-
-                  _context11.next = 3;
-                  return viewIsReady(enteringEl);
-
-                case 3:
-                case "end":
-                  return _context11.stop();
-              }
-            }
-          }, _callee11);
-        }));
-
-        return function notifyViewReady(_x11, _x12) {
-          return _ref8.apply(this, arguments);
-        };
-      }();
-
-      var playTransition = function playTransition(trans, opts) {
-        var progressCallback = opts.progressCallback;
-        var promise = new Promise(function (resolve) {
-          trans.onFinish(function (currentStep) {
-            return resolve(currentStep === 1);
-          });
-        }); // cool, let's do this, start the transition
-
-        if (progressCallback) {
-          // this is a swipe to go back, just get the transition progress ready
-          // kick off the swipe animation start
-          trans.progressStart(true);
-          progressCallback(trans);
-        } else {
-          // only the top level transition should actually start "play"
-          // kick it off and let it play through
-          // ******** DOM WRITE ****************
-          trans.play();
-        } // create a callback for when the animation is done
-
-
-        return promise;
-      };
-
-      var fireWillEvents = function fireWillEvents(enteringEl, leavingEl) {
-        lifecycle(leavingEl, _constants_3c3e1099_js__WEBPACK_IMPORTED_MODULE_1__["b"]);
-        lifecycle(enteringEl, _constants_3c3e1099_js__WEBPACK_IMPORTED_MODULE_1__["L"]);
-      };
-
-      var fireDidEvents = function fireDidEvents(enteringEl, leavingEl) {
-        lifecycle(enteringEl, _constants_3c3e1099_js__WEBPACK_IMPORTED_MODULE_1__["a"]);
-        lifecycle(leavingEl, _constants_3c3e1099_js__WEBPACK_IMPORTED_MODULE_1__["c"]);
-      };
-
-      var lifecycle = function lifecycle(el, eventName) {
-        if (el) {
-          var ev = new CustomEvent(eventName, {
-            bubbles: false,
-            cancelable: false
-          });
-          el.dispatchEvent(ev);
-        }
-      };
-
-      var shallowReady = function shallowReady(el) {
-        if (el && el.componentOnReady) {
-          return el.componentOnReady();
-        }
-
-        return Promise.resolve();
-      };
-
-      var deepReady = /*#__PURE__*/function () {
-        var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(el) {
-          var element, stencilEl;
-          return regeneratorRuntime.wrap(function _callee12$(_context12) {
-            while (1) {
-              switch (_context12.prev = _context12.next) {
-                case 0:
-                  element = el;
-
-                  if (!element) {
-                    _context12.next = 10;
-                    break;
-                  }
-
-                  if (!(element.componentOnReady != null)) {
-                    _context12.next = 8;
-                    break;
-                  }
-
-                  _context12.next = 5;
-                  return element.componentOnReady();
-
-                case 5:
-                  stencilEl = _context12.sent;
-
-                  if (!(stencilEl != null)) {
-                    _context12.next = 8;
-                    break;
-                  }
-
-                  return _context12.abrupt("return");
-
-                case 8:
-                  _context12.next = 10;
-                  return Promise.all(Array.from(element.children).map(deepReady));
-
-                case 10:
-                case "end":
-                  return _context12.stop();
-              }
-            }
-          }, _callee12);
-        }));
-
-        return function deepReady(_x13) {
-          return _ref9.apply(this, arguments);
-        };
-      }();
-
-      var setPageHidden = function setPageHidden(el, hidden) {
-        if (hidden) {
-          el.setAttribute('aria-hidden', 'true');
-          el.classList.add('ion-page-hidden');
-        } else {
-          el.hidden = false;
-          el.removeAttribute('aria-hidden');
-          el.classList.remove('ion-page-hidden');
-        }
-      };
-
-      var setZIndex = function setZIndex(enteringEl, leavingEl, direction) {
-        if (enteringEl !== undefined) {
-          enteringEl.style.zIndex = direction === 'back' ? '99' : '101';
-        }
-
-        if (leavingEl !== undefined) {
-          leavingEl.style.zIndex = '100';
-        }
-      };
-
-      var getIonPageElement = function getIonPageElement(element) {
-        if (element.classList.contains('ion-page')) {
-          return element;
-        }
-
-        var ionPage = element.querySelector(':scope > .ion-page, :scope > ion-nav, :scope > ion-tabs');
-
-        if (ionPage) {
-          return ionPage;
-        } // idk, return the original element so at least something animates and we don't have a null pointer
-
-
-        return element;
-      };
-      /***/
-
-    },
-
-    /***/
-    "YtD4":
-    /*!*************************************************************!*\
-      !*** ./node_modules/@ionic/core/dist/esm/index-3476b023.js ***!
-      \*************************************************************/
-
-    /*! exports provided: s */
-
-    /***/
-    function YtD4(module, __webpack_exports__, __webpack_require__) {
-      "use strict";
-
-      __webpack_require__.r(__webpack_exports__);
-      /* harmony export (binding) */
-
-
-      __webpack_require__.d(__webpack_exports__, "s", function () {
-        return sanitizeDOMString;
-      });
-      /**
-       * Does a simple sanitization of all elements
-       * in an untrusted string
-       */
-
-
-      var sanitizeDOMString = function sanitizeDOMString(untrustedString) {
-        try {
-          if (typeof untrustedString !== 'string' || untrustedString === '') {
-            return untrustedString;
-          }
-          /**
-           * Create a document fragment
-           * separate from the main DOM,
-           * create a div to do our work in
-           */
-
-
-          var documentFragment = document.createDocumentFragment();
-          var workingDiv = document.createElement('div');
-          documentFragment.appendChild(workingDiv);
-          workingDiv.innerHTML = untrustedString;
-          /**
-           * Remove any elements
-           * that are blocked
-           */
-
-          blockedTags.forEach(function (blockedTag) {
-            var getElementsToRemove = documentFragment.querySelectorAll(blockedTag);
-
-            for (var elementIndex = getElementsToRemove.length - 1; elementIndex >= 0; elementIndex--) {
-              var element = getElementsToRemove[elementIndex];
-
-              if (element.parentNode) {
-                element.parentNode.removeChild(element);
-              } else {
-                documentFragment.removeChild(element);
-              }
-              /**
-               * We still need to sanitize
-               * the children of this element
-               * as they are left behind
-               */
-
-
-              var childElements = getElementChildren(element);
-              /* tslint:disable-next-line */
-
-              for (var childIndex = 0; childIndex < childElements.length; childIndex++) {
-                sanitizeElement(childElements[childIndex]);
-              }
-            }
-          });
-          /**
-           * Go through remaining elements and remove
-           * non-allowed attribs
-           */
-          // IE does not support .children on document fragments, only .childNodes
-
-          var dfChildren = getElementChildren(documentFragment);
-          /* tslint:disable-next-line */
-
-          for (var childIndex = 0; childIndex < dfChildren.length; childIndex++) {
-            sanitizeElement(dfChildren[childIndex]);
-          } // Append document fragment to div
-
-
-          var fragmentDiv = document.createElement('div');
-          fragmentDiv.appendChild(documentFragment); // First child is always the div we did our work in
-
-          var getInnerDiv = fragmentDiv.querySelector('div');
-          return getInnerDiv !== null ? getInnerDiv.innerHTML : fragmentDiv.innerHTML;
-        } catch (err) {
-          console.error(err);
-          return '';
-        }
-      };
-      /**
-       * Clean up current element based on allowed attributes
-       * and then recursively dig down into any child elements to
-       * clean those up as well
-       */
-
-
-      var sanitizeElement = function sanitizeElement(element) {
-        // IE uses childNodes, so ignore nodes that are not elements
-        if (element.nodeType && element.nodeType !== 1) {
-          return;
-        }
-
-        for (var i = element.attributes.length - 1; i >= 0; i--) {
-          var attribute = element.attributes.item(i);
-          var attributeName = attribute.name; // remove non-allowed attribs
-
-          if (!allowedAttributes.includes(attributeName.toLowerCase())) {
-            element.removeAttribute(attributeName);
-            continue;
-          } // clean up any allowed attribs
-          // that attempt to do any JS funny-business
-
-
-          var attributeValue = attribute.value;
-          /* tslint:disable-next-line */
-
-          if (attributeValue != null && attributeValue.toLowerCase().includes('javascript:')) {
-            element.removeAttribute(attributeName);
-          }
-        }
-        /**
-         * Sanitize any nested children
-         */
-
-
-        var childElements = getElementChildren(element);
-        /* tslint:disable-next-line */
-
-        for (var _i = 0; _i < childElements.length; _i++) {
-          sanitizeElement(childElements[_i]);
-        }
-      };
-      /**
-       * IE doesn't always support .children
-       * so we revert to .childNodes instead
-       */
-
-
-      var getElementChildren = function getElementChildren(el) {
-        return el.children != null ? el.children : el.childNodes;
-      };
-
-      var allowedAttributes = ['class', 'id', 'href', 'src', 'name', 'slot'];
-      var blockedTags = ['script', 'style', 'iframe', 'meta', 'link', 'object', 'embed'];
-      /***/
-    },
-
-    /***/
-    "Z2Br":
-    /*!**********************************************!*\
-      !*** ./src/app/services/firebase.service.ts ***!
-      \**********************************************/
-
-    /*! exports provided: FirebaseService */
-
-    /***/
-    function Z2Br(module, __webpack_exports__, __webpack_require__) {
-      "use strict";
-
-      __webpack_require__.r(__webpack_exports__);
-      /* harmony export (binding) */
-
-
-      __webpack_require__.d(__webpack_exports__, "FirebaseService", function () {
-        return FirebaseService;
-      });
-      /* harmony import */
-
-
-      var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
-      /*! tslib */
-      "mrSG");
-      /* harmony import */
-
-
-      var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
-      /*! @angular/core */
-      "fXoL");
-      /* harmony import */
-
-
-      var _loading_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
-      /*! ./loading.service */
-      "7ch9");
-      /* harmony import */
-
-
-      var _data_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
-      /*! ./data.service */
-      "EnSQ");
-      /* harmony import */
-
-
-      var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
-      /*! @angular/fire/firestore */
-      "I/3d");
-      /* harmony import */
-
-
-      var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
-      /*! @angular/fire/auth */
-      "UbJi");
-
-      var FirebaseService = /*#__PURE__*/function () {
-        function FirebaseService(firestore, loadingProvider, afAuth, dataProvider) {
-          _classCallCheck(this, FirebaseService);
-
-          this.firestore = firestore;
-          this.loadingProvider = loadingProvider;
-          this.afAuth = afAuth;
-          this.dataProvider = dataProvider;
-        } // Send friend request to userId.
-
-
-        _createClass(FirebaseService, [{
-          key: "sendFriendRequest",
-          value: function sendFriendRequest(userId) {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee13() {
-              var _this8 = this;
-
-              var loggedInUserId, requestsSent;
-              return regeneratorRuntime.wrap(function _callee13$(_context13) {
-                while (1) {
-                  switch (_context13.prev = _context13.next) {
-                    case 0:
-                      _context13.next = 2;
-                      return this.afAuth.currentUser.then(function (data) {
-                        return data.uid;
-                      });
-
-                    case 2:
-                      loggedInUserId = _context13.sent;
-                      this.loadingProvider.show();
-                      // Use take(1) so that subscription will only trigger once.
-                      this.dataProvider.getRequests(loggedInUserId).get().subscribe(function (requests) {
-                        if (requests.data() != null && requests.data().requestsSent != null) {
-                          requestsSent = requests.data().requestsSent;
-                        }
-
-                        if (requestsSent == null || requestsSent === undefined) {
-                          requestsSent = [userId];
-                        } else {
-                          if (requestsSent.indexOf(userId) === -1) {
-                            requestsSent.push(userId);
-                          }
-                        } // Add requestsSent information.
-
-
-                        _this8.firestore.collection('requests').doc(loggedInUserId).set({
-                          requestsSent: requestsSent
-                        }).then(function (success) {
-                          var friendRequests; // tslint:disable-next-line: no-shadowed-variable
-
-                          _this8.dataProvider.getRequests(userId).get().subscribe(function (requests) {
-                            if (requests.data() != null && requests.data().friendRequests != null) {
-                              friendRequests = requests.data().friendRequests;
-                            }
-
-                            if (friendRequests == null) {
-                              friendRequests = [loggedInUserId];
-                            } else {
-                              if (friendRequests.indexOf(userId) === -1) {
-                                friendRequests.push(loggedInUserId);
-                              }
-                            } // Add friendRequest information.
-
-
-                            _this8.firestore.collection('requests').doc(userId).set({
-                              friendRequests: friendRequests
-                            }).then(function (succ) {
-                              _this8.loadingProvider.hide();
-
-                              _this8.loadingProvider.showToast('Friend Request Sent');
-                            })["catch"](function (error) {
-                              _this8.loadingProvider.hide();
-                            });
-                          });
-                        })["catch"](function (error) {
-                          console.log('error', error);
-
-                          _this8.loadingProvider.hide();
-                        });
-                      });
-
-                    case 5:
-                    case "end":
-                      return _context13.stop();
-                  }
-                }
-              }, _callee13, this);
-            }));
-          } // Cancel friend request sent to userId.
-
-        }, {
-          key: "cancelFriendRequest",
-          value: function cancelFriendRequest(userId) {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee14() {
-              var _this9 = this;
-
-              var loggedInUserId, requestsSent;
-              return regeneratorRuntime.wrap(function _callee14$(_context14) {
-                while (1) {
-                  switch (_context14.prev = _context14.next) {
-                    case 0:
-                      _context14.next = 2;
-                      return this.afAuth.currentUser.then(function (data) {
-                        return data.uid;
-                      });
-
-                    case 2:
-                      loggedInUserId = _context14.sent;
-                      this.loadingProvider.show();
-                      requestsSent = [];
-                      this.dataProvider.getRequests(loggedInUserId).get().subscribe(function (requests) {
-                        requestsSent = requests.data().requestsSent;
-                        requestsSent.splice(requestsSent.indexOf(userId), 1); // Update requestSent information.
-
-                        _this9.firestore.collection('requests').doc(loggedInUserId).set({
-                          requestsSent: requestsSent
-                        }).then(function (success) {
-                          var friendRequests;
-
-                          _this9.dataProvider.getRequests(userId).get().subscribe(function (req) {
-                            friendRequests = req.data().friendRequests;
-                            console.log(friendRequests);
-                            friendRequests.splice(friendRequests.indexOf(loggedInUserId), 1); // Update friendRequests information.
-
-                            _this9.firestore.collection('requests').doc(userId).set({
-                              friendRequests: friendRequests
-                            }).then(function (succ) {
-                              console.log(succ);
-
-                              _this9.loadingProvider.hide();
-
-                              _this9.loadingProvider.showToast('Removed Friend Request');
-                            })["catch"](function (error) {
-                              console.log(error);
-
-                              _this9.loadingProvider.hide();
-                            });
-                          });
-                        })["catch"](function (error) {
-                          console.log(error);
-
-                          _this9.loadingProvider.hide();
-                        });
-                      });
-
-                    case 6:
-                    case "end":
-                      return _context14.stop();
-                  }
-                }
-              }, _callee14, this);
-            }));
-          } // Delete friend request.
-
-        }, {
-          key: "deleteFriendRequest",
-          value: function deleteFriendRequest(userId) {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee15() {
-              var _this10 = this;
-
-              var loggedInUserId, friendRequests;
-              return regeneratorRuntime.wrap(function _callee15$(_context15) {
-                while (1) {
-                  switch (_context15.prev = _context15.next) {
-                    case 0:
-                      _context15.next = 2;
-                      return this.afAuth.currentUser.then(function (data) {
-                        return data.uid;
-                      });
-
-                    case 2:
-                      loggedInUserId = _context15.sent;
-                      this.loadingProvider.show();
-                      friendRequests = [];
-                      this.dataProvider.getRequests(loggedInUserId).get().subscribe(function (requests) {
-                        friendRequests = requests.data().friendRequests;
-                        friendRequests = friendRequests.filter(function (u) {
-                          return u !== userId;
-                        }); // Update friendRequests information.
-
-                        _this10.firestore.collection('requests').doc(loggedInUserId).set({
-                          friendRequests: friendRequests
-                        }).then(function (success) {
-                          var requestsSent;
-
-                          _this10.dataProvider.getRequests(userId).get().subscribe(function (req) {
-                            requestsSent = req.data().requestsSent;
-                            requestsSent.splice(requestsSent.indexOf(loggedInUserId), 1);
-                            console.log('requestsSent:', requestsSent, loggedInUserId, requestsSent.indexOf(userId), 1); // Update requestsSent information.
-
-                            _this10.firestore.collection('requests').doc(userId).set({
-                              requestsSent: requestsSent
-                            }).then(function (succ) {
-                              console.log(succ);
-
-                              _this10.loadingProvider.hide();
-                            })["catch"](function (error) {
-                              console.log(error);
-
-                              _this10.loadingProvider.hide();
-                            });
-                          });
-                        })["catch"](function (err) {
-                          console.log(err);
-
-                          _this10.loadingProvider.hide();
-                        });
-                      });
-
-                    case 6:
-                    case "end":
-                      return _context15.stop();
-                  }
-                }
-              }, _callee15, this);
-            }));
-          } // Accept friend request.
-
-        }, {
-          key: "acceptFriendRequest",
-          value: function acceptFriendRequest(userId) {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee16() {
-              var _this11 = this;
-
-              var loggedInUserId;
-              return regeneratorRuntime.wrap(function _callee16$(_context16) {
-                while (1) {
-                  switch (_context16.prev = _context16.next) {
-                    case 0:
-                      _context16.next = 2;
-                      return this.afAuth.currentUser.then(function (data) {
-                        return data.uid;
-                      });
-
-                    case 2:
-                      loggedInUserId = _context16.sent;
-                      // Delete friend request.
-                      this.deleteFriendRequest(userId);
-                      this.loadingProvider.show();
-                      this.dataProvider.getUser(loggedInUserId).get().subscribe(function (account) {
-                        var friends = account.data().friends;
-
-                        if (!friends) {
-                          friends = [userId];
-                        } else {
-                          friends.push(userId);
-                        } // Add both users as friends.
-
-
-                        _this11.dataProvider.getUser(loggedInUserId).update({
-                          friends: friends
-                        }).then(function (success) {
-                          _this11.dataProvider.getUser(userId).get().subscribe(function (acc) {
-                            var friends = acc.data().friends;
-
-                            if (!friends) {
-                              friends = [loggedInUserId];
-                            } else {
-                              friends.push(loggedInUserId);
-                            }
-
-                            _this11.dataProvider.getUser(userId).update({
-                              friends: friends
-                            }).then(function (succ) {
-                              _this11.loadingProvider.hide();
-                            })["catch"](function (error) {
-                              _this11.loadingProvider.hide();
-                            });
-                          });
-                        })["catch"](function (error) {
-                          _this11.loadingProvider.hide();
-                        });
-                      });
-
-                    case 6:
-                    case "end":
-                      return _context16.stop();
-                  }
-                }
-              }, _callee16, this);
-            }));
-          }
-        }]);
-
-        return FirebaseService;
-      }();
-
-      FirebaseService.ctorParameters = function () {
-        return [{
-          type: _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__["AngularFirestore"]
-        }, {
-          type: _loading_service__WEBPACK_IMPORTED_MODULE_2__["LoadingService"]
-        }, {
-          type: _angular_fire_auth__WEBPACK_IMPORTED_MODULE_5__["AngularFireAuth"]
-        }, {
-          type: _data_service__WEBPACK_IMPORTED_MODULE_3__["DataService"]
-        }];
-      };
-
-      FirebaseService = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
-        providedIn: 'root'
-      }), Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"])("design:paramtypes", [_angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__["AngularFirestore"], _loading_service__WEBPACK_IMPORTED_MODULE_2__["LoadingService"], _angular_fire_auth__WEBPACK_IMPORTED_MODULE_5__["AngularFireAuth"], _data_service__WEBPACK_IMPORTED_MODULE_3__["DataService"]])], FirebaseService);
-      /***/
-    },
-
-    /***/
-    "m9yc":
-    /*!**************************************************************************!*\
-      !*** ./node_modules/@ionic/core/dist/esm/framework-delegate-c2e2e1f4.js ***!
-      \**************************************************************************/
-
-    /*! exports provided: a, d */
-
-    /***/
-    function m9yc(module, __webpack_exports__, __webpack_require__) {
-      "use strict";
-
-      __webpack_require__.r(__webpack_exports__);
-      /* harmony export (binding) */
-
-
-      __webpack_require__.d(__webpack_exports__, "a", function () {
-        return attachComponent;
-      });
-      /* harmony export (binding) */
-
-
-      __webpack_require__.d(__webpack_exports__, "d", function () {
-        return detachComponent;
-      });
-
-      var attachComponent = /*#__PURE__*/function () {
-        var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(delegate, container, component, cssClasses, componentProps) {
-          var el;
-          return regeneratorRuntime.wrap(function _callee17$(_context17) {
-            while (1) {
-              switch (_context17.prev = _context17.next) {
-                case 0:
-                  if (!delegate) {
-                    _context17.next = 2;
-                    break;
-                  }
-
-                  return _context17.abrupt("return", delegate.attachViewToDom(container, component, componentProps, cssClasses));
-
-                case 2:
-                  if (!(typeof component !== 'string' && !(component instanceof HTMLElement))) {
-                    _context17.next = 4;
-                    break;
-                  }
-
-                  throw new Error('framework delegate is missing');
-
-                case 4:
-                  el = typeof component === 'string' ? container.ownerDocument && container.ownerDocument.createElement(component) : component;
-
-                  if (cssClasses) {
-                    cssClasses.forEach(function (c) {
-                      return el.classList.add(c);
-                    });
-                  }
-
-                  if (componentProps) {
-                    Object.assign(el, componentProps);
-                  }
-
-                  container.appendChild(el);
-
-                  if (!el.componentOnReady) {
-                    _context17.next = 11;
-                    break;
-                  }
-
-                  _context17.next = 11;
-                  return el.componentOnReady();
-
-                case 11:
-                  return _context17.abrupt("return", el);
-
-                case 12:
-                case "end":
-                  return _context17.stop();
-              }
-            }
-          }, _callee17);
-        }));
-
-        return function attachComponent(_x14, _x15, _x16, _x17, _x18) {
-          return _ref10.apply(this, arguments);
-        };
-      }();
-
-      var detachComponent = function detachComponent(delegate, element) {
-        if (element) {
-          if (delegate) {
-            var container = element.parentElement;
-            return delegate.removeViewFromDom(container, element);
-          }
-
-          element.remove();
-        }
-
-        return Promise.resolve();
-      };
-      /***/
-
-    },
-
-    /***/
-    "opz7":
+    "qULd":
     /*!**************************************************************!*\
-      !*** ./node_modules/@ionic/core/dist/esm/haptic-c8f1473e.js ***!
+      !*** ./node_modules/@ionic/core/dist/esm/haptic-27b3f981.js ***!
       \**************************************************************/
 
-    /*! exports provided: a, b, c, h */
+    /*! exports provided: a, b, c, d, h */
 
     /***/
-    function opz7(module, __webpack_exports__, __webpack_require__) {
+    function qULd(module, __webpack_exports__, __webpack_require__) {
       "use strict";
 
       __webpack_require__.r(__webpack_exports__);
@@ -1848,31 +1216,112 @@
 
 
       __webpack_require__.d(__webpack_exports__, "c", function () {
-        return hapticSelectionEnd;
+        return hapticSelection;
+      });
+      /* harmony export (binding) */
+
+
+      __webpack_require__.d(__webpack_exports__, "d", function () {
+        return hapticImpact;
       });
       /* harmony export (binding) */
 
 
       __webpack_require__.d(__webpack_exports__, "h", function () {
-        return hapticSelection;
+        return hapticSelectionEnd;
       });
-      /**
-       * Check to see if the Haptic Plugin is available
-       * @return Returns `true` or false if the plugin is available
-       */
 
+      var HapticEngine = {
+        getEngine: function getEngine() {
+          var win = window;
+          return win.TapticEngine || win.Capacitor && win.Capacitor.isPluginAvailable('Haptics') && win.Capacitor.Plugins.Haptics;
+        },
+        available: function available() {
+          return !!this.getEngine();
+        },
+        isCordova: function isCordova() {
+          return !!window.TapticEngine;
+        },
+        isCapacitor: function isCapacitor() {
+          var win = window;
+          return !!win.Capacitor;
+        },
+        impact: function impact(options) {
+          var engine = this.getEngine();
+
+          if (!engine) {
+            return;
+          }
+
+          var style = this.isCapacitor() ? options.style.toUpperCase() : options.style;
+          engine.impact({
+            style: style
+          });
+        },
+        notification: function notification(options) {
+          var engine = this.getEngine();
+
+          if (!engine) {
+            return;
+          }
+
+          var style = this.isCapacitor() ? options.style.toUpperCase() : options.style;
+          engine.notification({
+            style: style
+          });
+        },
+        selection: function selection() {
+          this.impact({
+            style: 'light'
+          });
+        },
+        selectionStart: function selectionStart() {
+          var engine = this.getEngine();
+
+          if (!engine) {
+            return;
+          }
+
+          if (this.isCapacitor()) {
+            engine.selectionStart();
+          } else {
+            engine.gestureSelectionStart();
+          }
+        },
+        selectionChanged: function selectionChanged() {
+          var engine = this.getEngine();
+
+          if (!engine) {
+            return;
+          }
+
+          if (this.isCapacitor()) {
+            engine.selectionChanged();
+          } else {
+            engine.gestureSelectionChanged();
+          }
+        },
+        selectionEnd: function selectionEnd() {
+          var engine = this.getEngine();
+
+          if (!engine) {
+            return;
+          }
+
+          if (this.isCapacitor()) {
+            engine.selectionEnd();
+          } else {
+            engine.gestureSelectionEnd();
+          }
+        }
+      };
       /**
        * Trigger a selection changed haptic event. Good for one-time events
        * (not for gestures)
        */
 
-
       var hapticSelection = function hapticSelection() {
-        var engine = window.TapticEngine;
-
-        if (engine) {
-          engine.selection();
-        }
+        HapticEngine.selection();
       };
       /**
        * Tell the haptic engine that a gesture for a selection change is starting.
@@ -1880,11 +1329,7 @@
 
 
       var hapticSelectionStart = function hapticSelectionStart() {
-        var engine = window.TapticEngine;
-
-        if (engine) {
-          engine.gestureSelectionStart();
-        }
+        HapticEngine.selectionStart();
       };
       /**
        * Tell the haptic engine that a selection changed during a gesture.
@@ -1892,11 +1337,7 @@
 
 
       var hapticSelectionChanged = function hapticSelectionChanged() {
-        var engine = window.TapticEngine;
-
-        if (engine) {
-          engine.gestureSelectionChanged();
-        }
+        HapticEngine.selectionChanged();
       };
       /**
        * Tell the haptic engine we are done with a gesture. This needs to be
@@ -1905,11 +1346,119 @@
 
 
       var hapticSelectionEnd = function hapticSelectionEnd() {
-        var engine = window.TapticEngine;
+        HapticEngine.selectionEnd();
+      };
+      /**
+       * Use this to indicate success/failure/warning to the user.
+       * options should be of the type `{ style: 'light' }` (or `medium`/`heavy`)
+       */
 
-        if (engine) {
-          engine.gestureSelectionEnd();
+
+      var hapticImpact = function hapticImpact(options) {
+        HapticEngine.impact(options);
+      };
+      /***/
+
+    },
+
+    /***/
+    "spDm":
+    /*!**************************************************************************!*\
+      !*** ./node_modules/@ionic/core/dist/esm/framework-delegate-94e770cc.js ***!
+      \**************************************************************************/
+
+    /*! exports provided: a, d */
+
+    /***/
+    function spDm(module, __webpack_exports__, __webpack_require__) {
+      "use strict";
+
+      __webpack_require__.r(__webpack_exports__);
+      /* harmony export (binding) */
+
+
+      __webpack_require__.d(__webpack_exports__, "a", function () {
+        return attachComponent;
+      });
+      /* harmony export (binding) */
+
+
+      __webpack_require__.d(__webpack_exports__, "d", function () {
+        return detachComponent;
+      });
+      /* harmony import */
+
+
+      var _helpers_1457892a_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
+      /*! ./helpers-1457892a.js */
+      "W6o/");
+
+      var attachComponent = /*#__PURE__*/function () {
+        var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(delegate, container, component, cssClasses, componentProps) {
+          var el;
+          return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+            while (1) switch (_context10.prev = _context10.next) {
+              case 0:
+                if (!delegate) {
+                  _context10.next = 2;
+                  break;
+                }
+
+                return _context10.abrupt("return", delegate.attachViewToDom(container, component, componentProps, cssClasses));
+
+              case 2:
+                if (!(typeof component !== 'string' && !(component instanceof HTMLElement))) {
+                  _context10.next = 4;
+                  break;
+                }
+
+                throw new Error('framework delegate is missing');
+
+              case 4:
+                el = typeof component === 'string' ? container.ownerDocument && container.ownerDocument.createElement(component) : component;
+
+                if (cssClasses) {
+                  cssClasses.forEach(function (c) {
+                    return el.classList.add(c);
+                  });
+                }
+
+                if (componentProps) {
+                  Object.assign(el, componentProps);
+                }
+
+                container.appendChild(el);
+                _context10.next = 10;
+                return new Promise(function (resolve) {
+                  return Object(_helpers_1457892a_js__WEBPACK_IMPORTED_MODULE_0__["c"])(el, resolve);
+                });
+
+              case 10:
+                return _context10.abrupt("return", el);
+
+              case 11:
+              case "end":
+                return _context10.stop();
+            }
+          }, _callee10);
+        }));
+
+        return function attachComponent(_x5, _x6, _x7, _x8, _x9) {
+          return _ref2.apply(this, arguments);
+        };
+      }();
+
+      var detachComponent = function detachComponent(delegate, element) {
+        if (element) {
+          if (delegate) {
+            var container = element.parentElement;
+            return delegate.removeViewFromDom(container, element);
+          }
+
+          element.remove();
         }
+
+        return Promise.resolve();
       };
       /***/
 
