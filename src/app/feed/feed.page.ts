@@ -9,6 +9,8 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { NgAnalyzeModulesHost } from '@angular/compiler';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
+import { EmojiPickerComponentModule } from '../components/emoji-picker/emoji-picker.module';
+import { PopoverController } from '@ionic/angular';
 
 import { FCM } from '@ionic-native/fcm/ngx';
 import { Platform } from '@ionic/angular';
@@ -17,6 +19,7 @@ import { constants } from 'perf_hooks';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
 
 // Add interface for user data
 interface UserDocument {
@@ -86,7 +89,8 @@ export class FeedPage implements OnInit {
     private afAuth: AngularFireAuth,
     private localNotifications: LocalNotifications,
     private fcm: FCM,
-    public plt: Platform
+    public plt: Platform,
+    private popoverCtrl: PopoverController
 
     ) {
       this.plt.ready()
@@ -705,5 +709,28 @@ export class FeedPage implements OnInit {
   searchTag(tag, post) {
     this.searchMode = true;
     this.searchTerm = tag.val;
+  }
+
+  async showEmojiPicker(event: any, item: any) {
+    event.stopPropagation();
+    
+    const popover = await this.popoverCtrl.create({
+      component: EmojiPickerComponent,
+      componentProps: {
+        post: item,
+        postType: item.type
+      },
+      event: event,
+      translucent: true,
+      cssClass: 'emoji-picker-popover'
+    });
+  
+    await popover.present();
+  
+    const { data } = await popover.onDidDismiss();
+    if (data) {
+      console.log('emoji selected', data);
+      this.submitReactionPost(data.post, data.emoji.value);
+    }
   }
 }

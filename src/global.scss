@@ -425,3 +425,33 @@ ion-checkbox {
     -webkit-backdrop-filter: blur(8px);
   }
 }
+.emoji-picker-popover {
+  --width: auto;
+  --min-width: 200px;
+  --height: auto;
+  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  
+  .popover-content {
+    border-radius: 12px;
+  }
+
+  &.ios {
+    --backdrop-opacity: 0.2;
+  }
+}
+
+// Optional: Add animation for the popover
+.emoji-picker-popover .popover-content {
+  animation: scale-in 0.2s ease-out;
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

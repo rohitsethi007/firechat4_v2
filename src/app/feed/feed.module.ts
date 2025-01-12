@@ -6,6 +6,7 @@ import { SharedModule } from '../services/share.module';
 import { IonicModule } from '@ionic/angular';
 import { ComponentsModule } from '../components/components.module';
 import { FeedPage } from './feed.page';
+import { EmojiPickerComponentModule } from '../components/emoji-picker/emoji-picker.module';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
     SharedModule,
     IonicModule,
     ComponentsModule,
+    EmojiPickerComponentModule,
     RouterModule.forChild(routes)
   ],
   declarations: [FeedPage]

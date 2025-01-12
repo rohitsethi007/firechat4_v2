@@ -117,40 +117,57 @@
           </ion-row>
           </div> -->
           <div class="reactions">
-          <ion-row >
-            <ion-col>
-              <ion-buttons>
-                <ion-button (click)="submitReactionPost(item, 'Thanks')">
-               <div *ngIf="item.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> </div> 
-               <div *ngIf="!item.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> </div> 
-              </ion-button>
-              </ion-buttons> 
-            </ion-col>
-            <ion-col>
-              <ion-buttons>
-                <ion-button (click)="submitReactionPost(item, 'Hug')">
-               <div *ngIf="item.showHug"><ion-icon size="small" class="icon" src="./assets/icon/hug-active.svg" ></ion-icon> </div> 
-               <div *ngIf="!item.showHug"><ion-icon size="small" class="icon"  src="./assets/icon/hug.svg" ></ion-icon> </div> 
-              </ion-button>
-              </ion-buttons> 
-            </ion-col>
-            <ion-col size=3></ion-col>
-            <ion-col size=2>
-              <ion-buttons>
-                <ion-button (click)="showReactionsList(item)">
-              <div><ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon><ion-icon size="small" src="./assets/icon/hug-active.svg" class="icon"></ion-icon> <span class="text">{{item.totalReactionCount}}</span></div>
-            </ion-button>
-          </ion-buttons> 
-            </ion-col>
-            <ion-col size=2>
-              <ion-buttons>
-                <ion-button>
-              <div><ion-icon size="small" class="icon" name="chatbox-outline"></ion-icon> <span class="text">{{item.totalReviewCount}}</span></div>
-            </ion-button>
-          </ion-buttons> 
-            </ion-col>
-          </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-buttons>
+                  <ion-button (click)="showEmojiPicker($event, item)">
+                    <!-- Keep your existing Thanks/Smile reaction display -->
+                    <div>
+                      <ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg"></ion-icon>
+                    </div>
+                  </ion-button>
+                </ion-buttons>
+              </ion-col>
+              <ion-col>
+                <ion-buttons>
+                  <ion-button (click)="showEmojiPicker($event, item)">
+                    <!-- Keep your existing Hug reaction display -->
+                    <div *ngIf="item.showHug">
+                      <ion-icon size="small" class="icon" src="./assets/icon/hug-active.svg"></ion-icon>
+                    </div>
+                    <div *ngIf="!item.showHug">
+                      <ion-icon size="small" class="icon" src="./assets/icon/hug.svg"></ion-icon>
+                    </div>
+                  </ion-button>
+                </ion-buttons>
+              </ion-col>
+              <ion-col size="3"></ion-col>
+              <!-- Keep your reaction count display -->
+              <ion-col size="2">
+                <ion-buttons>
+                  <ion-button (click)="showReactionsList(item)">
+                    <div>
+                      <ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon>
+                      <ion-icon size="small" src="./assets/icon/hug-active.svg" class="icon"></ion-icon>
+                      <span class="text">{{item.totalReactionCount}}</span>
+                    </div>
+                  </ion-button>
+                </ion-buttons>
+              </ion-col>
+              <!-- Keep your comments count display -->
+              <ion-col size="2">
+                <ion-buttons>
+                  <ion-button>
+                    <div>
+                      <ion-icon size="small" class="icon" name="chatbox-outline"></ion-icon>
+                      <span class="text">{{item.totalReviewCount}}</span>
+                    </div>
+                  </ion-button>
+                </ion-buttons>
+              </ion-col>
+            </ion-row>
           </div>
+          
         </ion-card-content>
 
         <ion-card-content class="message" *ngIf="item.type === 'event'">
