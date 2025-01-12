@@ -196,7 +196,7 @@ export class FeedPage implements OnInit {
       header: 'Create a new ...',
       backdropDismiss: true,
       mode: 'md',
-      cssClass: 'GroupAction',
+      cssClass: 'post-options-action-sheet',
       buttons: [{
         text: 'Post',
         icon: 'chatbubbles-outline',
@@ -239,7 +239,7 @@ export class FeedPage implements OnInit {
       header: 'Post options',
       backdropDismiss: true,
       mode: 'md',
-      cssClass: 'GroupAction',
+      cssClass: 'post-options-action-sheet',
       buttons: this.createPostOptionButtons(post)
     }).then(r => r.present());
   }
@@ -473,60 +473,62 @@ export class FeedPage implements OnInit {
   createPostOptionButtons(post) {
     const buttons = [];
     
+    // Common styles for all buttons
+    const buttonBaseStyle = 'action-sheet-button';
+  
     const cancelButton = {
       text: 'Cancel',
       icon: 'close',
       role: 'cancel',
+      cssClass: `${buttonBaseStyle} cancel-button`,
       handler: () => {
         console.log('Cancel clicked');
       }
     };
-
+  
     const reportButton = {
       text: 'Report Post',
       icon: 'flag-outline',
+      cssClass: `${buttonBaseStyle} report-button`,
       handler: () => {
         this.reportPost(post);
-       }
-      };
-    let notificationButton = {};
-
+      }
+    };
+  
+    // Owner-specific options
     if (post.addedByUser.addedByKey === this.loggedInUserId) {
       const deletePostButton = {
         text: 'Delete Post',
         icon: 'trash-outline',
-        cssClass: 'actionicon',
+        cssClass: `${buttonBaseStyle} delete-button danger`,
         handler: () => {
           this.deletePost(post);
         }
       };
       buttons.push(deletePostButton);
-    } else {
-      if (this.userNotifications && this.userNotifications.some(el => el === post.key)) {
-        notificationButton = {
-            text: 'Turn Off Notifications',
-            icon: 'notifications-off-outline',
-            cssClass: 'actionicon',
-            handler: () => {
-              this.unFollowPost(post);
-            }
-          };
-      } else {
-        notificationButton = {
-          text: 'Turn On Notifications',
-          icon: 'notifications-outline',
-          cssClass: 'actionicon',
-          handler: () => {
-            this.followPost(post);
-          }
-        };
-      }
+    } 
+    // Non-owner options
+    else {
+      const isNotificationsEnabled = this.userNotifications?.some(el => el === post.key);
+      
+      const notificationButton = {
+        text: isNotificationsEnabled ? 'Turn Off Notifications' : 'Turn On Notifications',
+        icon: isNotificationsEnabled ? 'notifications-off-outline' : 'notifications-outline',
+        cssClass: `${buttonBaseStyle} notification-button${isNotificationsEnabled ? ' active' : ''}`,
+        handler: () => {
+          isNotificationsEnabled ? this.unFollowPost(post) : this.followPost(post);
+        }
+      };
+      
       buttons.push(notificationButton);
-  }
+    }
+  
     buttons.push(reportButton);
     buttons.push(cancelButton);
+    
     return buttons;
   }
+  
 
   loadData(event) {
     if ( this.posts.length > this.maxNoOfPosts ) {
@@ -576,6 +578,7 @@ export class FeedPage implements OnInit {
           post.pollClosed = false;
         }
       }
+      
       // get reactions list
       this.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe((reactions: any) => {
         post.reactions = [];

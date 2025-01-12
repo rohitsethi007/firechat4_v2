@@ -1,123 +1,179 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
-    </ion-buttons>
     <ion-title>{{title}}</ion-title>
     <ion-buttons slot="end">
-      <ion-button class="logout" color="secondary" (click)="logout()">
-        Logout
+      <ion-button class="logout-button" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        <span>Logout</span>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div *ngIf="user">
-    <ion-row> 
-      <div class="user-info">
-        <div class="user-img"> 
-          <img src="{{user.img}}" tappable (click)="setPhoto()"
-          onError="this.src='./assets/images/default-dp_rect.png'">
+<ion-content class="profile-content">
+  <div class="profile-container" *ngIf="user">
+    <!-- Profile Header Section -->
+    <section class="profile-header">
+      <div class="profile-image-container">
+        <img [src]="user.img" 
+             (click)="setPhoto()"
+             [alt]="user.name"
+             onerror="this.src='./assets/images/default-dp_rect.png'"
+             class="profile-image">
+        <div class="edit-overlay" *ngIf="myProfile" (click)="setPhoto()">
+          <ion-icon name="camera"></ion-icon>
         </div>
-        <div>
-          <ion-item lines="none">
-          <ion-text class="profile-summary-name">{{user.name}}</ion-text>
-          <ion-button *ngIf="myProfile" color="primary" slot="end" (click)="editProfile()" class="profile-edit-button">Edit</ion-button>
-        </ion-item>
-        <ion-text class="profile-component-title ion-padding">@{{user.username}}<span *ngIf="myProfile"> · {{user.email}}</span></ion-text>
       </div>
-        <br>
-        <div class="ion-no-border">
-          <ion-item class="toggle-text" lines="none">
-            <ion-text>{{user.description}}</ion-text>
-          </ion-item>
+
+      <div class="profile-info">
+        <div class="name-section">
+          <h1>{{user.name}}</h1>
+          <ion-button *ngIf="myProfile" 
+                      (click)="editProfile()" 
+                      fill="outline" 
+                      size="small" 
+                      class="edit-button">
+            <ion-icon name="create-outline"></ion-icon>
+            Edit
+          </ion-button>
         </div>
-        <ion-row *ngIf="!myProfile">
-          <div *ngIf="!messageMe" class="ion-padding save">
-            <ion-button color="secondary" expand="block" (click)="connectUser()">Connect with me</ion-button>
-          </div>
-          <div *ngIf="messageMe" class="ion-padding save">
-            <ion-button color="secondary" expand="block" (click)="messageUser()">Message me</ion-button>
-          </div>
-        </ion-row>
-        <br><br>
-        <ion-item-divider *ngIf="myProfile" class="profile-component-title">Other Settings</ion-item-divider>
-    <ion-list *ngIf="myProfile" lines="none">
-      <ion-item>
-        <ion-label class="toggle-text">Enable Public Visibility</ion-label>
-        <ion-toggle  slot="end" color="secondary" [(ngModel)]="user.publicVisibility" (ionChange)="changeVisibility()"></ion-toggle>
-      </ion-item>
-      <ion-item>
-        <ion-label class="toggle-text">Show Online</ion-label>
-        <ion-toggle slot="end" color="secondary" [(ngModel)]="user.showOnline" (ionChange)="changeStatus()"></ion-toggle>
-      </ion-item>
-      <ion-item>
-        <ion-label class="toggle-text">Enable Notification</ion-label>
-        <ion-toggle slot="end" color="secondary" [(ngModel)]="user.isPushEnabled" [disabled]="isBrowser"
-          (ionChange)="changeNotification()">
-        </ion-toggle>
-      </ion-item>
-      <ion-item  routerLink="/blockedlist">
-        <ion-label class="toggle-text">Blocked List</ion-label>
-        <ion-icon slot="end" name="arrow-forward-circle-outline"></ion-icon>
-      </ion-item>
-      <ion-item tappable (click)="setPassword()" *ngIf="user && user.provider == 'Email'">
-        Update Password
-      </ion-item>
-     </ion-list>
-     <ion-item-divider class="profile-component-title">Activity</ion-item-divider>
-     <ion-list class="activities" lines="none" > 
-      <ion-item *ngIf="userPosts.length == 0" class="toggle-text">
-       <ion-label>You have not created or commented on any posts.</ion-label>
-      </ion-item>
-      <ion-item class="toggle-text activities-item"  *ngFor="let item of userPosts">
-        New post: <a class="link" [routerLink]="['/post', item.key]"> "{{item.title}}"</a>
-      <ion-text slot="end" class="addedByDate">{{item.date.toDate() | date:'mediumDate'}}</ion-text>  
-    </ion-item>
-    <ion-item class="toggle-text activities-item"  *ngFor="let item of userReactions">
-      Reacted on: <a class="link" [routerLink]="['/post', item.key]"> "{{item.title}}"</a>
-    <ion-text slot="end" class="addedByDate">{{item.date.toDate() | date:'mediumDate'}}</ion-text>  
-  </ion-item>
-     </ion-list>
-     <ion-item-divider class="profile-component-title">Groups</ion-item-divider>
-     <ion-list lines="none">
-      <ion-item *ngIf="groups.length == 0" class="toggle-text">
-          <ion-label>You have not joined any groups.</ion-label>
-      </ion-item>
-        <ion-item text-wrap *ngFor="let group of groups" (click)="viewGroup(group.key)">
-          <ion-avatar slot="start">
-            <ion-img src="{{group.img}}"></ion-img>
-          </ion-avatar>
-          <ion-label class="toggle-text">
-              <ion-label class="ion-no-padding">{{group.name}}<br/>
-              {{group.description}}</ion-label>
+        
+        <p class="username">@{{user.username}}<span *ngIf="myProfile" class="email">· {{user.email}}</span></p>
+        
+        <p class="bio">{{user.description}}</p>
+
+        <!-- Action Buttons for non-profile owner -->
+        <div class="action-buttons" *ngIf="!myProfile">
+          <ion-button *ngIf="!messageMe" 
+                      (click)="connectUser()" 
+                      expand="block" 
+                      class="connect-button">
+            <ion-icon name="person-add-outline"></ion-icon>
+            Connect with me
+          </ion-button>
+          <ion-button *ngIf="messageMe" 
+                      (click)="messageUser()" 
+                      expand="block" 
+                      class="message-button">
+            <ion-icon name="chatbubble-outline"></ion-icon>
+            Message me
+          </ion-button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings Section -->
+    <section class="settings-section" *ngIf="myProfile">
+      <h2 class="section-title">Settings</h2>
+      <ion-list lines="none">
+        <ion-item>
+          <ion-icon name="eye-outline" slot="start"></ion-icon>
+          <ion-label>Public Visibility</ion-label>
+          <ion-toggle [(ngModel)]="user.publicVisibility" 
+                     (ionChange)="changeVisibility()">
+          </ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon name="radio-outline" slot="start"></ion-icon>
+          <ion-label>Show Online</ion-label>
+          <ion-toggle [(ngModel)]="user.showOnline" 
+                     (ionChange)="changeStatus()">
+          </ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon name="notifications-outline" slot="start"></ion-icon>
+          <ion-label>Enable Notification</ion-label>
+          <ion-toggle [(ngModel)]="user.isPushEnabled" 
+                     [disabled]="isBrowser"
+                     (ionChange)="changeNotification()">
+          </ion-toggle>
+        </ion-item>
+
+        <ion-item button routerLink="/blockedlist">
+          <ion-icon name="ban-outline" slot="start"></ion-icon>
+          <ion-label>Blocked List</ion-label>
+          <ion-icon name="chevron-forward" slot="end"></ion-icon>
+        </ion-item>
+
+        <ion-item button (click)="setPassword()" *ngIf="user?.provider === 'Email'">
+          <ion-icon name="key-outline" slot="start"></ion-icon>
+          <ion-label>Update Password</ion-label>
+          <ion-icon name="chevron-forward" slot="end"></ion-icon>
+        </ion-item>
+      </ion-list>
+    </section>
+
+    <!-- Activity Section -->
+    <section class="activity-section">
+      <h2 class="section-title">Activity</h2>
+      <ion-list lines="none">
+        <ion-item *ngIf="userPosts.length === 0" class="empty-state">
+          <ion-label>
+            <ion-icon name="document-text-outline"></ion-icon>
+            <p>You have not created or commented on any posts.</p>
           </ion-label>
         </ion-item>
-    </ion-list>
-    <ion-item-divider class="profile-component-title">Connected to:</ion-item-divider>
-    <ion-list lines="none">
-      <ion-list lines="none">
-        <ion-item  *ngIf="friends.length == 0" class="toggle-text">
-          <ion-label>You are not connected to any fellow members.</ion-label>
-        </ion-item>  
-        <ion-item text-wrap *ngFor="let friend of friends" (click)="viewUser(friend.key)">
-          <ion-avatar slot="start">
-            <ion-img src="{{friend.img}}"></ion-img>
-          </ion-avatar>
-          <ion-label class="toggle-text">
-              <ion-label class="ion-no-padding">{{friend.username}}<br/>
-              {{friend.description}}</ion-label>
+
+        <ion-item *ngFor="let item of userPosts" class="activity-item">
+          <ion-icon name="create-outline" slot="start"></ion-icon>
+          <ion-label>
+            <p class="activity-text">
+              New post: <a [routerLink]="['/post', item.key]">"{{item.title}}"</a>
+            </p>
+            <p class="activity-date">{{item.date.toDate() | date:'mediumDate'}}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item *ngFor="let item of userReactions" class="activity-item">
+          <ion-icon name="heart-outline" slot="start"></ion-icon>
+          <ion-label>
+            <p class="activity-text">
+              Reacted on: <a [routerLink]="['/post', item.key]">"{{item.title}}"</a>
+            </p>
+            <p class="activity-date">{{item.date.toDate() | date:'mediumDate'}}</p>
           </ion-label>
         </ion-item>
       </ion-list>
-    </ion-list>
-    </div>
-</ion-row>
-<ion-row *ngIf="myProfile">
-  <div class="ion-padding save">
-    <ion-button color="danger" expand="block" (click)="deleteAccount()">Delete Account</ion-button>
+    </section>
+
+    <!-- Groups Section -->
+    <section class="groups-section">
+      <h2 class="section-title">Groups</h2>
+      <ion-list lines="none">
+        <ion-item *ngIf="groups.length === 0" class="empty-state">
+          <ion-label>
+            <ion-icon name="people-outline"></ion-icon>
+            <p>You have not joined any groups.</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item *ngFor="let group of groups" 
+                  button
+                  (click)="viewGroup(group.key)" 
+                  class="group-item">
+          <ion-avatar slot="start">
+            <img [src]="group.img" [alt]="group.name">
+          </ion-avatar>
+          <ion-label>
+            <h3>{{group.name}}</h3>
+            <p>{{group.description}}</p>
+          </ion-label>
+          <ion-icon name="chevron-forward" slot="end"></ion-icon>
+        </ion-item>
+      </ion-list>
+    </section>
+
+    <!-- Delete Account Button -->
+    <section class="danger-zone" *ngIf="myProfile">
+      <ion-button color="danger" 
+                  expand="block" 
+                  (click)="deleteAccount()"
+                  class="delete-account-button">
+        <ion-icon name="trash-outline" slot="start"></ion-icon>
+        Delete Account
+      </ion-button>
+    </section>
   </div>
-</ion-row>
-</div>
 </ion-content>

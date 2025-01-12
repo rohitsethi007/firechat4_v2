@@ -81,3 +81,260 @@ ion-list-header {
   line-height: 23px;
 }
 
+// Add this in your global styles or component styles
+:root {
+  --action-sheet-background: #ffffff;
+  --action-sheet-border-radius: 16px;
+  --button-height: 56px;
+}
+
+// Action Sheet Styles
+.action-sheet-button {
+  display: flex;
+  align-items: center;
+  height: var(--button-height);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ion-color-dark);
+  
+  ion-icon {
+    margin-right: 16px;
+    font-size: 20px;
+  }
+
+  &.danger {
+    color: var(--ion-color-danger);
+    
+    ion-icon {
+      color: var(--ion-color-danger);
+    }
+  }
+
+  &.active {
+    color: var(--ion-color-primary);
+    
+    ion-icon {
+      color: var(--ion-color-primary);
+    }
+  }
+}
+
+// Specific button styles
+.delete-button {
+  ion-icon {
+    color: var(--ion-color-danger);
+  }
+}
+
+.notification-button {
+  ion-icon {
+    color: var(--ion-color-primary);
+  }
+}
+
+.report-button {
+  ion-icon {
+    color: var(--ion-color-warning);
+  }
+}
+
+.cancel-button {
+  border-top: 1px solid var(--ion-color-light);
+  color: var(--ion-color-medium);
+  
+  ion-icon {
+    color: var(--ion-color-medium);
+  }
+}
+
+// Action Sheet Animation
+.post-options-action-sheet {
+  --height: auto;
+  
+  .action-sheet-wrapper {
+    position: fixed;
+    bottom: 0;
+    max-height: 70vh; // Maximum height of 70% of viewport
+    
+    .action-sheet-container {
+      border-radius: 16px 16px 0 0;
+      background: var(--action-sheet-background);
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
+      padding-bottom: env(safe-area-inset-bottom); // For iOS safe area
+
+      .action-sheet-group {
+        margin: 0;
+        border-radius: 16px 16px 0 0;
+        
+        .action-sheet-button {
+          padding: 16px;
+          height: 56px;
+          display: flex;
+          align-items: center;
+          font-size: 16px;
+          font-weight: 500;
+          color: var(--ion-color-dark);
+          
+          ion-icon {
+            margin-right: 16px;
+            font-size: 20px;
+          }
+
+          &.danger {
+            color: var(--ion-color-danger);
+          }
+        }
+
+        .action-sheet-selected {
+          background: var(--ion-color-light-shade);
+        }
+
+        .action-sheet-cancel {
+          border-top: 1px solid var(--ion-color-light);
+        }
+      }
+    }
+  }
+}
+// Global Form Styles
+ion-content {
+  --background: #f5f5f5;
+}
+
+// Common Form Container
+.validations-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+  
+  ion-list {
+    background: white;
+    padding: 0;
+  }
+}
+
+// Card Style Forms
+ion-card.form-card {
+  background: #ffffff;
+  border-radius: 16px;
+  margin: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  ion-card-header {
+    padding: 16px;
+    
+    ion-card-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    
+    ion-card-subtitle {
+      font-size: 14px;
+      color: var(--ion-color-medium);
+    }
+  }
+}
+
+// Common Input Styles
+ion-item {
+  --background: var(--ion-color-light);
+  --background-hover: var(--ion-color-light-shade);
+  --background-focused: var(--ion-color-light-shade);
+  --border-radius: 12px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --highlight-height: 0;
+  margin: 8px 0;
+  border-radius: 12px;
+
+  &.item-has-focus {
+    --background: var(--ion-color-light-shade);
+  }
+
+  ion-label {
+    --color: var(--ion-color-dark);
+    font-weight: 500;
+  }
+
+  ion-input, ion-textarea, ion-select {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    font-size: 15px;
+    --placeholder-color: var(--ion-color-medium);
+    --placeholder-opacity: 0.7;
+  }
+
+  ion-textarea {
+    min-height: 100px;
+  }
+}
+
+// Form Groups
+.form-group {
+  margin-bottom: 16px;
+  
+  ion-label {
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--ion-color-dark);
+  }
+}
+
+// Error Messages
+.error-message {
+  color: var(--ion-color-danger);
+  font-size: 12px;
+  margin: 4px 16px;
+  display: flex;
+  align-items: center;
+
+  ion-icon {
+    margin-right: 4px;
+    font-size: 16px;
+  }
+}
+
+// Form Buttons
+.form-buttons {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  justify-content: flex-end;
+
+  ion-button {
+    --border-radius: 12px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    --padding-start: 24px;
+    --padding-end: 24px;
+    font-weight: 500;
+  }
+}
+
+// Toggle Items
+ion-item.toggle-item {
+  --background: transparent;
+  --border-style: none;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+
+  ion-toggle {
+    padding-right: 0;
+  }
+}
+
+// Select Items
+ion-select {
+  width: 100%;
+  max-width: 100%;
+  --padding-start: 0;
+}
+
+// Checkbox Items
+ion-checkbox {
+  --size: 20px;
+  --checkbox-background-checked: var(--ion-color-primary);
+  margin-right: 12px;
+}
+

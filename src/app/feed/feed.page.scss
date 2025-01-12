@@ -53,7 +53,7 @@ ion-header {
 
           ion-icon {
             font-size: 22px;
-            color: #666;
+            color: var(--ion-color-primary);
           }
 
           ion-badge {
@@ -81,7 +81,7 @@ ion-header {
   ion-card {
     margin: 0;
     border-radius: 12px;
-    background: var(--ion-color-light);
+    background: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
     ion-card-header {
@@ -93,8 +93,8 @@ ion-header {
         gap: 8px;
         
         .addedByImg {
-          width: 36px;
-          height: 36px;
+          width: 50px;
+          height: 50px;
           border-radius: 50%;
           object-fit: cover;
         }
@@ -130,6 +130,11 @@ ion-header {
             color: var(--ion-color-medium);
             font-size: 18px;
           }
+          ion-icon[name="ellipsis-vertical"] {
+            margin-right: -8px; // Negative margin to push it further right
+            font-size: 18px;
+          }
+          
         }
       }
     }
@@ -432,3 +437,113 @@ ion-card-content {
     }
   }
 }
+
+ion-card-content.pollmessage {
+  background-color: rgba(var(--ion-color-primary-rgb), 0.03);
+  padding: 16px !important;
+
+  b {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 16px;
+    color: var(--ion-color-dark);
+    line-height: 1.4;
+  }
+
+  ion-row {
+    margin: 0 !important;
+    padding: 0 !important;
+    
+    ion-col {
+      padding: 0 !important;
+      
+      div {
+        background: rgba(var(--ion-color-primary-rgb), 0.03);
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin: 2px 0;
+        display: flex;
+        align-items: center;
+        border: 1px solid rgba(var(--ion-color-primary-rgb), 0.08);
+        transition: all 0.2s ease;
+
+        .poll-circle {
+          width: 12px;
+          height: 12px;
+          min-width: 12px;
+          border-radius: 50%;
+          margin-right: 12px;
+        }
+
+        span:not(.poll-circle) {
+          font-size: 14px;
+          color: var(--ion-color-dark);
+        }
+
+        &:hover {
+          background: rgba(var(--ion-color-primary-rgb), 0.08);
+          transform: translateX(2px);
+        }
+      }
+    }
+  }
+
+  // Modern circle colors
+  .circle-0 { background: #FF6B6B; }
+  .circle-1 { background: #4ECDC4; }
+  .circle-2 { background: #45B7D1; }
+  .circle-3 { background: #96CEB4; }
+  .circle-4 { background: #FFD93D; }
+  .circle-5 { background: #FF8066; }
+
+  .tags-wrapper {
+    margin: 12px 0 8px;
+
+    ion-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      
+      .tags {
+        margin: 0;
+        
+        .item-rating {
+          background: rgba(var(--ion-color-primary-rgb), 0.08);
+          color: var(--ion-color-primary);
+          padding: 4px 10px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  .info-row {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+
+    ion-col {
+      padding: 0;
+    }
+
+    .text {
+      color: var(--ion-color-medium);
+      font-size: 12px;
+    }
+  }
+}
+
+// Optional: if you want to style the containing card
+ion-card {
+  &:has(ion-card-content.pollmessage) {
+    margin: 8px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border-left: 3px solid var(--ion-color-primary);
+  }
+}
+
+
+

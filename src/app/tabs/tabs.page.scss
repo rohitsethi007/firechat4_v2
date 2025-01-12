@@ -1,13 +1,12 @@
-// In your tabs.page.scss
 .tabs {
   ion-tab-bar {
     --background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-top: none;
-    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
-    padding: 10px 10px 20px 10px;
-    height: 85px; // Adjusted for larger icons
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    padding: 5px 10px 10px 10px; // Reduced padding
+    height: 60px; // Reduced height from 85px
 
     ion-tab-button {
       --color: #b3b3b3;
@@ -18,32 +17,37 @@
       position: relative;
       
       ion-icon {
-        transition: all 0.3s ease;
-        font-size: 28px; // Adjusted for 'large' size
-        margin-bottom: 5px;
+        transition: all 0.2s ease; // Slightly faster animation
+        font-size: 22px; // Reduced from 28px
+        margin-bottom: 1px; // Reduced from 5px
       }
 
       ion-label {
-        font-size: 12px;
+        font-size: 11px; // Reduced from 12px
         font-weight: 500;
-        margin-top: 4px;
+        margin-top: 2px; // Reduced from 4px
         transition: all 0.2s ease;
       }
 
       ion-badge {
         position: absolute;
-        top: 5px;
-        right: calc(50% - 15px);
-        padding: 4px 8px;
-        border-radius: 10px;
-        font-size: 11px;
+        top: 2px; // Reduced from 5px
+        right: calc(50% - 12px); // Adjusted for smaller size
+        padding: 3px 6px; // Reduced padding
+        border-radius: 8px;
+        font-size: 10px;
+        min-width: 16px;
+        min-height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       // Selected state
       &.tab-selected {
         ion-icon {
-          transform: translateY(-4px);
-          filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+          transform: translateY(-2px); // Reduced from -4px
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)); // Reduced shadow
         }
 
         ion-label {
@@ -55,36 +59,37 @@
       // Hover effects
       &:hover {
         ion-icon {
-          transform: translateY(-2px);
+          transform: translateY(-1px); // Reduced from -2px
         }
       }
     }
   }
 }
 
-// Add these animations
+// Updated animation
 @keyframes scaleIn {
   0% {
-    transform: scale(0.8) translateY(0);
+    transform: scale(0.9) translateY(0);
     opacity: 0;
   }
   100% {
-    transform: scale(1) translateY(-4px);
+    transform: scale(1) translateY(-2px);
     opacity: 1;
   }
 }
 
-// Optional: Add these to your :root variables
+// Updated root variables
 :root {
   --ion-tab-bar-background: rgba(255, 255, 255, 0.95);
   --ion-tab-bar-color: #b3b3b3;
   --ion-tab-bar-color-selected: var(--ion-color-primary);
   --ion-tab-indicator-height: 2px;
 }
-// Alternative 2: Background highlight
+
+// Updated background highlight
 .tabs ion-tab-bar ion-tab-button {
   &.tab-selected {
-    background: rgba(var(--ion-color-primary-rgb), 0.1);
-    border-radius: 16px;
+    background: rgba(var(--ion-color-primary-rgb), 0.08); // Reduced opacity
+    border-radius: 12px; // Reduced from 16px
   }
 }
