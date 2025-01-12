@@ -1,0 +1,31 @@
+.emoji-picker-horizontal {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 8px;
+    gap: 4px;
+    background: #ffffff;
+    border-radius: 12px;
+    min-width: 200px;
+    justify-content: center;
+  
+    .emoji-button {
+      --padding-start: 8px;
+      --padding-end: 8px;
+      --padding-top: 8px;
+      --padding-bottom: 8px;
+      margin: 0;
+      height: 40px;
+      width: 40px;
+  
+      ion-icon {
+        font-size: 24px;
+        transition: transform 0.2s ease;
+      }
+  
+      &:hover ion-icon {
+        transform: scale(1.2);
+      }
+    }
+  }
+  

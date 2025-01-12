@@ -1,0 +1,10 @@
+<div class="emoji-picker-horizontal">
+  <ion-button 
+    *ngFor="let emoji of getEmojis()" 
+    (click)="selectEmoji(emoji)" 
+    fill="clear"
+    size="small"
+    class="emoji-button">
+    <ion-icon [src]="emoji.icon"></ion-icon>
+  </ion-button>
+</div>
