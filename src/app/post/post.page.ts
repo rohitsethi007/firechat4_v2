@@ -632,7 +632,7 @@ viewGroup(groupId) {
       header: 'Post options',
       backdropDismiss: true,
       mode: 'md',
-      cssClass: 'GroupAction',
+      cssClass: 'post-options-action-sheet',
       buttons: this.createPostOptionButtons(post)
     }).then(r => r.present());
   }
@@ -674,19 +674,27 @@ viewGroup(groupId) {
     this.alertCtrl.create({
       header: 'Delete Post',
       message: 'Are you sure you want to delete this post?',
+      cssClass: 'custom-alert',
       buttons: [
         {
-          text: 'Cancel'
+          text: 'Cancel',
+          cssClass: 'alert-button-cancel',
+          role: 'cancel'
         },
         {
-          text: 'Yes',
-          handler: data => {
-             this.firestore.doc('posts/' + post.key).delete();
+          text: 'Delete',
+          cssClass: 'alert-button-delete',
+          handler: async () => {
+            await this.firestore.doc('posts/' + post.key).delete();
+            // Navigate to tab1
+            //TODO
+            this.router.navigateByUrl('/tabs/tab1');
           }
         }
       ]
     }).then(r => r.present());
   }
+  
 
   createPostOptionButtons(post) {
     let buttons = [];

@@ -338,3 +338,90 @@ ion-checkbox {
   margin-right: 12px;
 }
 
+.custom-alert {
+  --backdrop-opacity: 0.6;
+  --background: #ffffff;
+
+  .alert-wrapper {
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .alert-head {
+    padding-top: 20px;
+    padding-bottom: 10px;
+    
+    .alert-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+  }
+
+  .alert-message {
+    color: var(--ion-color-medium);
+    font-size: 14px;
+    padding-bottom: 20px;
+  }
+
+  .alert-button-group {
+    padding: 8px;
+    
+    button {
+      border-radius: 8px;
+      margin: 0 4px;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .alert-button-cancel {
+      color: var(--ion-color-medium);
+      background: rgba(var(--ion-color-medium-rgb), 0.1);
+      
+      &:hover {
+        background: rgba(var(--ion-color-medium-rgb), 0.2);
+      }
+    }
+
+    .alert-button-delete {
+      color: #ffffff;
+      background: var(--ion-color-primary);
+      
+      &:hover {
+        background: var(--ion-color-primary-shade);
+      }
+    }
+  }
+}
+
+.custom-toast {
+  --background: var(--ion-color-primary);
+  --box-shadow: 0 3px 12px rgba(var(--ion-color-primary-rgb), 0.2);
+  --border-radius: 12px;
+  --min-height: 48px;
+  --color: #ffffff;
+  
+  font-weight: 500;
+  font-size: 14px;
+  
+  &::part(message) {
+    padding: 12px 16px;
+  }
+
+  &.ios {
+    --width: 90%;
+    max-width: 340px;
+    margin-top: env(safe-area-inset-top);
+  }
+
+  .toast-wrapper {
+    padding: 0;
+  }
+
+  &.toast-translucent.ios {
+    background: rgba(var(--ion-color-primary-rgb), 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}

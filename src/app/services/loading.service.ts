@@ -35,10 +35,11 @@ export class LoadingService {
       duration: 3000,
       position: 'top',
       animated: true,
-      color: 'secondary',
-      cssClass: 'toastCss',
+      color: 'primary', // changed from secondary to primary
+      cssClass: 'custom-toast',
       mode: 'ios'
     });
     toast.present();
   }
+  
 }

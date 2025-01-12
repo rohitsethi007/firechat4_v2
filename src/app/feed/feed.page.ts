@@ -456,12 +456,16 @@ export class FeedPage implements OnInit {
     this.alertCtrl.create({
       header: 'Delete Post',
       message: 'Are you sure you want to delete this post?',
+      cssClass: 'custom-alert',
       buttons: [
         {
-          text: 'Cancel'
+          text: 'Cancel',
+          cssClass: 'alert-button-cancel',
+          role: 'cancel'
         },
         {
-          text: 'Yes',
+          text: 'Delete',
+          cssClass: 'alert-button-delete',
           handler: data => {
              this.firestore.doc('posts/' + post.key).delete();
           }
@@ -469,6 +473,7 @@ export class FeedPage implements OnInit {
       ]
     }).then(r => r.present());
   }
+
 
   createPostOptionButtons(post) {
     const buttons = [];

@@ -109,13 +109,13 @@
             <a class="show-more"  *ngIf="item.data.message.length > 100" (click)="item.showMore = !item.showMore">...Show more</a><br/></ion-label>
           <ion-label (click)="viewPost(item)"  *ngIf="item.showMore"><b>{{item.title}}.</b> {{item.data.message}} <br/></ion-label>
         </div>
-          <div class="tags-wrapper">
+          <!-- <div class="tags-wrapper">
           <ion-row>
             <div class="tags" *ngFor="let tag of item.postTags">
               <span (click)="searchTag(tag, item)" class="item-rating">#{{tag.val}}</span>
             </div>
           </ion-row>
-          </div>
+          </div> -->
           <div class="reactions">
           <ion-row >
             <ion-col>
@@ -164,13 +164,13 @@
               {{item.data.link}}<br/>
               {{item.data.message}}
             </div>
-          <div class="tags-wrapper">
+          <!-- <div class="tags-wrapper">
             <ion-row>
               <div class="tags" *ngFor="let tag of item.postTags">
                 <span class="item-rating">#{{tag.val}}</span>
               </div>
             </ion-row>
-            </div>
+            </div> -->
           <div class="reactions">
             <ion-row>
               <ion-col size=3>
@@ -220,13 +220,13 @@
               </ion-col>
             </ion-row>
           </div>
-          <div class="tags-wrapper">
+          <!-- <div class="tags-wrapper">
             <ion-row>
               <div class="tags" *ngFor="let tag of item.postTags">
                 <span class="item-rating">#{{tag.val}}</span>
               </div>
             </ion-row>
-          </div>
+          </div> -->
         
           <ion-row class="info-row">
             <ion-col size="8">
@@ -274,13 +274,13 @@
           <a href="{{item.data.metasite}}">{{item.data.metasite}}</a>
           </div>
         </div>
-        <div class="tags-wrapper">
+        <!-- <div class="tags-wrapper">
           <ion-row>
             <div class="tags" *ngFor="let tag of item.postTags">
               <span class="item-rating">#{{tag.val}}</span>
             </div>
           </ion-row>
-          </div>
+          </div> -->
           <div class="reactions">
              <ion-row>
               <ion-col size=3>
@@ -357,13 +357,13 @@
              <span (click)="viewPost(item)"><b>{{item.title}}.</b> {{trimString(item.data.message, 100)}}</span> 
           </ion-label>
          </div>
-           <div class="tags-wrapper">
+           <!-- <div class="tags-wrapper">
            <ion-row>
              <div class="tags" *ngFor="let tag of item.postTags">
                <span class="item-rating">#{{tag.val}}</span>
              </div>
            </ion-row>
-           </div>
+           </div> -->
          </ion-card-content>
  
          <ion-card-content class="message" *ngIf="item.type === 'event'">
@@ -383,13 +383,13 @@
            <div (click)="viewPost(item)">
            <b>{{item.title}}.</b><br/>
          </div>
-         <div class="tags-wrapper">
+         <!-- <div class="tags-wrapper">
            <ion-row>
              <div class="tags" *ngFor="let tag of item.postTags">
                <span class="item-rating">#{{tag.val}}</span>
              </div>
            </ion-row>
-           </div>
+           </div> -->
          </ion-card-content>
          
          <ion-card-content class="message" *ngIf="item.type === 'resource'">
@@ -399,13 +399,13 @@
            {{item.data.metatitle}}<br/>
            </div>
          </div>
-         <div class="tags-wrapper">
+         <!-- <div class="tags-wrapper">
            <ion-row>
              <div class="tags" *ngFor="let tag of item.postTags">
                <span class="item-rating">#{{tag.val}}</span>
              </div>
            </ion-row>
-           </div>
+           </div> -->
          </ion-card-content>
          <!-- Dont touch the tags below this line-->
        </ion-card>
