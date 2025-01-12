@@ -1,16 +1,90 @@
+// In your tabs.page.scss
 .tabs {
-  border-top: black;
-}
-        .filters-btn {
-            --padding-start: 0px;
-            --padding-end: 0px;
-    
-            margin: 0px;
-            font-size: 18px;
-            // override Ionic fixed height
-            height: initial;
-          }
+  ion-tab-bar {
+    --background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: none;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
+    padding: 10px 10px 20px 10px;
+    height: 85px; // Adjusted for larger icons
 
-          ion-tab-button {
-            --color-selected: var(--ion-color-secondary);
-          }
+    ion-tab-button {
+      --color: #b3b3b3;
+      --color-selected: var(--ion-color-primary);
+      --background: transparent;
+      --background-focused: transparent;
+      --ripple-color: transparent;
+      position: relative;
+      
+      ion-icon {
+        transition: all 0.3s ease;
+        font-size: 28px; // Adjusted for 'large' size
+        margin-bottom: 5px;
+      }
+
+      ion-label {
+        font-size: 12px;
+        font-weight: 500;
+        margin-top: 4px;
+        transition: all 0.2s ease;
+      }
+
+      ion-badge {
+        position: absolute;
+        top: 5px;
+        right: calc(50% - 15px);
+        padding: 4px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+      }
+
+      // Selected state
+      &.tab-selected {
+        ion-icon {
+          transform: translateY(-4px);
+          filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        ion-label {
+          font-weight: 600;
+          color: var(--ion-color-primary);
+        }
+      }
+
+      // Hover effects
+      &:hover {
+        ion-icon {
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+}
+
+// Add these animations
+@keyframes scaleIn {
+  0% {
+    transform: scale(0.8) translateY(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(-4px);
+    opacity: 1;
+  }
+}
+
+// Optional: Add these to your :root variables
+:root {
+  --ion-tab-bar-background: rgba(255, 255, 255, 0.95);
+  --ion-tab-bar-color: #b3b3b3;
+  --ion-tab-bar-color-selected: var(--ion-color-primary);
+  --ion-tab-indicator-height: 2px;
+}
+// Alternative 2: Background highlight
+.tabs ion-tab-bar ion-tab-button {
+  &.tab-selected {
+    background: rgba(var(--ion-color-primary-rgb), 0.1);
+    border-radius: 16px;
+  }
+}

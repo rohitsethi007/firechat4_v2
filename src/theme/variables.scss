@@ -1,113 +1,115 @@
-// Ionic Variables and Theming. For more info, please see:
-// http://ionicframework.com/docs/theming/
-// Ionic Variables and Theming. For more info, please see:
-// http://ionicframework.com/docs/theming/
-
-/** Ionic CSS Variables **/
 :root {
+  // Your existing color variables remain the same
   /** primary **/
   --ion-color-primary: #1C1C1C;
-  --ion-color-primary-rgb: 28,28,28;
-  --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-contrast-rgb: 255,255,255;
-  --ion-color-primary-shade: #191919; 
-  --ion-color-primary-tint: #333333;
+  // ... other existing color variables ...
 
-  /** secondary **/
-  --ion-color-secondary: #00a846;
-  --ion-color-secondary-rgb: 255,0,98;
-  --ion-color-secondary-contrast: #ffffff;
-  --ion-color-secondary-contrast-rgb: 255,255,255;
-  --ion-color-secondary-shade: #00d257;
-  --ion-color-secondary-tint: #00d257;
+  // Add new modern UI variables
+  // Shadows
+  --box-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --box-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --box-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
 
-  /** tertiary **/
-  --ion-color-tertiary: white;
-  --ion-color-tertiary-rgb: 0,175,255;
-  --ion-color-tertiary-contrast: #000000;
-  --ion-color-tertiary-contrast-rgb: 0,0,0;
-  --ion-color-tertiary-shade: #009ae0;
-  --ion-color-tertiary-tint: #1ab7ff;
+  // Header styling
+  --header-height: 60px;
+  --header-background: #ffffff;
+  --header-border: none;
+  --header-box-shadow: var(--box-shadow-sm);
 
-  /** success **/
-  --ion-color-success: #20dc6a;
-  --ion-color-success-rgb: 32,220,106;
-  --ion-color-success-contrast: #000000;
-  --ion-color-success-contrast-rgb: 0,0,0;
-  --ion-color-success-shade: #1cc25d;
-  --ion-color-success-tint: #36e079;
+  // Tab bar styling
+  --tab-bar-background: #ffffff;
+  --tab-bar-border: none;
+  --tab-bar-box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
+  --tab-bar-padding: 10px 0;
+  --tab-button-color: var(--ion-color-medium);
+  --tab-button-color-selected: var(--ion-color-primary);
+  --tab-indicator-height: 3px;
+  --tab-indicator-color: var(--ion-color-primary);
 
-  /** warning **/
-  --ion-color-warning: #ffed11;
-  --ion-color-warning-rgb: 255,237,17;
-  --ion-color-warning-contrast: #000000;
-  --ion-color-warning-contrast-rgb: 0,0,0;
-  --ion-color-warning-shade: #e0d10f;
-  --ion-color-warning-tint: #ffef29;
+  // Animations
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s ease;
 
-  /** danger **/
-  --ion-color-danger: #f4344f;
-  --ion-color-danger-rgb: 244,52,79;
-  --ion-color-danger-contrast: #ffffff;
-  --ion-color-danger-contrast-rgb: 255,255,255;
-  --ion-color-danger-shade: #d72e46;
-  --ion-color-danger-tint: #f54861;
-
-  /** lightest **/
-  --ion-color-lightest: #FFFFFF;
-  --ion-color-lightest-rgb: 255,255,255;
-
-  /** light **/
-  --ion-color-light: #f4f5f8;
-  --ion-color-light-rgb: 244,244,244;
-  --ion-color-light-contrast: #000000;
-  --ion-color-light-contrast-rgb: 0,0,0;
-  --ion-color-light-shade: #d7d8da;
-  --ion-color-light-shade-rgb: 215,216,218;
-  --ion-color-light-tint: #f5f6f9;
-  --ion-color-light-tint-rgb: 245,246,249;
-
-  /** medium **/
-  --ion-color-medium: #989aa2;
-  --ion-color-medium-rgb: 152,154,162;
-  --ion-color-medium-contrast: #ffffff;
-  --ion-color-medium-contrast-rgb: 255,255,255;
-  --ion-color-medium-shade: #86888f;
-  --ion-color-medium-shade-rgb: 134,136,143;
-  --ion-color-medium-tint: #a2a4ab;
-  --ion-color-medium-tint-rgb: 162,164,171;
-
-  /** dark **/
-  --ion-color-dark: #222428;
-  --ion-color-dark-rgb: 34,34,34;
-  --ion-color-dark-contrast: #ffffff;
-  --ion-color-dark-contrast-rgb: 255,255,255;
-  --ion-color-dark-shade: #1e2023;
-  --ion-color-dark-shade-rgb: 30,32,35;
-  --ion-color-dark-tint: #383a3e;
-  --ion-color-dark-tint-rgb: 56,58,62;
-
-  /** darkest **/
-  --ion-color-darkest: #000000;
-  --ion-color-darkest-rgb: 0,0,0;
+  // Border radius
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 20px;
 }
 
-:root {
-  /* Set the font family of the entire app */
-  --ion-font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
-  --app-background: white;
-  --ion-text-color: black;
-  --color: black;
-  
-  // --app-background-shade: var(--ion-background-color-step-50, #F2F2F2);
-  --app-background-alt: var(--ion-color-primary);
-  --app-background-alt-shade: var(--ion-color-primary-shade);
+// Add modern tab bar styles
+ion-tab-bar {
+  --background: var(--tab-bar-background);
+  --border: var(--tab-bar-border);
+  box-shadow: var(--tab-bar-box-shadow);
+  padding: var(--tab-bar-padding);
 
-  --app-narrow-margin: 12px;
-  --app-fair-margin: 16px;
-  --app-broad-margin: 20px;
+  ion-tab-button {
+    --color: var(--tab-button-color);
+    --color-selected: var(--tab-button-color-selected);
+    position: relative;
+    transition: var(--transition-fast);
 
-  --app-narrow-radius: 4px;
-  --app-fair-radius: 8px;
-  --app-broad-radius: 12px;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: var(--tab-indicator-height);
+      background: var(--tab-indicator-color);
+      transition: width var(--transition-fast);
+    }
+
+    &.tab-selected {
+      &::before {
+        width: 30px;
+      }
+
+      ion-icon {
+        transform: scale(1.1);
+      }
+    }
+
+    ion-icon {
+      transition: transform var(--transition-fast);
+    }
+  }
+}
+
+// Add modern header styles
+ion-header {
+  ion-toolbar {
+    --background: var(--header-background);
+    --border-width: 0;
+    --box-shadow: var(--header-box-shadow);
+    min-height: var(--header-height);
+
+    ion-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+
+    ion-button {
+      --background: transparent;
+      --box-shadow: none;
+      transition: var(--transition-fast);
+    }
+  }
+}
+
+// Add modern content styles
+ion-content {
+  --background: #f8f9fa;
+}
+
+// Modern card styles
+ion-card {
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-sm);
+  transition: var(--transition-medium);
+
+  &:active {
+    transform: scale(0.98);
+  }
 }
