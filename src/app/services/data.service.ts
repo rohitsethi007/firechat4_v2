@@ -175,24 +175,40 @@ export class DataService {
   }
 
   addPost(post): Promise<any> {
-    return new Promise(resolve => {
-     this.firestore.collection('posts').add(post).then(success => {
-        let postId = success.id;
-        if (post.postMediaImgs && post.postMediaImgs.length > 0) {
-          this.imageProvider.uploadPostPhotos(postId, post.postMediaImgs).then((postMediaUrls) => {
-            post.postMediaImgs = [];
-            if (postMediaUrls) {
-              post.postMediaImgs = postMediaUrls;
-              this.firestore.doc('posts/' + postId).update({
-                postMediaImgs: postMediaUrls
+    return new Promise((resolve, reject) => {
+      this.firestore.collection('posts').add(post)
+        .then(success => {
+          let postId = success.id;
+          
+          // If there are images to upload
+          if (post.postMediaImgs && post.postMediaImgs.length > 0) {
+            this.imageProvider.uploadPostPhotos(postId, post.postMediaImgs)
+              .then((postMediaUrls) => {
+                post.postMediaImgs = [];
+                if (postMediaUrls) {
+                  post.postMediaImgs = postMediaUrls;
+                  return this.firestore.doc('posts/' + postId).update({
+                    postMediaImgs: postMediaUrls
+                  });
+                }
               })
-            }
+              .then(() => {
+                resolve(success);
+              })
+              .catch(error => {
+                reject(error);
+              });
+          } else {
+            // Important: Resolve immediately if no images to upload
             resolve(success);
-            });
           }
+        })
+        .catch(error => {
+          reject(error);
+        });
     });
-  });
   }
+  
 
   addEvent(event) {
     return this.firestore.collection('events').add(event);

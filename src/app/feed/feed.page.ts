@@ -128,13 +128,18 @@ export class FeedPage implements OnInit {
   ngOnInit() {
   }
 
-  ionViewDidEnter() {
-    // Replace the firebase.auth() call with AngularFireAuth
+
+
+  ionViewWillEnter() {
+    console.log('Entering feed view');
+    
     this.afAuth.currentUser.then(user => {
       this.loggedInUserId = user?.uid;
-      // Get Posts
+      console.log('Current user:', this.loggedInUserId);
+  
+      // Get Posts with snapshot changes to get real-time updates
       this.dataProvider.getCurrentUser().then((u) => {
-        u.get().subscribe((user) => {
+        u.get({ source: 'server' }).subscribe((user) => { // Force server fetch
           const userData = user.data() as UserDocument;
           if (userData) {
             this.userReactions = userData.userReactions || [];
@@ -152,11 +157,11 @@ export class FeedPage implements OnInit {
     .where('groupId', 'in', this.loggedInUser.groups)
     .orderBy('date', 'desc')
     .limit(5);
-    this.firstDataSet.get().then((po: any) => {
-    this.lastDataSet = po.docs[po.docs.length - 1];
-    this.posts = [];
-    this.loadEachPostData(po);
-});
+      this.firstDataSet.get().then((po: any) => {
+      this.lastDataSet = po.docs[po.docs.length - 1];
+      this.posts = [];
+      this.loadEachPostData(po);
+    });
   }
   addOrUpdatePost(post) {
     if (!this.posts) {

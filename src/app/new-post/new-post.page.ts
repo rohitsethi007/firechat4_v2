@@ -188,41 +188,42 @@ export class NewPostPage implements OnInit {
 
   // Add post to database.
       this.dataProvider.addPost(this.post).then((success) => {
-      const postId = success.id;
-      this.postId = postId;
+        const postId = success.id;
+        this.postId = postId;
+        console.log('step 1')
+        // Update group data on the database.
+        if (this.group.posts === undefined) {
+          this.group.posts = [];
+        }
+        this.group.posts.push(this.postId);
+        this.dataProvider.getGroup(this.groupId).update({
+          posts: this.group.posts
+        });
 
-      // Update group data on the database.
-      if (this.group.posts === undefined) {
-        this.group.posts = [];
-      }
-      this.group.posts.push(this.postId);
-      this.dataProvider.getGroup(this.groupId).update({
-        posts: this.group.posts
-      });
+        // Update user notifications.
+        if (!this.userNotifications) {
+          this.userNotifications = [this.postId];
+        } else {
+          this.userNotifications.push(this.postId);
+        }
+        this.dataProvider.getUser(this.addedByUser.addedByKey).update({
+          userNotifications: this.userNotifications
+        });
 
-      // Update user notifications.
-      if (!this.userNotifications) {
-        this.userNotifications = [this.postId];
-      } else {
-        this.userNotifications.push(this.postId);
-      }
-      this.dataProvider.getUser(this.addedByUser.addedByKey).update({
-        userNotifications: this.userNotifications
-      });
-
-      // Update user activity.
-      if (!this.userPosts) {
-        this.userPosts = [this.postId];
-      } else {
-        this.userPosts.push(this.postId);
-      }
-      this.dataProvider.getUser(this.addedByUser.addedByKey).update({
-        userPosts: this.userPosts
-      });
+        // Update user activity.
+        if (!this.userPosts) {
+          this.userPosts = [this.postId];
+        } else {
+          this.userPosts.push(this.postId);
+        }
+        this.dataProvider.getUser(this.addedByUser.addedByKey).update({
+          userPosts: this.userPosts
+        });
     }).then(() => {
-      // Back.
+      console.log('submit successfull')
       this.loadingProvider.hide();
-      this.router.navigateByUrl('app/tabs/tab1');
+
+      this.router.navigateByUrl('/app/tabs/tab1');
     });;
 
     
