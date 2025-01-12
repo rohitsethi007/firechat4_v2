@@ -242,7 +242,10 @@ export class DataService {
   }
 
   updatePostReactions(postKey, reaction) {
-    return this.firestore.collection('posts').doc(postKey).collection('reactions').doc(reaction.key).update(reaction).then(() => {
+    console.info('reaction', reaction)
+    console.info('postkey', postKey)
+    return this.firestore.collection('posts').doc(postKey).collection('reactions').add(reaction).then(() => {
+      console.info('reaction added')
       const increment = firebase.default.firestore.FieldValue.increment(1);
       this.firestore.collection('posts').doc(postKey).update({
         totalReactionCount : increment

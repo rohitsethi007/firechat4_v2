@@ -51,6 +51,17 @@ const routes: Routes = [
           }
         ]
        },
+       {
+        path: 'tab5',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../profile/profile.module').then(m => m.ProfilePageModule),
+              canActivate: [AuthGuardService]
+          }
+        ]
+       },
       {
         path: 'tab6',
         children: [

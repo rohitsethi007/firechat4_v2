@@ -313,23 +313,28 @@ export class FeedPage implements OnInit {
 
   addPostReaction(post, reactionType) {
     // first find the post in the collection
+
     const postIndex = this.posts.findIndex(el => el.key ===  post.key);
+    console.info('postIndex', postIndex);
     const p = this.posts[postIndex];
 
-    const r = p.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId());
-
+    const r = p.reactions.find(el => el.addedByUser.addedByKey === this.loggedInUserId && el.reactionType === reactionType);
+    console.info('r is', r)
     if (!r) {
+      console.info('im here')
       const react = {
+        key: '',
         dateCreated: new Date(),
         addedByUser: {
-                      addedByKey: this.dataProvider.getCurrentUserId(),
+                      addedByKey: this.loggedInUserId,
                       addedByUsername: this.loggedInUser.username,
                       addedByImg: this.loggedInUser.img
                     },
-        reactionType: [reactionType]
+        reactionType: reactionType
       };
-
-      this.dataProvider.addPostReactions(post.key, react).then(() => {
+      console.info('post.key', post.key)
+      this.dataProvider.updatePostReactions(post.key, react).then(() => {
+        this.posts[postIndex].showSmiley = true
         // Update user notifications.
         if (!this.userNotifications.some(p => p !== this.postId)) {
           this.userNotifications.push(this.postId);
@@ -359,10 +364,10 @@ export class FeedPage implements OnInit {
   }
 
   removePostReaction(post, reactionType) {
+    console.info('removePostReaction', post, reactionType);
     // first find the post in the collection
     const postIndex = this.posts.findIndex(el => el.key ===  post.key);
     const p = this.posts[postIndex];
-
     const found = false;
     if (p.reactions !== undefined) {
       const values = Object.keys(p.reactions).map( function(e) {
@@ -370,25 +375,15 @@ export class FeedPage implements OnInit {
       });
 
       const reaction = p.reactions.find(
-        el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId());
+        el => el.addedByUser.addedByKey === this.loggedInUserId);
 
-      if (reaction.reactionType.length === 1 
-        && reaction.reactionType.some(e => e === reactionType)) {
+      if (reaction.reactionType === reactionType) {
+          console.info('here!!', post.key, reaction)
         this.dataProvider.removePostReaction(post.key, reaction.key);
-      } else {
-        // reaction.reactionType = reaction.reactionType.filter(x => x !== reactionType);
-        // this.dataProvider.updatePostReactions(post.key, reaction, true);
-        this.firestore.collection('posts').doc(post.key).collection('reactions').doc(reaction.key).update({
-          reactionType: firebase.default.firestore.FieldValue.arrayRemove(reactionType)
-      }).then(() => {
-        const increment = firebase.default.firestore.FieldValue.increment(-1);
-        this.firestore.collection('posts').doc(post.key).update({
-          totalReactionCount : increment
-        });
-      });
       }
     }
   }
+  
 
   async showReactionsList(post) {
     if (post.totalReactionCount === 0) {
@@ -589,8 +584,13 @@ export class FeedPage implements OnInit {
         if (reactions.length > 0) {
         let foundSmiley = false;
         if (post.reactions.length > 0) {
-             const r = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId());
-             foundSmiley = r.reactionType.some(r => r === 'Thanks');
+            foundSmiley = post.reactions.some(el => {
+              const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
+              const typeMatch = Array.isArray(el.reactionType) 
+                ? el.reactionType.includes('Thanks')
+                : el.reactionType === 'Thanks';
+              return keyMatch && typeMatch;
+            });
           }
         if (foundSmiley) {
             post.showSmiley = true;
@@ -599,9 +599,14 @@ export class FeedPage implements OnInit {
           }
           // Check for Hugs
         let foundHug = false;
-        if (post.reactions !== undefined) {
-            const r = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId());
-            foundHug = r.reactionType.some(r => r === 'Hug');
+        if (post.reactions.length > 0) {
+          foundHug = post.reactions.some(el => {
+            const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
+            const typeMatch = Array.isArray(el.reactionType) 
+              ? el.reactionType.includes('Hug')
+              : el.reactionType === 'Hug';
+            return keyMatch && typeMatch;
+          });
           }
         if (foundHug) {
             post.showHug = true;
@@ -612,8 +617,13 @@ export class FeedPage implements OnInit {
         // Check for Checkin
         let foundCheckin = false;
         if (post.reactions !== undefined) {
-          const r = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId());
-          foundCheckin = r.reactionType.some(r => r === 'Checkin');
+            foundCheckin = post.reactions.some(el => {
+              const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
+              const typeMatch = Array.isArray(el.reactionType) 
+                ? el.reactionType.includes('Checkin')
+                : el.reactionType === 'Checkin';
+              return keyMatch && typeMatch;
+            });
           }
         if (foundCheckin) {
             post.showCheckin = true;
@@ -624,8 +634,13 @@ export class FeedPage implements OnInit {
         // Check for Bookmark
         let foundBookmark = false;
         if (post.reactions !== undefined) {
-          const r = post.reactions.find(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId())
-          foundBookmark = r.reactionType.some(r => r === 'Bookmark');
+            foundBookmark = post.reactions.some(el => {
+              const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
+              const typeMatch = Array.isArray(el.reactionType) 
+                ? el.reactionType.includes('Bookmark')
+                : el.reactionType === 'Bookmark';
+              return keyMatch && typeMatch;
+            });
           }
         if (foundBookmark) {
             post.showBookmark = true;

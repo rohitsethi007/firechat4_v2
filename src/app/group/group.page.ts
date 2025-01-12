@@ -1108,7 +1108,7 @@ export class GroupPage implements OnInit {
                       addedByUsername: this.loggedInUser.username,
                       addedByImg: this.loggedInUser.img
                     },
-        reactionType: [reactionType]
+        reactionType: reactionType
       };
 
       this.dataProvider.addPostReactions(post.key, react).then(() => {

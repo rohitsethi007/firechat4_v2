@@ -58,9 +58,12 @@ export class ProfilePage implements OnInit {
     public modalCtrl: ModalController,
     private routerOutlet: IonRouterOutlet
   ) {
-    this.userId = this.route.snapshot.params.id;
-    this.loggedInUserId = this.dataProvider.getCurrentUserId();
+   
+    this.loggedInUserId = firebase.default.auth().currentUser.uid;
+    this.userId = this.loggedInUserId;//this.route.snapshot.params.id;
+    console.info('im here',this.loggedInUserId)
     if (this.userId === this.loggedInUserId) {
+      console.info('im here 2', this.loggedInUserId)
       this.myProfile = true;
     } else {
       this.myProfile = false;

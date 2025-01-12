@@ -15,6 +15,19 @@ import { ImagemodalPage } from '../imagemodal/imagemodal.page';
 import { ChartDataSets } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
 import * as firebase from 'firebase/app';
+import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+interface Reaction {
+  payload: any;
+  id?: string;
+  addedByUser: {
+    addedByImg: string;
+    addedByKey: string;
+    addedByUsername: string;
+  };
+  dateCreated: string;
+  reactionType: string;
+}
 
 @Component({
   selector: 'app-post',
@@ -31,7 +44,7 @@ export class PostPage implements OnInit {
   private loggedInUserId: any;
   private reviewMedia: any = [];
   private uploadingImage: boolean;
-
+  private reactionSubscription: Subscription;
   // Poll related fields
   private poll: any;
   private pollId: any;
@@ -130,68 +143,67 @@ export class PostPage implements OnInit {
         let totalReviewCount = 0;
         p.postTags = p.postTags.filter(x => x.isChecked !== false);
 
-        // get reactions list
-        this.firestore.collection('posts').doc(post.id).collection('reactions').snapshotChanges().subscribe((reactions: any) => {
-          this.post.reactions = [];
-          reactions.forEach(element => {
-          let reaction = element.payload.doc.data();
-          reaction.key = element.payload.doc.id;
-          p.reactions.push(reaction);
-        });
+        this.reactionSubscription = this.firestore
+            .collection('posts')
+            .doc(post.id)
+            .collection<Reaction>('reactions')
+            .snapshotChanges()
+            .pipe(
+              map(actions => actions.map(a => ({
+                id: a.payload.doc.id,
+                ...a.payload.doc.data()
+              })))
+            )
+            .subscribe({
+              next: (reactions) => {
+                if (reactions) {
+                  p.reactions = reactions;
+                  totalReactionCount = reactions.length;
+                  // Check for Thanks
+                  p.showSmiley = reactions.some(el => {
+                    const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
+                    const typeMatch = Array.isArray(el.reactionType) 
+                      ? el.reactionType.includes('Thanks')
+                      : el.reactionType === 'Thanks';
+                    return keyMatch && typeMatch;
+                  });
+                  
 
-          // Check for Thanks
-          if (reactions) {
-          totalReactionCount = p.reactions.length;
-          let foundSmiley = false;
-          if (p.reactions !== undefined) {
-              foundSmiley = p.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                            && el.reactionType === 'Thanks');
-            }
-          if (foundSmiley) {
-              p.showSmiley = true;
-            } else {
-              p.showSmiley = false;
-            }
-            // Check for Hugs
-          let foundHug = false;
-          if (p.reactions !== undefined) {
-              foundHug = p.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                          && el.reactionType === 'Hug');
-            }
-          if (foundHug) {
-              p.showHug = true;
-            } else {
-              p.showHug = false;
-            }
+                  // Check for Hugs
+                  p.showHug = reactions.some(el => {
+                    const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
+                    const typeMatch = Array.isArray(el.reactionType) 
+                      ? el.reactionType.includes('Hug')
+                      : el.reactionType === 'Hug';
+                    return keyMatch && typeMatch;
+                  });
+  
+                  // Check for Checkin
+                  p.showCheckin = reactions.some(el => {
+                    const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
+                    const typeMatch = Array.isArray(el.reactionType) 
+                      ? el.reactionType.includes('Checkin')
+                      : el.reactionType === 'Checkin';
+                    return keyMatch && typeMatch;
+                  });
+  
+                  // Check for Bookmark
+                  p.showBookmark = reactions.some(el => {
+                    const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
+                    const typeMatch = Array.isArray(el.reactionType) 
+                      ? el.reactionType.includes('Bookmark')
+                      : el.reactionType === 'Bookmark';
+                    return keyMatch && typeMatch;
+                  });
+  
+                  p.totalReactionCount = totalReactionCount;
+                }
+              },
+              error: (error) => {
+                console.error('Error fetching reactions:', error);
+              }
+            });
 
-          // Check for Checkin
-          let foundCheckin = false;
-          if (p.reactions !== undefined) {
-              foundCheckin = p.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                          && el.reactionType === 'Checkin');
-            }
-          if (foundCheckin) {
-              p.showCheckin = true;
-            } else {
-              p.showCheckin = false;
-            }
-
-          // Check for Bookmark
-          let foundBookmark = false;
-          if (p.reactions !== undefined) {
-              foundBookmark = p.reactions.some(el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId() 
-                                          && el.reactionType === 'Bookmark');
-            }
-          if (foundBookmark) {
-              p.showBookmark = true;
-            } else {
-              p.showBookmark = false;
-            }
-
-          p.totalReactionCount = totalReactionCount;
-        }
-
-        });
 
         // get reviews list
         this.firestore.collection('posts').doc(post.id).collection('reviews')
@@ -298,7 +310,7 @@ export class PostPage implements OnInit {
           p.data.pollOptions.forEach(pollOption => {
             if (pollOption.members != null) {
               pollOption.members.forEach(member => {
-                if (member === this.dataProvider.getCurrentUserId()) {
+                if (member === this.loggedInUserId) {
                   this.voted = true;
                 }
               });
@@ -313,8 +325,9 @@ export class PostPage implements OnInit {
 
   submitReactionSmile() {
     const reaction = this.post.reactions.find(
-      el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+      el => el.addedByUser.addedByKey === this.loggedInUserId
       && el.reactionType === 'Thanks');
+      console.info('found reaction', reaction)
     if (reaction === undefined) {
       this.dataProvider.getCurrentUser().then((u) => {
         u.get().subscribe((account: any) => {
@@ -331,7 +344,7 @@ export class PostPage implements OnInit {
               key: '',
               dateCreated: new Date(),
               addedByUser: {
-                            addedByKey: this.dataProvider.getCurrentUserId(),
+                            addedByKey: this.loggedInUserId,
                             addedByUsername: account.data().username,
                             addedByImg: account.data().img
                           },
@@ -363,14 +376,15 @@ export class PostPage implements OnInit {
       })
     } else {
       this.post.showSmiley = false;
-      this.dataProvider.removePostReaction(this.post.key, reaction.key);
+      this.dataProvider.removePostReaction(this.post.key, reaction.id);
     }
   }
 
   submitReactionHug() {
     const reaction = this.post.reactions.find(
-      el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+      el => el.addedByUser.addedByKey === this.loggedInUserId 
       && el.reactionType === 'Hug');
+
     if (reaction === undefined) {
       this.dataProvider.getCurrentUser().then((u) => {
         u.get().subscribe((account: any) => {
@@ -380,17 +394,17 @@ export class PostPage implements OnInit {
     
             const currentUserName = account.data().username;
             let reaction = {
-              key: '',
+            
               dateCreated: new Date(),
               addedByUser: {
-                            addedByKey: this.dataProvider.getCurrentUserId(),
+                            addedByKey: this.loggedInUserId ,
                             addedByUsername: account.data().username,
                             addedByImg: account.data().img
                           },
               reactionType: 'Hug'
             };
   
-            this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
+            this.dataProvider.updatePostReactions(this.postId, reaction).then(() => {
               this.post.showHug = true;
             }).then(() => {
               // Update user notifications.
@@ -415,13 +429,13 @@ export class PostPage implements OnInit {
       })
     } else {
       this.post.showHug = false;
-      this.dataProvider.removePostReaction(this.post.key, reaction.key);
+      this.dataProvider.removePostReaction(this.post.key, reaction.id);
     }
   }
 
   submitReactionCheckin() {
     const reaction = this.post.reactions.find(
-      el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+      el => el.addedByUser.addedByKey === this.loggedInUserId 
       && el.reactionType === 'Checkin');
     if (reaction === undefined) {
       this.dataProvider.getCurrentUser().then((u) => {
@@ -434,7 +448,7 @@ export class PostPage implements OnInit {
               key: '',
               dateCreated: new Date(),
               addedByUser: {
-                            addedByKey: this.dataProvider.getCurrentUserId(),
+                            addedByKey: this.loggedInUserId ,
                             addedByUsername: account.data().username,
                             addedByImg: account.data().img
                           },
@@ -472,7 +486,7 @@ export class PostPage implements OnInit {
 
   submitReactionBookmark() {
     const reaction = this.post.reactions.find(
-      el => el.addedByUser.addedByKey === this.dataProvider.getCurrentUserId()
+      el => el.addedByUser.addedByKey === this.loggedInUserId
       && el.reactionType === 'Bookmark');
     if (reaction === undefined) {
       this.dataProvider.getCurrentUser().then((u) => {
@@ -485,7 +499,7 @@ export class PostPage implements OnInit {
               key: '',
               dateCreated: new Date(),
               addedByUser: {
-                            addedByKey: this.dataProvider.getCurrentUserId(),
+                            addedByKey: this.loggedInUserId,
                             addedByUsername: account.data().username,
                             addedByImg: account.data().img
                           },
@@ -539,15 +553,17 @@ export class PostPage implements OnInit {
     this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
     let review: any;
     let currentUserName: any;
+    console.info('submitReview', this.message)
     this.dataProvider.getCurrentUser().then((u) => {
+
       u.get().subscribe((account: any) => {
         if (account) {
           currentUserName = account.data().username;
-  
+          console.info('submitReview1', currentUserName)
           review = {
             dateCreated: new Date(),
             addedByUser: {
-               addedByKey: this.dataProvider.getCurrentUserId(),
+               addedByKey: this.loggedInUserId,
                addedByUsername: account.data().username,
                addedByImg: account.data().img
              },
@@ -736,7 +752,7 @@ viewGroup(groupId) {
     const pollOptionIndex = this.pollOptionForm.value["selected_poll_option"];
     console.log('pollOptionIndex', pollOptionIndex);
     const members = [];
-    members.push(this.dataProvider.getCurrentUserId());
+    members.push(this.loggedInUserId);
     this.post.data.pollOptions[pollOptionIndex].members = members;
     this.voted = true;
     this.dataProvider.updatePollMembers(this.postId, this.post.data);
