@@ -265,60 +265,24 @@ export class FeedPage implements OnInit {
   }
 
   submitReactionPost(post, reactionType) {
-    switch (reactionType) {
-      case 'Thanks': {
-        if (!post.showSmiley) {
-          this.addPostReaction(post, reactionType);
-          post.showSmiley = true;
-          post.totalReactionCount += 1;
-        } else {
-          this.removePostReaction(post, reactionType);
-          post.showSmiley = false;
-          post.totalReactionCount -= 1;
-        }
-        break;
-      }
+    console.info('post.reactionType', post.reactionType)
+    console.info('reactionType', reactionType)
+  if (post.reactionType === '') {
+    console.info('1')
+      this.addPostReaction(post, reactionType);
+      post.totalReactionCount += 1;
+    } else if(post.reactionType !== reactionType) {
+      console.info('2')
+        this.removePostReaction(post, post.reactionType);
 
-      case 'Hug': {
-        if (!post.showHug) {
-          this.addPostReaction(post, reactionType);
-          post.showHug = true;
-          post.totalReactionCount += 1;
-        } else {
-          this.removePostReaction(post, reactionType);
-          post.showHug = false;
-          post.totalReactionCount -= 1;
-        }
-        break;
-      }
-
-      case 'Checkin': {
-        if (!post.showCheckin) {
-          this.addPostReaction(post, reactionType);
-          post.showCheckin = true;
-          post.totalReactionCount += 1;
-        } else {
-          this.removePostReaction(post, reactionType);
-          post.showCheckin = false;
-          post.totalReactionCount -= 1;
-        }
-        break;
-      }
-
-      case 'Bookmark': {
-        if (!post.showBookmark) {
-          this.addPostReaction(post, reactionType);
-          post.showBookmark = true;
-          post.totalReactionCount += 1;
-        } else {
-          this.removePostReaction(post, reactionType);
-          post.showBookmark = false;
-          post.totalReactionCount -= 1;
-        }
-        break;
-      }
+        this.addPostReaction(post, reactionType);
+    } else if(post.reactionType === reactionType) {
+      console.info('3')
+      this.removePostReaction(post, reactionType);
+      post.totalReactionCount -= 1;
     }
   }
+  
 
   addPostReaction(post, reactionType) {
     // first find the post in the collection
@@ -328,9 +292,7 @@ export class FeedPage implements OnInit {
     const p = this.posts[postIndex];
 
     const r = p.reactions.find(el => el.addedByUser.addedByKey === this.loggedInUserId && el.reactionType === reactionType);
-    console.info('r is', r)
     if (!r) {
-      console.info('im here')
       const react = {
         key: '',
         dateCreated: new Date(),
@@ -389,10 +351,9 @@ export class FeedPage implements OnInit {
       if (reaction.reactionType === reactionType) {
           console.info('here!!', post.key, reaction)
         this.dataProvider.removePostReaction(post.key, reaction.key);
-      }
+      } 
     }
-  }
-  
+  }  
 
   async showReactionsList(post) {
     if (post.totalReactionCount === 0) {
@@ -597,74 +558,22 @@ export class FeedPage implements OnInit {
         post.reactions.push(reaction);
       });
 
-        // Check for Thanks
+        let reactionType : string;
         if (reactions.length > 0) {
-        let foundSmiley = false;
-        if (post.reactions.length > 0) {
-            foundSmiley = post.reactions.some(el => {
-              const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
-              const typeMatch = Array.isArray(el.reactionType) 
-                ? el.reactionType.includes('Thanks')
-                : el.reactionType === 'Thanks';
-              return keyMatch && typeMatch;
-            });
-          }
-        if (foundSmiley) {
-            post.showSmiley = true;
-          } else {
-            post.showSmiley = false;
-          }
-          // Check for Hugs
-        let foundHug = false;
-        if (post.reactions.length > 0) {
-          foundHug = post.reactions.some(el => {
-            const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
-            const typeMatch = Array.isArray(el.reactionType) 
-              ? el.reactionType.includes('Hug')
-              : el.reactionType === 'Hug';
-            return keyMatch && typeMatch;
-          });
-          }
-        if (foundHug) {
-            post.showHug = true;
-          } else {
-            post.showHug = false;
-          }
-
-        // Check for Checkin
-        let foundCheckin = false;
-        if (post.reactions !== undefined) {
-            foundCheckin = post.reactions.some(el => {
-              const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
-              const typeMatch = Array.isArray(el.reactionType) 
-                ? el.reactionType.includes('Checkin')
-                : el.reactionType === 'Checkin';
-              return keyMatch && typeMatch;
-            });
-          }
-        if (foundCheckin) {
-            post.showCheckin = true;
-          } else {
-            post.showCheckin = false;
-          }
-
-        // Check for Bookmark
-        let foundBookmark = false;
-        if (post.reactions !== undefined) {
-            foundBookmark = post.reactions.some(el => {
-              const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
-              const typeMatch = Array.isArray(el.reactionType) 
-                ? el.reactionType.includes('Bookmark')
-                : el.reactionType === 'Bookmark';
-              return keyMatch && typeMatch;
-            });
-          }
-        if (foundBookmark) {
-            post.showBookmark = true;
-          } else {
-            post.showBookmark = false;
-          }
-      }
+          if (post.reactions.length > 0) {
+              // Using find() to get the reaction type
+              reactionType = post.reactions.find(el => 
+                el.addedByUser?.addedByKey === this.loggedInUserId
+              )?.reactionType || '';
+            }
+          if (reactionType !== '') {
+              post.reactionType = reactionType;
+            } else {
+              post.reactionType = '';
+            }
+        } else {
+          post.reactionType = '';
+        }
       });
       post.postTags = post.postTags.filter(x => x.isChecked !== false);
       this.addOrUpdatePost(post);

@@ -123,20 +123,9 @@
                   <ion-button (click)="showEmojiPicker($event, item)">
                     <!-- Keep your existing Thanks/Smile reaction display -->
                     <div>
-                      <ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg"></ion-icon>
-                    </div>
-                  </ion-button>
-                </ion-buttons>
-              </ion-col>
-              <ion-col>
-                <ion-buttons>
-                  <ion-button (click)="showEmojiPicker($event, item)">
-                    <!-- Keep your existing Hug reaction display -->
-                    <div *ngIf="item.showHug">
-                      <ion-icon size="small" class="icon" src="./assets/icon/hug-active.svg"></ion-icon>
-                    </div>
-                    <div *ngIf="!item.showHug">
-                      <ion-icon size="small" class="icon" src="./assets/icon/hug.svg"></ion-icon>
+                      <ion-icon *ngIf="item.reactionType === ''" size="small" class="icon" src="./assets/icon/smile-inactive.svg"></ion-icon>
+                      <ion-icon *ngIf="item.reactionType !== ''" size="small" class="icon" [src]="'./assets/icon/' + item.reactionType + '.svg'">
+                    </ion-icon>
                     </div>
                   </ion-button>
                 </ion-buttons>
