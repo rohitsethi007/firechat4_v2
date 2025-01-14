@@ -18,14 +18,7 @@ export class ReactionListModalPage implements OnInit {
     this.items = Object.keys(r).map(function(e) {
       return r[e];
     });
-    this.items.forEach(i => {
-      if (i.reactionType.some(el => el === 'Thanks')) {
-        i.reactionThanks = true;
-      }
-      if (i.reactionType.some(el => el === 'Hug')) {
-        i.reactionHug = true;
-      }
-    });
+
   }
 
   ngOnInit() {

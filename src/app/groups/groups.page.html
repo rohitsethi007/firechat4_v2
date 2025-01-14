@@ -36,8 +36,8 @@
           <ion-label class="ion-no-padding">{{group.name}}<br/>
           <span class="group-subheading">{{group.members.length}} Members · <span *ngIf="group.posts">{{group.posts.length}}</span> <span *ngIf="!group.posts">0</span> posts</span></ion-label>
         </ion-label>
-        <ion-button *ngIf="!group.isUserMember" slot="end" color="secondary"  fill="outline" class="join" (click)="joinGroup(group.key)" >Join</ion-button>
-        <ion-button *ngIf="group.isUserMember" slot="end" color="secondary" class="join" >Joined</ion-button>
+        <ion-button *ngIf="!group.isUserMember" slot="end" fill="outline" class="join" (click)="joinGroup(group.key)" >Join</ion-button>
+        <ion-button *ngIf="group.isUserMember" slot="end" class="join" >Joined</ion-button>
       </ion-item>
   </ion-list>
 

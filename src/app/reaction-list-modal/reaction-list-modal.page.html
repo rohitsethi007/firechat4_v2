@@ -20,10 +20,7 @@
         <h2>{{item.addedByUser.addedByUsername}}</h2>
         <!--<p>Sneaky little hobbitses!</p> -->
       </ion-label>
-      <ion-icon size="small" *ngIf="item.reactionThanks" class="icon" src="./assets/icon/smile-active.svg"></ion-icon>
-      <ion-icon size="small" *ngIf="item.reactionHug" class="icon" src="./assets/icon/hug-active.svg"></ion-icon>
-      <ion-icon size="small" *ngIf="item.reactionBookmark" class="icon" src="./assets/icon/bookmark-active.svg"></ion-icon>
-      <ion-icon size="small" *ngIf="item.reactionCheckin" class="icon" src="./assets/icon/checkin-active.svg"></ion-icon>
+      <ion-icon size="small" *ngIf="item.reactionType" class="icon" [src]="'./assets/icon/' + item.reactionType + '.svg'"></ion-icon>
     </ion-item>
 
   </ion-list>
