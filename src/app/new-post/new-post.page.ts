@@ -120,7 +120,7 @@ export class NewPostPage implements OnInit {
     this.dataProvider.getCurrentUser().then((u) => {
       u.snapshotChanges().subscribe((value: any) => {
         this.user = value.payload.data();
-  
+        console.info('value', value)
         this.addedByUser = {
         addedByKey: value.payload.data().userId,
         addedByUsername: value.payload.data().username,

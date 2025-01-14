@@ -46,15 +46,21 @@ export class LoginService {
 
   register(name, username, email, password, img) {
     this.loadingProvider.show();
-    this.afAuth.createUserWithEmailAndPassword(email, password).then((res) => {
-      let user: any = this.afAuth.currentUser;
-      this.loadingProvider.hide();
-      this.createNewUser(user.uid, name, username, user.email, "I am available", "Firebase", img);
-    }).catch(err => {
+    this.afAuth.createUserWithEmailAndPassword(email, password).then((userCredential) => {
+      // userCredential.user contains the user information
+      const user = userCredential.user;
+      console.info('New user created:', user);
+      
+      // If you need specific user properties
+      if (user) {
+        this.createNewUser(user.uid, name, username, user.email, "I am available", "Firebase", img);
+        console.info('User data:', user);
+      }
+    }).catch((err) => {
       console.log(err);
       this.loadingProvider.hide();
       this.loadingProvider.showToast(err.message);
-    })
+    });
   }
 
   reset(email) {

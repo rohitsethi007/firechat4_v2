@@ -35,6 +35,7 @@ export class DataService {
   // Get logged in user data
   async getCurrentUser() {
     const loggedInUserId = await this.afAuth.currentUser.then((data) => { return data.uid});
+    console.info('loggedInUserId', loggedInUserId)
     return this.getUser(loggedInUserId);
   }
 
