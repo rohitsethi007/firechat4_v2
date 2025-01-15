@@ -141,9 +141,10 @@ ion-header {
 
     ion-item {
       --padding-start: 20px;
-      --padding-end: 20px;
+      --padding-end: 10px;
       --min-height: 56px;
       --background: transparent;
+      align-items: flex-start; // Align items to top for better text wrapping
       
       ion-icon[slot="start"] {
         color: var(--ion-color-medium);
@@ -152,8 +153,22 @@ ion-header {
       }
 
       ion-label {
-        font-size: 15px;
-        font-weight: 500;
+        white-space: normal; // Allow text wrapping
+        h3 {
+          font-size: 16px;
+          font-weight: 500;
+          color: var(--ion-color-dark);
+        }
+  
+        .setting-description {
+          font-size: 13px;
+          color: var(--ion-color-medium);
+          margin: 0;
+          line-height: 1.4;
+          white-space: normal; // Ensure description wraps
+          overflow: visible; // Show all text
+          max-width: 90%; // Prevent text from touching the toggle
+        }
       }
 
       ion-toggle {
@@ -238,18 +253,16 @@ ion-header {
   border-radius: 24px;
   overflow: hidden;
   margin-bottom: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 
   .section-title {
     padding: 20px;
     margin: 0;
     font-size: 18px;
     font-weight: 600;
-    color: var(--ion-color-dark);
-    border-bottom: 1px solid var(--ion-color-light);
   }
 
   .group-item {
+    background: #ffffff;
     --padding-start: 20px;
     --padding-end: 20px;
     --min-height: 72px;
@@ -263,13 +276,11 @@ ion-header {
       h3 {
         font-size: 15px;
         font-weight: 500;
-        color: var(--ion-color-dark);
         margin: 0 0 4px;
       }
 
       p {
         font-size: 13px;
-        color: var(--ion-color-medium);
         margin: 0;
       }
     }

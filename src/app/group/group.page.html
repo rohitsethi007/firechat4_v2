@@ -1,45 +1,64 @@
-<ion-header>
+<ion-header class="modern-header">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button text="" icon="chevron-back-outline"></ion-back-button>
     </ion-buttons>
-    <ion-title (click)="groupInfo()">{{title}}</ion-title>
+    
+    <ion-title class="group-title" (click)="groupInfo()">
+      <div class="title-content">
+        {{title}}
+      </div>
+    </ion-title>
+    
+    
+    
     <ion-buttons slot="end"> 
-      <ion-button *ngIf="loggedInUserIsMember == true" (click)="showGroupOptions()" ><ion-icon name="ellipsis-vertical"></ion-icon></ion-button>
-   <ion-button *ngIf="loggedInUserIsMember == false" (click)="joinGroup()" >Join Group</ion-button>
-    <ion-button *ngIf="loggedInUserIsMember == true && tab=='posts'" (click)="newPost()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
-    <ion-button *ngIf="loggedInUserIsMember == true && tab=='polls'" (click)="newPoll()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
-		<ion-button *ngIf="loggedInUserIsMember == true && tab=='resources'" (click)="newResource()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
-		<ion-button *ngIf="loggedInUserIsMember == true && tab=='events'" (click)="newEvent()" ><ion-icon name="add-circle-outline"></ion-icon></ion-button>
-	</ion-buttons>
-
+      <ion-col class="call-to-action-col">
+        <ion-button (click)="groupInfo()">
+          <ion-icon name="help-circle" class="info-btn"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col class="call-to-action-col">
+        <ion-button fill="clear" class="filters-btn" (click)="showGroupOptions()">
+          <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col class="call-to-action-col">
+      <ion-button *ngIf="!loggedInUserIsMember" 
+                  (click)="joinGroup()"
+                  class="join-button">
+        Join Group
+      </ion-button>
+    </ion-col>
+    </ion-buttons>
   </ion-toolbar>
 
-  <ion-segment value="posts" color="secondary" [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
-		<!-- <ion-segment-button value="group">
-  			<ion-icon name="chatbubbles"></ion-icon>
-    </ion-segment-button> -->
-		<!-- <ion-segment-button value="groupInfo">
-      <ion-icon name="ellipsis-vertical"></ion-icon>
-		</ion-segment-button> -->
-    <ion-segment-button value="posts">
-      <ion-icon size="medium" name="chatbubbles"></ion-icon>
-      <!-- <span class="tab-title">Posts</span> -->
+  <ion-segment value="posts" 
+               [(ngModel)]="tab" 
+               (ionChange)="segmentChanged($event)"
+               class="custom-segment">
+    <ion-segment-button value="posts" class="segment-button">
+      <ion-icon name="chatbubbles"></ion-icon>
+      <ion-label>Posts</ion-label>
     </ion-segment-button>
-		<ion-segment-button value="polls">
-      <ion-icon size="medium" name="podium"></ion-icon>
-      <!-- <span class="tab-title">Polls</span> -->
-		</ion-segment-button>
-		<ion-segment-button value="resources">
-      <ion-icon size="medium" name="library"></ion-icon>
-      <!-- <span class="tab-title">Resources</span> -->
+    
+    <ion-segment-button value="polls" class="segment-button">
+      <ion-icon name="podium"></ion-icon>
+      <ion-label>Polls</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="events">
-      <ion-icon size="medium" name="calendar"></ion-icon>
-      <!-- <span class="tab-title">Events</span> -->
+    
+    <ion-segment-button value="resources" class="segment-button">
+      <ion-icon name="library"></ion-icon>
+      <ion-label>Resources</ion-label>
     </ion-segment-button>
-</ion-segment>
+    
+    <ion-segment-button value="events" class="segment-button">
+      <ion-icon name="calendar"></ion-icon>
+      <ion-label>Events</ion-label>
+    </ion-segment-button>
+  </ion-segment>
 </ion-header>
+
 
 <ion-content fullscreen>
   <div [ngSwitch]="tab" >

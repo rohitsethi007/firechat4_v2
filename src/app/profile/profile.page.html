@@ -68,7 +68,10 @@
       <ion-list lines="none">
         <ion-item>
           <ion-icon name="eye-outline" slot="start"></ion-icon>
-          <ion-label>Public Visibility</ion-label>
+          <ion-label>
+            <h3>Public Visibility</h3>
+            <p class="setting-description">Allow other users to find and send you friend requests</p>
+          </ion-label>
           <ion-toggle [(ngModel)]="user.publicVisibility" 
                      (ionChange)="changeVisibility()">
           </ion-toggle>
@@ -76,7 +79,10 @@
 
         <ion-item>
           <ion-icon name="radio-outline" slot="start"></ion-icon>
-          <ion-label>Show Online</ion-label>
+          <ion-label>
+            <h3>Show Online</h3>
+            <p class="setting-description">Let friends see when you're active and available to chat</p>
+          </ion-label>
           <ion-toggle [(ngModel)]="user.showOnline" 
                      (ionChange)="changeStatus()">
           </ion-toggle>
@@ -84,7 +90,10 @@
 
         <ion-item>
           <ion-icon name="notifications-outline" slot="start"></ion-icon>
-          <ion-label>Enable Notification</ion-label>
+          <ion-label>
+            <h3>Enable Notifications</h3>
+            <p class="setting-description">Get instant alerts for new messages and friend requests</p>
+          </ion-label>
           <ion-toggle [(ngModel)]="user.isPushEnabled" 
                      [disabled]="isBrowser"
                      (ionChange)="changeNotification()">
@@ -93,7 +102,10 @@
 
         <ion-item button routerLink="/blockedlist">
           <ion-icon name="ban-outline" slot="start"></ion-icon>
-          <ion-label>Blocked List</ion-label>
+          <ion-label>
+            <h3>Blocked Users</h3>
+            <p class="setting-description">Get instant alerts for new messages and friend requests</p>
+          </ion-label>
           <ion-icon name="chevron-forward" slot="end"></ion-icon>
         </ion-item>
 
@@ -141,8 +153,8 @@
     <!-- Groups Section -->
     <section class="groups-section">
       <h2 class="section-title">Groups</h2>
-      <ion-list lines="none">
-        <ion-item *ngIf="groups.length === 0" class="empty-state">
+      <ion-list class="ion-no-padding">
+        <ion-item *ngIf="groups.length === 0" class="ion-margin-bottom">
           <ion-label>
             <ion-icon name="people-outline"></ion-icon>
             <p>You have not joined any groups.</p>
