@@ -1,30 +1,70 @@
-<ion-header>
-  <ion-toolbar class="filters-toolbar">
-    <ion-row class="searchbar-row" align-items-center>
-    <ion-col>
-        <ion-searchbar [(ngModel)]="searchGroup" mode="ios" (ionCancel)="onCancel($event)" class="searchbar" showCancelButton="always" placeholder="Search in {{category.name}}..."></ion-searchbar>
-      </ion-col>
-    </ion-row>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="search-toolbar ion-padding-horizontal">
+    <ion-searchbar 
+      [(ngModel)]="searchGroup" 
+      mode="ios" 
+      (ionCancel)="onCancel($event)" 
+      placeholder="Search in {{category.name}}..."
+      animated="true"
+      class="custom-searchbar"
+      clear-icon="close-circle"
+      search-icon="search-outline"
+      showCancelButton="always">
+    </ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list class="inputs-list" lines="full">
-    <ion-list-header class="header">
-      Search in category &nbsp;<ion-label><b>{{category.name}}</b></ion-label>
-    </ion-list-header>
-    <ion-list lines="none">
-      <ion-item text-wrap *ngFor="let group of groups | groupFilter:searchGroup"  (click)="viewGroup(group.key)">
-        <ion-avatar slot="start">
-          <ion-img src="{{group.img}}"></ion-img>
-        </ion-avatar>
-        <ion-label class="toggle-text">
-            <ion-label class="ion-no-padding">{{group.name}}<br/>
-            <span class="group-subheading">{{group.members.length}} Members · <span *ngIf="group.posts">{{group.posts.length}}</span> <span *ngIf="!group.posts">0</span> posts</span></ion-label>
-          </ion-label>
-          <ion-button *ngIf="!group.isUserMember" slot="end" color="secondary" fill="outline" class="join" >Join</ion-button>
-          <ion-button *ngIf="group.isUserMember" slot="end" color="secondary" class="join" >Joined</ion-button>
-        </ion-item>
-    </ion-list>
+  <!-- Category Header -->
+  <ion-item lines="none" class="category-header ion-padding">
+    <ion-label>
+      <h2>Search in category <ion-text color="primary"><b>{{category.name}}</b></ion-text></h2>
+    </ion-label>
+  </ion-item>
+
+
+  <!-- Groups List - Exactly matching groups.html -->
+  <ion-list class="ion-no-padding ion-padding-horizontal">
+    <ion-item *ngFor="let group of groups | groupFilter:searchGroup" 
+              button 
+              detail="false" 
+              class="ion-margin-bottom"
+              (click)="viewGroup(group.key)">
+      <ion-thumbnail slot="start">
+        <ion-img [src]="group.img" [alt]="group.name"></ion-img>
+      </ion-thumbnail>
+      
+      <ion-label>
+        <h3 class="ion-no-margin">{{group.name}}</h3>
+        <p class="ion-text-wrap">
+          <ion-text color="medium">
+            <ion-icon name="people-outline"></ion-icon>
+            {{group.members?.length || 0}} Members · 
+            <ion-icon name="chatbubbles-outline"></ion-icon>
+            {{group.posts?.length || 0}} posts
+          </ion-text>
+        </p>
+      </ion-label>
+
+      <ion-button slot="end" 
+          fill="solid"
+          [color]="group.isUserMember ? 'success' : 'primary'"
+          class="join-group-btn">
+            <ion-icon [name]="group.isUserMember ? 'checkmark-outline' : 'add-outline'"
+                  slot="start"></ion-icon>
+            {{group.isUserMember ? 'Joined' : 'Join'}}
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <!-- Empty State -->
+  <ion-list *ngIf="(groups | groupFilter:searchGroup)?.length === 0">
+    <ion-item lines="none">
+      <ion-label class="ion-text-center">
+        <ion-icon name="search-outline" size="large" color="medium"></ion-icon>
+        <h2>No Groups Found</h2>
+        <p>Try different search terms</p>
+      </ion-label>
+    </ion-item>
   </ion-list>
 </ion-content>

@@ -1,59 +1,83 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="/groups"></ion-back-button>
     </ion-buttons>
     <ion-title>Join Group</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-item lines="none">
-    <ion-row class="section">
-      <span class="heading">Join {{group.name}}</span>
-      <br>
-      <span class="section-text">Excitenly, you are about to join one of most interesting groups.</span>
-    </ion-row>
-  </ion-item>
-  <ion-item lines="none">
-    <ion-row class="section">
-      <span class="heading kind">Be kind</span>
-      <br>
-      <span class="section-text">Be respectful of others and be kind. They are here to help you. If you believe someone is not behaving in the spirit, let us know.</span>
-    </ion-row>
-  </ion-item>
-  <ion-item lines="none">
-    <ion-row class="section">
-      <span class="heading safe">Be safe</span>
-      <br>
-      <span class="section-text">Don't post your personal details like phone number, address etc in public posts.</span>
-    </ion-row>
-  </ion-item>
-  <ion-item lines="none">
-  <ion-row class="section">
-    <span class="heading enjoy">Enjoy</span>
-    <br>
-    <span class="section-text">Remember, we are all in the same boat.</span>
-  </ion-row>
-</ion-item>
- <ion-item lines="none">
-    <ion-row class="section">
-      <span class="heading last">One last thing</span>
-      <br>
-      <span class="section-text">To protect all members on the app we don't allow promoting, selling in our apps</span>
-    </ion-row>
-  </ion-item>
-  <ion-item text-wrap lines="none">
-    <ion-row>
-      <ion-col size=1>
-    <ion-checkbox [(ngModel)]="termsAgreed"></ion-checkbox>
-  </ion-col>
-    <ion-col  size=11>
-    <ion-label text-wrap class="agree">I agree to look out for and support other members on this group.</ion-label>
-  </ion-col>
-</ion-row>
-</ion-item>
-  <ion-item lines="none">
-  <ion-button color="secondary" class="join ion-text-capitalize" expand="block" [disabled]="!termsAgreed" (click)="joinGroup()">Join &nbsp;<b>"{{group.name}}" </b>&nbsp; group</ion-button>
-</ion-item>
+<ion-content class="ion-padding">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <h1>Join <ion-text color="primary">{{group.name}}</ion-text> Group</h1>
+    <p class="subtitle">You're about to join one of our most engaging communities.</p>
+  </div>
+
+  <!-- Guidelines Cards -->
+  <ion-list class="guidelines-list">
+    <!-- Be Kind -->
+    <ion-card class="guideline-card">
+      <ion-card-content>
+        <div class="guideline-header">
+          <ion-icon name="heart-outline" color="danger"></ion-icon>
+          <h2>Be kind</h2>
+        </div>
+        <p>Be respectful of others and be kind. They are here to help you. If you believe someone is not behaving appropriately, let us know.</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Be Safe -->
+    <ion-card class="guideline-card">
+      <ion-card-content>
+        <div class="guideline-header">
+          <ion-icon name="shield-checkmark-outline" color="success"></ion-icon>
+          <h2>Be safe</h2>
+        </div>
+        <p>Don't share personal details like phone numbers or addresses in public posts.</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Enjoy -->
+    <ion-card class="guideline-card">
+      <ion-card-content>
+        <div class="guideline-header">
+          <ion-icon name="happy-outline" color="warning"></ion-icon>
+          <h2>Enjoy</h2>
+        </div>
+        <p>Remember, we are all in this together.</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- One Last Thing -->
+    <ion-card class="guideline-card">
+      <ion-card-content>
+        <div class="guideline-header">
+          <ion-icon name="information-circle-outline" color="primary"></ion-icon>
+          <h2>One last thing</h2>
+        </div>
+        <p>To protect all members, we don't allow promotional or sales content in our groups.</p>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+
+  <!-- Agreement Section -->
+  <div class="agreement-section ion-padding">
+    <ion-item lines="none" class="checkbox-item">
+      <ion-checkbox slot="start" 
+                   [(ngModel)]="termsAgreed">
+      </ion-checkbox>
+      <ion-label class="ion-text-wrap">
+        I agree to look out for and support other members in this group
+      </ion-label>
+    </ion-item>
+  
+    <ion-button expand="block" 
+                class="join-button" 
+                [disabled]="!termsAgreed" 
+                (click)="joinGroup()">
+      <ion-icon name="people-outline" slot="start"></ion-icon>
+      Join "{{group.name}}"
+    </ion-button>
+  </div>
 </ion-content>

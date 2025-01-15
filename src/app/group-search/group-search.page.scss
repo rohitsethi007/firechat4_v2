@@ -1,68 +1,81 @@
 :host {
-    --page-margin: var(--app-narrow-margin);
-    --page-background: var(--app-background);
- }
- 
- ion-searchbar {
-   --border-radius: 30px;
- }
+  .search-toolbar {
+    --background: transparent;
+    padding-bottom: 8px;
 
-.filters-toolbar {
-   --padding-start: var(--page-margin);
-   --padding-end: var(--page-margin);
-   // --padding-top: var(--page-margin);
+    .custom-searchbar {
+      --background: var(--ion-color-light);
+      --border-radius: 12px;
+      --box-shadow: none;
+      --placeholder-color: var(--ion-color-medium);
+      --icon-color: var(--ion-color-medium);
+      --color: var(--ion-color-dark);
+      padding: 0;
+      height: 46px;
+      
+      .searchbar-input {
+        font-size: 16px;
+        line-height: 24px;
+      }
 
-   .searchbar-row {
-     --ion-grid-column-padding: 0px;
- 
-     .searchbar {
-       padding: 0px;
-       height:30px;
-       border-radius: 20px;
-       // override Ionic fixed height
-       // height: 100%;
-       // Learn more about CSS contain property here: https://termvader.github.io/css-contain/
-       //  contain: content;
-     }
+      .searchbar-search-icon {
+        width: 20px;
+        height: 20px;
+      }
 
-   }
-
- }
-
- .inputs-list {
-    padding: var(--page-margin) var(--page-margin) calc(var(--page-margin) * 2);
-
-    .header {
-      font-size: 14px;
+      .searchbar-clear-button {
+        width: 40px;
+        height: 40px;
+      }
     }
-    .error-container {
-      .error-message {
-        margin: calc(var(--page-margin) / 2) 0px;
-        display: flex;
-        align-items: center;
-        color: var(--ion-color-danger);
-        font-size: 14px;
-
-        ion-icon {
-          padding-inline-end: calc(var(--page-margin) / 2);
-          flex-shrink: 0;
-        }
-      }
-      }
   }
 
-  .toggle-text {
-    font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 19px;
-    -webkit-font-smoothing: subpixel-antialiased;
-    -moz-osx-font-smoothing: auto;
-    overflow: hidden; 
-    text-overflow: ellipsis;
+  .category-header {
+    h2 {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--ion-color-dark);
+    }
+  }
+
+  ion-list {
+    background: transparent;
+  }
+
+
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  ion-item {
+    --background: transparent;
+    --padding-start: 0;  // Important: Set to 0 since we're using list padding
+    --padding-end: 0;    // Important: Set to 0 since we're using list padding
+    --inner-padding-end: 0;
+    margin-bottom: 8px;
+    
+    ion-thumbnail {
+      --size: 60px;
+      --border-radius: 8px;
+      margin-right: 16px;
+    }
+  }
+
+  .join-group-btn {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --border-radius: 8px;
+    
+    &[disabled] {
+      opacity: 1; // Keep full opacity even when disabled
+      --background: var(--ion-color-success);
+      --color: var(--ion-color-success-contrast);
+    }
   
-    .group-subheading {
-      font-weight: 400;
-      font-size: 10px;
+    ion-icon {
+      margin-right: 4px;
     }
   }
+}

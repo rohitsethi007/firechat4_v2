@@ -1,104 +1,149 @@
-// Custom variables
-// Note:  These ones were added by us and have nothing to do with Ionic CSS Custom Properties
 :host {
-    --page-margin: var(--app-narrow-margin);
-    --page-border-radius: var(--app-fair-radius);
-    --page-segment-background: var(--app-background);
-    --page-segment-indicator-height: 2px;
-  }
-  
-  // Note:  All the CSS variables defined below are overrides of Ionic elements CSS Custom Properties
-  .user-friends-segment {
-    --background: var(--page-segment-background);
-    position: sticky;
-    top: 0;
-    z-index: 8;
-  
-    ion-segment-button {
-      --padding-end: var(--page-margin);
-      --padding-start: var(--page-margin);
-      --color: rgba(var(--ion-color-dark-rgb), 0.4);
-      --indicator-color: var(--ion-color-dark);
-  
-      text-transform: capitalize;
-      min-height: calc((var(--page-margin) * 3) - var(--page-segment-indicator-height));
+  // Header Styles
+  ion-header {
+    ion-toolbar {
+      --background: transparent;
+
+      ion-title {
+        font-size: 20px;
+        font-weight: 600;
+      }
     }
-  }
-  
-  ion-searchbar.friends-searchbar {
-    padding: calc(var(--page-margin) * 1.5) var(--page-margin);
-  }
-  
-  .friends-list {
-    padding: 0px var(--page-margin);
-    margin-bottom: calc(var(--page-margin) * 3);
-  }
-  
-  .empty-list-message {
-    margin: calc(var(--page-margin) * 3);
-    color: rgba(var(--ion-color-dark-rgb), 0.4);
-    text-align: center;
-  }
-  
-  ion-item.friend-item {
-    --inner-padding-start: 0px;
-    --inner-padding-end: 0px;
-    --padding-start: 0px;
-    --padding-end: 0px;
-    --padding-bottom: var(--page-margin);
-    --inner-padding-bottom: var(--page-margin);
-  
-    &:last-child {
-      --border-style: none;
-      --padding-bottom: 0px;
-      --inner-padding-bottom: 0px;
-    }
-  
-    .user-details-section {
-      --ion-grid-column-padding: 0px;
-  
-      width: 100%;
-      align-items: center;
-  
-      .user-data-wrapper {
-        padding-left: var(--page-margin);
-        padding-right: calc(var(--page-margin) / 2);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-  
-        .user-info {
-          &:not(:last-child) {
-            margin-bottom: calc(var(--page-margin) / 2);
-          }
-  
-          .user-name {
-            margin: 0px;
-            margin-bottom: 4px;
-            font-size: 16px;
-          }
-  
-          .user-job {
-            margin: 0px;
-            color: rgba(var(--ion-color-dark-rgb), 0.4);
-            font-size: 14px;
+
+    .segment-toolbar {
+      --background: transparent;
+      padding: 0 16px 8px;
+
+      .custom-segment {
+        --background: var(--ion-color-light);
+        border-radius: 12px;
+        
+        ion-segment-button {
+          --background-checked: var(--ion-color-primary);
+          --color: var(--ion-color-medium);
+          --color-checked: white;
+          --indicator-color: transparent;
+          min-height: 40px;
+          font-size: 14px;
+          font-weight: 500;
+          letter-spacing: 0;
+          text-transform: none;
+
+          ion-badge {
+            margin-left: 4px;
+            --background: var(--ion-color-primary);
+            --color: white;
+            font-size: 12px;
           }
         }
       }
-  
-      .user-actions-wrapper {
+    }
+  }
+
+  // Content Styles
+  .custom-searchbar {
+    --background: var(--ion-color-light);
+    --border-radius: 12px;
+    --box-shadow: none;
+    --placeholder-color: var(--ion-color-medium);
+    --icon-color: var(--ion-color-medium);
+    --color: var(--ion-color-dark);
+    margin: 16px 0;
+    padding: 0;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+    margin: 24px 0 16px;
+  }
+
+  // List Items
+  ion-item {
+    --background: transparent;
+    --padding-start: 0;
+    --padding-end: 0;
+    --inner-padding-end: 0;
+    margin-bottom: 16px;
+
+    ion-avatar {
+      width: 48px;
+      height: 48px;
+      margin-right: 16px;
+    }
+
+    ion-label {
+      h2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--ion-color-dark);
+        margin: 0 0 4px;
+      }
+
+      p {
         font-size: 14px;
-  
-        // Make sure we always have space for 10 characters
-        // As ch (width of the character '0') unit is not 100% supported, we will use ex (height of the 'x' character) as a fallback
-        // See: https://www.quirksmode.org/css/units-values/
-        max-width: 10ex; // The 'x' character is semi-square char
-        max-width: 10ch; // ch is the only font unit based on the width of characters
-  
-        .user-action {
-          margin: 0px;
-        }
+        color: var(--ion-color-medium);
+        margin: 0;
+      }
+    }
+
+    .online-badge {
+      --background: var(--ion-color-success);
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 12px;
+
+      ion-icon {
+        font-size: 8px;
+        margin-right: 4px;
+      }
+    }
+
+    ion-button {
+      --padding-start: 12px;
+      --padding-end: 12px;
+      --border-radius: 8px;
+      height: 36px;
+      font-size: 14px;
+
+      ion-icon {
+        font-size: 16px;
+        margin-right: 4px;
       }
     }
   }
+
+  // Empty State
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    text-align: center;
+
+    ion-icon {
+      font-size: 64px;
+      color: var(--ion-color-medium);
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+      margin: 0 0 8px;
+    }
+
+    p {
+      font-size: 16px;
+      color: var(--ion-color-medium);
+      margin: 0;
+    }
+  }
+
   
+}

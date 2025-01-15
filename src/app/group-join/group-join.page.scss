@@ -1,66 +1,149 @@
 :host {
-    --page-margin: var(--app-narrow-margin);
-    --page-background: var(--app-background);
-    --ion-font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
-  }
+  --page-padding: 16px;
 
-  .section {
-      width: 100%;
- 
-  .heading {
-    padding: var(--page-margin);
-    padding-top: calc(var(--page-margin) * 2) ;
-    font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
-    font-weight: bold;
-    font-size: 18px;
-    line-height: 19px;
-    -webkit-font-smoothing: subpixel-antialiased;
-    -moz-osx-font-smoothing: auto;
-    overflow: hidden; 
-    text-overflow: ellipsis;
+  .welcome-section {
+    padding: 24px var(--page-padding) 16px;
     text-align: center;
-    width: 100%;
+    
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--ion-color-dark);
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      font-size: 16px;
+      color: var(--ion-color-medium);
+    }
   }
 
-  .kind {
-    color: blue;
+  .guidelines-list {
+    padding: 0 var(--page-padding);
+    background: transparent;
+
+    .guideline-card {
+      margin: 16px 0;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      background: var(--ion-card-background);
+
+      ion-card-content {
+        padding: 16px;
+      }
+
+      .guideline-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+
+        ion-icon {
+          font-size: 24px;
+          margin-right: 12px;
+        }
+
+        h2 {
+          margin: 0;
+          font-size: 18px;
+          font-weight: 600;
+          color: var(--ion-color-dark);
+        }
+      }
+
+      p {
+        margin: 0;
+        font-size: 14px;
+        color: var(--ion-color-medium);
+        line-height: 1.4;
+      }
+    }
   }
 
-  .safe {
-    color: orange;
+  .agreement-section {
+    position: sticky;
+    bottom: 0;
+    background: var(--ion-background-color);
+    padding-top: 16px;
+    border-top: 1px solid var(--ion-color-light);
+  
+    .checkbox-item {
+      --background: transparent;
+      --padding-start: 0;
+      --padding-end: 0;
+      --inner-padding-end: 0;
+      margin-bottom: 16px;
+  
+      ion-checkbox {
+        --background: transparent;
+        --background-checked: var(--ion-color-primary);
+        --border-color: var(--ion-color-medium);
+        --border-radius: 4px;
+        margin-right: 16px;
+      }
+  
+      ion-label {
+        color: var(--ion-color-dark);
+        font-size: 14px;
+        margin-left: 8px;
+      }
+    }
+  
+    .join-button {
+      --border-radius: 8px;
+      margin: 0;
+      height: 48px;
+      font-weight: 600;
+      text-transform: none;
+      
+      &:not([disabled]) {
+        --background: var(--ion-color-primary);
+        --color: var(--ion-color-primary-contrast);
+      }
+  
+      ion-icon {
+        margin-right: 8px;
+      }
+    }
   }
+  
 
-  .enjoy {
-    color: turquoise
-  }
+  // Add to the existing SCSS
+.guideline-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-  .last {
-    color: royalblue;
-  }
-
-  .section-text {
-    padding: var(--page-margin) ;
-    font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 19px;
-    -webkit-font-smoothing: subpixel-antialiased;
-    -moz-osx-font-smoothing: auto;
-    overflow: hidden; 
-    text-overflow: ellipsis;
-    text-align: center;
+  &:active {
+    transform: scale(0.98);
   }
 }
 
-.agree {
-  font-weight: bold;
+.join-button {
+  transition: opacity 0.2s ease;
+  
+  &[disabled] {
+    opacity: 0.7;
+  }
 }
 
-.join {
-  width: 100%;
-  height: 40px;
-  font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, 'Roboto', 'Segoe UI', Arial, sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  text-align: center;
+// Optional: Add entrance animations
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.guideline-card {
+  animation: slideUp 0.3s ease forwards;
+  @for $i from 1 through 4 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+}
+
 }

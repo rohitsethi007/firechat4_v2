@@ -343,57 +343,279 @@ ion-checkbox {
   --background: #ffffff;
 
   .alert-wrapper {
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 28px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    max-width: 320px;
   }
 
   .alert-head {
-    padding-top: 20px;
-    padding-bottom: 10px;
+    padding: 0;
+    margin-bottom: 16px;
+    text-align: center;
     
     .alert-title {
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 20px;
+      font-weight: 700;
       color: var(--ion-color-dark);
+      margin: 0;
     }
   }
 
   .alert-message {
     color: var(--ion-color-medium);
-    font-size: 14px;
-    padding-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 0;
+    margin-bottom: 24px;
+    text-align: center;
+
+    strong {
+      color: var(--ion-color-dark);
+      font-weight: 600;
+    }
   }
 
   .alert-button-group {
-    padding: 8px;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     
     button {
-      border-radius: 8px;
-      margin: 0 4px;
-      padding: 10px;
-      font-size: 14px;
-      font-weight: 500;
+      margin: 0;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: none;
+      transition: all 0.2s ease;
+
+      &:active {
+        transform: scale(0.98);
+      }
     }
 
     .alert-button-cancel {
       color: var(--ion-color-medium);
-      background: rgba(var(--ion-color-medium-rgb), 0.1);
+      background: var(--ion-color-light);
       
-      &:hover {
-        background: rgba(var(--ion-color-medium-rgb), 0.2);
+      &:active {
+        background: var(--ion-color-light-shade);
       }
     }
 
-    .alert-button-delete {
-      color: #ffffff;
+    .alert-button-delete,
+    .alert-button-confirm {
+      color: var(--ion-color-primary-contrast);
       background: var(--ion-color-primary);
       
-      &:hover {
+      &:active {
         background: var(--ion-color-primary-shade);
       }
     }
   }
+
+  // Friend request specific styling
+  &.friend-request-alert {
+    .alert-message {
+      &::before {
+        content: '';
+        display: block;
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 16px;
+        background: var(--ion-color-primary);
+        opacity: 0.1;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M376 144c-3.92 52.87-44 96-88 96s-84.15-43.12-88-96c-4-55 35-96 88-96s92 42 88 96z' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32'/%3E%3Cpath d='M288 304c-87 0-175.3 48-191.64 138.6-2 10.92 4.21 21.4 15.65 21.4H464c11.44 0 17.62-10.48 15.65-21.4C463.3 352 375 304 288 304z' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32'/%3E%3Cpath fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32' d='M88 176v112M144 232H32'/%3E%3C/svg%3E") no-repeat center;
+        mask-size: contain;
+        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M376 144c-3.92 52.87-44 96-88 96s-84.15-43.12-88-96c-4-55 35-96 88-96s92 42 88 96z' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32'/%3E%3Cpath d='M288 304c-87 0-175.3 48-191.64 138.6-2 10.92 4.21 21.4 15.65 21.4H464c11.44 0 17.62-10.48 15.65-21.4C463.3 352 375 304 288 304z' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32'/%3E%3Cpath fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32' d='M88 176v112M144 232H32'/%3E%3C/svg%3E") no-repeat center;
+        -webkit-mask-size: contain;
+        border-radius: 32px;
+      }
+    }
+  }
 }
+
+.incoming-request-alert {
+  .alert-wrapper {
+    padding: 24px 24px 16px !important;
+    
+    .alert-head {
+      margin-bottom: 20px;
+      
+      .alert-title {
+        font-size: 22px;
+        background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+
+    .alert-message {
+      padding: 0 !important;
+      
+      .request-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        
+        .user-avatar {
+          width: 80px;
+          height: 80px;
+          border-radius: 40px;
+          overflow: hidden;
+          margin-bottom: 16px;
+          border: 3px solid var(--ion-color-light);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+        
+        .request-text {
+          font-size: 15px;
+          line-height: 1.5;
+          color: var(--ion-color-medium);
+          margin-bottom: 8px;
+          
+          strong {
+            display: block;
+            color: var(--ion-color-dark);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+          }
+        }
+      }
+    }
+
+    .alert-button-group {
+      padding: 0;
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      
+      button {
+        margin: 0;
+        border-radius: 14px;
+        height: 48px;
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: none;
+        transition: all 0.2s ease;
+        
+        &.alert-button-confirm {
+          background: var(--ion-color-primary);
+          color: var(--ion-color-primary-contrast);
+          
+          &:active {
+            transform: scale(0.98);
+            background: var(--ion-color-primary-shade);
+          }
+        }
+        
+        &.alert-button-cancel {
+          background: var(--ion-color-light);
+          color: var(--ion-color-medium);
+          
+          &:active {
+            background: var(--ion-color-light-shade);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .incoming-request-alert {
+    .alert-wrapper {
+      .alert-message {
+        .request-content {
+          .user-avatar {
+            border-color: rgba(var(--ion-color-light-rgb), 0.1);
+          }
+        }
+      }
+      
+      .alert-button-group {
+        button.alert-button-cancel {
+          background: rgba(var(--ion-color-light-rgb), 0.1);
+          color: var(--ion-color-light);
+          
+          &:active {
+            background: rgba(var(--ion-color-light-rgb), 0.2);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Optional: Add a nice animation
+.incoming-request-alert {
+  .alert-wrapper {
+    animation: alertPopIn 0.3s forwards;
+  }
+}
+
+@keyframes alertPopIn {
+  0% {
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+// Optional: Add a subtle pulse animation to the Accept button
+.incoming-request-alert {
+  .alert-button-confirm {
+    animation: subtlePulse 2s infinite;
+  }
+}
+
+@keyframes subtlePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--ion-color-primary-rgb), 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(var(--ion-color-primary-rgb), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--ion-color-primary-rgb), 0);
+  }
+}
+
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .custom-alert {
+    --background: var(--ion-background-color);
+
+    .alert-button-group {
+      .alert-button-cancel {
+        background: rgba(var(--ion-color-light-rgb), 0.1);
+        color: var(--ion-color-light);
+        
+        &:active {
+          background: rgba(var(--ion-color-light-rgb), 0.2);
+        }
+      }
+    }
+  }
+}
+
 
 .custom-toast {
   --background: var(--ion-color-primary);

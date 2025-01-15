@@ -297,52 +297,62 @@ export class FriendsPage implements OnInit {
   }
 
   // Send friend request.
-  sendFriendRequest(user) {
-    this.alert = this.alertCtrl.create({
+  async sendFriendRequest(user: any) {
+    const alert = await this.alertCtrl.create({
       header: 'Send Friend Request',
-      message: 'Do you want to send friend request to <b>' + user.name + '</b>?',
+      message: `Would you like to connect with <strong>${user.name}</strong>?`,
+      cssClass: 'custom-alert friend-request-alert',
       buttons: [
         {
           text: 'Cancel',
-          handler: data => { }
+          role: 'cancel',
+          cssClass: 'alert-button-cancel',
+          handler: () => {}
         },
         {
-          text: 'Send',
+          text: 'Send Request',
+          cssClass: 'alert-button-confirm',
           handler: () => {
             this.firebaseProvider.sendFriendRequest(user.$key);
           }
         }
       ]
-    }).then(r => r.present());
+    });
+  
+    await alert.present();
   }
 
-  // Accept Friend Request.
-  acceptFriendRequest(user) {
-    this.alert = this.alertCtrl.create({
-      header: 'Confirm Friend Request',
-      message: 'Do you want to accept <b>' + user.name + '</b> as your friend?',
+  async acceptFriendRequest(user: any) {
+    const alert = await this.alertCtrl.create({
+      header: 'Friend Request',
+      message: `<div class="request-content">
+                  <div class="user-avatar">
+                    <img src="${user.img || './assets/images/default-dp.png'}" alt="${user.name}">
+                  </div>
+                  <div class="request-text">
+                    <strong>${user.name}</strong> wants to connect with you
+                  </div>
+                </div>`,
+      cssClass: 'custom-alert incoming-request-alert',
       buttons: [
         {
-          text: 'Cancel',
-          handler: data => { }
+          text: 'Decline',
+          role: 'cancel',
+          cssClass: 'alert-button-cancel'
         },
         {
-          text: 'Reject Request',
-          handler: () => {
-            this.firebaseProvider.deleteFriendRequest(user.$key);
-            this.getFriendRequests();
-          }
-        },
-        {
-          text: 'Accept Request',
+          text: 'Accept',
+          cssClass: 'alert-button-confirm',
           handler: () => {
             this.firebaseProvider.acceptFriendRequest(user.$key);
-            this.getFriendRequests();
           }
         }
       ]
-    }).then(r => r.present());
+    });
+  
+    await alert.present();
   }
+  
 
   // Cancel Friend Request sent.
   cancelFriendRequest(user) {

@@ -27,7 +27,8 @@ export class GroupJoinPage implements OnInit {
     this.dataProvider.getCurrentUser().then((u) => {
       u.get().subscribe((u: any) => {
         let user = u.data();
-        user.userId = firebase.default.auth().currentUser.uid;;
+        user.userId = firebase.default.auth().currentUser.uid;
+        console.info('user', user);
         this.loggedInUser = user;
       });
     })

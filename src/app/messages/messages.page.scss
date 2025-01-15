@@ -1,0 +1,150 @@
+:host {
+    // Header Styles
+    ion-header {
+      ion-toolbar {
+        --background: transparent;
+        
+        ion-back-button {
+          --color: var(--ion-color-dark);
+          --icon-font-size: 24px;
+        }
+  
+        ion-title {
+          font-size: 20px;
+          font-weight: 600;
+        }
+      }
+  
+      .search-toolbar {
+        --background: transparent;
+        padding-bottom: 8px;
+  
+        .custom-searchbar {
+          --background: var(--ion-color-light);
+          --border-radius: 12px;
+          --box-shadow: none;
+          --placeholder-color: var(--ion-color-medium);
+          --icon-color: var(--ion-color-medium);
+          --color: var(--ion-color-dark);
+          padding: 0;
+          height: 46px;
+        }
+      }
+    }
+  
+    // Empty State
+    .empty-state {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+  
+      .empty-state-content {
+        text-align: center;
+  
+        ion-icon {
+          font-size: 64px;
+          color: var(--ion-color-medium);
+          margin-bottom: 16px;
+        }
+  
+        h2 {
+          font-size: 20px;
+          font-weight: 600;
+          color: var(--ion-color-dark);
+          margin: 0 0 8px;
+        }
+  
+        p {
+          font-size: 16px;
+          color: var(--ion-color-medium);
+          margin: 0;
+        }
+      }
+    }
+  
+    // Conversations List
+    .conversations-list {
+      background: transparent;
+      padding-top: 8px;
+  
+      .conversation-item {
+        --background: transparent;
+        --padding-start: 0;
+        --padding-end: 0;
+        --inner-padding-end: 0;
+        margin-bottom: 16px;
+        border-radius: 12px;
+  
+        &:active {
+          --background: var(--ion-color-light);
+        }
+  
+        &.unread {
+          ion-label {
+            h2 {
+              font-weight: 700;
+              color: var(--ion-color-primary);
+            }
+  
+            .message-preview {
+              color: var(--ion-color-dark);
+              font-weight: 500;
+            }
+          }
+        }
+  
+        ion-avatar {
+          width: 48px;
+          height: 48px;
+          margin-right: 16px;
+        }
+  
+        ion-label {
+          .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+  
+            h2 {
+              font-size: 16px;
+              font-weight: 500;
+              color: var(--ion-color-dark);
+              margin: 0;
+            }
+  
+            .message-time {
+              font-size: 12px;
+              color: var(--ion-color-medium);
+            }
+          }
+  
+          .message-preview {
+            font-size: 14px;
+            color: var(--ion-color-medium);
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+  
+        .unread-badge {
+          position: absolute;
+          top: 50%;
+          right: 0;
+          transform: translateY(-50%);
+          --background: var(--ion-color-primary);
+          --padding-start: 8px;
+          --padding-end: 8px;
+          height: 20px;
+          border-radius: 10px;
+          font-size: 12px;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+  
