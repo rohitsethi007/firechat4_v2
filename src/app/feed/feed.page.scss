@@ -5,73 +5,112 @@
 
 // Header Styling
 ion-header {
-  &::after { display: none; }
+  background: var(--ion-background-color);
+  
+  ion-toolbar {
+    --background: transparent;
+    --border-width: 0;
+    padding: 8px 0;
 
-  ion-toolbar.filters-toolbar {
-    --background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 6px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    .header-row {
+      padding: 0 16px;
 
-    .searchbar-row {
-      align-items: center;
-      padding: 0 8px;
+      .search-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
 
-      ion-searchbar.searchbar {
-        --background: #f5f5f5;
-        --border-radius: 10px;
-        --box-shadow: none;
-        --placeholder-color: #666;
-        --icon-color: #666;
-        --color: #333;
-        padding: 0;
-        height: 40px;
+        .search-box {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          background: var(--ion-color-light);
+          border-radius: 12px;
+          padding: 8px 12px;
+          transition: all 0.3s ease;
 
-        .searchbar-input {
-          font-size: 15px;
-          padding-left: 35px !important;
-        }
-
-        .searchbar-search-icon {
-          width: 18px;
-          height: 18px;
-          left: 10px;
-        }
-      }
-
-      .call-to-action-col {
-        flex: 0 0 auto;
-        max-width: fit-content;
-        padding: 0 2px;
-
-        ion-button.filters-btn {
-          --padding-start: 6px;
-          --padding-end: 6px;
-          height: 40px;
-          margin: 0;
-
-          ion-icon {
-            font-size: 22px;
-            color: var(--ion-color-primary);
+          &.focused {
+            background: var(--ion-color-light-shade);
           }
 
-          ion-badge {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            border-radius: 8px;
-            padding: 3px 5px;
-            min-width: 16px;
-            height: 16px;
-            font-size: 10px;
-            font-weight: 600;
+          ion-icon {
+            font-size: 24px;
+            color: var(--ion-color-medium);
+            margin-right: 8px;
+          }
+
+          ion-input {
+            --padding-start: 0;
+            --padding-end: 0;
+            --placeholder-color: var(--ion-color-medium);
+            --placeholder-opacity: 0.8;
+            font-size: 16px;
+          }
+        }
+
+        .action-buttons {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .action-btn {
+            position: relative;
+            margin: 0;
+            height: 48px;
+            width: 48px;
+
+            ion-icon {
+              font-size: 28px;
+              color: var(--ion-color-medium);
+              transition: color 0.2s ease;
+
+              &.active {
+                color: var(--ion-color-primary);
+              }
+            }
+
+            &:last-child ion-icon {
+              color: var(--ion-color-primary);
+              font-size: 32px;
+            }
+
+            ion-badge {
+              position: absolute;
+              top: 4px;
+              right: 4px;
+              font-size: 12px;
+              --padding-start: 5px;
+              --padding-end: 5px;
+              min-width: 18px;
+              height: 18px;
+              border-radius: 9px;
+            }
           }
         }
       }
     }
   }
 }
+
+
+// Dark mode adjustments
+@media (prefers-color-scheme: dark) {
+  ion-header {
+    .search-box {
+      background: rgba(var(--ion-color-light-rgb), 0.05) !important;
+
+      &.focused {
+        background: rgba(var(--ion-color-light-rgb), 0.1) !important;
+      }
+    }
+
+    ion-chip {
+      background: rgba(var(--ion-color-light-rgb), 0.1) !important;
+    }
+  }
+}
+
 
 // Feed Items Styling
 .listing-item {

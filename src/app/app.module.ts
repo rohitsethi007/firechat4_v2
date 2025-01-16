@@ -43,10 +43,12 @@ import { ReactionListModalPageModule } from './reaction-list-modal/reaction-list
 import { Chooser } from '@ionic-native/chooser/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { FCM } from '@ionic-native/fcm/ngx';
+import { FilterComponent } from './feed/filter.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    FilterComponent
   ],
   entryComponents: [],
   imports: [

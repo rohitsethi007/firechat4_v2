@@ -1,8 +1,9 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { DataService } from '../services/data.service';
-import { NavController, ActionSheetController, AlertController, ModalController, IonRouterOutlet, IonInfiniteScroll } from '@ionic/angular';
+import { PopoverController, NavController, ActionSheetController, AlertController, ModalController, IonRouterOutlet, IonInfiniteScroll } from '@ionic/angular';
 import { LoadingService } from '../services/loading.service';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+import { FilterComponent } from './filter.component';
 
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -10,7 +11,6 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { NgAnalyzeModulesHost } from '@angular/compiler';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
 import { EmojiPickerComponentModule } from '../components/emoji-picker/emoji-picker.module';
-import { PopoverController } from '@ionic/angular';
 
 import { FCM } from '@ionic-native/fcm/ngx';
 import { Platform } from '@ionic/angular';
@@ -38,6 +38,12 @@ interface UserDocument {
 })
 export class FeedPage implements OnInit {
   @ViewChild(IonInfiniteScroll, {static: true}) infiniteScroll: IonInfiniteScroll;
+  searchQuery: string = '';
+  isSearchFocused: boolean = false;
+  isFilterActive: boolean = false;
+  unreadCount: number = 0;
+
+
   userReactions: any[] = [];
   userNotifications: any[] = [];
   loggedInUser: UserDocument | null = null;
@@ -641,5 +647,72 @@ export class FeedPage implements OnInit {
       console.log('emoji selected', data);
       this.submitReactionPost(data.post, data.emoji.value);
     }
+  }
+
+
+  onSearchFocus() {
+    this.isSearchFocused = true;
+  }
+
+  onSearchBlur() {
+    this.isSearchFocused = false;
+  }
+
+  onSearchInput(event: any) {
+    // Handle search input
+  }
+
+  showFilters() {
+    // Show filter modal/popover
+  }
+
+  createPost() {
+    // Handle post creation
+  }
+
+  removeFilter(filter: {id: string, name: string}) {
+    this.activeFilters = this.activeFilters.filter(f => f.id !== filter.id);
+    // Update your filtered results
+  }
+
+// feed.page.ts
+async presentFilterPopover(ev: any) {
+  const popover = await this.popoverCtrl.create({
+    component: FilterComponent,
+    event: ev,
+    translucent: true,
+    cssClass: 'filter-popover',
+    backdropDismiss: true,
+    keyboardClose: true,
+    mode: 'md'// Using material design mode for better accessibility
+  
+  });
+
+  // Handle keyboard events for accessibility
+  const handleKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      popover.dismiss();
+    }
+  };
+
+  document.addEventListener('keydown', handleKeydown);
+
+  await popover.present();
+
+  const { data } = await popover.onWillDismiss();
+  // Clean up event listener
+  document.removeEventListener('keydown', handleKeydown);
+
+  if (data) {
+    this.isFilterActive = data.type !== 'all' || (data.groups && data.groups.length > 0);
+    this.applyFilters(data);
+  }
+}
+
+  
+
+  applyFilters(filters: any) {
+    console.log('Applying filters:', filters);
+    // Implement your filter logic here
   }
 }

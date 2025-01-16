@@ -1,61 +1,44 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar class="filters-toolbar">
-    <!-- Search Mode False -->
-    <ion-row class="searchbar-row" *ngIf="!searchMode" align-items-center>
-      <ion-col>
-        <ion-searchbar 
-          mode="ios" 
-          (ionFocus)="onFocus($event)" 
-          class="searchbar" 
-          placeholder="Search SocialShare ..."
-          animated="true">
-        </ion-searchbar>
-      </ion-col>
-      
-      <ion-col class="call-to-action-col">
-        <ion-button fill="clear" class="filters-btn" routerLink="/messages">
-          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
-          <ion-badge 
-            *ngIf="getUnreadMessagesCount() != null"
-            color="danger">
-            {{getUnreadMessagesCount()}}
-          </ion-badge>
-        </ion-button>
-      </ion-col>
-      
-      <ion-col class="call-to-action-col">
-        <ion-button fill="clear" class="filters-btn" (click)="showGroupOptions()">
-          <ion-icon slot="icon-only" name="add-circle"></ion-icon>
-        </ion-button>
-      </ion-col>
-    </ion-row>
+  <ion-toolbar>
+    <ion-row class="header-row">
+      <ion-col size="12">
+        <div class="search-container">
+          <!-- Search Bar -->
+          <div class="search-box" [class.focused]="isSearchFocused">
+            <ion-icon name="search-outline"></ion-icon>
+            <ion-input
+              placeholder="Search posts..."
+              [(ngModel)]="searchQuery"
+              (ionFocus)="onSearchFocus()"
+              (ionBlur)="onSearchBlur()"
+              (ionInput)="onSearchInput($event)">
+            </ion-input>
+          </div>
 
-    <!-- Search Mode True -->
-    <ion-row class="searchbar-row" *ngIf="searchMode" align-items-center>
-      <ion-col>
-        <ion-searchbar 
-          mode="ios" 
-          debounce="1000" 
-          (ionChange)="seachFeed($event)" 
-          [(ngModel)]="searchTerm" 
-          (ionFocus)="onFocus($event)" 
-          class="searchbar" 
-          placeholder="Search SocialShare ..."
-          animated="true">
-        </ion-searchbar>
-      </ion-col>
-      
-      <ion-col class="call-to-action-col">
-        <ion-button 
-          fill="clear" 
-          class="filters-btn ion-text-capitalize" 
-          (click)="onCancel($event)">
-          Cancel
-        </ion-button>
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <ion-button fill="clear" class="action-btn" (click)="presentFilterPopover($event)">
+              <ion-icon name="funnel-outline" 
+                        [class.active]="isFilterActive">
+              </ion-icon>
+            </ion-button>
+
+            <ion-button fill="clear" class="action-btn" routerLink="/messages">
+              <ion-icon name="notifications-outline"></ion-icon>
+              <ion-badge *ngIf="unreadCount > 0">{{unreadCount}}</ion-badge>
+            </ion-button>
+
+            <ion-button fill="clear" class="action-btn" (click)="createPost()">
+              <ion-icon name="add-circle"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
       </ion-col>
     </ion-row>
   </ion-toolbar>
 </ion-header>
+
+
 
 <ion-content>
   <div *ngIf="!searchMode">
