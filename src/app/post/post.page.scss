@@ -10,170 +10,6 @@ ion-header {
   }
 }
 
-.poll-card {
-  border-radius: 16px;
-  margin: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-
-  .post-header {
-    padding: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    border-bottom: 1px solid var(--ion-color-light);
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-
-      .user-avatar {
-        width: 40px;
-        height: 40px;
-        border: 2px solid var(--ion-color-light);
-      }
-
-      .user-details {
-        .username {
-          font-weight: 600;
-          color: var(--ion-color-dark);
-          font-size: 16px;
-          margin-bottom: 4px;
-          display: block;
-        }
-
-        .post-meta {
-          font-size: 13px;
-          color: var(--ion-color-medium);
-          
-          .group-name {
-            color: var(--ion-color-primary);
-            font-weight: 500;
-          }
-        }
-      }
-    }
-  }
-
-  .poll-content {
-    padding: 16px;
-
-    .media-slider {
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 16px;
-      height: 200px;
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    }
-
-    .poll-title-section {
-      margin-bottom: 20px;
-
-      .poll-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: var(--ion-color-dark);
-        margin: 0 0 8px;
-      }
-
-      .poll-instruction {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        color: var(--ion-color-medium);
-        font-size: 14px;
-        margin: 0;
-
-        ion-icon {
-          font-size: 18px;
-        }
-      }
-    }
-
-    .poll-options {
-      .poll-option {
-        margin-bottom: 12px;
-
-        .option-item {
-          --background: var(--ion-color-light-tint);
-          --border-radius: 8px;
-          --padding-start: 8px;
-          --padding-end: 16px;
-          --min-height: 50px;
-
-          &:hover {
-            --background: var(--ion-color-light);
-          }
-        }
-
-        .option-label {
-          font-size: 15px;
-          color: var(--ion-color-dark);
-        }
-
-        .custom-radio {
-          --color: var(--ion-color-primary);
-          --color-checked: var(--ion-color-primary);
-          margin-right: 12px;
-        }
-      }
-    }
-
-    .vote-button {
-      margin-top: 20px;
-      --border-radius: 8px;
-      --background: var(--ion-color-primary);
-      
-      ion-icon {
-        margin-right: 8px;
-      }
-    }
-
-    .poll-results {
-      margin: 20px 0;
-      padding: 16px;
-      background: var(--ion-color-light-tint);
-      border-radius: 12px;
-
-      canvas {
-        width: 100% !important;
-        height: auto !important;
-      }
-
-      .chart-legend {
-        margin-top: 16px;
-        text-align: center;
-      }
-    }
-
-    .tags-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 16px;
-
-      .tag-chip {
-        margin: 0;
-        --background: var(--ion-color-light);
-        --color: var(--ion-color-medium);
-        height: 24px;
-        font-size: 12px;
-
-        &.active {
-          --background: var(--ion-color-primary-tint);
-          --color: var(--ion-color-primary);
-        }
-      }
-    }
-  }
-}
-
 .reaction-count-button {
   --padding-start: 8px;
   --padding-end: 8px;
@@ -408,4 +244,32 @@ ion-header {
       
     }
   }
+
+  .post-container {
+    .poll-results-wrapper {
+      width: 100%;
+      margin: 16px 0;
+      
+      h4 {
+        font-size: 16px;
+        margin-bottom: 16px;
+      }
+  
+      .poll-chart {
+        position: relative;
+        width: 100%;
+        height: 260px !important; // Even smaller fixed height
+        display: flex;
+        align-items: center;
+        justify-content: center;
+  
+        canvas {
+          width: 100% !important;
+          height: 260px !important;
+          max-height: 260px !important;
+        }
+      }
+    }
+  }
+  
   

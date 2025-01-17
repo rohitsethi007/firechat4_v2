@@ -11,9 +11,10 @@ import { Contacts } from '@ionic-native/contacts/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
-import { ImagemodalPage } from '../imagemodal/imagemodal.page';
+import { Chart } from 'chart.js';
 import { ChartDataSets } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
+
 import * as firebase from 'firebase/app';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -75,34 +76,41 @@ export class PostPage implements OnInit {
   private pollId: any;
   private pollOptionForm: FormGroup;
   private optionsArray: string[];
-  chartData: any[] = [
+  chartData: ChartDataSets[] = [
     {
       data: [],
       label: 'Votes'
     }
   ];
-  chartLabels: string[] = [];
+  chartLabels: Label[] = [];
   chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    scales: {
-      yAxes: [{
-        ticks: {
-          beginAtZero: true,
-          stepSize: 1
+    plugins: {
+      legend: {
+        display: true,
+        position: 'right', // Changed to right to save vertical space
+        align: 'center',
+        labels: {
+          boxWidth: 10,
+          padding: 6,
+          font: {
+            size: 11
+          }
         }
-      }]
+      }
     }
   };
-  chartColors = [
+  
+  chartColors: Color[] = [
     {
-      backgroundColor: 'rgba(66, 133, 244, 0.3)',
-      borderColor: 'rgb(66, 133, 244)',
-      borderWidth: 2
+      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+      borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+      borderWidth: 0
     }
   ];
-  showLegend = false;
-  chartType = 'pie';
+  showLegend = true;
+  chartType = 'pie'; // or 'bar' depending on your preference
 
   voted = false;
   pollClosed = false;
@@ -163,6 +171,12 @@ export class PostPage implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  // Add this to debug
+  ngAfterViewInit() {
+    console.log('Chart Data:', this.chartData);
+    console.log('Chart Labels:', this.chartLabels);
   }
 
   getPostDetails() {
@@ -596,52 +610,50 @@ viewGroup(groupId) {
     // Implement your bookmark logic here
   }
   
-  private initializePollData(p: any) {
-    if (p.type !== 'poll') return;
-  
-    console.log('Initializing poll data');
-  
-    try {
-      // Initialize chart arrays
-      this.chartLabels = [];
-      this.chartData[0].data = [];
-  
-      // Process poll options
-      p.data.pollOptions.forEach((option: PollOption, index: number) => {
-        if (option) {
-          // Add vote count
-          const voteCount = option.members?.length || 0;
-          this.chartData[0].data.push(voteCount);
-  
-          // Add label
-          this.chartLabels.push(option.name);
-        }
-      });
-  
-      // Check if poll is closed
-      const today = new Date();
-      const pollEndDate = p.data.dateEnding.toDate();
-      this.pollClosed = pollEndDate < today;
-  
-      // Check if user has voted
-      this.voted = p.data.pollOptions.some((option: PollOption) => 
-        option.members?.includes(this.loggedInUserId)
-      );
-  
-      // Reset selected option
-      this.selectedOption = '';
-  
-      // Optional: Log chart data for debugging
-      console.log('Chart Data:', {
-        labels: this.chartLabels,
-        data: this.chartData[0].data,
-        voted: this.voted,
-        closed: this.pollClosed
-      });
-  
-    } catch (error) {
-      console.error('Error initializing poll data:', error);
-      // Handle error appropriately
-    }
+private initializePollData(p: any) {
+  if (p.type !== 'poll') return;
+
+  console.log('Initializing poll data');
+
+  try {
+    // Reset arrays
+    this.chartLabels = [];
+    this.chartData[0].data = [];
+
+    // Process poll options
+    p.data.pollOptions.forEach((option: PollOption, index: number) => {
+      if (option) {
+        const voteCount = option.members?.length || 0;
+        console.log(`Option ${option.name}: ${voteCount} votes`);
+        
+        this.chartData[0].data.push(voteCount);
+        this.chartLabels.push(option.name);
+      }
+    });
+
+    // Force chart update
+    this.chartData = [...this.chartData];
+    
+    // Check if user has voted
+    this.voted = p.data.pollOptions.some((option: PollOption) => 
+      option.members?.includes(this.loggedInUserId)
+    );
+
+    // Check if poll is closed
+    const today = new Date();
+    const pollEndDate = p.data.dateEnding.toDate();
+    this.pollClosed = pollEndDate < today;
+
+    console.log('Chart initialization complete:', {
+      data: this.chartData[0].data,
+      labels: this.chartLabels,
+      voted: this.voted,
+      closed: this.pollClosed
+    });
+
+  } catch (error) {
+    console.error('Error initializing poll data:', error);
   }
+}
+
 }

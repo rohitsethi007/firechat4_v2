@@ -8,6 +8,7 @@ import { ChartsModule } from 'ng2-charts';
 import { PostPage } from './post.page';
 import { ComponentsModule } from '../components/components.module';
 
+
 const routes: Routes = [
   {
     path: '', 
