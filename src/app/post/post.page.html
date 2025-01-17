@@ -242,6 +242,115 @@
     </ion-card>
   </div>
   
+  <div class="post-container" *ngIf="post.type === 'event'">
+    <ion-card class="event-card">
+      <ion-card-header>
+        <ion-row>
+          <ion-col size=10>
+        <ion-card-subtitle class="addedBy">
+          <img class="addedByImg" src="{{post.avatar}}" onError="this.src='./assets/images/default-dp.png'" /> 
+          <p><a class="addedByTitle" (click)="viewUser(post.addedByUser.addedByKey)" ><b>{{post.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf="item.showNewIcon" class="newIcon" src="./assets/icon/new.svg" />  -->
+            <br/>
+          <span class="addedByDate">posted {{post.date.toDate() | DateFormat}}</span><br/>
+          <a (click)="viewGroup(post.groupId)" class="addedByTitle">in <b>{{post.groupName}}</b></a></p>
+        </ion-card-subtitle>
+      </ion-col>
+      <ion-col size=2>
+        <ion-buttons>
+          <ion-button (click)="showPostOptions(post)">
+            <ion-icon slot="end" name="chevron-down-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-col>
+      </ion-row>
+      </ion-card-header>
+      <ion-card-content class="message">
+        <div>
+          <div *ngIf="post.postMedia">
+            <ion-slides class="slider" pager="true" [options]="slideOptsOne" #slideWithNav>
+            <ion-slide *ngFor="let s of post.postMedia">
+              <div class="bgSizeContain" 
+              [ngStyle]="{'background-image':'url('+s+')'}">
+            </div>
+            </ion-slide>
+          </ion-slides>
+          </div>
+          <ion-label> <b>{{post.title}}.</b> <br/>{{post.data.eventDate}} at {{post.data.eventTime}}<br/><br/>
+          {{post.data.address}}<br/><br/>
+          {{post.data.link}}</ion-label>
+        </div>
+        <div class="tags-wrapper">
+          <ion-row >
+            <div class="tags" *ngFor="let tag of post.postTags">
+              <span *ngIf="tag.isChecked" class="item-rating" [attr.ratingBase]="1">#{{tag.val}}</span>
+              <span *ngIf="!tag.isChecked" class="item-rating" [attr.ratingBase]="0">#{{tag.val}}</span>
+            </div>
+          </ion-row>
+        </div>
+        <div class="reactions">
+          <ion-row>
+            <ion-col size=3>
+              <ion-buttons>
+                <ion-button (click)="submitReactionSmile()">
+              <div *ngIf="post.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+              <div *ngIf="!post.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> <span class="text">Thanks</span></div> 
+              </ion-button>
+              </ion-buttons> 
+            </ion-col>
+            <ion-col size=3> 
+              <ion-buttons>
+                <ion-button (click)="submitReactionCheckin()">
+              <div *ngIf="post.showCheckin"><ion-icon size="small" class="icon" src="./assets/icon/checkin-active.svg" ></ion-icon> <span class="text">Checkin</span></div> 
+              <div *ngIf="!post.showCheckin"><ion-icon size="small" class="icon"  src="./assets/icon/checkin.svg" ></ion-icon> <span class="text">Checkin</span></div> 
+              </ion-button>
+              </ion-buttons> 
+            </ion-col>
+            <ion-col size=2></ion-col>
+            <ion-col size=2>
+              <ion-buttons>
+                <ion-button (click)="showReactionsList()">
+              <div><ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon><ion-icon size="small" src="./assets/icon/checkin-active.svg" class="icon"></ion-icon> <span class="text">{{post.totalReactionCount}}</span></div>
+            </ion-button>
+            </ion-buttons> 
+            </ion-col>
+            <ion-col size=2>
+              <ion-buttons>
+                <ion-button>
+              <div><ion-icon size="small" class="icon" name="chatbox-outline"></ion-icon> <span class="text">{{post.totalReviewCount}}</span></div>
+            </ion-button>
+            </ion-buttons> 
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-card-content>
+
+    <!-- <hr class="details-divider">
+      
+        <h3 class="detail-title">Selected Tags</h3> -->
+        <hr class="details-divider">
+        <div class="user-preferences-wrapper">
+          <div  >
+            <div class="reviews" *ngFor="let r of postReviews">
+              <ion-row>
+                <ion-col size="2">
+                    <img class="addedByImgReview" src="{{r.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" />
+                </ion-col>
+                <ion-col class="review" size="9">
+                    <span class="addedByTitleReview"><a (click)="viewUser(r.addedByUser.addedByKey)" >
+                      <b>{{post.addedByUser.addedByUsername}}</b></a>, <span class="addedByDateReview">{{r.dateCreated.toDate() | DateFormat}}</span>
+                    </span>
+                        <br/>
+                        <br/>
+                        <div *ngIf="r.reviewMedia.length > 0" class="bgSizeContain" 
+                        [ngStyle]="{'background-image':'url('+r.reviewMedia+')'}"></div>
+                        <div class="messageReview" [innerHTML]="r.review"></div>
+                  </ion-col>
+            </ion-row>
+          </div>
+          </div>
+        </div>
+    </ion-card>
+  </div>
   
   
 </ion-content>

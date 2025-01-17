@@ -1,101 +1,201 @@
-:host {
-  --page-margin: var(--app-narrow-margin);
+
+.groups-container {
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
-.forms-validations-content {
-   .validations-form {
-    margin-bottom: calc(var(--page-margin) * 2);
-
-    .inputs-list {
-      padding: var(--page-margin) var(--page-margin) calc(var(--page-margin) * 2);
-
-      .header {
-        font-size: 14px;
-      }
-      .error-container {
-        .error-message {
-          margin: calc(var(--page-margin) / 2) 0px;
-          display: flex;
-          align-items: center;
-          color: var(--ion-color-danger);
-          font-size: 14px;
-
-          ion-icon {
-            padding-inline-end: calc(var(--page-margin) / 2);
-            flex-shrink: 0;
-          }
-        }
-        }
-    }
-
-    .submit-btn {
-      margin: var(--page-margin);
-    }
+.group-card {
+  margin: 8px 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  
+  &:active {
+    transform: scale(0.98);
   }
+}
 
-  .tags {
-    padding-right: 5px;
-    padding-bottom: 5px;
-  .item-rating {
-    // Default background
-    background-color: rgba(var(--page-color-rgb), .35);
-            color: var(--ion-color-lightest);
-            border-radius: var(--app-narrow-radius);
-            padding-top: calc(var(--page-margin) / 3);
-            padding-bottom: calc(var(--page-margin) / 3);
-            padding-left: calc(var(--page-margin) / 2);
-            padding-right: calc(var(--page-margin) / 2);
-            font-size: 12px;
-            font-weight: 600;
-            width: 100%;
-            display: block;
-            text-align: center;
-            &[ratingBase="0"] {
-              background-color: #bbb2b2;
-            }
-            &[ratingBase="1"] {
-              background-color: #e0c77c;
-            }
-  }
-  ion-checkbox {
-    margin: 0px;
-    width: 50px;
-    align-content: center;
-    --border-width: 0px;
-    --color-checked: transparent;
-    margin-left: 9px;
-    margin-top: -20px;
-    display:block;
-    opacity: 0;
+.selected-group {
+  background: var(--ion-color-light);
+  border-radius: 12px;
+  margin: 16px 0;
+  
+  h2 {
+
+    font-size: 14px;
+    margin-bottom: 4px;
+    padding-left: 10px;
   }
   
-}
+  h3 {
+    font-weight: 600;
+    margin: 0;
+  }
 }
 
-.uploads {
-  margin: 5px;
-.img-wrap {
+.form-section {
+  background: transparent;
+  border-radius: 12px;
+  padding: 6px;
+  margin: 0px 0;
+}
+
+.question-input {
+  --background: var(--ion-color-white);
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.options-container {
+  ion-item {
+    --background: var(--ion-color-white);
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+}
+
+.custom-input {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  font-size: 16px;
+}
+
+.submit-button {
+  margin-top: 24px;
+  --border-radius: 12px;
+  --box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.2);
+}
+
+// Add ripple effect styles
+.ripple-parent {
   position: relative;
-  display: inline-block;
-  font-size: 0;
-  padding: 5px;
+  overflow: hidden;
 }
-.img-wrap .close {
-  position: absolute;
-  top: -2px;
-  right: -7px;
-  z-index: 100;
-  background-color: #FFF;
-  padding: 5px 2px 2px;
-  color: #000;
-  cursor: pointer;
-  text-align: center;
-  font-size: 22px;
-  line-height: 10px;
-  border-radius: 50%;
+.event-container {
+
+  padding: 16px;
+  ion-item {
+    --padding-start: 16px;
+    --inner-padding-end: 0;
+    --background: transparent;
+
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  ion-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    
+    &.item-has-focus {
+      --highlight-background: var(--ion-color-primary);
+    }
+  }
+
+  ion-label {
+    margin-bottom: 8px;
+    font-weight: 500;
+    
+    &[position="stacked"] {
+      margin-bottom: 4px;
+    }
+  }
+
+  .error-message {
+    color: var(--ion-color-danger);
+    font-size: 12px;
+    margin-top: 4px;
+    padding-left: 16px;
+  }
 }
-.img-wrap:hover .close {
-  opacity: 1;
+.banner-field {
+  margin-bottom: 20px;
+
+  .banner-container {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+
+    .banner-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      display: flex;
+      justify-content: center;
+
+      .upload-button {
+        --background: rgba(255,255,255,0.2);
+        --color: white;
+      }
+    }
+  }
 }
+
+.start-segment {
+  margin: 16px 0;
+  --background: var(--ion-color-light);
+  border-radius: 8px;
+  
+  ion-segment-button {
+    --indicator-color: var(--ion-color-primary);
+    --color-checked: var(--ion-color-primary);
+    --color: var(--ion-color-medium);
+  }
 }
+
+.input-item {
+  --background: var(--ion-color-light);
+  --border-radius: 8px;
+  margin-bottom: 12px;
+
+  .input-icon {
+    margin-right: 8px;
+    color: var(--ion-color-medium);
+  }
+}
+
+.submit-button-container {
+  margin-top: 24px;
+
+  .submit-button {
+    --border-radius: 8px;
+    margin: 0;
+  }
+}
+
+.error-message {
+  font-size: 12px;
+  margin-left: 16px;
+  margin-top: 4px;
+  display: block;
+}
+
+.input-item {
+  &.item-has-error {
+    --border-color: var(--ion-color-danger);
+  }
+}
+
+.checkbox-item {
+  --background: var(--ion-color-light);
+  --border-radius: 8px;
+  margin: 16px 0;
+  
+  ion-checkbox {
+    margin-right: 8px;
+  }
+}
+
+
 
