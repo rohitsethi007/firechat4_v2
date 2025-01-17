@@ -1,178 +1,411 @@
 ion-header {
   ion-toolbar {
-    --background: #ffffff;
+    --background: transparent;
+    --border-width: 0;
     
-    ion-title {
-      font-weight: 600;
-      font-size: 16px;
+    // For gradient background (optional)
+    &::after {
+      display: none;
     }
   }
 }
 
-.listing-item {
-  ion-card {
-    margin: 0;
-    box-shadow: none;
-    background: #ffffff;
-    border-radius: 0;
-    border-bottom: 1px solid rgba(var(--ion-color-medium-rgb), 0.2);
+.poll-card {
+  border-radius: 16px;
+  margin: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 
-    ion-card-header {
-      padding: 12px 16px 0;
+  .post-header {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--ion-color-light);
 
-      .addedBy {
-        display: flex;
-        align-items: flex-start;
-        padding: 0;
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
 
-        .addedByImg {
-          width: 40px;
-          height: 40px;
-          border-radius: 20px;
-          margin-right: 12px;
-          object-fit: cover;
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border: 2px solid var(--ion-color-light);
+      }
+
+      .user-details {
+        .username {
+          font-weight: 600;
+          color: var(--ion-color-dark);
+          font-size: 16px;
+          margin-bottom: 4px;
+          display: block;
         }
 
-        p {
-          margin: 0;
+        .post-meta {
+          font-size: 13px;
+          color: var(--ion-color-medium);
           
-          .addedByTitle {
-            color: var(--ion-color-dark);
-            text-decoration: none;
-            font-size: 14px;
-            
-            b {
-              font-weight: 600;
-            }
-          }
-
-          .addedByDate {
-            color: var(--ion-color-medium);
-            font-size: 12px;
+          .group-name {
+            color: var(--ion-color-primary);
+            font-weight: 500;
           }
         }
       }
+    }
+  }
 
-      ion-buttons {
-        margin-top: -8px;
-        
-        ion-button {
-          --color: var(--ion-color-medium);
+  .poll-content {
+    padding: 16px;
+
+    .media-slider {
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      height: 200px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .poll-title-section {
+      margin-bottom: 20px;
+
+      .poll-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ion-color-dark);
+        margin: 0 0 8px;
+      }
+
+      .poll-instruction {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--ion-color-medium);
+        font-size: 14px;
+        margin: 0;
+
+        ion-icon {
+          font-size: 18px;
         }
       }
     }
 
-    ion-card-content.message {
-      padding: 12px 16px;
+    .poll-options {
+      .poll-option {
+        margin-bottom: 12px;
 
-      .slider {
-        margin-bottom: 16px;
-        
-        .bgSizeContain {
-          height: 200px;
-          background-size: cover;
-          background-position: center;
-          width: 100%;
+        .option-item {
+          --background: var(--ion-color-light-tint);
+          --border-radius: 8px;
+          --padding-start: 8px;
+          --padding-end: 16px;
+          --min-height: 50px;
+
+          &:hover {
+            --background: var(--ion-color-light);
+          }
+        }
+
+        .option-label {
+          font-size: 15px;
+          color: var(--ion-color-dark);
+        }
+
+        .custom-radio {
+          --color: var(--ion-color-primary);
+          --color-checked: var(--ion-color-primary);
+          margin-right: 12px;
         }
       }
+    }
 
-      ion-label {
-        color: var(--ion-color-dark);
-        font-size: 14px;
-        line-height: 1.5;
-        
-        b {
-          color: var(--ion-color-primary);
-        }
+    .vote-button {
+      margin-top: 20px;
+      --border-radius: 8px;
+      --background: var(--ion-color-primary);
+      
+      ion-icon {
+        margin-right: 8px;
+      }
+    }
+
+    .poll-results {
+      margin: 20px 0;
+      padding: 16px;
+      background: var(--ion-color-light-tint);
+      border-radius: 12px;
+
+      canvas {
+        width: 100% !important;
+        height: auto !important;
       }
 
-      .tags-wrapper {
-        margin: 12px 0;
-        
-        ion-row {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
+      .chart-legend {
+        margin-top: 16px;
+        text-align: center;
+      }
+    }
 
-          .tags {
-            .item-rating {
-              background: rgba(var(--ion-color-primary-rgb), 0.08);
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+
+      .tag-chip {
+        margin: 0;
+        --background: var(--ion-color-light);
+        --color: var(--ion-color-medium);
+        height: 24px;
+        font-size: 12px;
+
+        &.active {
+          --background: var(--ion-color-primary-tint);
+          --color: var(--ion-color-primary);
+        }
+      }
+    }
+  }
+}
+
+.reaction-count-button {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  height: 36px;
+
+  .reaction-count-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .stacked-icons {
+    position: relative;
+    width: 28px; // Adjust based on your icon size
+    height: 20px; // Adjust based on your icon size
+    
+    .icon {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      
+      &.smile {
+        left: 0;
+        z-index: 2;
+      }
+      
+      &.hug {
+        left: 8px; // Adjust for desired overlap
+        z-index: 1;
+      }
+    }
+  }
+
+  .count-text {
+    font-size: 14px;
+    line-height: 1;
+    color: var(--ion-color-medium);
+    margin-left: 2px; // Fine-tune spacing
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+  .post-container {
+    padding: 16px;
+  
+    .post-card {
+      border-radius: 16px;
+      margin: 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+  
+    .post-header {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--ion-color-light);
+  
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+  
+        .user-avatar {
+          width: 40px;
+          height: 40px;
+          border: 2px solid var(--ion-color-light);
+        }
+  
+        .user-details {
+          .username {
+            font-weight: 600;
+            color: var(--ion-color-dark);
+            font-size: 16px;
+            margin-bottom: 4px;
+            display: block;
+          }
+  
+          .post-meta {
+            font-size: 13px;
+            color: var(--ion-color-medium);
+            
+            .group-name {
               color: var(--ion-color-primary);
-              padding: 4px 10px;
-              border-radius: 4px;
-              font-size: 12px;
               font-weight: 500;
             }
           }
         }
       }
-
-      .reactions {
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px solid rgba(var(--ion-color-medium-rgb), 0.2);
-
-        ion-button {
-          --padding-start: 0;
-          --padding-end: 0;
-          height: 30px;
-
-          .icon {
-            margin-right: 4px;
-          }
-
-          .text {
-            color: var(--ion-color-medium);
-            font-size: 12px;
-          }
-        }
+  
+      .options-button {
+        --padding-start: 8px;
+        --padding-end: 8px;
+        margin: 0;
+        height: 36px;
       }
     }
-  }
-}
-
-// For the reviews section
-.user-preferences-wrapper {
-  .reviews {
-    padding: 16px;
-    border-bottom: 1px solid rgba(var(--ion-color-medium-rgb), 0.2);
-
-    .addedByImgReview {
-      width: 32px;
-      height: 32px;
-      border-radius: 16px;
-      object-fit: cover;
-    }
-
-    .review {
-      .addedByTitleReview {
-        font-size: 14px;
-        
-        b {
+  
+    .post-content {
+      padding: 16px;
+  
+      .media-slider {
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 16px;
+        height: 200px;
+  
+        .post-media {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+  
+      .post-text {
+        margin-bottom: 16px;
+  
+        .post-title {
+          font-weight: 600;
+          margin: 0 0 8px 0;
           color: var(--ion-color-dark);
         }
-
-        .addedByDateReview {
+  
+        .post-message {
           color: var(--ion-color-medium);
-          font-size: 12px;
+          line-height: 1.5;
+          margin: 0;
         }
       }
-
-      .messageReview {
-        margin-top: 8px;
-        color: var(--ion-color-dark);
-        font-size: 14px;
-        line-height: 1.5;
+  
+      .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+  
+        .tag-chip {
+          margin: 0;
+          --background: var(--ion-color-light);
+          --color: var(--ion-color-medium);
+          height: 24px;
+          font-size: 12px;
+  
+          &.active {
+            --background: var(--ion-color-primary-tint);
+            --color: var(--ion-color-primary);
+          }
+        }
       }
-
-      .bgSizeContain {
-        height: 200px;
-        background-size: cover;
-        background-position: center;
-        width: 100%;
-        margin: 8px 0;
-        border-radius: 8px;
+  
+      .reactions-bar {
+        padding: 8px 0;
+        
+        ion-row {
+          align-items: center;
+        }
+      
+        ion-buttons {
+          ion-button {
+            --padding-start: 8px;
+            --padding-end: 8px;
+            height: 36px;
+            
+            .icon {
+              font-size: 20px;
+              color: var(--ion-color-medium);
+            }
+          }
+        }
+      
+        .reaction-count-button {
+          .reaction-count-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+          }
+      
+          .stacked-icons {
+            position: relative;
+            width: 28px;
+            height: 20px;
+            
+            .icon {
+              position: absolute;
+              width: 20px;
+              height: 20px;
+              
+              &.smile {
+                left: 0;
+                z-index: 2;
+              }
+              
+              &.hug {
+                left: 8px;
+                z-index: 1;
+              }
+            }
+          }
+        }
+      
+        .comment-count {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          
+          .icon {
+            margin-right: 2px;
+          }
+        }
+      
+        .count-text {
+          font-size: 14px;
+          color: var(--ion-color-medium);
+          line-height: 1;
+        }
+      
+        // Right aligned buttons
+        .ion-text-end {
+          ion-buttons {
+            gap: 4px;
+            
+            ion-button {
+              &:last-child {
+                --padding-end: 0;
+              }
+            }
+          }
+        }
       }
+      
     }
   }
-}
+  

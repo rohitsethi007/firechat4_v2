@@ -178,7 +178,7 @@ export class NewPostPage implements OnInit {
 
    submitPostForm() {
     this.loadingProvider.show();
-    console.log('this.group', this.group);
+
     // Add post info and date.
     this.post.date = new Date();
     this.post.title = this.postForm.value.title;
@@ -222,9 +222,7 @@ export class NewPostPage implements OnInit {
           userPosts: this.userPosts
         });
     }).then(() => {
-      console.log('submit successfull')
       this.loadingProvider.hide();
-
       this.router.navigateByUrl('/app/tabs/tab1');
     });;
 
@@ -238,9 +236,9 @@ export class NewPostPage implements OnInit {
 
     this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
       this.group = group.payload.data();
-      this.group.groupTags.forEach((element: any) => {
-        this.postTags.push({val: element, isChecked: false});
-      });
+      // this.group.groupTags.forEach((element: any) => {
+      //   this.postTags.push({val: element, isChecked: false});
+      //});
       // TAGS Commented
       // this.addTagControls();
 

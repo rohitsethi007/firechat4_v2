@@ -581,7 +581,7 @@ export class FeedPage implements OnInit {
           post.reactionType = '';
         }
       });
-      post.postTags = post.postTags.filter(x => x.isChecked !== false);
+      // post.postTags = post.postTags.filter(x => x.isChecked !== false);
       this.addOrUpdatePost(post);
     });
   }

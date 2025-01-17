@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ActionSheetController, AlertController, ModalController } from '@ionic/angular';
+import { PopoverController, ActionSheetController, AlertController, ModalController } from '@ionic/angular';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { DataService } from '../services/data.service';
 import { ImageService } from '../services/image.service';
@@ -17,6 +17,9 @@ import { Color, Label } from 'ng2-charts';
 import * as firebase from 'firebase/app';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { EmojiPickerComponentModule } from '../components/emoji-picker/emoji-picker.module';
+import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
+import { AngularFireAuth } from '@angular/fire/auth';
 interface Reaction {
   payload: any;
   id?: string;
@@ -27,6 +30,24 @@ interface Reaction {
   };
   dateCreated: string;
   reactionType: string;
+}
+// Add interface for user data
+interface UserDocument {
+  userReactions: any[];
+  userNotifications: any[];
+  username: string;
+  img: string;
+  groups: string[];
+  // add other properties as needed
+}
+interface PollOption {
+  name: string;
+  members: string[] | null;
+}
+
+interface PollData {
+  pollOptions: PollOption[];
+  dateEnding: any; // Replace 'any' with proper Firebase Timestamp type if available
 }
 
 @Component({
@@ -43,52 +64,49 @@ export class PostPage implements OnInit {
   private notifications: any = [];
   private loggedInUserId: any;
   private reviewMedia: any = [];
+  userReactions: any[] = [];
   private uploadingImage: boolean;
   private reactionSubscription: Subscription;
+  loggedInUser: UserDocument | null = null;
+  userNotifications: any[] = [];
+
   // Poll related fields
   private poll: any;
   private pollId: any;
   private pollOptionForm: FormGroup;
   private optionsArray: string[];
-  private selectedOption: any;
-  private voted: any;
-  private pollClosed: any;
-  private chartType = 'pie';
-   // Data
-   chartData: ChartDataSets[] = [{ data: [], label: 'Poll Results', backgroundColor: [
-    "#f43004",
-    "#decf3f",
-    "#FFA500",
-    "#9b59b6",
-  ],
- }];
-   chartLabels: Label[];
-
-   // Options
-   chartOptions =   {
-    legend: {
-      display: true
-    },
-    legendCallback: function(chart) {
-      var text = [];
-      text.push('<ul class="0-legend">');
-      var ds = this.chartData.datasets[0];
-      var sum = ds.data.reduce(function add(a, b) {
-        return a + b;
-      }, 0);
-      for (var i = 0; i < ds.data.length; i++) {
-        text.push('<li>');
-        var perc = Math.round(100 * ds.data[i] / sum);
-        // tslint:disable-next-line: max-line-length
-        text.push('<span style="background-color:' + ds.backgroundColor[i] + '">' + '</span>' + this.chartData.labels[i] + ' (' + ds.data[i] + ') (' + perc + '%)');
-        text.push('</li>');
-      }
-      text.push('</ul>');
-      return text.join('');
+  chartData: any[] = [
+    {
+      data: [],
+      label: 'Votes'
+    }
+  ];
+  chartLabels: string[] = [];
+  chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true,
+          stepSize: 1
+        }
+      }]
     }
   };
+  chartColors = [
+    {
+      backgroundColor: 'rgba(66, 133, 244, 0.3)',
+      borderColor: 'rgb(66, 133, 244)',
+      borderWidth: 2
+    }
+  ];
+  showLegend = false;
+  chartType = 'pie';
 
-
+  voted = false;
+  pollClosed = false;
+  selectedOption = '';
 
   private slideOptsOne = {
     initialSlide: 0,
@@ -108,10 +126,12 @@ export class PostPage implements OnInit {
     public keyboard: Keyboard,
     public contacts: Contacts,
     public geolocation: Geolocation,
-    public alertCtrl: AlertController
+    public alertCtrl: AlertController,
+    private popoverCtrl: PopoverController,
+    private afAuth: AngularFireAuth
   ) {
    // this.reviewMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FkjD2RUnc.jpg?alt=media&token=d0073c88-58cf-4fc0-9e5c-c6a491bb2673');
-    this.post = {showSmiley: false, showHug: false, addedByUser: {}, data: {}, date: firebase.default.firestore.Timestamp.now(), reviewMedia: []};
+    this.post = {reactionType: '', addedByUser: {}, data: {}, date: firebase.default.firestore.Timestamp.now(), reviewMedia: []};
     this.pollOptionForm = new FormGroup({
       selected_poll_option: new FormControl('', Validators.compose([
         Validators.required
@@ -123,6 +143,23 @@ export class PostPage implements OnInit {
 
   ionViewDidEnter() {
     this.loggedInUserId = firebase.default.auth().currentUser.uid;
+    console.log('Entering feed view');
+    
+    this.afAuth.currentUser.then(user => {
+      this.loggedInUserId = user?.uid;
+      console.log('Current user:', this.loggedInUserId);
+  
+      // Get Posts with snapshot changes to get real-time updates
+      this.dataProvider.getCurrentUser().then((u) => {
+        u.get({ source: 'server' }).subscribe((user) => { // Force server fetch
+          const userData = user.data() as UserDocument;
+          if (userData) {
+            this.userNotifications = userData.userNotifications || [];
+            this.loggedInUser = userData;
+          }
+        });
+      });
+    });
   }
 
   ngOnInit() {
@@ -131,17 +168,17 @@ export class PostPage implements OnInit {
   getPostDetails() {
     this.loadingProvider.show();
     this.postId = this.route.snapshot.params.id;
-    this.post.reactions = [];
     this.post.reviews = [];
     this.dataProvider.getPostDetails(this.postId).get().subscribe((post: any) => {
       if (post) {
         let p = post.data(); 
+        console.info('p', p)
         p.reactions = [];
         p.key = post.id;
         this.title = post.data().title;
         let totalReactionCount = 0;
         let totalReviewCount = 0;
-        p.postTags = p.postTags.filter(x => x.isChecked !== false);
+        // p.postTags = p.postTags.filter(x => x.isChecked !== false);
 
         this.reactionSubscription = this.firestore
             .collection('posts')
@@ -159,43 +196,14 @@ export class PostPage implements OnInit {
                 if (reactions) {
                   p.reactions = reactions;
                   totalReactionCount = reactions.length;
-                  // Check for Thanks
-                  p.showSmiley = reactions.some(el => {
-                    const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
-                    const typeMatch = Array.isArray(el.reactionType) 
-                      ? el.reactionType.includes('Thanks')
-                      : el.reactionType === 'Thanks';
-                    return keyMatch && typeMatch;
-                  });
-                  
 
-                  // Check for Hugs
-                  p.showHug = reactions.some(el => {
-                    const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
-                    const typeMatch = Array.isArray(el.reactionType) 
-                      ? el.reactionType.includes('Hug')
-                      : el.reactionType === 'Hug';
-                    return keyMatch && typeMatch;
-                  });
-  
-                  // Check for Checkin
-                  p.showCheckin = reactions.some(el => {
-                    const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
-                    const typeMatch = Array.isArray(el.reactionType) 
-                      ? el.reactionType.includes('Checkin')
-                      : el.reactionType === 'Checkin';
-                    return keyMatch && typeMatch;
-                  });
-  
-                  // Check for Bookmark
-                  p.showBookmark = reactions.some(el => {
-                    const keyMatch = String(el.addedByUser?.addedByKey) === String(this.loggedInUserId);
-                    const typeMatch = Array.isArray(el.reactionType) 
-                      ? el.reactionType.includes('Bookmark')
-                      : el.reactionType === 'Bookmark';
-                    return keyMatch && typeMatch;
-                  });
-  
+                  if (reactions.length > 0) {
+                    this.post.reactionType = reactions.find(el => 
+                      el.addedByUser?.addedByKey === this.loggedInUserId
+                    )?.reactionType || '';;
+                  } else {
+                    this.post.reactionType = '';
+                  }
                   p.totalReactionCount = totalReactionCount;
                 }
               },
@@ -234,307 +242,13 @@ export class PostPage implements OnInit {
         // poll related data
         if (p.type === 'poll') {
           console.log('inside poll');
-          let pollOption0Votes;
-          let pollOption1Votes;
-          let pollOption2Votes;
-          let pollOption3Votes;
-
-          let pollOption0Name: string;
-          let pollOption1Name: string;
-          let pollOption2Name: string;
-          let pollOption3Name: string;
-
-          pollOption0Name = p.data.pollOptions[0].name;
-          pollOption1Name = p.data.pollOptions[1].name;
-
-          if (p.data.pollOptions[2] != null) {
-            pollOption2Name = p.data.pollOptions[2].name;
-          }
-          if (p.data.pollOptions[3] != null) {
-            pollOption3Name = p.data.pollOptions[3].name;
-          }
-
-          if (p.data.pollOptions[0].members == null) {
-            pollOption0Votes = 0;
-          } else {
-            pollOption0Votes = p.data.pollOptions[0].members.length;
-          }
-
-          if (p.data.pollOptions[1].members == null) {
-            pollOption1Votes = 0;
-          } else {
-            pollOption1Votes = p.data.pollOptions[1].members.length;
-          }
-
-          if (p.data.pollOptions[2] == null || p.data.pollOptions[2].members == null) {
-            pollOption2Votes = 0;
-          } else {
-            pollOption2Votes = p.data.pollOptions[2].members.length;
-          }
-
-          if (p.data.pollOptions[3] == null || p.data.pollOptions[3].members == null) {
-            pollOption3Votes = 0;
-          } else {
-            pollOption3Votes = p.data.pollOptions[3].members.length;
-          }
-
-        // this.optionsArray = [pollOption0Name, pollOption1Name, pollOption2Name, pollOption3Name];
-        // this.chartData = [pollOption0Votes, pollOption1Votes, pollOption3Votes, pollOption3Votes];
-          this.chartLabels = [];
-          this.chartData[0].data = [];
-
-          this.chartData[0].data.push(pollOption0Votes);
-          this.chartData[0].data.push(pollOption1Votes);
-          this.chartLabels.push(pollOption0Name);
-          this.chartLabels.push(pollOption1Name);
-
-          if (p.data.pollOptions[2] != null) {
-            this.chartData[0].data.push(pollOption2Votes);
-            this.chartLabels.push(pollOption2Name);
-          }
-          if (p.data.pollOptions[3] != null) {
-            this.chartData[0].data.push(pollOption3Votes);
-            this.chartLabels.push(pollOption3Name);
-          }
-
-          this.selectedOption = '';
-          this.voted = false;
-
-          const today = new Date();
-          const de = p.data.dateEnding.toDate();
-          if (de < today) {
-            this.pollClosed = true;
-          } else {
-            this.pollClosed = false;
-          }
-          p.data.pollOptions.forEach(pollOption => {
-            if (pollOption.members != null) {
-              pollOption.members.forEach(member => {
-                if (member === this.loggedInUserId) {
-                  this.voted = true;
-                }
-              });
-            }
-          });
+          this.initializePollData(p)
         }
         this.post = p;
       }
       this.loadingProvider.hide();
     });
   }
-
-  submitReactionSmile() {
-    const reaction = this.post.reactions.find(
-      el => el.addedByUser.addedByKey === this.loggedInUserId
-      && el.reactionType === 'Thanks');
-      console.info('found reaction', reaction)
-    if (reaction === undefined) {
-      this.dataProvider.getCurrentUser().then((u) => {
-        u.get().subscribe((account: any) => {
- 
-          let userNotifications = account.data().userNotifications;
-          let userReactions = account.data().userReactions;
-  
-          if (!userNotifications) { userNotifications = [] as string[]; }
-          if (!userReactions) { userReactions = [] as string[]; }
-  
-          if (account) {
-            const currentUserName = account.data().username;
-            let reaction = {
-              key: '',
-              dateCreated: new Date(),
-              addedByUser: {
-                            addedByKey: this.loggedInUserId,
-                            addedByUsername: account.data().username,
-                            addedByImg: account.data().img
-                          },
-              reactionType: 'Thanks'
-            };
-  
-            this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
-              this.post.showSmiley = true;
-            }).then(() => {
-              // Update user notifications.
-              if (!userNotifications.some(p => p !== this.postId)) {
-                userNotifications.push(this.postId);
-                this.dataProvider.getUser(account.data().userId).update({
-                  userNotifications
-                });
-              }
-  
-              // Update user activity.
-              if (!userReactions.some(p => p !== this.postId)) {
-                userReactions.push(this.postId);
-                this.dataProvider.getUser(account.data().userId).update({
-                  userReactions
-                });
-              }
-            });
-  
-        }
-    });
-      })
-    } else {
-      this.post.showSmiley = false;
-      this.dataProvider.removePostReaction(this.post.key, reaction.id);
-    }
-  }
-
-  submitReactionHug() {
-    const reaction = this.post.reactions.find(
-      el => el.addedByUser.addedByKey === this.loggedInUserId 
-      && el.reactionType === 'Hug');
-
-    if (reaction === undefined) {
-      this.dataProvider.getCurrentUser().then((u) => {
-        u.get().subscribe((account: any) => {
-          if (account) {
-            let userNotifications = account.data().userNotifications;
-            let userReactions = account.data().userReactions;
-    
-            const currentUserName = account.data().username;
-            let reaction = {
-            
-              dateCreated: new Date(),
-              addedByUser: {
-                            addedByKey: this.loggedInUserId ,
-                            addedByUsername: account.data().username,
-                            addedByImg: account.data().img
-                          },
-              reactionType: 'Hug'
-            };
-  
-            this.dataProvider.updatePostReactions(this.postId, reaction).then(() => {
-              this.post.showHug = true;
-            }).then(() => {
-              // Update user notifications.
-              if (!userNotifications.some(p => p !== this.postId)) {
-                userNotifications.push(this.postId);
-                this.dataProvider.getUser(account.data().userId).update({
-                  userNotifications
-                });
-              }
-  
-              // Update user activity.
-              if (!userReactions.some(p => p !== this.postId)) {
-                userReactions.push(this.postId);
-                this.dataProvider.getUser(account.data().userId).update({
-                  userReactions
-                });
-              }
-            });
-  
-        }
-    });
-      })
-    } else {
-      this.post.showHug = false;
-      this.dataProvider.removePostReaction(this.post.key, reaction.id);
-    }
-  }
-
-  submitReactionCheckin() {
-    const reaction = this.post.reactions.find(
-      el => el.addedByUser.addedByKey === this.loggedInUserId 
-      && el.reactionType === 'Checkin');
-    if (reaction === undefined) {
-      this.dataProvider.getCurrentUser().then((u) => {
-        u.get().subscribe((account: any) => {
-          if (account) {
-            let userNotifications = account.data().userNotifications;
-            let userReactions = account.data().userReactions;
-            const currentUserName = account.data().username;
-            let reaction = {
-              key: '',
-              dateCreated: new Date(),
-              addedByUser: {
-                            addedByKey: this.loggedInUserId ,
-                            addedByUsername: account.data().username,
-                            addedByImg: account.data().img
-                          },
-              reactionType: 'Checkin'
-            };
-  
-            this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
-              this.post.showCheckin = true;
-            }).then(() => {
-              // Update user notifications.
-              if (!userNotifications.some(p => p !== this.postId)) {
-                userNotifications.push(this.postId);
-                this.dataProvider.getUser(account.data().userId).update({
-                  userNotifications
-                });
-              }
-  
-              // Update user activity.
-              if (!userReactions.some(p => p !== this.postId)) {
-                userReactions.push(this.postId);
-                this.dataProvider.getUser(account.data().userId).update({
-                  userReactions
-                });
-              }
-            });;
-  
-        }
-    });
-      })
-    } else {
-      this.post.showCheckin = false;
-      this.dataProvider.removePostReaction(this.post.key, reaction.key);
-    }
-  }
-
-  submitReactionBookmark() {
-    const reaction = this.post.reactions.find(
-      el => el.addedByUser.addedByKey === this.loggedInUserId
-      && el.reactionType === 'Bookmark');
-    if (reaction === undefined) {
-      this.dataProvider.getCurrentUser().then((u) => {
-        u.get().subscribe((account: any) => {
-          if (account) {
-            let userNotifications = account.data().userNotifications;
-            let userReactions = account.data().userReactions;
-            const currentUserName = account.data().username;
-            let reaction = {
-              key: '',
-              dateCreated: new Date(),
-              addedByUser: {
-                            addedByKey: this.loggedInUserId,
-                            addedByUsername: account.data().username,
-                            addedByImg: account.data().img
-                          },
-              reactionType: 'Bookmark'
-            };
-  
-            this.dataProvider.updatePostReactions(this.post.key, reaction).then(() => {
-              this.post.showBookmark = true;
-            }).then(() => {
-              // Update user notifications.
-              if (!userNotifications.some(p => p !== this.postId)) {
-                userNotifications.push(this.postId);
-                this.dataProvider.getUser(account.data().userId).update({
-                  userNotifications
-                });
-              }
-  
-              // Update user activity.
-              if (!userReactions.some(p => p !== this.postId)) {
-                userReactions.push(this.postId);
-                this.dataProvider.getUser(account.data().userId).update({
-                  userReactions
-                });
-              }
-            });;
-  
-        }
-    });
-      })
-    } else {
-      this.post.showBookmark = false;
-      this.dataProvider.removePostReaction(this.post.key, reaction.key);
-    }
-  }
-
   async showReactionsList() {
     if (this.post.totalReactionCount === 0) {
       return;
@@ -765,5 +479,169 @@ viewGroup(groupId) {
     this.voted = true;
     this.dataProvider.updatePollMembers(this.postId, this.post.data);
     this.ngOnInit();
+  }
+
+  async showEmojiPicker(event: any, item: any) {
+    event.stopPropagation();
+    
+    const popover = await this.popoverCtrl.create({
+      component: EmojiPickerComponent,
+      componentProps: {
+        post: item,
+        postType: item.type
+      },
+      event: event,
+      translucent: true,
+      cssClass: 'emoji-picker-popover'
+    });
+  
+    await popover.present();
+  
+    const { data } = await popover.onDidDismiss();
+    if (data) {
+      console.log('emoji selected', data);
+      this.submitReactionPost(data.post, data.emoji.value);
+    }
+  }
+
+  submitReactionPost(post, reactionType) {
+  if (post.reactionType === '') {
+    console.info('1')
+      this.addPostReaction(post, reactionType);
+      post.totalReactionCount += 1;
+    } else if(post.reactionType !== reactionType) {
+      console.info('2')
+        this.removePostReaction(post, post.reactionType);
+
+        this.addPostReaction(post, reactionType);
+    } else if(post.reactionType === reactionType) {
+      console.info('3')
+      this.removePostReaction(post, reactionType);
+      post.totalReactionCount -= 1;
+    }
+  }
+
+  addPostReaction(post, reactionType) {
+    // first find the post in the collection
+    const p = this.post;
+
+    const r = p.reactions.find(el => el.addedByUser.addedByKey === this.loggedInUserId && el.reactionType === reactionType);
+    if (!r) {
+      const react = {
+        key: '',
+        dateCreated: new Date(),
+        addedByUser: {
+                      addedByKey: this.loggedInUserId,
+                      addedByUsername: this.loggedInUser.username,
+                      addedByImg: this.loggedInUser.img
+                    },
+        reactionType: reactionType
+      };
+
+      this.dataProvider.updatePostReactions(post.key, react).then(() => {
+        // Update user notifications.
+        if (!this.userNotifications.some(p => p !== this.postId)) {
+          this.userNotifications.push(this.postId);
+          this.dataProvider.getUser(this.loggedInUserId).update({
+            userNotifications: this.userNotifications
+          });
+        }
+
+        // Update user activity.
+        if (!this.userReactions && this.userReactions.some(p => p !== this.postId)) {
+          this.userReactions.push(this.postId);
+          this.dataProvider.getUser(this.loggedInUserId).update({
+            userReactions: this.userReactions
+          });
+        }
+      });
+    } else {
+      this.firestore.collection('posts').doc(post.key).collection('reactions').doc(r.key).update({
+        reactionType: firebase.default.firestore.FieldValue.arrayUnion(reactionType)
+    }).then(() => {
+      const increment = firebase.default.firestore.FieldValue.increment(1);
+      this.firestore.collection('posts').doc(post.key).update({
+        totalReactionCount : increment
+      });
+    });
+    }
+  }
+
+  removePostReaction(post, reactionType) {
+    console.info('removePostReaction', post, reactionType);
+    // first find the post in the collection
+    const p = this.post;
+    const found = false;
+    if (p.reactions !== undefined) {
+      const values = Object.keys(p.reactions).map( function(e) {
+        return p.reactions[e];
+      });
+
+      const reaction = p.reactions.find(
+        el => el.addedByUser.addedByKey === this.loggedInUserId);
+
+      if (reaction.reactionType === reactionType) {
+          console.info('here!!', post.key, reaction)
+        this.dataProvider.removePostReaction(post.key, reaction.key);
+      } 
+    }
+  }
+  
+  sharePost(post: any) {
+    // Implement your share logic here
+  }
+  
+  toggleBookmark(post: any) {
+    post.isBookmarked = !post.isBookmarked;
+    // Implement your bookmark logic here
+  }
+  
+  private initializePollData(p: any) {
+    if (p.type !== 'poll') return;
+  
+    console.log('Initializing poll data');
+  
+    try {
+      // Initialize chart arrays
+      this.chartLabels = [];
+      this.chartData[0].data = [];
+  
+      // Process poll options
+      p.data.pollOptions.forEach((option: PollOption, index: number) => {
+        if (option) {
+          // Add vote count
+          const voteCount = option.members?.length || 0;
+          this.chartData[0].data.push(voteCount);
+  
+          // Add label
+          this.chartLabels.push(option.name);
+        }
+      });
+  
+      // Check if poll is closed
+      const today = new Date();
+      const pollEndDate = p.data.dateEnding.toDate();
+      this.pollClosed = pollEndDate < today;
+  
+      // Check if user has voted
+      this.voted = p.data.pollOptions.some((option: PollOption) => 
+        option.members?.includes(this.loggedInUserId)
+      );
+  
+      // Reset selected option
+      this.selectedOption = '';
+  
+      // Optional: Log chart data for debugging
+      console.log('Chart Data:', {
+        labels: this.chartLabels,
+        data: this.chartData[0].data,
+        voted: this.voted,
+        closed: this.pollClosed
+      });
+  
+    } catch (error) {
+      console.error('Error initializing poll data:', error);
+      // Handle error appropriately
+    }
   }
 }

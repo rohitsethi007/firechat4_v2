@@ -28,14 +28,14 @@ ion-header {
 }
 
 ion-content {
-  --background: var(--ion-color-light);
+  --background: transparent;
 
   ion-list {
     background: transparent;
     padding: 8px 0;
 
     ion-item {
-      --background: var(--ion-color-light);
+      --background: transparent;
       --background-hover: var(--ion-color-light-shade);
       margin-bottom: 1px;
       

@@ -63,7 +63,7 @@ export class ProfilePage implements OnInit {
     private alertController: AlertController,
   ) {
    
-    this.loggedInUserId = firebase.default.auth().currentUser.uid;
+    this.loggedInUserId = firebase.auth().currentUser.uid;
     this.userId = this.loggedInUserId;//this.route.snapshot.params.id;
     console.info('im here',this.loggedInUserId)
     if (this.userId === this.loggedInUserId) {
@@ -99,7 +99,7 @@ export class ProfilePage implements OnInit {
         // get user Posts
         if (this.user.userPosts) {
           this.firestore.collection('posts').ref
-          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.userPosts)
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userPosts)
           .get().then((po: any) => {
             this.userPosts = [];
             this.loadEachPostData(po, 'userPosts');
@@ -109,7 +109,7 @@ export class ProfilePage implements OnInit {
         // get user Reaction Posts
         if (this.user.userReactions) {
           this.firestore.collection('posts').ref
-          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.userReactions)
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userReactions)
           .get().then((po: any) => {
           this.userReactions = [];
           this.loadEachPostData(po, 'userReactions');
@@ -119,7 +119,7 @@ export class ProfilePage implements OnInit {
         // get user Posts
         if (this.user.userComments) {
           this.firestore.collection('posts').ref
-          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.userComments)
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userComments)
           .get().then((po: any) => {
           this.userComments = [];
           this.loadEachPostData(po, 'userComments');
@@ -129,7 +129,7 @@ export class ProfilePage implements OnInit {
         // Get User Friends list
         if (this.user.friends) {
           this.firestore.collection('accounts').ref
-          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.friends)
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.friends)
           .get().then((user: any) => {
             this.friends = [];
             user.forEach(f => {
@@ -153,7 +153,7 @@ export class ProfilePage implements OnInit {
         // Get User Groups List
         if (this.user.groups && this.user.groups.length > 0) {
           this.firestore.collection('groups').ref
-          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.groups)
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.groups)
           .get().then((group: any) => {
             this.groups = [];
             group.forEach(g => {

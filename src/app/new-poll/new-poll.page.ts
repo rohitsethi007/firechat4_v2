@@ -20,7 +20,7 @@ export class NewPollPage implements OnInit {
   private groupId: any;
   private group: any;
   private pollId: any;
-  private postTags: any = [];
+  // private postTags: any = [];
   private addedByUser: any;
   private step: any = 1;
   groups: any;
@@ -46,9 +46,9 @@ export class NewPollPage implements OnInit {
       { type: 'minlength', message: 'Poll Question must be at least 10 characters long.' },
       { type: 'maxlength', message: 'Poll Question cannot be more than 50 characters long.' }
     ],
-    tags: [
-      { type: 'required', message: 'Please select at least one tag.' }
-    ]
+    // tags: [
+    //   { type: 'required', message: 'Please select at least one tag.' }
+    // ]
     };
 
   constructor(
@@ -85,7 +85,7 @@ export class NewPollPage implements OnInit {
       ])),
       pollOption3: new FormControl(''),
       pollOption4: new FormControl(''),
-      tags: new FormArray([], CheckboxCheckedValidator.tagsSelected(1))
+      // tags: new FormArray([], CheckboxCheckedValidator.tagsSelected(1))
       });
    }
 
@@ -107,7 +107,7 @@ export class NewPollPage implements OnInit {
         addedByUser: this.addedByUser,
         date: '',
         title: '',
-        postTags: [],
+        // postTags: [],
         groupId: '',
         groupName: '',
         type: 'poll',
@@ -134,15 +134,15 @@ export class NewPollPage implements OnInit {
           });
           }
         } else {
-          this.title = 'Poll';
+          this.title = 'New Poll';
     
-          this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-            this.group = group.payload.data();
-            this.group.groupTags.forEach((element: any) => {
-              this.postTags.push({val: element, isChecked: false});
-            });
-            this.addTagControls();
-          });   
+          // this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
+          //   this.group = group.payload.data();
+          //   this.group.groupTags.forEach((element: any) => {
+          //     this.postTags.push({val: element, isChecked: false});
+          //   });
+          //   this.addTagControls();
+          // });   
         }
     });
      })
@@ -167,23 +167,21 @@ export class NewPollPage implements OnInit {
     }
   }
 
-  addTagControls() {
-    this.postTags.forEach((o, i) => {
-      const control = new FormControl(i === 0); // if first item set to true, else false
-      (this.pollForm.controls.tags as FormArray).push(control);
-    });
-  }
+  // addTagControls() {
+  //   this.postTags.forEach((o, i) => {
+  //     const control = new FormControl(i === 0); // if first item set to true, else false
+  //     (this.pollForm.controls.tags as FormArray).push(control);
+  //   });
+  // }
 
   submitPollForm() {
-    this.loadingProvider.show();
-
     // Add poll info and date.
     this.poll.groupId = this.groupId;
     this.poll.groupName = this.group.name;
     this.poll.date = new Date();
     this.poll.title = this.pollForm.value.description;
-    this.poll.postTags = [];
-    this.poll.postTags = this.postTags;
+    // this.poll.postTags = [];
+    // this.poll.postTags = this.postTags;
 
     const today = new Date();
     const dd = today.getDate();
@@ -220,24 +218,23 @@ export class NewPollPage implements OnInit {
         this.poll.data.pollOptions.push({
           name : this.pollForm.value.pollOption4.trim()});
     }
-
+    console.info('this.poll:', this.poll)
 
     this.dataProvider.addPost(this.poll).then((success) => {
-          const pollId = success.id;
-          this.pollId = pollId;
-          if (this.group.polls === undefined) {
-            this.group.polls = [];
-          }
-          this.group.polls.push(this.pollId);
+          // const pollId = success.id;
+          // this.pollId = pollId;
+          // if (this.group.polls === undefined) {
+          //   this.group.polls = [];
+          // }
+          // this.group.polls.push(this.pollId);
 
-          // Update group data on the database.
-          this.dataProvider.getGroup(this.groupId).update({
-            posts: this.group.posts
-          }).then(() => {
-          // Back.
-          this.loadingProvider.hide();
-          this.router.navigateByUrl('tabs/tab2');
-          });
+          // // Update group data on the database.
+          // this.dataProvider.getGroup(this.groupId).update({
+          //   posts: this.group.posts
+          // }).then(() => {
+          // // Back.
+          // this.loadingProvider.hide();
+          this.router.navigateByUrl('/app/tabs/tab1');
       });
     }
 
@@ -245,14 +242,14 @@ export class NewPollPage implements OnInit {
     this.groupId = groupId;
     console.log('groupId', groupId);
     this.step = 2;
-    this.title = 'Event';
+    this.title = 'New Poll';
 
     this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
       this.group = group.payload.data();
-      this.group.groupTags.forEach((element: any) => {
-        this.postTags.push({val: element, isChecked: false});
-      });
-      this.addTagControls();
+      // this.group.groupTags.forEach((element: any) => {
+      //   this.postTags.push({val: element, isChecked: false});
+      // });
+      // this.addTagControls();
 
   });
 

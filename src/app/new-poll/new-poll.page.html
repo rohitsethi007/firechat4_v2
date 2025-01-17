@@ -4,76 +4,104 @@
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>{{title}}</ion-title>
-    <ion-buttons *ngIf="step==2" slot="end">
-      <ion-button color="secondary" class="ion-text-capitalize" [disabled]="!pollForm.valid" (click)="submitPollForm()">Post</ion-button>
-    </ion-buttons>
+    <!-- <ion-buttons *ngIf="step==2" slot="end">
+      <ion-button color="primary" class="ion-text-capitalize" [disabled]="!pollForm.valid" (click)="submitPollForm()">Submit</ion-button>
+    </ion-buttons> -->
   </ion-toolbar>
 </ion-header> 
 
-<ion-content class="forms-validations-content">
+<ion-content>
   <div *ngIf="step==1"> 
     <div *ngIf="groups && groups.length > 0"> 
-      <ion-list>
-        <ion-item text-wrap *ngFor="let group of groups" (click)="selectGroup(group.key)">
+      <ion-list class="ion-no-padding">
+        <ion-item class="ion-margin-left" text-wrap *ngFor="let group of groups" (click)="selectGroup(group.key)">
           <ion-thumbnail slot="start">
             <img src="{{group.img}}" onError="this.src='./assets/images/default-group.png'">
           </ion-thumbnail>
           <ion-label>
-              <b>{{group.name}}</b><br/>
-              {{group.description}}
+            <h3 class="ion-no-margin">{{group.name}}</h3>
+            <p class="ion-text-wrap">
+              <ion-text color="medium">
+                {{group.description}}
+              </ion-text>
+            </p>
           </ion-label>
         </ion-item>
       </ion-list>
     </div>
   </div>
-  <div *ngIf="step==2">
-    <form class="validations-form" [formGroup]="pollForm" (ngSubmit)="submitPollForm()">
-      <ion-list class="inputs-list" lines="full">
-        <ion-list-header class="header">
-          posting in &nbsp;<ion-label><b>{{group.name}}</b></ion-label>
-        </ion-list-header>
-        <ion-item class="input-item">
-          <ion-input type="text" formControlName="description" clearInput placeholder="What would like to ask?"></ion-input>
-        </ion-item>
-        <ion-item class="input-item">
-          <ion-input type="text" formControlName="pollOption1" clearInput placeholder="Enter the first option"></ion-input>
-        </ion-item>
-        <ion-item class="input-item">
-          <ion-input type="text" formControlName="pollOption2" clearInput placeholder="Enter the second option"></ion-input>
-        </ion-item>
-        <ion-item class="input-item">
-          <ion-input type="text" formControlName="pollOption3" clearInput placeholder="This is optional"></ion-input>
-        </ion-item>
-        <ion-item class="input-item">
-          <ion-input type="text" formControlName="pollOption4" clearInput placeholder="This is optional"></ion-input>
-        </ion-item>
-      </ion-list>
- 
-      <ion-list class="inputs-list" lines="full">
-        <ion-list-header>
-          <ion-label class="header-title">Select relevant tags</ion-label>
-        </ion-list-header>
-  
-        <div class="reviews-wrapper">
-        <ion-row>
-          <div class="tags" formArrayName="tags" *ngFor="let entry of pollForm.controls.tags.controls; let i = index">
-            <ion-label *ngIf="postTags[i] === undefined || !postTags[i].isChecked" class="item-rating" [attr.ratingBase]="0">{{postTags[i].val}}</ion-label>
-            <ion-label *ngIf="postTags[i] !== undefined && postTags[i].isChecked" class="item-rating" [attr.ratingBase]="1">{{postTags[i].val}}</ion-label>  
-            <ion-checkbox slot="start" [formControlName]="i" [(ngModel)]="postTags[i].isChecked"></ion-checkbox>
-          </div>
-        </ion-row>
+  <div *ngIf="step === 2" class="poll-form-container">
+    <form [formGroup]="pollForm" (ngSubmit)="submitPollForm()">
+      <ion-item lines="none" class="selected-group">
+        <ion-label>
+          <h2>Creating poll in <strong>{{group.name}}</strong></h2>
+        </ion-label>
+        <ion-button fill="clear" (click)="step = 1" slot="end">
+          <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-item>
 
-        <div class="error-container">
-          <ng-container *ngFor="let validation of validations.tags">
-            <div class="error-message" *ngIf="pollForm.get('tags').hasError(validation.type) && (pollForm.get('tags').dirty || pollForm.get('tags').touched)">
-              <ion-icon name="information-circle-outline"></ion-icon>
-              <span>{{ validation.message }}</span>
-            </div>
-          </ng-container>
+      <div class="form-section">
+        <ion-item class="question-input">
+          <ion-label position="stacked">Question</ion-label>
+          <ion-input type="text" 
+                     formControlName="description" 
+                     placeholder="What would you like to ask?"
+                     class="custom-input">
+          </ion-input>
+        </ion-item>
+
+        <div class="options-container">
+          <ion-text color="medium" class="ion-padding-bottom">
+            <h3>Poll Options</h3>
+          </ion-text>
+
+          <!-- Required Options -->
+          <ion-item>
+            <ion-label position="stacked">Option 1 *</ion-label>
+            <ion-input formControlName="pollOption1" 
+                      placeholder="Enter first option"
+                      class="custom-input">
+            </ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Option 2 *</ion-label>
+            <ion-input formControlName="pollOption2" 
+                      placeholder="Enter second option"
+                      class="custom-input">
+            </ion-input>
+          </ion-item>
+
+          <!-- Optional Options -->
+          <ion-item>
+            <ion-label position="stacked">Option 3 (Optional)</ion-label>
+            <ion-input formControlName="pollOption3" 
+                      placeholder="Add another option"
+                      class="custom-input">
+            </ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Option 4 (Optional)</ion-label>
+            <ion-input formControlName="pollOption4" 
+                      placeholder="Add another option"
+                      class="custom-input">
+            </ion-input>
+          </ion-item>
         </div>
-        </div>
-      </ion-list>
-      <!-- <ion-button class="submit-btn" type="submit" expand="block" fill="outline" [disabled]="!pollForm.valid">Submit</ion-button> -->
-  </form>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="ion-padding">
+        <ion-button expand="block" 
+                    type="submit" 
+                    [disabled]="!pollForm.valid"
+                    class="submit-button">
+          <ion-icon name="create-outline" slot="start"></ion-icon>
+          Create Poll
+        </ion-button>
+      </div>
+    </form>
   </div>
 </ion-content>

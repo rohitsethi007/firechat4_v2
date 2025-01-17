@@ -215,7 +215,7 @@ ion-content {
 
 // Card Style Forms
 ion-card.form-card {
-  background: #ffffff;
+  background: transparent;
   border-radius: 16px;
   margin: 16px;
   padding: 16px;
@@ -238,9 +238,7 @@ ion-card.form-card {
 
 // Common Input Styles
 ion-item {
-  --background: var(--ion-color-light);
-  --background-hover: var(--ion-color-light-shade);
-  --background-focused: var(--ion-color-light-shade);
+  background: transparent;
   --border-radius: 12px;
   --padding-start: 16px;
   --padding-end: 16px;
@@ -249,7 +247,7 @@ ion-item {
   border-radius: 12px;
 
   &.item-has-focus {
-    --background: var(--ion-color-light-shade);
+    background: transparent;
   }
 
   ion-label {
