@@ -7,13 +7,16 @@ import { AlertController, Platform, ModalController, IonRouterOutlet } from '@io
 import { ImageService } from '../services/image.service';
 import { Camera } from '@ionic-native/camera/ngx';
 import { FirebaseX } from '@ionic-native/firebase-x/ngx';
-import { AngularFirestore } from '@angular/fire/firestore';
+
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Validator } from 'src/environments/validator';
-import * as firebase from 'firebase/app';
+
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { FirebaseService } from '../services/firebase.service';
 import { UserProfileModalPage } from '../user-profile-modal/user-profile-modal.page';
+import { AngularFirestore } from '@angular/fire/firestore';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 @Component({
   selector: 'app-profile',
@@ -56,7 +59,8 @@ export class ProfilePage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public modalCtrl: ModalController,
-    private routerOutlet: IonRouterOutlet
+    private routerOutlet: IonRouterOutlet,
+    private alertController: AlertController,
   ) {
    
     this.loggedInUserId = firebase.default.auth().currentUser.uid;
@@ -147,7 +151,7 @@ export class ProfilePage implements OnInit {
         }
 
         // Get User Groups List
-        if (this.user.groups) {
+        if (this.user.groups && this.user.groups.length > 0) {
           this.firestore.collection('groups').ref
           .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.groups)
           .get().then((group: any) => {
@@ -159,6 +163,9 @@ export class ProfilePage implements OnInit {
               this.addOrUpdateUserGroup(group);
             });
           });
+          }
+          else {
+            this.groups = [];
           }
       }
     });
@@ -447,5 +454,64 @@ export class ProfilePage implements OnInit {
         }
       ]
     }).then(r => r.present());
+  }
+
+  async confirmLeaveGroup(group: any) {
+    const alert = await this.alertController.create({
+      header: 'Leave Group',
+      message: 'Are you sure you want to leave this group? Your posts will remain in the group but you will no longer have access to group content.',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary'
+        },
+        {
+          text: 'Leave Group',
+          role: 'destructive',
+          handler: () => {
+            this.leaveGroup(group);
+          }
+        }
+      ],
+      cssClass: 'custom-alert'
+    });
+
+    await alert.present();
+  }
+
+  leaveGroup(group: any) {
+    // Remove user from group members
+    const updatedMembers = group.members.filter(memberId => memberId !== this.loggedInUserId);
+    
+    // Create a batch write to update both documents
+    const batch = this.firestore.firestore.batch();
+    
+    // Reference to group document
+    const groupRef = this.firestore.collection('groups').doc(group.key).ref;
+    
+    // Reference to user's account document
+    const userRef = this.firestore.collection('accounts').doc(this.loggedInUserId).ref;
+    
+    // Update group members
+    batch.update(groupRef, { members: updatedMembers });
+    
+    // Update user's groups array using arrayRemove
+    batch.update(userRef, {
+      groups: firebase.firestore.FieldValue.arrayRemove(group.key)
+    });
+  
+    // Commit the batch
+    batch.commit()
+      .then(() => {
+        // Update local group data
+        group.isUserMember = false;
+        group.members = updatedMembers;
+        console.log('Successfully left group');
+      })
+      .catch(error => {
+        console.error('Error leaving group:', error);
+        // Handle error (show toast message)
+      });
   }
 }

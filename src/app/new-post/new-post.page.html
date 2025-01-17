@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>{{title}}</ion-title>
     <ion-buttons *ngIf="step==2" slot="end">
-      <ion-button color="secondary" class="ion-text-capitalize" [disabled]="!postForm.valid" (click)="submitPostForm()">Post</ion-button>
+      <ion-button color="primary" class="ion-text-capitalize" [disabled]="!postForm.valid" (click)="submitPostForm()">Submit</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>  
@@ -13,14 +13,18 @@
 <ion-content class="forms-validations-content">
   <div *ngIf="step==1"> 
     <div *ngIf="groups && groups.length > 0">
-      <ion-list>
-        <ion-item text-wrap *ngFor="let group of groups" (click)="selectGroup(group.key)">
+      <ion-list class="ion-no-padding">
+        <ion-item class="ion-margin-left" text-wrap *ngFor="let group of groups" (click)="selectGroup(group.key)">
           <ion-thumbnail slot="start">
             <img src="{{group.img}}" onError="this.src='./assets/images/default-group.png'">
           </ion-thumbnail>
           <ion-label>
-              <b>{{group.name}}</b><br/>
-              {{group.description}}
+            <h3 class="ion-no-margin">{{group.name}}</h3>
+            <p class="ion-text-wrap">
+              <ion-text color="medium">
+                {{group.description}}
+              </ion-text>
+            </p>
           </ion-label>
         </ion-item>
       </ion-list>
@@ -38,7 +42,7 @@
       <ion-item class="input-item">
         <ion-textarea rows="6"  formControlName="message" clearInput placeholder="Message"></ion-textarea>
       </ion-item>
-      <ion-list class="inputs-list" lines="full">
+      <!-- <ion-list class="inputs-list" lines="full">
         <ion-list-header>
           <ion-label class="header-title">Select relevant tags</ion-label>
         </ion-list-header>
@@ -60,7 +64,7 @@
           </ng-container>
         </div>
         </div>
-      </ion-list>
+      </ion-list> -->
 
     <!-- <ion-button class="submit-btn" type="submit" expand="block" fill="outline" [disabled]="!postForm.valid" >Submit</ion-button> -->
     </ion-list>

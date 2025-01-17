@@ -1,5 +1,18 @@
 :host {
-  --page-margin: var(--app-narrow-margin);
+
+  ion-item {
+    --padding-start: 16px;
+    --inner-padding-end: 0;
+    --background: transparent;
+    
+    ion-thumbnail {
+      --size: 60px;
+      --border-radius: 8px;
+      margin: 8px 8px 8px 0; // top right bottom left
+    }
+  }
+  
+
 }
 
 .forms-validations-content {

@@ -1,3 +1,31 @@
+
+:host {
+
+  ion-item {
+    --background: transparent;
+  }
+
+
+  .join-group-btn {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --border-radius: 8px;
+    
+    &[color="danger"] {
+      --background: transparent;
+      --color: var(--ion-color-danger);
+      --border-color: var(--ion-color-danger);
+      --border-style: solid;
+      --border-width: 1px;
+      
+      &:hover {
+        --background: var(--ion-color-danger);
+        --color: var(--ion-color-danger-contrast);
+      }
+    }
+  }
+
+}
 // Profile Page Styles
 .profile-content {
   --background: #f5f5f5;
@@ -259,6 +287,7 @@ ion-header {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
+    color: var(--ion-color-dark);
   }
 
   .group-item {

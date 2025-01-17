@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { LoadingService } from '../services/loading.service';
 import { DataService } from '../services/data.service';
 import { Router } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/firestore';
+
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AlertController } from '@ionic/angular';
-
+import { AngularFirestore } from '@angular/fire/firestore';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 @Component({
   selector: 'app-groups',
   templateUrl: './groups.page.html',
@@ -141,15 +143,35 @@ export class GroupsPage implements OnInit {
     // Remove user from group members
     const updatedMembers = group.members.filter(memberId => memberId !== this.loggedInUserId);
     
-    this.firestore.collection('groups').doc(group.key).update({
-      members: updatedMembers
-    }).then(() => {
-      // Update local group data
-      group.isUserMember = false;
-      group.members = updatedMembers;
-    }).catch(error => {
-      console.error('Error leaving group:', error);
-      // Handle error (maybe show a toast message)
+    // Create a batch write to update both documents
+    const batch = this.firestore.firestore.batch();
+    
+    // Reference to group document
+    const groupRef = this.firestore.collection('groups').doc(group.key).ref;
+    
+    // Reference to user's account document
+    const userRef = this.firestore.collection('accounts').doc(this.loggedInUserId).ref;
+    
+    // Update group members
+    batch.update(groupRef, { members: updatedMembers });
+    
+    // Update user's groups array using arrayRemove
+    batch.update(userRef, {
+      groups: firebase.firestore.FieldValue.arrayRemove(group.key)
     });
+  
+    // Commit the batch
+    batch.commit()
+      .then(() => {
+        // Update local group data
+        group.isUserMember = false;
+        group.members = updatedMembers;
+        console.log('Successfully left group');
+      })
+      .catch(error => {
+        console.error('Error leaving group:', error);
+        // Handle error (show toast message)
+      });
   }
+  
 }

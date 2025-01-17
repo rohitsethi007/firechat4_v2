@@ -6,7 +6,7 @@
 // Header Styling
 ion-header {
   background: var(--ion-background-color);
-  
+
   ion-toolbar {
     --background: transparent;
     --border-width: 0;
@@ -18,7 +18,7 @@ ion-header {
       .search-container {
         display: flex;
         align-items: center;
-        gap: 12px;
+        // gap: 12px;
         width: 100%;
 
         .search-box {
@@ -52,42 +52,48 @@ ion-header {
         .action-buttons {
           display: flex;
           align-items: center;
-          gap: 8px;
-
+          gap: 4px;
+        
           .action-btn {
             position: relative;
             margin: 0;
-            height: 48px;
-            width: 48px;
-
+            height: 50px;
+            width: 50px;
+        
             ion-icon {
               font-size: 28px;
-              color: var(--ion-color-medium);
-              transition: color 0.2s ease;
-
-              &.active {
-                color: var(--ion-color-primary);
-              }
-            }
-
-            &:last-child ion-icon {
               color: var(--ion-color-primary);
-              font-size: 32px;
-            }
-
-            ion-badge {
-              position: absolute;
-              top: 4px;
-              right: 4px;
-              font-size: 12px;
-              --padding-start: 5px;
-              --padding-end: 5px;
-              min-width: 18px;
-              height: 18px;
-              border-radius: 9px;
+              transition: all 0.2s ease;
+              opacity: 0.7; // Slightly dimmed when not active
+              
+              // Use outline icons by default
+              &[name="notifications"] {
+                --ionicon-stroke-width: 32px; // Makes outline more visible
+                &.active {
+                  --ionicon-stroke-width: 0px;
+                  opacity: 1;
+                }
+              }
+              
+              &[name="chatbubble"] {
+                --ionicon-stroke-width: 32px;
+                &.active {
+                  --ionicon-stroke-width: 0px;
+                  opacity: 1;
+                }
+              }
+              
+              &[name="add-circle"] {
+                --ionicon-stroke-width: 32px;
+                opacity: 1; // Keep the add button fully visible
+                &.active {
+                  --ionicon-stroke-width: 0px;
+                }
+              }
             }
           }
         }
+        
       }
     }
   }
@@ -116,7 +122,7 @@ ion-header {
 .listing-item {
   margin: 12px 8px;
   animation: fadeIn 0.3s ease-out;
-  
+
   ion-card {
     margin: 0;
     border-radius: 12px;
@@ -125,12 +131,12 @@ ion-header {
 
     ion-card-header {
       padding: 10px 12px;
-      
+
       .addedBy {
         display: flex;
         align-items: center;
         gap: 8px;
-        
+
         .addedByImg {
           width: 50px;
           height: 50px;
@@ -146,7 +152,7 @@ ion-header {
             color: var(--ion-color-dark);
             font-size: 14px;
             font-weight: 500;
-            
+
             b {
               font-weight: 600;
             }
@@ -164,7 +170,7 @@ ion-header {
           --padding-start: 6px;
           --padding-end: 6px;
           height: 32px;
-          
+
           ion-icon {
             color: var(--ion-color-medium);
             font-size: 18px;
@@ -173,7 +179,7 @@ ion-header {
             margin-right: -8px; // Negative margin to push it further right
             font-size: 18px;
           }
-          
+
         }
       }
     }
@@ -185,7 +191,7 @@ ion-header {
         border-radius: 8px;
         overflow: hidden;
         margin: 8px 0;
-        
+
         .bgSizeContain {
           height: 180px;
           background-size: cover;
@@ -203,7 +209,7 @@ ion-header {
         font-size: 14px;
         line-height: 1.4;
         color: var(--ion-color-dark);
-        
+
         b {
           font-weight: 600;
         }
@@ -221,7 +227,7 @@ ion-header {
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
-        
+
         .tags {
           .item-rating {
             display: inline-flex;
@@ -233,13 +239,13 @@ ion-header {
             font-size: 12px;
             font-weight: 500;
             transition: all 0.2s ease;
-            
+
             &:before {
               content: '#';
               margin-right: 2px;
               opacity: 0.7;
             }
-            
+
             &:active {
               transform: scale(0.95);
               background: var(--ion-color-primary);
@@ -252,24 +258,24 @@ ion-header {
         border-top: 1px solid rgba(var(--ion-color-medium-rgb), 0.08);
         padding-top: 8px;
         margin-top: 8px;
-      
+
         ion-row {
           ion-col {
             // Make columns more compact
             padding: 0 4px;
-            
+
             ion-buttons {
               ion-button {
                 height: 32px;
                 --padding-start: 4px; // Reduced padding
                 --padding-end: 4px;   // Reduced padding
                 margin: 0;
-                
+
                 div {
                   display: flex;
                   align-items: center;
                   gap: 2px;  // Reduced gap since text is removed
-                  
+
                   .icon {
                     font-size: 18px;
                   }
@@ -279,7 +285,7 @@ ion-header {
           }
         }
       }
-      
+
     }
   }
 }
@@ -308,7 +314,7 @@ ion-header {
   align-items: flex-start;
   gap: 8px;
   padding: 0;
-  
+
   .searchaddedByImg {
     width: 36px;
     height: 36px;
@@ -324,7 +330,7 @@ ion-header {
       color: var(--ion-color-dark);
       font-size: 14px;
       text-decoration: none;
-      
+
       b {
         font-weight: 600;
       }
@@ -400,11 +406,11 @@ div[class*="search"] {
           font-size: 14px;
           line-height: 1.4;
           color: var(--ion-color-dark);
-          
+
           span {
             display: inline-block;
             margin-bottom: 8px;
-            
+
             b {
               font-weight: 600;
             }
@@ -417,7 +423,7 @@ div[class*="search"] {
           display: flex;
           flex-wrap: wrap;
           gap: 6px;
-          
+
           .tags {
             .item-rating {
               display: inline-flex;
@@ -428,13 +434,13 @@ div[class*="search"] {
               border-radius: 6px;
               font-size: 12px;
               font-weight: 500;
-              
+
               &:before {
                 content: '#';
                 margin-right: 2px;
                 opacity: 0.7;
               }
-              
+
               &:active {
                 transform: scale(0.95);
                 background: var(--ion-color-primary);
@@ -492,10 +498,10 @@ ion-card-content.pollmessage {
   ion-row {
     margin: 0 !important;
     padding: 0 !important;
-    
+
     ion-col {
       padding: 0 !important;
-      
+
       div {
         background: rgba(var(--ion-color-primary-rgb), 0.03);
         padding: 8px 12px;
@@ -542,10 +548,10 @@ ion-card-content.pollmessage {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      
+
       .tags {
         margin: 0;
-        
+
         .item-rating {
           background: rgba(var(--ion-color-primary-rgb), 0.08);
           color: var(--ion-color-primary);

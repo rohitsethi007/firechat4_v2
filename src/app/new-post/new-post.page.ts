@@ -84,8 +84,8 @@ export class NewPostPage implements OnInit {
           // Validators.minLength(10),
           // Validators.maxLength(100),
           Validators.required
-        ])),
-         tags: new FormArray([], CheckboxCheckedValidator.tagsSelected(1))
+        ]))
+        //  tags: new FormArray([], CheckboxCheckedValidator.tagsSelected(1))
     });
    }
 
@@ -109,12 +109,13 @@ export class NewPostPage implements OnInit {
     }
   }
 
-  addTagControls() {
-    this.postTags.forEach((o, i) => {
-      const control = new FormControl(i === 0); // if first item set to true, else false
-      (this.postForm.controls.tags as FormArray).push(control);
-    });
-  }
+  // TAGS Commented
+  // addTagControls() {
+  //   this.postTags.forEach((o, i) => {
+  //     const control = new FormControl(i === 0); // if first item set to true, else false
+  //     (this.postForm.controls.tags as FormArray).push(control);
+  //   });
+  // }
 
   ngOnInit() {
     this.dataProvider.getCurrentUser().then((u) => {
@@ -167,7 +168,8 @@ export class NewPostPage implements OnInit {
                 this.group.groupTags.forEach((element: any) => {
                   this.postTags.push({val: element, isChecked: false});
                 });
-                this.addTagControls();
+                //TAGS commented
+                // this.addTagControls();
               });
             }
         });
@@ -232,14 +234,15 @@ export class NewPostPage implements OnInit {
    selectGroup(groupId) {
     this.groupId = groupId;
     this.step = 2;
-    this.title = 'General';
+    this.title = 'New Post';
 
     this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
       this.group = group.payload.data();
       this.group.groupTags.forEach((element: any) => {
         this.postTags.push({val: element, isChecked: false});
       });
-      this.addTagControls();
+      // TAGS Commented
+      // this.addTagControls();
 
   });
 
