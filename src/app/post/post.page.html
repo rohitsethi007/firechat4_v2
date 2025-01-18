@@ -4,7 +4,7 @@
       <ion-back-button [text]="" icon="chevron-back-outline"></ion-back-button>
     </ion-buttons>
     
-    <ion-title class="ion-text-center">
+    <ion-title class="ion-text-left">
       <h4 class="title-text">{{title}}</h4>
     </ion-title>
 
@@ -302,9 +302,9 @@
 
             <!-- Event Quick Stats -->
             <div class="event-stats">
-              <div class="stat-item">
+              <div class="stat-item" (click)="showCheckinsList(post)">
                 <ion-icon name="people-outline"></ion-icon>
-                <span>{{post.totalReactionCount}} attending</span>
+                <span>{{post.totalCheckinCount}} attending</span>
               </div>
             </div>
           </div>
@@ -350,8 +350,7 @@
           <!-- Action Button -->
           <div class="event-actions">
             <ion-button expand="block" color="primary" (click)="submitReactionCheckin()" [class.active]="post.showCheckin">
-              <ion-icon [src]="post.showCheckin ? './assets/icon/checkin-active.svg' : './assets/icon/checkin.svg'"></ion-icon>
-              {{post.showCheckin ? 'Going' : 'Join Event'}}
+                {{post.showCheckin ? 'Going' : 'I\'ll Attend'}}
             </ion-button>
           </div>
         </div>

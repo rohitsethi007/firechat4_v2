@@ -32,6 +32,16 @@ interface Reaction {
   dateCreated: string;
   reactionType: string;
 }
+interface Checkin {
+  payload: any;
+  id?: string;
+  addedByUser: {
+    addedByImg: string;
+    addedByKey: string;
+    addedByUsername: string;
+  };
+  dateCreated: string;
+}
 // Add interface for user data
 interface UserDocument {
   userReactions: any[];
@@ -68,6 +78,7 @@ export class PostPage implements OnInit {
   userReactions: any[] = [];
   private uploadingImage: boolean;
   private reactionSubscription: Subscription;
+  private checkinSubscription: Subscription;
   loggedInUser: UserDocument | null = null;
   userNotifications: any[] = [];
 
@@ -189,11 +200,13 @@ export class PostPage implements OnInit {
         console.info('p', p)
         p.reactions = [];
         p.key = post.id;
+        p.checkins = []; // Initialize empty array
+        p.totalCheckinCount = 0; // Initialize count
         this.title = post.data().title;
         let totalReactionCount = 0;
         let totalReviewCount = 0;
-        // p.postTags = p.postTags.filter(x => x.isChecked !== false);
 
+        // get Reactions Collection
         this.reactionSubscription = this.firestore
             .collection('posts')
             .doc(post.id)
@@ -252,6 +265,38 @@ export class PostPage implements OnInit {
             }
 
         });
+
+         // Get checkins
+         this.checkinSubscription = this.firestore
+         .collection('posts')
+         .doc(post.id)
+         .collection<Checkin>('checkins')
+         .snapshotChanges()
+         .pipe(
+           map(actions => actions.map(a => ({
+             id: a.payload.doc.id,
+             ...a.payload.doc.data()
+           })))
+         )
+         .subscribe({
+           next: (checkins) => {
+             if (checkins) {
+               p.checkins = checkins;
+               p.totalCheckinCount = checkins.length;
+
+               if (checkins.length > 0) {
+                 this.post.showCheckin = checkins.some(checkin => 
+                  checkin.addedByUser?.addedByKey === this.loggedInUserId
+                );
+               } else {
+                 this.post.showCheckin = false;
+               }
+             }
+           },
+           error: (error) => {
+             console.error('Error fetching reactions:', error);
+           }
+         });
 
         // poll related data
         if (p.type === 'poll') {
@@ -660,5 +705,59 @@ copyLink(link: string) {
   navigator.clipboard.writeText(link);
   // Show toast or notification
 }
+
+async submitReactionCheckin() {
+  try {
+    // Get current checkins from Firestore
+    const checkinsRef = this.firestore.collection('posts').doc(this.post.key).collection('checkins');
+    const checkinSnapshot = await checkinsRef.ref.where('addedByUser.addedByKey', '==', this.loggedInUserId).get();
+
+    if (!checkinSnapshot.empty) {
+      // User has already checked in - remove the checkin
+      this.post.showCheckin = false
+      const checkinDoc = checkinSnapshot.docs[0];
+      await checkinsRef.doc(checkinDoc.id).delete();
+
+      // Update local count
+      this.post.totalCheckinCount = (this.post.totalCheckinCount || 1) - 1;
+    } else {
+      // Add new checkin
+      const checkinData = {
+        dateCreated: new Date(),
+        addedByUser: {
+          addedByKey: this.loggedInUserId,
+          addedByUsername: this.loggedInUser.username,
+          addedByImg: this.loggedInUser.img
+        }
+      };
+
+      // Add to Firestore
+      await checkinsRef.add(checkinData);
+      
+      // Update local count
+      this.post.totalCheckinCount = (this.post.totalCheckinCount || 0) + 1;
+      this.post.showCheckin = true
+    }
+
+  } catch (error) {
+    console.error('Error handling checkin:', error);
+    this.loadingProvider.showToast('Error updating check-in. Please try again.');
+  }
+}
+
+async showCheckinsList() {
+  if (this.post.totalCheckinCount === 0) {
+    return;
+  }
+  const p = this.post;
+  const modal = await this.modalCtrl.create({
+     component: ReactionListModalPage,
+     componentProps: {
+       reactions: p.checkins
+     }
+   });
+  return await modal.present();
+}
+
 
 }

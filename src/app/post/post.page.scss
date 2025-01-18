@@ -258,7 +258,7 @@ ion-header {
   
     .event-card {
       border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       overflow: hidden;
   
       ion-card-header {
@@ -398,7 +398,7 @@ ion-header {
               .stat-item {
                 display: flex;
                 align-items: center;
-                color: var(--ion-color-medium);
+                color: var(--ion-color-primary);;
                 font-size: 14px;
         
                 ion-icon {
