@@ -24,32 +24,8 @@ export class NewPollPage implements OnInit {
   private addedByUser: any;
   private step: any = 1;
   groups: any;
-
-  validations = {
-    name: [
-      { type: 'required', message: 'Title is required.' },
-      { type: 'minlength', message: 'Title must be at least 5 characters long.' },
-      { type: 'maxlength', message: 'Title cannot be more than 25 characters long.' }
-    ],
-    description: [
-      { type: 'required', message: 'Poll Question is required.' },
-      { type: 'minlength', message: 'Poll Question must be at least 10 characters long.' },
-      { type: 'maxlength', message: 'Poll Question cannot be more than 50 characters long.' }
-    ],
-    pollOption1: [
-      { type: 'required', message: 'Poll Question is required.' },
-      { type: 'minlength', message: 'Poll Question must be at least 10 characters long.' },
-      { type: 'maxlength', message: 'Poll Question cannot be more than 50 characters long.' }
-    ],
-    pollOption2: [
-      { type: 'required', message: 'Poll Question is required.' },
-      { type: 'minlength', message: 'Poll Question must be at least 10 characters long.' },
-      { type: 'maxlength', message: 'Poll Question cannot be more than 50 characters long.' }
-    ],
-    // tags: [
-    //   { type: 'required', message: 'Please select at least one tag.' }
-    // ]
-    };
+  userNotifications: any = [];
+  userPosts: any = [];
 
   constructor(
     public dataProvider: DataService,
@@ -102,8 +78,9 @@ export class NewPollPage implements OnInit {
         addedByUsername: value.payload.data().username,
         addedByImg: value.payload.data().img
       };
-  
-        this.poll = {
+      this.userNotifications = value.payload.data().userNotifications;
+      this.userPosts = value.payload.data().userPosts;
+      this.poll = {
         addedByUser: this.addedByUser,
         date: '',
         title: '',
@@ -135,14 +112,6 @@ export class NewPollPage implements OnInit {
           }
         } else {
           this.title = 'New Poll';
-    
-          // this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-          //   this.group = group.payload.data();
-          //   this.group.groupTags.forEach((element: any) => {
-          //     this.postTags.push({val: element, isChecked: false});
-          //   });
-          //   this.addTagControls();
-          // });   
         }
     });
      })
@@ -166,77 +135,96 @@ export class NewPollPage implements OnInit {
       }
     }
   }
+    async submitPollForm() {
+      // Add poll info and date.
+      this.poll.groupId = this.groupId;
+      this.poll.groupName = this.group.name;
+      this.poll.date = new Date();
+      this.poll.title = this.pollForm.value.description;
+      // this.poll.postTags = [];
+      // this.poll.postTags = this.postTags;
 
-  // addTagControls() {
-  //   this.postTags.forEach((o, i) => {
-  //     const control = new FormControl(i === 0); // if first item set to true, else false
-  //     (this.pollForm.controls.tags as FormArray).push(control);
-  //   });
-  // }
+      const today = new Date();
+      const dd = today.getDate();
+      const mm = today.getMonth(); // January is 0!
+      const yyyy = today.getFullYear();
 
-  submitPollForm() {
-    // Add poll info and date.
-    this.poll.groupId = this.groupId;
-    this.poll.groupName = this.group.name;
-    this.poll.date = new Date();
-    this.poll.title = this.pollForm.value.description;
-    // this.poll.postTags = [];
-    // this.poll.postTags = this.postTags;
+      const date: Date = new Date(yyyy, mm, dd + 2);
+      const dateEnding = date;
 
-    const today = new Date();
-    const dd = today.getDate();
-    const mm = today.getMonth(); // January is 0!
-    const yyyy = today.getFullYear();
-
-    const date: Date = new Date(yyyy, mm, dd + 2);
-    const dateEnding = date;
-
-    this.poll.data = {
-      dateCreated: new Date(),
-      dateEnding,
-      pollOptions: []
-    };
+      this.poll.data = {
+        dateCreated: new Date(),
+        dateEnding,
+        pollOptions: []
+      };
 
 
-    if (this.pollForm.value.pollOption1 != null
-          && this.pollForm.value.pollOption1.trim() !== '') {
+      if (this.pollForm.value.pollOption1 != null
+            && this.pollForm.value.pollOption1.trim() !== '') {
+            this.poll.data.pollOptions.push({
+              name : this.pollForm.value.pollOption1.trim()});
+          }
+      if (this.pollForm.value.pollOption2 != null
+              && this.pollForm.value.pollOption2.trim() !== '') {
+              this.poll.data.pollOptions.push({
+                name : this.pollForm.value.pollOption2.trim()});
+          }
+      if (this.pollForm.value.pollOption3 != null
+              && this.pollForm.value.pollOption3.trim() !== '') {
+              this.poll.data.pollOptions.push({
+                name : this.pollForm.value.pollOption3.trim()});
+          }
+      if (this.pollForm.value.pollOption4 != null
+            && this.pollForm.value.pollOption4.trim() !== '') {
           this.poll.data.pollOptions.push({
-            name : this.pollForm.value.pollOption1.trim()});
-        }
-    if (this.pollForm.value.pollOption2 != null
-            && this.pollForm.value.pollOption2.trim() !== '') {
-            this.poll.data.pollOptions.push({
-              name : this.pollForm.value.pollOption2.trim()});
-        }
-    if (this.pollForm.value.pollOption3 != null
-            && this.pollForm.value.pollOption3.trim() !== '') {
-            this.poll.data.pollOptions.push({
-               name : this.pollForm.value.pollOption3.trim()});
-        }
-    if (this.pollForm.value.pollOption4 != null
-          && this.pollForm.value.pollOption4.trim() !== '') {
-        this.poll.data.pollOptions.push({
-          name : this.pollForm.value.pollOption4.trim()});
-    }
-    console.info('this.poll:', this.poll)
+            name : this.pollForm.value.pollOption4.trim()});
+      }
+      console.info('this.poll:', this.poll)
 
-    this.dataProvider.addPost(this.poll).then((success) => {
-          // const pollId = success.id;
-          // this.pollId = pollId;
-          // if (this.group.polls === undefined) {
-          //   this.group.polls = [];
-          // }
-          // this.group.polls.push(this.pollId);
+          // Add the poll and get the ID
+        const success = await this.dataProvider.addPost(this.poll);
+        const pollId = success.id;
+        this.pollId = pollId;
 
-          // // Update group data on the database.
-          // this.dataProvider.getGroup(this.groupId).update({
-          //   posts: this.group.posts
-          // }).then(() => {
-          // // Back.
-          // this.loadingProvider.hide();
-          this.router.navigateByUrl('/app/tabs/tab1');
-      });
-    }
+        // Initialize group if needed
+        if (!this.group) {
+          this.group = {};
+        }
+
+        // Initialize group arrays
+        if (!this.group.posts) {
+          this.group.posts = [];
+        }
+        if (!this.group.polls) {
+          this.group.polls = [];
+        }
+
+        // Initialize user arrays
+        this.userNotifications = this.userNotifications || [];
+        this.userPosts = this.userPosts || [];
+
+        // Update arrays
+        this.group.polls.push(pollId);
+        this.userNotifications.push(pollId);
+        this.userPosts.push(pollId);
+
+        // Perform updates
+        await Promise.all([
+          // Update group
+          this.dataProvider.getGroup(this.groupId).update({
+            posts: this.group.posts,
+            polls: this.group.polls
+          }),
+          // Update user
+          this.dataProvider.getUser(this.addedByUser.addedByKey).update({
+            userNotifications: this.userNotifications,
+            userPosts: this.userPosts
+          })
+        ]);
+
+
+        this.router.navigateByUrl('/app/tabs/tab1');
+      }
 
   selectGroup(groupId) {
     this.groupId = groupId;
@@ -246,10 +234,6 @@ export class NewPollPage implements OnInit {
 
     this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
       this.group = group.payload.data();
-      // this.group.groupTags.forEach((element: any) => {
-      //   this.postTags.push({val: element, isChecked: false});
-      // });
-      // this.addTagControls();
 
   });
 

@@ -137,7 +137,7 @@ export class NewPostPage implements OnInit {
             postTags: [],
             groupId: '',
             groupName: '',
-            type: 'general',
+            type: 'event',
             data: {},
             totalReactionCount: 0,
             totalReviewCount: 0,

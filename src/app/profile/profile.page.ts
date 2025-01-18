@@ -95,6 +95,7 @@ export class ProfilePage implements OnInit {
       let account = user.payload.data();
       if (account != null) {
         this.user = account;
+        console.log('user data', this.user)
         this.title = this.user.username;
         // get user Posts
         if (this.user.userPosts) {
@@ -176,7 +177,6 @@ export class ProfilePage implements OnInit {
       let post: any;
       post = p.data();
       post.key = p.id;
-      post.postTags = post.postTags.filter(x => x.isChecked !== false);
       if (collection === 'userPosts') { this.addOrUpdateUserPost(post); }
       if (collection === 'userComments') { this.addOrUpdateCommentPost(post); }
       if (collection === 'userReactions') { this.addOrUpdateReactionPost(post); }
@@ -184,6 +184,7 @@ export class ProfilePage implements OnInit {
   }
 
   addOrUpdateUserPost(post) {
+    console.info('adding post', post)
     if (!this.userPosts) {
       this.userPosts = [post];
     } else {

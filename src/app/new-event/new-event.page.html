@@ -11,31 +11,23 @@
 </ion-header> 
 
 <ion-content>
-  <!-- Step 1: Group Selection -->
-  <div class="post-container" *ngIf="step==1">
-    <div *ngIf="groups && groups.length > 0">
-      <ion-card class="group-selection-card">
-        <ion-list class="groups-list" lines="full">
-          <ion-item *ngFor="let group of groups" 
-                    (click)="selectGroup(group.key)"
-                    detail="true"
-                    class="group-item">
-            <ion-thumbnail slot="start" class="group-thumbnail">
-              <img [src]="group.img" 
-                   [alt]="group.name"
-                   onError="this.src='./assets/images/default-group.png'">
-            </ion-thumbnail>
-            <ion-label>
-              <h3 class="group-name">{{group.name}}</h3>
-              <p class="group-description">
-                <ion-text color="medium">
-                  {{group.description}}
-                </ion-text>
-              </p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </ion-card>
+  <div *ngIf="step==1"> 
+    <div *ngIf="groups && groups.length > 0"> 
+      <ion-list class="ion-no-padding">
+        <ion-item class="ion-margin-left" text-wrap *ngFor="let group of groups" (click)="selectGroup(group.key)">
+          <ion-thumbnail slot="start">
+            <img src="{{group.img}}" onError="this.src='./assets/images/default-group.png'">
+          </ion-thumbnail>
+          <ion-label>
+            <h3 class="ion-no-margin">{{group.name}}</h3>
+            <p class="ion-text-wrap">
+              <ion-text color="medium">
+                {{group.description}}
+              </ion-text>
+            </p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
     </div>
   </div>
 
@@ -147,7 +139,7 @@
           </ion-item>
         </div>
     
-        <!-- Attendance Checkbox -->
+        <!-- Attendance Checkbox
         <div class="form-field">
           <ion-item class="checkbox-item">
             <ion-label>I'll be attending the Event</ion-label>
@@ -156,7 +148,7 @@
                         slot="end">
             </ion-checkbox>
           </ion-item>
-        </div>
+        </div> -->
     
         <!-- Submit Button -->
         <div class="submit-button-container">

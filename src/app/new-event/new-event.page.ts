@@ -23,7 +23,6 @@ interface Event {
   videoLink?: string;
   bannerImage?: string;
   createdAt: Date;
-  isAttending: boolean;
 }
 
 interface Group {
@@ -56,6 +55,7 @@ export class NewEventPage implements OnInit {
   private step: any = 1;
   groups: any;
   userNotifications: any = [];
+  userPosts: any = [];
   private postMedia: any = [];
   // In your component class
   bannerImage: string | null = null;
@@ -94,16 +94,7 @@ export class NewEventPage implements OnInit {
    ionViewDidEnter() {}
 
    ngOnInit() {
-    this.eventForm = this.formBuilder.group({
-      title: ['', Validators.required],
-      eventDate: ['', Validators.required],
-      eventTime: ['', Validators.required],
-      location: ['', Validators.required],
-      videoLink: [''], // Optional field,
-      isAttending: [false],
-      groupId: ['']  
-    });
-
+   
     this.dataProvider.getCurrentUser().then((u) => {
       u.snapshotChanges().subscribe((value: any) => {
         this.user = value.payload.data();
@@ -111,6 +102,34 @@ export class NewEventPage implements OnInit {
         addedByKey: value.payload.data().userId,
         addedByUsername: value.payload.data().username,
         addedByImg: value.payload.data().img
+      };
+      this.userNotifications = value.payload.data().userNotifications;
+      this.userPosts = value.payload.data().userPosts;
+      this.eventForm = this.formBuilder.group({
+        addedByUser: this.addedByUser,
+        title: ['', Validators.required],
+        eventDate: ['', Validators.required],
+        eventTime: ['', Validators.required],
+        location: ['', Validators.required],
+        videoLink: [''], // Optional field,
+        groupId: '',
+        totalReactionCount: 0,
+        totalReviewCount: 0,
+        groupName: '',
+        type: 'event',
+      });
+      this.event = {
+        addedByUser: this.addedByUser,
+        date: '',
+        title: '',
+        postTags: [],
+        groupId: '',
+        groupName: '',
+        type: 'event',
+        data: {},
+        totalReactionCount: 0,
+        totalReviewCount: 0,
+        postMedia: []
       };
   
         if (this.step === 1) {
@@ -158,58 +177,64 @@ export class NewEventPage implements OnInit {
     }
   }
 
-  submitEventForm() {
+  async submitEventForm() {
     this.loadingProvider.show();
     console.info('new group id', this.groupId);
 
-    // Add event info and date
-    this.event = {
-      ...this.event,  // preserve any existing event properties
-      groupId: this.groupId,
-      groupName: this.group.name,
-      date: this.eventForm.value.eventDate,
-      time: this.eventForm.value.eventTime,
-      title: this.eventForm.value.title,
-      location: this.eventForm.value.location,
-      videoLink: this.eventForm.value.videoLink || null,
-      bannerImage: this.bannerImage || './assets/images/default-banner.jpg',
-      createdAt: new Date(),
-      isAttending: this.eventForm.value.isAttending
-    };
+    // Add post info and date.
+    this.event.date = new Date();
+    this.event.title = this.eventForm.value.title;
+    this.event.data.eventDate = this.eventForm.value.eventDate;
+    this.event.data.eventTime = this.eventForm.value.eventTime;
+    this.event.data.location = this.eventForm.value.location;
+    this.event.data.videoLink = this.eventForm.value.videoLink;
+    this.event.groupId = this.groupId;
+    this.event.groupName = this.group.name;
 
-    // Add event to database
-    this.dataProvider.addPost(this.event).then((success) => {
-      const eventId = success.id;
-      this.eventId = eventId;
 
-      // Initialize posts array if undefined
-      if (this.group.posts === undefined) {
-        this.group.posts = [];
-      }
-      this.group.posts.push(this.eventId);
+   // Add the poll and get the ID
+   const success = await this.dataProvider.addPost(this.event);
+   const eventId = success.id;
+   this.eventId = eventId;
 
-      // Update group data on the database
-      this.dataProvider.getGroup(this.groupId).update({
-        posts: this.group.posts
-      });
+   // Initialize group if needed
+   if (!this.group) {
+     this.group = {};
+   }
 
-      // Update the Checkin data for this event
-      if (this.eventForm.value.isAttending === true) {
-        const reaction = {
-          addedByUser: this.addedByUser,
-          dateCreated: new Date(),
-          reactionType: 'Checkin'
-        };
-        this.dataProvider.updatePostReactions(eventId, reaction);
-      }
+   // Initialize group arrays
+   if (!this.group.posts) {
+     this.group.posts = [];
+   }
+   if (!this.group.polls) {
+     this.group.polls = [];
+   }
 
-      this.loadingProvider.hide();
+   // Initialize user arrays
+   this.userNotifications = this.userNotifications || [];
+   this.userPosts = this.userPosts || [];
+
+   // Update arrays
+   this.group.polls.push(eventId);
+   this.userNotifications.push(eventId);
+   this.userPosts.push(eventId);
+
+   // Perform updates
+   await Promise.all([
+     // Update group
+     this.dataProvider.getGroup(this.groupId).update({
+       posts: this.group.posts,
+       polls: this.group.polls
+     }),
+     // Update user
+     this.dataProvider.getUser(this.addedByUser.addedByKey).update({
+       userNotifications: this.userNotifications,
+       userPosts: this.userPosts
+     })
+   ]);
+
       this.router.navigateByUrl('/app/tabs/tab1');
-    }).catch(error => {
-      console.error('Error creating event:', error);
-      this.loadingProvider.hide();
-      // Add error handling here if needed
-    });
+  
 }
 
 

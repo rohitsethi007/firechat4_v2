@@ -656,4 +656,9 @@ private initializePollData(p: any) {
   }
 }
 
+copyLink(link: string) {
+  navigator.clipboard.writeText(link);
+  // Show toast or notification
+}
+
 }

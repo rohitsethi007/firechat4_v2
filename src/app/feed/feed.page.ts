@@ -215,12 +215,6 @@ export class FeedPage implements OnInit {
           this.newPost();
         }
       }, {
-        text: 'Resource',
-        icon: 'document-outline',
-        handler: () => {
-          this.newResource();
-        }
-      }, {
         text: 'Poll',
         icon: 'podium-outline',
         handler: () => {
@@ -553,6 +547,25 @@ export class FeedPage implements OnInit {
         } else {
           post.pollClosed = false;
         }
+        // Calculate votes for each option and total count
+        post.totalPollCount = 0; // Initialize total count
+        // Map through poll options and calculate votes
+        post.data.pollOptions = post.data.pollOptions.map((option, index) => {
+        // Get the members array for this option (or empty array if undefined)
+        const members = option.members || [];
+        const votes = members.length;
+        
+        // Add to total poll count
+        post.totalPollCount += votes;
+
+        // Return option with votes count
+        return {
+          ...option,
+          votes: votes
+        };
+      });
+
+
       }
       
       // get reactions list
@@ -715,4 +728,23 @@ async presentFilterPopover(ev: any) {
     console.log('Applying filters:', filters);
     // Implement your filter logic here
   }
+
+  calculatePercentage(votes: number, total: number): number {
+    if (!total || total === 0) return 0;
+    return Math.round((votes / total) * 100);
+  }
+  
+  getPollColor(index: number): string {
+    const colors = [
+      '#4CAF50', // green
+      '#2196F3', // blue
+      '#FF9800', // orange
+      '#E91E63', // pink
+      '#9C27B0', // purple
+      '#00BCD4'  // cyan
+    ];
+    return colors[index % colors.length];
+  }
+  
+  
 }
