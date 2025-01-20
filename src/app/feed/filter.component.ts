@@ -43,10 +43,10 @@ import { DataService } from '../services/data.service';
         </div>
         
         <div class="filter-chip" 
-            [class.active]="selectedTypes.includes('resources')"
-            (click)="selectFilter('resources')">
+            [class.active]="selectedTypes.includes('polls')"
+            (click)="selectFilter('polls')">
             <ion-icon name="document-outline"></ion-icon>
-            <span>Resources</span>
+            <span>Polls</span>
         </div>
         </div>
 
@@ -421,16 +421,7 @@ export class FilterComponent {
   selectedTypes: string[] = ['all'];
   groupSearchTerm: string = '';
   groups: any[] = [];
-//   groups = [
-//     { id: 1, name: 'Music', selected: false, color: '#FF6B6B' },
-//     { id: 2, name: 'Sports', selected: false, color: '#4ECDC4' },
-//     { id: 3, name: 'Technology', selected: false, color: '#45B7D1' },
-//     { id: 4, name: 'Art & Design', selected: false, color: '#96CEB4' },
-//     { id: 5, name: 'Gaming', selected: false, color: '#FFEEAD' },
-//     { id: 6, name: 'Travel', selected: false, color: '#D4A5A5' },
-//     { id: 7, name: 'Photography', selected: false, color: '#9B89B3' },
-//     { id: 8, name: 'Food & Cooking', selected: false, color: '#FF9999' }
-//   ];
+
   filteredGroups = [...this.groups];
   private loggedInUserId: any;
   constructor(private popoverCtrl: 

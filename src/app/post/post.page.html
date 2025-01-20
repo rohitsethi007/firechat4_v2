@@ -62,15 +62,6 @@
           <p class="post-message">{{post.data.message}}</p>
         </div>
 
-        <!-- Tags -->
-        <!-- <div class="tags-container" *ngIf="post.postTags?.length">
-          <ion-chip *ngFor="let tag of post.postTags" 
-                    [class.active]="tag.isChecked" 
-                    class="tag-chip">
-            #{{tag.val}}
-          </ion-chip>
-        </div> -->
-
         <!-- Reactions Bar -->
         <div class="reactions-bar">
           <ion-row>
@@ -117,6 +108,97 @@
         </div>
 
       </div>
+<!-- Comment Section -->
+<div class="comment-section">
+  <div class="comments-container">
+    <!-- Root Comments -->
+    <ng-container *ngFor="let comment of comments">
+      <!-- Comment Template -->
+      <ng-container *ngTemplateOutlet="commentTemplate; context: { $implicit: comment }">
+      </ng-container>
+    </ng-container>
+  </div>
+  
+  <!-- Comment Template -->
+  <ng-template #commentTemplate let-comment>
+    <div class="comment-item">
+      <div class="comment-wrapper">
+        <ion-avatar>
+          <img [src]="comment.addedByUser.addedByImg || 'assets/default-avatar.png'" alt="avatar">
+        </ion-avatar>
+        
+        <div class="comment-content">
+          <div class="comment-text">
+            <span class="username">{{comment.addedByUser.addedByUsername}}</span>
+            <span class="message">{{comment.content}}</span>
+          </div>
+          
+          <div class="comment-footer">
+            <div class="actions">
+              <span class="action-btn like-btn" 
+              [class.liked]="isCommentLikedByUser(comment)"
+              (click)="likeComment(comment)">
+            <ion-icon [name]="isCommentLikedByUser(comment) ? 'heart' : 'heart-outline'"
+                      [color]="isCommentLikedByUser(comment) ? 'danger' : 'medium'">
+            </ion-icon>
+            <small *ngIf="comment.likes">{{comment.likes}}</small>
+          </span>
+              <!-- Only show reply button if this is not already a reply -->
+              <span class="action-btn" (click)="toggleReplyInput(comment)" *ngIf="!comment.parentId">
+                <ion-icon name="chatbubble-outline" color="medium"></ion-icon>
+                <small>Reply</small>
+              </span>
+              <span class="timestamp">{{comment.createdAt.toDate() | date:'shortTime'}}</span>
+            </div>
+          </div>
+  
+          <!-- Only show reply input if this is not already a reply -->
+          <div class="reply-section" *ngIf="comment.showReplyInput && !comment.parentId">
+            <div class="reply-input-wrapper">
+              <ion-avatar>
+                <img [src]="loggedInUser?.img || 'assets/default-avatar.png'" alt="user avatar">
+              </ion-avatar>
+              <ion-input 
+                placeholder="Write a reply..."
+                [(ngModel)]="comment.replyText"
+                (keyup.enter)="submitReply(comment)"
+                class="reply-input">
+              </ion-input>
+              <ion-button 
+                fill="clear" 
+                [disabled]="!comment.replyText?.trim()"
+                (click)="submitReply(comment)"
+                class="send-button">
+                <ion-icon name="send" [class.active]="comment.replyText?.trim()"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+  
+          <!-- Replies section -->
+          <div class="replies-section" *ngIf="comment.replies && comment.replies.length > 0">
+            <ng-container *ngFor="let reply of comment.replies">
+              <div class="nested-reply">
+                <ng-container *ngTemplateOutlet="commentTemplate; context: { $implicit: reply }">
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+  
+        <div class="options-btn" *ngIf="comment.addedByUser.addedByKey === loggedInUserId">
+          <ion-button fill="clear" (click)="deleteComment(comment)">
+            <ion-icon name="trash-outline" color="danger"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  
+  
+  
+  
+  
+</div>
     </ion-card>
   </div>
 
@@ -194,50 +276,50 @@
             Poll ended
           </ion-note>
         </div>
-                <!-- Reactions Bar -->
-                <div class="reactions-bar">
-                  <ion-row>
-                    <ion-col>
-                      <ion-buttons>
-                        <ion-button (click)="showEmojiPicker($event, post)">
-                          <!-- Keep your existing Thanks/Smile reaction display -->
-                          <div>
-                            <ion-icon *ngIf="post.reactionType === ''" size="medium" class="icon" src="./assets/icon/smile-inactive.svg"></ion-icon>
-                            <ion-icon *ngIf="post.reactionType !== ''" size="medium" class="icon" [src]="'./assets/icon/' + post.reactionType + '.svg'"></ion-icon>
-                          </div>
-                        </ion-button>
-                        <ion-button (click)="showReactionsList(post)" class="reaction-count-button">
-                          <div class="reaction-count-container">
-                            <div class="stacked-icons">
-                              <ion-icon size="small" src="./assets/icon/smile.svg" class="icon smile"></ion-icon>
-                              <ion-icon size="small" src="./assets/icon/hug.svg" class="icon hug"></ion-icon>
-                            </div>
-                            <span class="count-text">{{post.totalReactionCount}}</span>
-                          </div>
-                        </ion-button>
-                      </ion-buttons>
-                    </ion-col>
-        
-                    <!-- Right aligned icons -->
-                    <ion-col class="ion-text-end">
-                      <ion-buttons class="ion-justify-content-end">
-                        <ion-button>
-                          <div class="comment-count">
-                            <ion-icon size="small" class="icon" name="chatbox-outline"></ion-icon>
-                            <span class="count-text">{{post.totalReviewCount}}</span>
-                          </div>
-                        </ion-button>
-        
-                        <ion-button (click)="toggleBookmark(post)">
-                          <ion-icon size="small" class="icon" [name]="post.isBookmarked ? 'bookmark' : 'bookmark-outline'"></ion-icon>
-                        </ion-button>
-                        <ion-button (click)="sharePost(post)">
-                          <ion-icon name="share-social-outline"></ion-icon>
-                        </ion-button>
-                      </ion-buttons>
-                    </ion-col>
-                  </ion-row>
-                </div>
+          <!-- Reactions Bar -->
+          <div class="reactions-bar">
+            <ion-row>
+              <ion-col>
+                <ion-buttons>
+                  <ion-button (click)="showEmojiPicker($event, post)">
+                    <!-- Keep your existing Thanks/Smile reaction display -->
+                    <div>
+                      <ion-icon *ngIf="post.reactionType === ''" size="medium" class="icon" src="./assets/icon/smile-inactive.svg"></ion-icon>
+                      <ion-icon *ngIf="post.reactionType !== ''" size="medium" class="icon" [src]="'./assets/icon/' + post.reactionType + '.svg'"></ion-icon>
+                    </div>
+                  </ion-button>
+                  <ion-button (click)="showReactionsList(post)" class="reaction-count-button">
+                    <div class="reaction-count-container">
+                      <div class="stacked-icons">
+                        <ion-icon size="small" src="./assets/icon/smile.svg" class="icon smile"></ion-icon>
+                        <ion-icon size="small" src="./assets/icon/hug.svg" class="icon hug"></ion-icon>
+                      </div>
+                      <span class="count-text">{{post.totalReactionCount}}</span>
+                    </div>
+                  </ion-button>
+                </ion-buttons>
+              </ion-col>
+  
+              <!-- Right aligned icons -->
+              <ion-col class="ion-text-end">
+                <ion-buttons class="ion-justify-content-end">
+                  <ion-button>
+                    <div class="comment-count">
+                      <ion-icon size="small" class="icon" name="chatbox-outline"></ion-icon>
+                      <span class="count-text">{{post.totalReviewCount}}</span>
+                    </div>
+                  </ion-button>
+  
+                  <ion-button (click)="toggleBookmark(post)">
+                    <ion-icon size="small" class="icon" [name]="post.isBookmarked ? 'bookmark' : 'bookmark-outline'"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="sharePost(post)">
+                    <ion-icon name="share-social-outline"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-col>
+            </ion-row>
+          </div>
       </div>
     </ion-card>
   </div>
@@ -287,7 +369,7 @@
         <!-- Event Details -->
         <div class="event-details">
           <!-- Event Banner -->
-          <div class="event-banner" [style.backgroundImage]="'url(' + (post.bannerImage || './assets/images/default-event-banner.jpg') + ')'">
+          <div class="event-banner" [style.backgroundImage]="'url(' + (post.bannerImage || './assets/sample-images/default-event.jpg') + ')'">
             <div class="banner-overlay">
               <div class="event-date-badge">
                 <span class="month">{{post.data.eventDate | date:'MMM'}}</span>
@@ -401,6 +483,30 @@
           </ion-row>
         </div>
       </ion-card-content>
+      <hr class="details-divider">
+      <div class="user-preferences-wrapper">
+        <div  >
+          <div class="reviews" *ngFor="let r of postReviews">
+            <ion-row>
+              <ion-col size="2">
+                  <img class="addedByImgReview" src="{{r.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" />
+              </ion-col>
+              <ion-col class="review" size="9">
+                  <span class="addedByTitleReview"><a (click)="viewUser(r.addedByUser.addedByKey)" >
+                    <b>{{post.addedByUser.addedByUsername}}</b></a>, <span class="addedByDateReview">{{r.dateCreated.toDate() | DateFormat}}</span>
+                  </span>
+                      <br/>
+                      <br/>
+                      <div *ngIf="r.reviewMedia.length > 0" class="bgSizeContain" 
+                      [ngStyle]="{'background-image':'url('+r.reviewMedia+')'}"></div>
+                      <div class="messageReview" [innerHTML]="r.review"></div>
+                </ion-col>
+          </ion-row>
+        </div>
+        </div>
+      </div>
+
+      
     </ion-card>
   </div>
   
@@ -537,28 +643,30 @@
 </ion-card> -->
   
 </ion-content>
-
 <ion-footer>
-  <ion-toolbar>
-    <ion-row lines="none" class="uploads item-text-wrap" *ngIf="reviewMedia && reviewMedia.length > 0">
-      <div class="img-wrap" *ngFor="let media of reviewMedia">
-          <ion-thumbnail slot="start">
-            <span class="close" (click)="removeMedia(media)">&times;</span>
-            <ion-img [src]="media"></ion-img>
-          </ion-thumbnail>
-        </div>
-    </ion-row>
-    <ion-item>
-      <ion-button fill="clear" (click)="attach()" [disabled]="reviewMedia.length >= 1">
-        <ion-icon size="large" name="camera-outline"></ion-icon>
+  <div class="comment-section">
+     <!-- Comment Input -->
+  <div class="comment-input-wrapper">
+    <ion-item lines="none" class="comment-input-container">
+      <ion-avatar slot="start">
+        <img [src]="loggedInUser?.img || 'assets/default-avatar.png'" alt="user avatar">
+      </ion-avatar>
+      <ion-input 
+        #commentInput
+        placeholder="Write a comment..."
+        [(ngModel)]="newComment"
+        (keyup.enter)="submitComment()"
+        class="comment-input">
+      </ion-input>
+      <ion-button 
+        fill="clear" 
+        [disabled]="!newComment?.trim()"
+        (click)="submitComment()"
+        class="send-button">
+        <ion-icon name="send" [class.active]="newComment?.trim()"></ion-icon>
       </ion-button>
-      <ion-textarea class="comment" rows="0" placeholder="Type your message" [(ngModel)]="message"></ion-textarea>
-       <ion-buttons slot="end">
-        <ion-button fill="clear" (click)="submitReply()" [disabled]="!message && !uploadingImage">
-          <ion-icon size="large" color="secondary" name="arrow-forward-circle"></ion-icon>
-        </ion-button>
-      </ion-buttons>
     </ion-item>
-  </ion-toolbar>
+  </div>
+  </div>
 </ion-footer>
 

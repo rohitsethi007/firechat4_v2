@@ -55,12 +55,31 @@ interface PollOption {
   name: string;
   members: string[] | null;
 }
-
+// First, define your interfaces
+interface Comment {
+  id?: string;
+  postId: string;
+  content: string;
+  addedByUser: {
+    addedByKey: string;
+    addedByUsername: string;
+    addedByImg: string;
+  };
+  createdAt: any;
+  parentId?: string; // Reference to parent comment
+  likes?: number;
+  likedBy?: string[]; // Array of user IDs who liked the comment
+  replies?: Comment[]; // Array to hold replies
+  showReplyInput?: boolean;
+  replyText?: string;
+}
 interface PollData {
   pollOptions: PollOption[];
   dateEnding: any; // Replace 'any' with proper Firebase Timestamp type if available
 }
-
+interface FirestoreComment extends Omit<Comment, 'id'> {
+  // This interface represents the data as it exists in Firestore
+}
 @Component({
   selector: 'app-post',
   templateUrl: './post.page.html',
@@ -81,6 +100,13 @@ export class PostPage implements OnInit {
   private checkinSubscription: Subscription;
   loggedInUser: UserDocument | null = null;
   userNotifications: any[] = [];
+
+  newComment: string = '';
+  currentUserAvatar: string; // Set this from your auth service
+  
+  // Add this to your existing properties
+  comments: Comment[] = [];
+
 
   // Poll related fields
   private poll: any;
@@ -158,6 +184,7 @@ export class PostPage implements OnInit {
     });
 
     this.getPostDetails();
+
   }
 
   ionViewDidEnter() {
@@ -179,15 +206,11 @@ export class PostPage implements OnInit {
         });
       });
     });
+
   }
 
   ngOnInit() {
-  }
 
-  // Add this to debug
-  ngAfterViewInit() {
-    console.log('Chart Data:', this.chartData);
-    console.log('Chart Labels:', this.chartLabels);
   }
 
   getPostDetails() {
@@ -304,6 +327,8 @@ export class PostPage implements OnInit {
           this.initializePollData(p)
         }
         this.post = p;
+
+        this.loadComments();
       }
       this.loadingProvider.hide();
     });
@@ -322,34 +347,6 @@ export class PostPage implements OnInit {
     return await modal.present();
   }
 
-  submitReply() {
-    this.message = this.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
-    let review: any;
-    let currentUserName: any;
-    console.info('submitReview', this.message)
-    this.dataProvider.getCurrentUser().then((u) => {
-
-      u.get().subscribe((account: any) => {
-        if (account) {
-          currentUserName = account.data().username;
-          console.info('submitReview1', currentUserName)
-          review = {
-            dateCreated: new Date(),
-            addedByUser: {
-               addedByKey: this.loggedInUserId,
-               addedByUsername: account.data().username,
-               addedByImg: account.data().img
-             },
-            review: this.message,
-            reviewMedia: this.reviewMedia
-          };
- 
-          this.dataProvider.updatePostReviews(this.postId, review);
-          this.message = '';
-          this.reviewMedia = [];
-         }});
-    })
-  }
 
   attach() {
     this.actionSheet.create({
@@ -758,6 +755,177 @@ async showCheckinsList() {
    });
   return await modal.present();
 }
+async submitComment() {
+  if (!this.newComment?.trim()) return;
+
+  try {
+    const commentData = {
+      postId: this.post.key,
+      content: this.newComment,
+      addedByUser: {
+        addedByKey: this.loggedInUserId,
+        addedByUsername: this.loggedInUser.username,
+        addedByImg: this.loggedInUser.img
+      },      
+      createdAt: new Date(),
+      likes: 0
+    };
+
+    await this.firestore
+      .collection('comments')
+      .add(commentData);
+
+    // Clear input after successful submission
+    this.newComment = '';
+    
+    // Update comment count
+    this.post.totalReviewCount++;
+    
+    // Optionally, refresh comments
+    this.loadComments();
+  } catch (error) {
+    console.error('Error submitting comment:', error);
+    // Handle error (show toast or alert)
+  }
+}
+
+loadComments() {
+  if (!this.post?.key) return;
+
+  this.firestore
+    .collection<Comment>('comments', ref => 
+      ref.where('postId', '==', this.post.key)
+      .orderBy('createdAt', 'desc')
+    )
+    .snapshotChanges()
+    .subscribe(actions => {
+      const allComments = actions.map(action => ({
+        id: action.payload.doc.id,
+        ...action.payload.doc.data(),
+        replies: [],
+        showReplyInput: false,
+        replyText: ''
+      } as Comment));
+
+      // Build tree with max 2 levels
+      this.comments = this.buildCommentTree(allComments, 2);
+    });
+}
 
 
+async likeComment(comment: Comment) {
+  try {
+    const commentRef = this.firestore.collection('comments').doc(comment.id);
+    
+    // Get current data first
+    const doc = await commentRef.get().toPromise();
+    const currentData = doc?.data() as { likes?: number; likedBy?: string[] };
+    
+    const currentLikes = currentData?.likes || 0;
+    const currentLikedBy = currentData?.likedBy || [];
+    
+    const isLiked = currentLikedBy.includes(this.loggedInUserId);
+
+    if (!isLiked) {
+      // Add like
+      await commentRef.update({
+        likes: currentLikes + 1,
+        likedBy: [...currentLikedBy, this.loggedInUserId]
+      });
+    } else {
+      // Remove like
+      await commentRef.update({
+        likes: Math.max(currentLikes - 1, 0),
+        likedBy: currentLikedBy.filter(id => id !== this.loggedInUserId)
+      });
+    }
+  } catch (error) {
+    console.error('Error updating like:', error);
+    this.loadingProvider.showToast('Error updating like. Please try again.');
+  }
+}
+
+// Helper method to check if user liked a comment
+isCommentLikedByUser(comment: Comment): boolean {
+  return comment?.likedBy?.includes(this.loggedInUserId) || false;
+}
+
+
+
+replyToComment(comment: Comment) {
+  // Implement reply functionality
+}
+
+deleteComment(comment: Comment) {
+  // Implement delete functionality
+}
+
+toggleReplyInput(comment: any) {
+  // Toggle reply input visibility
+  comment.showReplyInput = !comment.showReplyInput;
+  if (!comment.showReplyInput) {
+    comment.replyText = ''; // Clear reply text when hiding input
+  }
+}
+async submitReply(parentComment: Comment) {
+  if (!parentComment.replyText?.trim()) return;
+
+  try {
+    // Check if the parent comment is already a reply
+    if (parentComment.parentId) {
+      this.loadingProvider.showToast('Replies are limited to one level deep');
+      return;
+    }
+
+    const replyData = {
+      postId: this.post.key,
+      parentId: parentComment.id,
+      content: parentComment.replyText,
+      addedByUser: {
+        addedByKey: this.loggedInUserId,
+        addedByUsername: this.loggedInUser.username,
+        addedByImg: this.loggedInUser.img
+      },
+      createdAt: new Date()
+    };
+
+    await this.firestore
+      .collection('comments')
+      .add(replyData);
+
+    parentComment.replyText = '';
+    parentComment.showReplyInput = false;
+
+  } catch (error) {
+    console.error('Error submitting reply:', error);
+    this.loadingProvider.showToast('Error submitting reply. Please try again.');
+  }
+}
+
+private buildCommentTree(comments: Comment[], maxDepth: number = 2): Comment[] {
+  const commentMap = new Map<string, Comment>();
+  const rootComments: Comment[] = [];
+
+  // First pass: create map of all comments
+  comments.forEach(comment => {
+    commentMap.set(comment.id!, comment);
+  });
+
+  // Second pass: create tree structure with depth limit
+  comments.forEach(comment => {
+    if (comment.parentId) {
+      // Only add as reply if parent exists and it's not already a reply (depth = 1)
+      const parent = commentMap.get(comment.parentId);
+      if (parent && !parent.parentId) { // Check if parent is a root comment
+        parent.replies = parent.replies || [];
+        parent.replies.push(comment);
+      }
+    } else {
+      // This is a root comment
+      rootComments.push(comment);
+    }
+  });
+
+  return rootComments;
+}
 }
