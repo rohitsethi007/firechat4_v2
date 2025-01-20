@@ -161,18 +161,66 @@ export class FeedPage implements OnInit {
         });
       });
     }
-
-    getFeedData() {
-      this.firstDataSet = this.firestore.collection('posts').ref
-      .where('groupId', 'in', this.loggedInUser.groups)
-      .orderBy('date', 'desc')
-      .limit(5);
+    getFeedData(filters?: { types?: string[], groups?: Array<{ id: string, name: string }> }) {
+      try {
+        let query = this.firestore.collection('posts').ref;
+    
+        if (filters) {
+          // If filters are present
+          if (filters.groups && filters.groups.length > 0) {
+            // Get array of group IDs from filters
+            const groupIds = filters.groups.map(group => group.id);
+            
+            if (filters.types && filters.types.length > 0) {
+              // Both groups and types filters
+              this.firstDataSet = this.firestore.collection('posts').ref
+                .where('groupId', 'in', groupIds)
+                .where('type', 'in', filters.types)
+                .orderBy('date', 'desc')
+                .limit(5);
+            } else {
+              // Only groups filter
+              this.firstDataSet = this.firestore.collection('posts').ref
+                .where('groupId', 'in', groupIds)
+                .orderBy('date', 'desc')
+                .limit(5);
+            }
+          } else if (filters.types && filters.types.length > 0) {
+            // Only types filter with default groups
+            this.firstDataSet = this.firestore.collection('posts').ref
+              .where('groupId', 'in', this.loggedInUser.groups)
+              .where('type', 'in', filters.types)
+              .orderBy('date', 'desc')
+              .limit(5);
+}
+        } else {
+          // Only groups filter
+          this.firstDataSet = this.firestore.collection('posts').ref
+          .where('groupId', 'in', this.loggedInUser.groups)
+          .orderBy('date', 'desc')
+          .limit(5);
+        }
+    
+        // Add ordering and limit
+        this.firstDataSet = query.orderBy('date', 'desc').limit(5);
+    
         this.firstDataSet.get().then((po: any) => {
-        this.lastDataSet = po.docs[po.docs.length - 1];
-        this.posts = [];
-        this.loadEachPostData(po);
-      });
+          if (po.docs.length > 0) {
+            this.lastDataSet = po.docs[po.docs.length - 1];
+            this.posts = [];
+            this.loadEachPostData(po);
+          } else {
+            this.posts = [];
+          }
+        });
+    
+      } catch (error) {
+        console.error('Error in getFeedData:', error);
+      }
     }
+    
+    
+    
 
     addOrUpdatePost(post) {
       if (!this.posts) {
@@ -721,9 +769,13 @@ async presentFilterPopover(ev: any) {
 
   
 
-  applyFilters(filters: any) {
-    console.log('Applying filters:', filters);
-    // Implement your filter logic here
+  applyFilters(filterData: any) {
+    if (filterData) {
+      this.getFeedData({
+        types: filterData.types,
+        groups: filterData.groups
+      });
+    }
   }
 
   calculatePercentage(votes: number, total: number): number {

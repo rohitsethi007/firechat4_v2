@@ -14,7 +14,7 @@
 
 <ion-content>
   <div class="post-container" *ngIf="post.type === 'general'">
-    <ion-card class="post-card">
+    <ion-card class="post-card" [button]="false">
       <!-- Post Header -->
       <div class="post-header">
         <div class="user-info">
@@ -203,7 +203,7 @@
   </div>
 
   <div class="post-container" *ngIf="post?.type === 'poll'">
-    <ion-card class="post-card">
+    <ion-card class="post-card" [button]="false">
       <div class="post-header">
         <div class="user-info">
           <ion-avatar class="user-avatar">
@@ -321,11 +321,98 @@
             </ion-row>
           </div>
       </div>
+      <!-- Comment Section -->
+<div class="comment-section">
+  <div class="comments-container">
+    <!-- Root Comments -->
+    <ng-container *ngFor="let comment of comments">
+      <!-- Comment Template -->
+      <ng-container *ngTemplateOutlet="commentTemplate; context: { $implicit: comment }">
+      </ng-container>
+    </ng-container>
+  </div>
+  
+  <!-- Comment Template -->
+  <ng-template #commentTemplate let-comment>
+    <div class="comment-item">
+      <div class="comment-wrapper">
+        <ion-avatar>
+          <img [src]="comment.addedByUser.addedByImg || 'assets/default-avatar.png'" alt="avatar">
+        </ion-avatar>
+        
+        <div class="comment-content">
+          <div class="comment-text">
+            <span class="username">{{comment.addedByUser.addedByUsername}}</span>
+            <span class="message">{{comment.content}}</span>
+          </div>
+          
+          <div class="comment-footer">
+            <div class="actions">
+              <span class="action-btn like-btn" 
+              [class.liked]="isCommentLikedByUser(comment)"
+              (click)="likeComment(comment)">
+            <ion-icon [name]="isCommentLikedByUser(comment) ? 'heart' : 'heart-outline'"
+                      [color]="isCommentLikedByUser(comment) ? 'danger' : 'medium'">
+            </ion-icon>
+            <small *ngIf="comment.likes">{{comment.likes}}</small>
+          </span>
+              <!-- Only show reply button if this is not already a reply -->
+              <span class="action-btn" (click)="toggleReplyInput(comment)" *ngIf="!comment.parentId">
+                <ion-icon name="chatbubble-outline" color="medium"></ion-icon>
+                <small>Reply</small>
+              </span>
+              <span class="timestamp">{{comment.createdAt.toDate() | date:'shortTime'}}</span>
+            </div>
+          </div>
+  
+          <!-- Only show reply input if this is not already a reply -->
+          <div class="reply-section" *ngIf="comment.showReplyInput && !comment.parentId">
+            <div class="reply-input-wrapper">
+              <ion-avatar>
+                <img [src]="loggedInUser?.img || 'assets/default-avatar.png'" alt="user avatar">
+              </ion-avatar>
+              <ion-input 
+                placeholder="Write a reply..."
+                [(ngModel)]="comment.replyText"
+                (keyup.enter)="submitReply(comment)"
+                class="reply-input">
+              </ion-input>
+              <ion-button 
+                fill="clear" 
+                [disabled]="!comment.replyText?.trim()"
+                (click)="submitReply(comment)"
+                class="send-button">
+                <ion-icon name="send" [class.active]="comment.replyText?.trim()"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+  
+          <!-- Replies section -->
+          <div class="replies-section" *ngIf="comment.replies && comment.replies.length > 0">
+            <ng-container *ngFor="let reply of comment.replies">
+              <div class="nested-reply">
+                <ng-container *ngTemplateOutlet="commentTemplate; context: { $implicit: reply }">
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+  
+        <div class="options-btn" *ngIf="comment.addedByUser.addedByKey === loggedInUserId">
+          <ion-button fill="clear" (click)="deleteComment(comment)">
+            <ion-icon name="trash-outline" color="danger"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  
+</div>
     </ion-card>
   </div>
   
   <div class="post-container" *ngIf="post.type === 'event'">
-    <ion-card class="event-card">
+    <ion-card class="event-card" [button]="false">
       <!-- Header Section -->
       <div class="post-header">
         <div class="user-info">
@@ -506,7 +593,93 @@
         </div>
       </div>
 
-      
+      <!-- Comment Section -->
+<div class="comment-section">
+  <div class="comments-container">
+    <!-- Root Comments -->
+    <ng-container *ngFor="let comment of comments">
+      <!-- Comment Template -->
+      <ng-container *ngTemplateOutlet="commentTemplate; context: { $implicit: comment }">
+      </ng-container>
+    </ng-container>
+  </div>
+  
+  <!-- Comment Template -->
+  <ng-template #commentTemplate let-comment>
+    <div class="comment-item">
+      <div class="comment-wrapper">
+        <ion-avatar>
+          <img [src]="comment.addedByUser.addedByImg || 'assets/default-avatar.png'" alt="avatar">
+        </ion-avatar>
+        
+        <div class="comment-content">
+          <div class="comment-text">
+            <span class="username">{{comment.addedByUser.addedByUsername}}</span>
+            <span class="message">{{comment.content}}</span>
+          </div>
+          
+          <div class="comment-footer">
+            <div class="actions">
+              <span class="action-btn like-btn" 
+              [class.liked]="isCommentLikedByUser(comment)"
+              (click)="likeComment(comment)">
+            <ion-icon [name]="isCommentLikedByUser(comment) ? 'heart' : 'heart-outline'"
+                      [color]="isCommentLikedByUser(comment) ? 'danger' : 'medium'">
+            </ion-icon>
+            <small *ngIf="comment.likes">{{comment.likes}}</small>
+          </span>
+              <!-- Only show reply button if this is not already a reply -->
+              <span class="action-btn" (click)="toggleReplyInput(comment)" *ngIf="!comment.parentId">
+                <ion-icon name="chatbubble-outline" color="medium"></ion-icon>
+                <small>Reply</small>
+              </span>
+              <span class="timestamp">{{comment.createdAt.toDate() | date:'shortTime'}}</span>
+            </div>
+          </div>
+  
+          <!-- Only show reply input if this is not already a reply -->
+          <div class="reply-section" *ngIf="comment.showReplyInput && !comment.parentId">
+            <div class="reply-input-wrapper">
+              <ion-avatar>
+                <img [src]="loggedInUser?.img || 'assets/default-avatar.png'" alt="user avatar">
+              </ion-avatar>
+              <ion-input 
+                placeholder="Write a reply..."
+                [(ngModel)]="comment.replyText"
+                (keyup.enter)="submitReply(comment)"
+                class="reply-input">
+              </ion-input>
+              <ion-button 
+                fill="clear" 
+                [disabled]="!comment.replyText?.trim()"
+                (click)="submitReply(comment)"
+                class="send-button">
+                <ion-icon name="send" [class.active]="comment.replyText?.trim()"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+  
+          <!-- Replies section -->
+          <div class="replies-section" *ngIf="comment.replies && comment.replies.length > 0">
+            <ng-container *ngFor="let reply of comment.replies">
+              <div class="nested-reply">
+                <ng-container *ngTemplateOutlet="commentTemplate; context: { $implicit: reply }">
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+  
+        <div class="options-btn" *ngIf="comment.addedByUser.addedByKey === loggedInUserId">
+          <ion-button fill="clear" (click)="deleteComment(comment)">
+            <ion-icon name="trash-outline" color="danger"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  
+</div>
     </ion-card>
   </div>
   

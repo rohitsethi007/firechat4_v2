@@ -442,7 +442,7 @@ export class FilterComponent {
         groups.forEach(element => {
           let group = element.payload.doc.data();
           group.key = element.payload.doc.id;
-     
+          console.info('fetched groups', group)
           if (group.members.some(e => e === this.loggedInUserId )) {
             group.isUserMember = true;
           } else {
@@ -520,7 +520,7 @@ export class FilterComponent {
   applyFilters() {
     const selectedGroups = this.groups
     .filter(g => g.selected)
-    .map(g => ({ id: g.id, name: g.name }));
+    .map(g => ({ id: g.key, name: g.name }));
 
     this.popoverCtrl.dismiss({
         types: this.selectedTypes,
