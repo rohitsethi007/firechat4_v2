@@ -11,6 +11,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { NgAnalyzeModulesHost } from '@angular/compiler';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
 import { EmojiPickerComponentModule } from '../components/emoji-picker/emoji-picker.module';
+import { IonSearchbar } from '@ionic/angular';
 
 import { FCM } from '@ionic-native/fcm/ngx';
 import { Platform } from '@ionic/angular';
@@ -19,6 +20,7 @@ import { constants } from 'perf_hooks';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+
 import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
 
 // Add interface for user data
@@ -28,6 +30,7 @@ interface UserDocument {
   username: string;
   img: string;
   groups: string[];
+  userId: string;
   // add other properties as needed
 }
 
@@ -38,8 +41,14 @@ interface UserDocument {
 })
 export class FeedPage implements OnInit {
     @ViewChild(IonInfiniteScroll, {static: true}) infiniteScroll: IonInfiniteScroll;
+    @ViewChild('searchbar') searchbar: IonSearchbar;
     searchQuery: string = '';
+    isSearchActive: boolean = false;
     isSearchFocused: boolean = false;
+    recentSearches: Array<{ id: string; term: string; timestamp: any }> = [];
+    trendingSearches: Array<{ id: string; term: string; count: number }> = [];
+    searchResults: any[] = [];
+
     isFilterActive: boolean = false;
     unreadCount: number = 0;
 
@@ -56,8 +65,6 @@ export class FeedPage implements OnInit {
     groupsInfo: any;
     conversationList: any;
     conversationsInfo: any;
-    searchMode = false;
-    searchTerm: any;
 
     private title: any;
     private groupId: any;
@@ -119,7 +126,7 @@ export class FeedPage implements OnInit {
 
       // this.client = algoliasearch(this.ALOGOLIA_APP_ID, this.ALGOLIA_API_KEY, {protocol: 'https'});
       // this.index = this.client.initIndex('posts');
-    
+      this.isSearchActive = false;
     }
 
     subscribeToTopic() {
@@ -138,11 +145,17 @@ export class FeedPage implements OnInit {
     }
 
     ngOnInit() {
+      this.isSearchActive = false;
+    }
+
+    ionViewDidEnter() {
+      this.isSearchActive = false;
     }
 
     ionViewWillEnter() {
       console.log('Entering feed view');
-      
+      this.isSearchActive = false;
+      console.info('issearchactive', this.isSearchActive);
       this.afAuth.currentUser.then(user => {
         this.loggedInUserId = user?.uid;
         console.log('Current user:', this.loggedInUserId);
@@ -151,6 +164,7 @@ export class FeedPage implements OnInit {
         this.dataProvider.getCurrentUser().then((u) => {
           u.get({ source: 'server' }).subscribe((user) => { // Force server fetch
             const userData = user.data() as UserDocument;
+            console.info('userData', userData);
             if (userData) {
               this.userReactions = userData.userReactions || [];
               this.userNotifications = userData.userNotifications || [];
@@ -161,66 +175,20 @@ export class FeedPage implements OnInit {
         });
       });
     }
-    getFeedData(filters?: { types?: string[], groups?: Array<{ id: string, name: string }> }) {
-      try {
-        let query = this.firestore.collection('posts').ref;
-    
-        if (filters) {
-          // If filters are present
-          if (filters.groups && filters.groups.length > 0) {
-            // Get array of group IDs from filters
-            const groupIds = filters.groups.map(group => group.id);
-            
-            if (filters.types && filters.types.length > 0) {
-              // Both groups and types filters
-              this.firstDataSet = this.firestore.collection('posts').ref
-                .where('groupId', 'in', groupIds)
-                .where('type', 'in', filters.types)
-                .orderBy('date', 'desc')
-                .limit(5);
-            } else {
-              // Only groups filter
-              this.firstDataSet = this.firestore.collection('posts').ref
-                .where('groupId', 'in', groupIds)
-                .orderBy('date', 'desc')
-                .limit(5);
-            }
-          } else if (filters.types && filters.types.length > 0) {
-            // Only types filter with default groups
-            this.firstDataSet = this.firestore.collection('posts').ref
-              .where('groupId', 'in', this.loggedInUser.groups)
-              .where('type', 'in', filters.types)
-              .orderBy('date', 'desc')
-              .limit(5);
-}
-        } else {
-          // Only groups filter
-          this.firstDataSet = this.firestore.collection('posts').ref
-          .where('groupId', 'in', this.loggedInUser.groups)
-          .orderBy('date', 'desc')
-          .limit(5);
-        }
-    
-        // Add ordering and limit
-        this.firstDataSet = query.orderBy('date', 'desc').limit(5);
-    
+
+    getFeedData() {
+      this.firstDataSet = this.firestore.collection('posts').ref
+      .where('groupId', 'in', this.loggedInUser.groups)
+      .orderBy('date', 'desc')
+      .limit(5);
         this.firstDataSet.get().then((po: any) => {
-          if (po.docs.length > 0) {
-            this.lastDataSet = po.docs[po.docs.length - 1];
-            this.posts = [];
-            this.loadEachPostData(po);
-          } else {
-            this.posts = [];
-          }
-        });
-    
-      } catch (error) {
-        console.error('Error in getFeedData:', error);
-      }
+        this.lastDataSet = po.docs[po.docs.length - 1];
+        this.posts = [];
+        this.loadEachPostData(po);
+      });
+
+      this.isSearchActive = false;
     }
-    
-    
-    
 
     addOrUpdatePost(post) {
       if (!this.posts) {
@@ -670,18 +638,13 @@ export class FeedPage implements OnInit {
     }
 
     seachFeed(event) {
-      // console.log('searching for ..', this.searchTerm );
+      console.log('searching for ..', this.searchTerm );
       // this.index.search('', {
       //   query: this.searchTerm
       // }).then((data) => {
       //   this.searchPosts = data.hits;
       // });
       this.searchPosts = this.posts;
-    }
-
-    searchTag(tag, post) {
-      this.searchMode = true;
-      this.searchTerm = tag.val;
     }
 
     async showEmojiPicker(event: any, item: any) {
@@ -707,32 +670,135 @@ export class FeedPage implements OnInit {
       }
     }
 
+    async activateSearch() {
+      this.isSearchActive = true;
+      // Load searches when search is activated
+      await this.loadRecentSearches();
+      await this.loadTrendingSearches();
+      
+      setTimeout(() => {
+        this.searchbar?.setFocus();
+      }, 150);
+    }
 
-  onSearchFocus() {
-    this.isSearchFocused = true;
+  deactivateSearch() {
+    this.isSearchActive = false;
+    this.searchQuery = '';
+    // Clear the arrays when search is deactivated
+    this.recentSearches = [];
+    this.trendingSearches = [];
+    this.searchResults = [];
+  }
+  onSearchSubmit(event: any) {
+    event.preventDefault(); // Prevent event bubbling
+    if (event.key === 'Enter' || event.keyCode === 13) {
+      this.performSearch();
+    }
+  }
+  async performSearch(term?: string) {
+    const searchTerm = term || this.searchQuery;
+    if (this.searchQuery.trim()) {
+      // Store the search query
+      await this.saveRecentSearch(this.searchQuery.trim());
+      
+      // Your existing search logic
+      this.getFeedData();
+    }
+  }
+  async saveRecentSearch(term: string) {
+    const userId = this.loggedInUser.userId;
+    const searchTerm = term.trim().toLowerCase(); // Normalize the search term
+    
+    // Check if this search term already exists for this user
+    const existingSearchQuery = this.firestore
+      .collection('userSearches')
+      .doc(userId)
+      .collection('searches', ref => 
+        ref.where('term', '==', searchTerm).limit(1)
+      );
+
+    const existingSearches = await existingSearchQuery.get().toPromise();
+
+    if (existingSearches.empty) {
+      // Only add if the search term doesn't exist
+      await this.firestore
+        .collection('userSearches')
+        .doc(userId)
+        .collection('searches')
+        .add({
+          term: searchTerm,
+          timestamp: firebase.default.firestore.FieldValue.serverTimestamp()
+        });
+
+      // Update trending searches count
+      const trendingRef = this.firestore.collection('trendingSearches').doc(searchTerm);
+      await trendingRef.set({
+        term: searchTerm,
+        count: firebase.default.firestore.FieldValue.increment(1)
+      }, { merge: true });
+    } else {
+      // Update timestamp of existing search
+      const existingDoc = existingSearches.docs[0];
+      await existingDoc.ref.update({
+        timestamp: firebase.default.firestore.FieldValue.serverTimestamp()
+      });
+    }
+  }
+  async loadRecentSearches() {
+    const user = this.loggedInUser;
+    if (user) {
+      this.firestore
+        .collection('userSearches')
+        .doc(user.userId)
+        .collection('searches', ref => 
+          ref.orderBy('timestamp', 'desc').limit(10)
+        )
+        .snapshotChanges()
+        .subscribe(actions => {
+          this.recentSearches = actions.map(a => ({
+            id: a.payload.doc.id,
+            term: a.payload.doc.data().term,
+            timestamp: a.payload.doc.data().timestamp
+          }));
+        });
+    }
   }
 
-  onSearchBlur() {
-    this.isSearchFocused = false;
+  loadTrendingSearches() {
+    this.firestore
+      .collection('trendingSearches', ref => 
+        ref.orderBy('count', 'desc').limit(5)
+      )
+      .snapshotChanges()
+      .subscribe(actions => {
+        this.trendingSearches = actions.map(a => ({
+          id: a.payload.doc.id,
+          ...a.payload.doc.data() as { term: string; count: number }
+        }));
+      });
   }
 
-  onSearchInput(event: any) {
-    // Handle search input
+  removeRecentSearch(searchId: string) {
+    const userId = this.loggedInUser.userId;
+    return this.firestore
+      .collection('userSearches')
+      .doc(userId)
+      .collection('searches')
+      .doc(searchId)
+      .delete();
   }
-
-  showFilters() {
-    // Show filter modal/popover
-  }
-
-  createPost() {
-    // Handle post creation
-  }
-
+  
   removeFilter(filter: {id: string, name: string}) {
     this.activeFilters = this.activeFilters.filter(f => f.id !== filter.id);
     // Update your filtered results
   }
 
+  clearSearch() {
+    this.searchQuery = '';
+    this.searchResults = [];
+    // Optionally return to feed view
+    // this.deactivateSearch();
+  }
 // feed.page.ts
 async presentFilterPopover(ev: any) {
   const popover = await this.popoverCtrl.create({
@@ -769,13 +835,9 @@ async presentFilterPopover(ev: any) {
 
   
 
-  applyFilters(filterData: any) {
-    if (filterData) {
-      this.getFeedData({
-        types: filterData.types,
-        groups: filterData.groups
-      });
-    }
+  applyFilters(filters: any) {
+    console.log('Applying filters:', filters);
+    // Implement your filter logic here
   }
 
   calculatePercentage(votes: number, total: number): number {

@@ -1,44 +1,59 @@
+<!-- feed.page.html -->
 <ion-header class="ion-no-border">
-  <ion-toolbar>
-    <ion-row class="header-row">
-      <ion-col size="14">
-        <div class="search-container">
-          <!-- Search Bar -->
-          <div class="search-box" [class.focused]="isSearchFocused">
-            <ion-icon name="search-outline"></ion-icon>
-            <ion-input
-              placeholder="Search posts..."
-              [(ngModel)]="searchQuery"
-              (ionFocus)="onSearchFocus()"
-              (ionBlur)="onSearchBlur()"
-              (ionInput)="onSearchInput($event)">
-            </ion-input>
+  <ion-toolbar *ngIf="isSearchActive">
+    <!-- Search Mode -->
+    <div class="search-header">
+      <ion-row class="ion-align-items-center">
+        <ion-col size="1" class="back-button-col">
+          <ion-button fill="clear" (click)="deactivateSearch()">
+            <ion-icon name="arrow-back-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+        <ion-col size="11" class="searchbar-col">
+          <ion-searchbar
+            #searchbar
+            [(ngModel)]="searchQuery"
+            placeholder="Search posts..."
+            [showCancelButton]="'never'"
+            (search)="performSearch()"
+            class="custom-searchbar">
+          </ion-searchbar>
+        </ion-col>
+      </ion-row>
+    </div>
+    </ion-toolbar>
+    <!-- Regular Mode -->
+    <ion-toolbar *ngIf="!isSearchActive">
+    <div *ngIf="!isSearchActive" class="regular-header">
+      <ion-row class="header-row">
+        <ion-col size="14">
+          <div class="search-container">
+            <div class="search-box" (click)="activateSearch()">
+              <ion-icon name="search-outline"></ion-icon>
+              <ion-input
+                readonly
+                placeholder="Search posts..."
+                [(ngModel)]="searchQuery">
+              </ion-input>
+            </div>
+
+            <div class="action-buttons">
+              <ion-button fill="clear" class="action-btn" routerLink="/messages">
+                <ion-icon name="notifications-outline"></ion-icon>
+                <ion-badge *ngIf="unreadCount > 0">{{unreadCount}}</ion-badge>
+              </ion-button>
+
+              <ion-button fill="clear" class="action-btn" (click)="showGroupOptions()">
+                <ion-icon name="add-circle"></ion-icon>
+              </ion-button>
+            </div>
           </div>
-
-          <!-- Action Buttons -->
-          <ion-col size="6">
-          <div class="action-buttons">
-            <ion-button fill="clear" class="action-btn" (click)="presentFilterPopover($event)">
-              <ion-icon [name]="isFilterActive ? 'funnel' : 'funnel-outline'" 
-              [class.active]="isFilterActive">
-              </ion-icon>
-            </ion-button>
-
-            <ion-button fill="clear" class="action-btn" routerLink="/messages">
-              <ion-icon name="notifications-outline"></ion-icon>
-              <ion-badge *ngIf="unreadCount > 0">{{unreadCount}}</ion-badge>
-            </ion-button>
-
-            <ion-button fill="clear" class="action-btn" (click)="showGroupOptions()">
-              <ion-icon name="add-circle"></ion-icon>
-            </ion-button>
-          </div>
-          </ion-col>
-        </div>
-      </ion-col>
-    </ion-row>
+        </ion-col>
+      </ion-row>
+    </div>
   </ion-toolbar>
 </ion-header>
+
 
 <!-- <ion-header class="ion-no-border">
   <ion-toolbar class="filters-toolbar">
@@ -99,8 +114,90 @@
   </ion-toolbar>
 </ion-header> -->
 
+<!-- feed.page.html -->
+<!-- feed.page.html -->
+<ion-content >
+    <!-- Search Suggestions/History (when searching but no query entered) -->
+  <div class="search-content" *ngIf="isSearchActive && !searchQuery">
+    <!-- Recent Searches Section -->
+    <div class="search-section" *ngIf="recentSearches.length > 0">
+      <div class="section-header">
+        <h2>Recent Searches</h2>
+        <!-- <ion-button fill="clear" class="clear-all" size="small">
+          Clear All
+        </ion-button> -->
+      </div>
+      <div class="search-items">
+        <div class="search-item" *ngFor="let search of recentSearches">
+          <div class="search-term" (click)="performSearch(search.term)">
+            <ion-icon name="time-outline" class="history-icon"></ion-icon>
+            <span>{{ search.term }}</span>
+          </div>
+          <ion-button fill="clear" (click)="removeRecentSearch(search.id)" class="delete-btn">
+            <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
 
-<ion-content>
+    <!-- Trending Searches Section -->
+    <div class="search-section">
+      <div class="section-header">
+        <h2>Trending Searches</h2>
+      </div>
+      <div class="trending-items">
+        <div class="trending-item" *ngFor="let trend of trendingSearches; let i = index">
+          <div class="trend-content" (click)="performSearch(trend.term)">
+            <div class="trend-rank">{{ i + 1 }}</div>
+            <div class="trend-info">
+              <span class="trend-term">{{ trend.term }}</span>
+              <span class="trend-count">{{ trend.count }} searches</span>
+            </div>
+            <ion-icon name="trending-up-outline" class="trend-icon"></ion-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Search Results (when there's a search query) -->
+  <div class="search-results-container" *ngIf="isSearchActive && searchQuery">
+    <!-- Search Results Header -->
+    <div class="search-results-header">
+      <div class="results-info">
+        <h2>Results for "{{ searchQuery }}"</h2>
+        <p>{{ searchResults.length }} results found</p>
+      </div>
+      <ion-button fill="clear" (click)="clearSearch()">
+        <ion-icon name="close-circle-outline"></ion-icon>
+        Clear
+      </ion-button>
+    </div>
+     <!-- Search Results List -->
+     <div class="feed-items">
+      <!-- Use your existing feed item component/template -->
+      <div class="listing-item" *ngFor="let item of searchResults">
+        <!-- Your existing feed item content -->
+      </div>
+    </div>
+
+    <!-- No Results State -->
+    <div class="no-results" *ngIf="searchResults.length === 0">
+      <ion-icon name="search-outline"></ion-icon>
+      <h3>No results found</h3>
+      <p>Try different keywords or check spelling</p>
+    </div>
+  </div>
+
+  <!-- Regular Feed (when not searching) -->
+  <div class="feed-container" *ngIf="!isSearchActive">
+    <!-- Your existing feed content -->
+  </div>
+  
+</ion-content>
+
+
+
+<ion-content *ngIf="!isSearchActive">
   <div *ngIf="!searchMode">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content
