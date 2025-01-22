@@ -35,22 +35,6 @@ export class NewPostPage implements OnInit {
   private postMediaImgs: any = [];
   private postMediaVideo: any = [];
  
-  validations = {
-    title: [
-      { type: 'minlength', message: 'Title should be atleast 5 characters long' },
-      { type: 'maxlength', message: 'Title cannot be more than 20 characters' },
-      { type: 'required', message: 'Title is a required field, atleast 5 characters' }
-    ],
-    message: [
-      { type: 'minlength', message: 'Title should be atleast 10 characters long' },
-      { type: 'maxlength', message: 'Title cannot be more than 100 characters' },
-      { type: 'required', message: 'Message is a required field, atleast 10 characters' }
-    ],
-    tags: [
-      { type: 'required', message: 'Please select at least one tag.' }
-    ]
-    };
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -64,7 +48,6 @@ export class NewPostPage implements OnInit {
   ) {
     this.postMediaImgs = [];
     this.postMediaVideo = [];
-    this.postTags = [];
     this.groupId = this.route.snapshot.params.id;
     this.group = {name: ''}
     if (this.groupId === 'undefined') {
@@ -187,7 +170,7 @@ export class NewPostPage implements OnInit {
     this.post.postTags = this.postTags;
     this.post.groupId = this.groupId;
     this.post.groupName = this.group.name;
-
+    this.post.type = 'general';
   // Add post to database.
       this.dataProvider.addPost(this.post).then((success) => {
         const postId = success.id;

@@ -176,11 +176,30 @@ export class DataService {
   }
 
   addPost(post): Promise<any> {
+    // add searchable data
+    // Extract text from different fields
+    let searchKeywords: string;
+    const searchableText = [
+      post.title || '',
+      post.data?.message || ''
+    ].join(' ').toLowerCase();
+
+    // Generate keywords including phrases
+    const keywords = this.generateSearchKeywords(searchableText);
+
+    if (post.type !== 'general') {
+      const searchableText = `${post.title}`.toLowerCase();
+    } else {
+      const searchableText = `${post.title} ${post.data.message}`.toLowerCase();
+    }
+    post.searchableText = searchableText;
+    post.searchKeywords = Array.from(new Set(keywords)); // Remove duplicates;
+
+
     return new Promise((resolve, reject) => {
       this.firestore.collection('posts').add(post)
         .then(success => {
           let postId = success.id;
-          
           // If there are images to upload
           if (post.postMediaImgs && post.postMediaImgs.length > 0) {
             this.imageProvider.uploadPostPhotos(postId, post.postMediaImgs)
@@ -208,6 +227,75 @@ export class DataService {
           reject(error);
         });
     });
+  }
+
+  // Helper method to generate n-gram phrases (not used atm)
+  private generatePhrases(words: string[], maxGramLength: number = 3): string[] {
+
+    const phrases: string[] = [];
+    
+    for (let i = 0; i < words.length; i++) {
+      let phrase = words[i];
+      phrases.push(phrase);
+      
+      for (let j = 1; j < maxGramLength && i + j < words.length; j++) {
+        phrase += ' ' + words[i + j];
+        phrases.push(phrase);
+      }
+    }
+    
+    return phrases;
+  }
+
+  private generateSearchKeywords(text: string): string[] {
+    // Common English stop words that should be ignored in search
+    let stopWords = new Set([
+      'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for',
+      'from', 'has', 'he', 'in', 'is', 'it', 'its', 'of', 'on',
+      'that', 'the', 'to', 'was', 'were', 'will', 'with', 'the',
+      'this', 'but', 'they', 'have', 'had', 'what', 'when', 'where',
+      'who', 'which', 'why', 'how', 'all', 'any', 'both', 'each',
+      'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor',
+      'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very'
+    ]);
+    // Remove special characters and extra spaces
+    const cleanText = text
+      .replace(/[^\w\s]/gi, '') // Remove special characters
+      .toLowerCase()
+      .trim();
+    
+    // Split into words
+    const words = cleanText.split(/\s+/)
+      .filter(word => {
+        return word.length > 0 && 
+               !stopWords.has(word) && // Remove stop words
+               !/^\d+$/.test(word);         // Remove pure numbers
+      });
+    
+    const keywords = new Set<string>();
+    
+    words.forEach(word => {
+      // Only process words with minimum length of 3
+      if (word.length >= 3) {
+        // Add full word
+        keywords.add(word);
+        
+        // Add important word combinations (phrases)
+        for (let i = 0; i < words.length - 1; i++) {
+          if (words[i] === word) {
+            const phrase = `${words[i]} ${words[i + 1]}`;
+            keywords.add(phrase);
+          }
+        }
+
+        // Add partial words for prefix search (min 3 chars)
+        for (let i = 3; i <= word.length; i++) {
+          keywords.add(word.substring(0, i));
+        }
+      }
+    });
+
+    return Array.from(keywords);
   }
   
 

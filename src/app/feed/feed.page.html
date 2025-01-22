@@ -26,7 +26,7 @@
     <ion-toolbar *ngIf="!isSearchActive">
     <div *ngIf="!isSearchActive" class="regular-header">
       <ion-row class="header-row">
-        <ion-col size="14">
+        <ion-col size="12">
           <div class="search-container">
             <div class="search-box" (click)="activateSearch()">
               <ion-icon name="search-outline"></ion-icon>
@@ -54,68 +54,6 @@
   </ion-toolbar>
 </ion-header>
 
-
-<!-- <ion-header class="ion-no-border">
-  <ion-toolbar class="filters-toolbar">
-     Search Mode False 
-    <ion-row class="searchbar-row" *ngIf="!searchMode" align-items-center>
-      <ion-col>
-        <ion-searchbar 
-          mode="ios" 
-          (ionFocus)="onFocus($event)" 
-          class="searchbar" 
-          placeholder="Search SocialShare ..."
-          animated="true">
-        </ion-searchbar>
-      </ion-col>
-      
-      <ion-col class="call-to-action-col">
-        <ion-button fill="clear" class="filters-btn" routerLink="/messages">
-          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
-          <ion-badge 
-            *ngIf="getUnreadMessagesCount() != null"
-            color="danger">
-            {{getUnreadMessagesCount()}}
-          </ion-badge>
-        </ion-button>
-      </ion-col>
-      
-      <ion-col class="call-to-action-col">
-        <ion-button fill="clear" class="filters-btn" (click)="showGroupOptions()">
-          <ion-icon slot="icon-only" name="add-circle"></ion-icon>
-        </ion-button>
-      </ion-col>
-    </ion-row>
-
-
-    <ion-row class="searchbar-row" *ngIf="searchMode" align-items-center>
-      <ion-col>
-        <ion-searchbar 
-          mode="ios" 
-          debounce="1000" 
-          (ionChange)="seachFeed($event)" 
-          [(ngModel)]="searchTerm" 
-          (ionFocus)="onFocus($event)" 
-          class="searchbar" 
-          placeholder="Search SocialShare ..."
-          animated="true">
-        </ion-searchbar>
-      </ion-col>
-      
-      <ion-col class="call-to-action-col">
-        <ion-button 
-          fill="clear" 
-          class="filters-btn ion-text-capitalize" 
-          (click)="onCancel($event)">
-          Cancel
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-toolbar>
-</ion-header> -->
-
-<!-- feed.page.html -->
-<!-- feed.page.html -->
 <ion-content >
     <!-- Search Suggestions/History (when searching but no query entered) -->
   <div class="search-content" *ngIf="isSearchActive && !searchQuery">
@@ -165,7 +103,7 @@
     <div class="search-results-header">
       <div class="results-info">
         <h2>Results for "{{ searchQuery }}"</h2>
-        <p>{{ searchResults.length }} results found</p>
+        <p>{{ posts.length }} results found</p>
       </div>
       <ion-button fill="clear" (click)="clearSearch()">
         <ion-icon name="close-circle-outline"></ion-icon>
@@ -181,7 +119,7 @@
     </div>
 
     <!-- No Results State -->
-    <div class="no-results" *ngIf="searchResults.length === 0">
+    <div class="no-results" *ngIf="posts.length === 0">
       <ion-icon name="search-outline"></ion-icon>
       <h3>No results found</h3>
       <p>Try different keywords or check spelling</p>
@@ -191,294 +129,204 @@
   <!-- Regular Feed (when not searching) -->
   <div class="feed-container" *ngIf="!isSearchActive">
     <!-- Your existing feed content -->
-  </div>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content
+        pullingIcon="chevron-down-circle-outline"
+        pullingText="Pull to refresh"
+        refreshingSpinner="circles"
+        refreshingText="Refreshing...">
+      </ion-refresher-content>
+    </ion-refresher>
   
-</ion-content>
-
-
-
-<ion-content *ngIf="!isSearchActive">
-  <div *ngIf="!searchMode">
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content
-      pullingIcon="chevron-down-circle-outline"
-      pullingText="Pull to refresh"
-      refreshingSpinner="circles"
-      refreshingText="Refreshing...">
-    </ion-refresher-content>
-  </ion-refresher>
-
-     <!-- Show Posts -->
-     <div *ngIf="posts && posts.length > 0" >
-     <div class="listing-item" *ngFor="let item of posts" >
-      <ion-card *ngIf="item.type === 'general'">
-        <div class="post-header">
-          <div class="user-info">
-            <ion-avatar class="user-avatar">
-              <img [src]="item.avatar" 
-                   [alt]="item.addedByUser.addedByUsername"
-                   (error)="$event.target.src='./assets/images/default-dp.png'">
-            </ion-avatar>
-            <div class="user-details">
-              <div class="name-row">
-                <a (click)="viewUser(item.addedByUser.addedByKey)" class="username">
-                  {{item.addedByUser.addedByUsername}}
-                </a>
-              </div>
-              <div class="post-meta">
-                <span class="post-time">{{item.date.toDate() | DateFormat}}</span>
-                •
-                <a class="group-name">
-                  {{item.groupName}}
-                </a>
-              </div>
-            </div>
-          </div>
-          
-          <ion-button fill="clear" (click)="showPostOptions(item)" class="options-button">
-            <ion-icon name="ellipsis-horizontal"></ion-icon>
-          </ion-button>
-        </div>
-        <ion-card-content class="message" >
-          <div>
-            <div>
-              <video *ngIf="item.postMediaVideo" controls preload="auto" height=200px width="100%" src="https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/videos%2Fcdv_photo_1604937924.MOV?alt=media&token=a757e495-8dc8-4540-84c9-33c7a6d50c9e" ></video>
-              <ion-slides *ngIf="item.postMediaImages" class="slider" pager="true" [options]="slideOptsOne" #slideWithNav>
-              <ion-slide *ngFor="let s of item.postMediaImages">
-                <div class="bgSizeContain" 
-                [ngStyle]="{'background-image':'url('+s+')'}">
-              </div>
-               </ion-slide>
-            </ion-slides>
-            </div>
-          <ion-label  *ngIf="!item.showMore">
-            <span (click)="viewPost(item)"><ion-text color="primary"><b>{{item.title}}. </b></ion-text> {{trimString(item.data.message, 100)}}</span> 
-            <a class="show-more"  *ngIf="item.data.message.length > 100" (click)="item.showMore = !item.showMore">...Show more</a><br/></ion-label>
-          <ion-label (click)="viewPost(item)"  *ngIf="item.showMore"><b>{{item.title}}.</b> {{item.data.message}} <br/></ion-label>
-        </div>
-                <!-- Reactions Bar -->
-                <div class="reactions-bar">
-                  <ion-row>
-                    <ion-col>
-                      <ion-buttons>
-                        <ion-button (click)="showEmojiPicker($event, item)">
-                          <!-- Keep your existing Thanks/Smile reaction display -->
-                          <div>
-                            <ion-icon *ngIf="item.reactionType === ''" size="medium" class="icon" src="./assets/icon/smile-inactive.svg"></ion-icon>
-                            <ion-icon *ngIf="item.reactionType !== ''" size="medium" class="icon" [src]="'./assets/icon/' + item.reactionType + '.svg'"></ion-icon>
-                          </div>
-                        </ion-button>
-                        <ion-button (click)="showReactionsList(post)" class="reaction-count-button">
-                          <div class="reaction-count-container">
-                            <div class="stacked-icons">
-                              <ion-icon size="small" src="./assets/icon/smile.svg" class="icon smile"></ion-icon>
-                              <ion-icon size="small" src="./assets/icon/hug.svg" class="icon hug"></ion-icon>
-                            </div>
-                            <span class="count-text">{{item.totalReactionCount}}</span>
-                          </div>
-                        </ion-button>
-                      </ion-buttons>
-                    </ion-col>
-        
-                    <!-- Right aligned icons -->
-                    <ion-col class="ion-text-end">
-                      <ion-buttons class="ion-justify-content-end">
-                        <ion-button>
-                          <div class="comment-count">
-                            <ion-icon size="small" class="icon" name="chatbox-outline"></ion-icon>
-                            <span class="count-text">{{item.totalReviewCount}}</span>
-                          </div>
-                        </ion-button>
-        
-                        <ion-button (click)="toggleBookmark(item)">
-                          <ion-icon size="small" class="icon" [name]="item.isBookmarked ? 'bookmark' : 'bookmark-outline'"></ion-icon>
-                        </ion-button>
-                        <ion-button (click)="sharePost(item)">
-                          <ion-icon name="share-social-outline"></ion-icon>
-                        </ion-button>
-                      </ion-buttons>
-                    </ion-col>
-                  </ion-row>
+       <!-- Show Posts -->
+       <div *ngIf="posts && posts.length > 0" >
+       <div class="listing-item" *ngFor="let item of posts" >
+        <ion-card *ngIf="item.type === 'general'">
+          <div class="post-header">
+            <div class="user-info">
+              <ion-avatar class="user-avatar">
+                <img [src]="item.avatar" 
+                     [alt]="item.addedByUser.addedByUsername"
+                     (error)="$event.target.src='./assets/images/default-dp.png'">
+              </ion-avatar>
+              <div class="user-details">
+                <div class="name-row">
+                  <a (click)="viewUser(item.addedByUser.addedByKey)" class="username">
+                    {{item.addedByUser.addedByUsername}}
+                  </a>
                 </div>
-     </ion-card-content>
-      </ion-card>
-      <ion-card *ngIf="item.type === 'event'" class="event-card" (click)="viewPost(item)">
-        <ion-card-content>
-          <!-- Date Badge -->
-          <div class="date-container">
-            <div class="date-badge">
-              <span class="month">{{item.data.eventDate | date:'MMM'}}</span>
-              <span class="day">{{item.data.eventDate | date:'dd'}}</span>
-            </div>
-          </div>
-      
-          <!-- Event Info -->
-          <div class="event-content">
-            <div class="title-row">
-              <h2 class="event-title">{{item.title}}</h2>
-              <!-- <div class="event-tag">
-                <ion-icon name="calendar-outline"></ion-icon>
-                <span>Event</span>
-              </div> -->
+                <div class="post-meta">
+                  <span class="post-time">{{item.date.toDate() | DateFormat}}</span>
+                  •
+                  <a class="group-name">
+                    {{item.groupName}}
+                  </a>
+                </div>
+              </div>
             </div>
             
-            <div class="event-details">
-              <div class="detail-item">
+            <ion-button fill="clear" (click)="showPostOptions(item)" class="options-button">
+              <ion-icon name="ellipsis-horizontal"></ion-icon>
+            </ion-button>
+          </div>
+          <ion-card-content class="message" >
+            <div>
+              <div>
+                <video *ngIf="item.postMediaVideo" controls preload="auto" height=200px width="100%" src="https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/videos%2Fcdv_photo_1604937924.MOV?alt=media&token=a757e495-8dc8-4540-84c9-33c7a6d50c9e" ></video>
+                <ion-slides *ngIf="item.postMediaImages" class="slider" pager="true" [options]="slideOptsOne" #slideWithNav>
+                <ion-slide *ngFor="let s of item.postMediaImages">
+                  <div class="bgSizeContain" 
+                  [ngStyle]="{'background-image':'url('+s+')'}">
+                </div>
+                 </ion-slide>
+              </ion-slides>
+              </div>
+            <ion-label  *ngIf="!item.showMore">
+              <span (click)="viewPost(item)"><ion-text color="primary"><b>{{item.title}}. </b></ion-text> {{trimString(item.data.message, 100)}}</span> 
+              <a class="show-more"  *ngIf="item.data.message.length > 100" (click)="item.showMore = !item.showMore">...Show more</a><br/></ion-label>
+            <ion-label (click)="viewPost(item)"  *ngIf="item.showMore"><b>{{item.title}}.</b> {{item.data.message}} <br/></ion-label>
+          </div>
+                  <!-- Reactions Bar -->
+                  <div class="reactions-bar">
+                    <ion-row>
+                      <ion-col>
+                        <ion-buttons>
+                          <ion-button (click)="showEmojiPicker($event, item)">
+                            <!-- Keep your existing Thanks/Smile reaction display -->
+                            <div>
+                              <ion-icon *ngIf="item.reactionType === ''" size="medium" class="icon" src="./assets/icon/smile-inactive.svg"></ion-icon>
+                              <ion-icon *ngIf="item.reactionType !== ''" size="medium" class="icon" [src]="'./assets/icon/' + item.reactionType + '.svg'"></ion-icon>
+                            </div>
+                          </ion-button>
+                          <ion-button (click)="showReactionsList(post)" class="reaction-count-button">
+                            <div class="reaction-count-container">
+                              <div class="stacked-icons">
+                                <ion-icon size="small" src="./assets/icon/smile.svg" class="icon smile"></ion-icon>
+                                <ion-icon size="small" src="./assets/icon/hug.svg" class="icon hug"></ion-icon>
+                              </div>
+                              <span class="count-text">{{item.totalReactionCount}}</span>
+                            </div>
+                          </ion-button>
+                        </ion-buttons>
+                      </ion-col>
+          
+                      <!-- Right aligned icons -->
+                      <ion-col class="ion-text-end">
+                        <ion-buttons class="ion-justify-content-end">
+                          <ion-button>
+                            <div class="comment-count">
+                              <ion-icon size="small" class="icon" name="chatbox-outline"></ion-icon>
+                              <span class="count-text">{{item.totalReviewCount}}</span>
+                            </div>
+                          </ion-button>
+          
+                          <ion-button (click)="toggleBookmark(item)">
+                            <ion-icon size="small" class="icon" [name]="item.isBookmarked ? 'bookmark' : 'bookmark-outline'"></ion-icon>
+                          </ion-button>
+                          <ion-button (click)="sharePost(item)">
+                            <ion-icon name="share-social-outline"></ion-icon>
+                          </ion-button>
+                        </ion-buttons>
+                      </ion-col>
+                    </ion-row>
+                  </div>
+       </ion-card-content>
+        </ion-card>
+        <ion-card *ngIf="item.type === 'event'" class="event-card" (click)="viewPost(item)">
+          <ion-card-content>
+            <!-- Date Badge -->
+            <div class="date-container">
+              <div class="date-badge">
+                <span class="month">{{item.data.eventDate | date:'MMM'}}</span>
+                <span class="day">{{item.data.eventDate | date:'dd'}}</span>
+              </div>
+            </div>
+        
+            <!-- Event Info -->
+            <div class="event-content">
+              <div class="title-row">
+                <h2 class="event-title">{{item.title}}</h2>
+                <!-- <div class="event-tag">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  <span>Event</span>
+                </div> -->
+              </div>
+              
+              <div class="event-details">
+                <div class="detail-item">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <span>{{item.data.eventTime | date:'shortTime'}}</span>
+                </div>
+                <div class="detail-item">
+                  <ion-icon name="location-outline"></ion-icon>
+                  <span>{{item.data.location}}</span>
+                </div>
+              </div>
+        
+              <!-- Attendance Count -->
+              <div class="attendance-count">
+                <ion-icon name="people-outline"></ion-icon>
+                <span>{{item.totalReactionCount}} attending</span>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+        
+        <ion-card *ngIf="item.type === 'poll'" class="poll-card" (click)="viewPost(item)">
+          <ion-card-content>
+            <!-- Header -->
+            <div class="poll-header">
+              <h2 class="poll-title">{{item.title}}</h2>
+              <div class="poll-tag">
+                <ion-icon name="bar-chart-outline"></ion-icon>
+                <span>Poll</span>
+              </div>
+            </div>
+        
+            <!-- Poll Options -->
+            <div class="poll-options">
+              <div class="poll-option" *ngFor="let pollOption of item.data.pollOptions; let i = index">
+                <div class="option-content">
+                  <div class="option-info">
+                    <span class="poll-circle circle-{{i}}"></span>
+                    <span class="option-name">{{pollOption.name}}</span>
+                  </div>
+                  <span class="vote-count">{{pollOption.votes || 0}}</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress" 
+                       [style.width]="calculatePercentage(pollOption.votes || 0, item.totalPollCount) + '%'"
+                       [style.background-color]="getPollColor(i)">
+                  </div>
+                </div>
+              </div>
+            </div>
+        
+            <!-- Footer -->
+            <div class="poll-footer">
+              <div class="poll-status" [class.closed]="item.pollClosed">
                 <ion-icon name="time-outline"></ion-icon>
-                <span>{{item.data.eventTime | date:'shortTime'}}</span>
+                <span *ngIf="!item.pollClosed">Ends {{item.data.dateEnding.toDate() | DateFormat}}</span>
+                <span *ngIf="item.pollClosed">Poll closed</span>
               </div>
-              <div class="detail-item">
-                <ion-icon name="location-outline"></ion-icon>
-                <span>{{item.data.location}}</span>
-              </div>
-            </div>
-      
-            <!-- Attendance Count -->
-            <div class="attendance-count">
-              <ion-icon name="people-outline"></ion-icon>
-              <span>{{item.totalReactionCount}} attending</span>
-            </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
-      
-      <ion-card *ngIf="item.type === 'poll'" class="poll-card" (click)="viewPost(item)">
-        <ion-card-content>
-          <!-- Header -->
-          <div class="poll-header">
-            <h2 class="poll-title">{{item.title}}</h2>
-            <div class="poll-tag">
-              <ion-icon name="bar-chart-outline"></ion-icon>
-              <span>Poll</span>
-            </div>
-          </div>
-      
-          <!-- Poll Options -->
-          <div class="poll-options">
-            <div class="poll-option" *ngFor="let pollOption of item.data.pollOptions; let i = index">
-              <div class="option-content">
-                <div class="option-info">
-                  <span class="poll-circle circle-{{i}}"></span>
-                  <span class="option-name">{{pollOption.name}}</span>
-                </div>
-                <span class="vote-count">{{pollOption.votes || 0}}</span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress" 
-                     [style.width]="calculatePercentage(pollOption.votes || 0, item.totalPollCount) + '%'"
-                     [style.background-color]="getPollColor(i)">
-                </div>
+              <div class="total-votes">
+                <ion-icon name="people-outline"></ion-icon>
+                <span>{{item.totalPollCount}} votes</span>
               </div>
             </div>
-          </div>
-      
-          <!-- Footer -->
-          <div class="poll-footer">
-            <div class="poll-status" [class.closed]="item.pollClosed">
-              <ion-icon name="time-outline"></ion-icon>
-              <span *ngIf="!item.pollClosed">Ends {{item.data.dateEnding.toDate() | DateFormat}}</span>
-              <span *ngIf="item.pollClosed">Poll closed</span>
-            </div>
-            <div class="total-votes">
-              <ion-icon name="people-outline"></ion-icon>
-              <span>{{item.totalPollCount}} votes</span>
-            </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
-      
-      
-      
-     </div>
-     </div>
-     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
-      <ion-infinite-scroll-content
-        loadingSpinner="bubbles"
-        loadingText="Loading more data...">
-      </ion-infinite-scroll-content>
-    </ion-infinite-scroll>
+          </ion-card-content>
+        </ion-card>
+        
+        
+        
+       </div>
+       </div>
+       <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+        <ion-infinite-scroll-content
+          loadingSpinner="bubbles"
+          loadingText="Loading more data...">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
   </div>
-  <div *ngIf="searchMode">
-    <div *ngIf="searchPosts && searchPosts.length > 0" >
-      <div class="listing-item" *ngFor="let item of searchPosts" >
-       <ion-card>
-         <ion-card-header>
-           <ion-row>
-             <ion-col size=10>
-            <ion-card-subtitle class="searchaddedBy">
-             <img class="searchaddedByImg" src="{{item.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" /> 
-              <p><a class="searchaddedByTitle" (click)="viewUser(item.addedByUser.addedByKey)" ><b>{{item.addedByUser.addedByUsername}}</b></a>
-              <span class="searchaddedByDate">posted {{item.date | DateFormat}}</span><br/>
-             <a (click)="viewGroup(item.groupId)" class="searchaddedByTitle">in <b>{{item.groupName}}</b></a></p>
-           </ion-card-subtitle>
-         </ion-col>
-         <ion-col size=2>
-           <ion-badge class="badge" *ngIf="item.type === 'general'" color="secondary">Post</ion-badge>
-          <ion-badge class="badge" *ngIf="item.type === 'event'" color="warning">Event</ion-badge>
-          <ion-badge class="badge" *ngIf="item.type === 'poll'" color="medium">Poll</ion-badge>
-          <ion-badge class="badge" *ngIf="item.type === 'resource'" color="dark">Resource</ion-badge> 
-       </ion-col>
-         </ion-row>
-         </ion-card-header>
-         <ion-card-content class="message" *ngIf="item.type === 'general'">
-           <div>
-           <ion-label>
-             <span (click)="viewPost(item)"><b>{{item.title}}.</b> {{trimString(item.data.message, 100)}}</span> 
-          </ion-label>
-         </div>
-           <!-- <div class="tags-wrapper">
-           <ion-row>
-             <div class="tags" *ngFor="let tag of item.postTags">
-               <span class="item-rating">#{{tag.val}}</span>
-             </div>
-           </ion-row>
-           </div> -->
-         </ion-card-content>
- 
-         <ion-card-content class="message" *ngIf="item.type === 'event'">
-           <div (click)="viewPost(item)" *ngIf="!item.showMore">
-           <!-- <b>{{item.title}}.</b> {{item.date}} at {{item.time}} -->
-           </div>
-           <div class="tags-wrapper">
-             <ion-row>
-               <div class="tags" *ngFor="let tag of item.postTags">
-                 <span class="item-rating">#{{tag.val}}</span>
-               </div>
-             </ion-row>
-             </div>
-         </ion-card-content>
- 
-         <ion-card-content class="message" *ngIf="item.type === 'poll'" >
-           <div (click)="viewPost(item)">
-           <b>{{item.title}}.</b><br/>
-         </div>
-         <!-- <div class="tags-wrapper">
-           <ion-row>
-             <div class="tags" *ngFor="let tag of item.postTags">
-               <span class="item-rating">#{{tag.val}}</span>
-             </div>
-           </ion-row>
-           </div> -->
-         </ion-card-content>
-         
-         <ion-card-content class="message" *ngIf="item.type === 'resource'">
-           <div (click)="viewPost(item)">
-           <b>{{item.title}}.</b><br/>
-           <div *ngIf="item?.data.type == 'weblink'">
-           {{item.data.metatitle}}<br/>
-           </div>
-         </div>
-         <!-- <div class="tags-wrapper">
-           <ion-row>
-             <div class="tags" *ngFor="let tag of item.postTags">
-               <span class="item-rating">#{{tag.val}}</span>
-             </div>
-           </ion-row>
-           </div> -->
-         </ion-card-content>
-         <!-- Dont touch the tags below this line-->
-       </ion-card>
-      </div>
-      </div>
-  </div>
+  
 </ion-content>

@@ -22,6 +22,8 @@ import 'firebase/auth';
 import 'firebase/firestore';
 
 import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 // Add interface for user data
 interface UserDocument {
@@ -48,7 +50,8 @@ export class FeedPage implements OnInit {
     recentSearches: Array<{ id: string; term: string; timestamp: any }> = [];
     trendingSearches: Array<{ id: string; term: string; count: number }> = [];
     searchResults: any[] = [];
-
+    searchSubject = new Subject<string>();
+    
     isFilterActive: boolean = false;
     unreadCount: number = 0;
 
@@ -146,6 +149,12 @@ export class FeedPage implements OnInit {
 
     ngOnInit() {
       this.isSearchActive = false;
+      this.searchSubject.pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      ).subscribe(searchTerm => {
+        this.performSearch(searchTerm);
+      });
     }
 
     ionViewDidEnter() {
@@ -176,18 +185,53 @@ export class FeedPage implements OnInit {
       });
     }
 
-    getFeedData() {
-      this.firstDataSet = this.firestore.collection('posts').ref
-      .where('groupId', 'in', this.loggedInUser.groups)
-      .orderBy('date', 'desc')
-      .limit(5);
-        this.firstDataSet.get().then((po: any) => {
-        this.lastDataSet = po.docs[po.docs.length - 1];
-        this.posts = [];
-        this.loadEachPostData(po);
-      });
+    async getFeedData(event?: any, searchTerm?: string) {
+      try{
+      this.loadingProvider.show();
+      if (!searchTerm) {
+        console.info('NO searchTerm:', searchTerm)
+        this.firstDataSet = this.firestore.collection('posts').ref
+        .where('groupId', 'in', this.loggedInUser.groups)
+        .orderBy('date', 'desc')
+        .limit(5);
+          this.firstDataSet.get().then((po: any) => {
+            this.lastDataSet = po.docs[po.docs.length - 1];
+            this.posts = [];
+            this.loadEachPostData(po);
+        });
+      } else {
+        console.info('GOT searchTerm:', searchTerm)
 
+         // Split search term into keywords
+          const searchTerms = searchTerm.toLowerCase()
+          .split(' ')
+          .filter(term => term.length > 0)
+          .map(term => term.trim());
+          console.info('GOT searchTerms:', searchTerms)
+          // Search using array-contains-any
+          this.firstDataSet = this.firestore.collection('posts').ref
+          // .where('groupId', 'in', this.loggedInUser.groups)
+          .where('searchKeywords', 'array-contains-any', searchTerms)
+          .orderBy('date', 'desc')
+          .limit(20);
+            this.firstDataSet.get().then((po: any) => {
+              console.info('found search results:', po.data)
+              this.lastDataSet = po.docs[po.docs.length - 1];
+        
+              this.posts = [];
+              this.loadEachPostData(po);
+              
+        });
+      }
       this.isSearchActive = false;
+      this.loadingProvider.hide();
+   } catch(error) {
+      console.error('Error fetching feed data:', error);
+      this.isSearchActive = false;
+      this.loadingProvider.hide();
+      return [];
+    }
+
     }
 
     addOrUpdatePost(post) {
@@ -634,17 +678,7 @@ export class FeedPage implements OnInit {
     onCancel(event) {
       this.searchMode = false;
       this.searchPosts = [];
-      this.searchTerm = '';
-    }
-
-    seachFeed(event) {
-      console.log('searching for ..', this.searchTerm );
-      // this.index.search('', {
-      //   query: this.searchTerm
-      // }).then((data) => {
-      //   this.searchPosts = data.hits;
-      // });
-      this.searchPosts = this.posts;
+      this.searchQuery = '';
     }
 
     async showEmojiPicker(event: any, item: any) {
@@ -681,181 +715,190 @@ export class FeedPage implements OnInit {
       }, 150);
     }
 
-  deactivateSearch() {
-    this.isSearchActive = false;
-    this.searchQuery = '';
-    // Clear the arrays when search is deactivated
-    this.recentSearches = [];
-    this.trendingSearches = [];
-    this.searchResults = [];
-  }
-  onSearchSubmit(event: any) {
-    event.preventDefault(); // Prevent event bubbling
-    if (event.key === 'Enter' || event.keyCode === 13) {
-      this.performSearch();
-    }
-  }
-  async performSearch(term?: string) {
-    const searchTerm = term || this.searchQuery;
-    if (this.searchQuery.trim()) {
-      // Store the search query
-      await this.saveRecentSearch(this.searchQuery.trim());
-      
-      // Your existing search logic
+    deactivateSearch() {
+      this.isSearchActive = false;
+      this.searchQuery = '';
+      // Clear the arrays when search is deactivated
+      this.recentSearches = [];
+      this.trendingSearches = [];
+      this.searchResults = [];
       this.getFeedData();
     }
-  }
-  async saveRecentSearch(term: string) {
-    const userId = this.loggedInUser.userId;
-    const searchTerm = term.trim().toLowerCase(); // Normalize the search term
-    
-    // Check if this search term already exists for this user
-    const existingSearchQuery = this.firestore
-      .collection('userSearches')
-      .doc(userId)
-      .collection('searches', ref => 
-        ref.where('term', '==', searchTerm).limit(1)
-      );
 
-    const existingSearches = await existingSearchQuery.get().toPromise();
+    onSearchSubmit(event: any) {
+      event.preventDefault(); // Prevent event bubbling
+      if (event.key === 'Enter' || event.keyCode === 13) {
+        this.performSearch();
+      }
+    }
 
-    if (existingSearches.empty) {
-      // Only add if the search term doesn't exist
-      await this.firestore
+    async performSearch(term?: string) {
+      this.loadingProvider.show();
+      this.searchQuery = term || this.searchQuery;
+
+      if (this.searchQuery.trim()) {
+        // Store the search query
+        await this.saveRecentSearch(this.searchQuery.trim());
+        // Your existing search logic
+        this.getFeedData(null, this.searchQuery);
+      }
+      this.loadingProvider.hide();
+    }
+
+    async saveRecentSearch(term: string) {
+      const userId = this.loggedInUser.userId;
+      const searchTerm = term.trim().toLowerCase(); // Normalize the search term
+      
+      // Check if this search term already exists for this user
+      const existingSearchQuery = this.firestore
         .collection('userSearches')
         .doc(userId)
-        .collection('searches')
-        .add({
+        .collection('searches', ref => 
+          ref.where('term', '==', searchTerm).limit(1)
+        );
+
+      const existingSearches = await existingSearchQuery.get().toPromise();
+
+      if (existingSearches.empty) {
+        // Only add if the search term doesn't exist
+        await this.firestore
+          .collection('userSearches')
+          .doc(userId)
+          .collection('searches')
+          .add({
+            term: searchTerm,
+            timestamp: firebase.default.firestore.FieldValue.serverTimestamp()
+          });
+
+        // Update trending searches count
+        const trendingRef = this.firestore.collection('trendingSearches').doc(searchTerm);
+        await trendingRef.set({
           term: searchTerm,
+          count: firebase.default.firestore.FieldValue.increment(1)
+        }, { merge: true });
+      } else {
+        // Update timestamp of existing search
+        const existingDoc = existingSearches.docs[0];
+        await existingDoc.ref.update({
           timestamp: firebase.default.firestore.FieldValue.serverTimestamp()
         });
-
-      // Update trending searches count
-      const trendingRef = this.firestore.collection('trendingSearches').doc(searchTerm);
-      await trendingRef.set({
-        term: searchTerm,
-        count: firebase.default.firestore.FieldValue.increment(1)
-      }, { merge: true });
-    } else {
-      // Update timestamp of existing search
-      const existingDoc = existingSearches.docs[0];
-      await existingDoc.ref.update({
-        timestamp: firebase.default.firestore.FieldValue.serverTimestamp()
-      });
+      }
     }
-  }
-  async loadRecentSearches() {
-    const user = this.loggedInUser;
-    if (user) {
+
+    async loadRecentSearches() {
+      const user = this.loggedInUser;
+      if (user) {
+        this.firestore
+          .collection('userSearches')
+          .doc(user.userId)
+          .collection('searches', ref => 
+            ref.orderBy('timestamp', 'desc').limit(10)
+          )
+          .snapshotChanges()
+          .subscribe(actions => {
+            this.recentSearches = actions.map(a => ({
+              id: a.payload.doc.id,
+              term: a.payload.doc.data().term,
+              timestamp: a.payload.doc.data().timestamp
+            }));
+          });
+      }
+    }
+
+    onSearchInput(event: any) {
+      this.searchSubject.next(event.target.value);
+    }
+  
+    loadTrendingSearches() {
       this.firestore
-        .collection('userSearches')
-        .doc(user.userId)
-        .collection('searches', ref => 
-          ref.orderBy('timestamp', 'desc').limit(10)
+        .collection('trendingSearches', ref => 
+          ref.orderBy('count', 'desc').limit(5)
         )
         .snapshotChanges()
         .subscribe(actions => {
-          this.recentSearches = actions.map(a => ({
+          this.trendingSearches = actions.map(a => ({
             id: a.payload.doc.id,
-            term: a.payload.doc.data().term,
-            timestamp: a.payload.doc.data().timestamp
+            ...a.payload.doc.data() as { term: string; count: number }
           }));
         });
     }
-  }
 
-  loadTrendingSearches() {
-    this.firestore
-      .collection('trendingSearches', ref => 
-        ref.orderBy('count', 'desc').limit(5)
-      )
-      .snapshotChanges()
-      .subscribe(actions => {
-        this.trendingSearches = actions.map(a => ({
-          id: a.payload.doc.id,
-          ...a.payload.doc.data() as { term: string; count: number }
-        }));
-      });
-  }
-
-  removeRecentSearch(searchId: string) {
-    const userId = this.loggedInUser.userId;
-    return this.firestore
-      .collection('userSearches')
-      .doc(userId)
-      .collection('searches')
-      .doc(searchId)
-      .delete();
-  }
-  
-  removeFilter(filter: {id: string, name: string}) {
-    this.activeFilters = this.activeFilters.filter(f => f.id !== filter.id);
-    // Update your filtered results
-  }
-
-  clearSearch() {
-    this.searchQuery = '';
-    this.searchResults = [];
-    // Optionally return to feed view
-    // this.deactivateSearch();
-  }
-// feed.page.ts
-async presentFilterPopover(ev: any) {
-  const popover = await this.popoverCtrl.create({
-    component: FilterComponent,
-    event: ev,
-    translucent: true,
-    cssClass: 'filter-popover',
-    backdropDismiss: true,
-    keyboardClose: true,
-    mode: 'md'// Using material design mode for better accessibility
-  });
-
-  // Handle keyboard events for accessibility
-  const handleKeydown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      popover.dismiss();
+    removeRecentSearch(searchId: string) {
+      const userId = this.loggedInUser.userId;
+      return this.firestore
+        .collection('userSearches')
+        .doc(userId)
+        .collection('searches')
+        .doc(searchId)
+        .delete();
     }
-  };
+    
+    removeFilter(filter: {id: string, name: string}) {
+      this.activeFilters = this.activeFilters.filter(f => f.id !== filter.id);
+      // Update your filtered results
+    }
 
-  document.addEventListener('keydown', handleKeydown);
+    clearSearch() {
+      this.searchQuery = '';
+      this.searchResults = [];
+      // Optionally return to feed view
+      this.deactivateSearch();
+    }
 
-  await popover.present();
+    async presentFilterPopover(ev: any) {
+      const popover = await this.popoverCtrl.create({
+        component: FilterComponent,
+        event: ev,
+        translucent: true,
+        cssClass: 'filter-popover',
+        backdropDismiss: true,
+        keyboardClose: true,
+        mode: 'md'// Using material design mode for better accessibility
+      });
 
-  const { data } = await popover.onWillDismiss();
-  // Clean up event listener
-  document.removeEventListener('keydown', handleKeydown);
+      // Handle keyboard events for accessibility
+      const handleKeydown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          popover.dismiss();
+        }
+      };
 
-  if (data) {
-    this.isFilterActive = data.type !== 'all' || (data.groups && data.groups.length > 0);
-    this.applyFilters(data);
-    console.info('filter data', data)
-  }
-}
+      document.addEventListener('keydown', handleKeydown);
 
-  
+      await popover.present();
 
-  applyFilters(filters: any) {
-    console.log('Applying filters:', filters);
-    // Implement your filter logic here
-  }
+      const { data } = await popover.onWillDismiss();
+      // Clean up event listener
+      document.removeEventListener('keydown', handleKeydown);
 
-  calculatePercentage(votes: number, total: number): number {
-    if (!total || total === 0) return 0;
-    return Math.round((votes / total) * 100);
-  }
-  
-  getPollColor(index: number): string {
-    const colors = [
-      '#4CAF50', // green
-      '#2196F3', // blue
-      '#FF9800', // orange
-      '#E91E63', // pink
-      '#9C27B0', // purple
-      '#00BCD4'  // cyan
-    ];
-    return colors[index % colors.length];
-  }
+      if (data) {
+        this.isFilterActive = data.type !== 'all' || (data.groups && data.groups.length > 0);
+        this.applyFilters(data);
+        console.info('filter data', data)
+      }
+    }
+
+    applyFilters(filters: any) {
+      console.log('Applying filters:', filters);
+      // Implement your filter logic here
+    }
+
+    calculatePercentage(votes: number, total: number): number {
+      if (!total || total === 0) return 0;
+      return Math.round((votes / total) * 100);
+    }
+    
+    getPollColor(index: number): string {
+      const colors = [
+        '#4CAF50', // green
+        '#2196F3', // blue
+        '#FF9800', // orange
+        '#E91E63', // pink
+        '#9C27B0', // purple
+        '#00BCD4'  // cyan
+      ];
+      return colors[index % colors.length];
+    }
   
   
 }
