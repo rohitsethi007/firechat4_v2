@@ -220,8 +220,17 @@
                             </div>
                           </ion-button>
           
-                          <ion-button (click)="toggleBookmark(item)">
-                            <ion-icon size="small" class="icon" [name]="item.isBookmarked ? 'bookmark' : 'bookmark-outline'"></ion-icon>
+                          <ion-button 
+                            fill="clear" 
+                            (click)="toggleBookmark(item)"
+                            [color]="item.isBookmarked ? 'primary' : 'medium'">
+                              <ion-icon 
+                                [name]="item.isBookmarked ? 'bookmark' : 'bookmark-outline'"
+                                slot="icon-only">
+                              </ion-icon>
+                              <!-- <ion-text *ngIf="item.bookmarkCount > 0">
+                                {{ item.bookmarkCount }}
+                              </ion-text> -->
                           </ion-button>
                           <ion-button (click)="sharePost(item)">
                             <ion-icon name="share-social-outline"></ion-icon>

@@ -24,11 +24,13 @@ import 'firebase/firestore';
 import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { BookmarkService } from '../services/bookmark.service';
 
 // Add interface for user data
 interface UserDocument {
   userReactions: any[];
   userNotifications: any[];
+  userBookmarks: any[];
   username: string;
   img: string;
   groups: string[];
@@ -52,9 +54,11 @@ export class FeedPage implements OnInit {
     searchResults: any[] = [];
     searchSubject = new Subject<string>();
     
+    bookmarks: any[] = [];
+    isBookmarked: false;
+
     isFilterActive: boolean = false;
     unreadCount: number = 0;
-
 
     userReactions: any[] = [];
     userNotifications: any[] = [];
@@ -106,7 +110,8 @@ export class FeedPage implements OnInit {
       private localNotifications: LocalNotifications,
       private fcm: FCM,
       public plt: Platform,
-      private popoverCtrl: PopoverController
+      private popoverCtrl: PopoverController,
+      private bookmarkService: BookmarkService
     ) 
     {
       this.plt.ready()
@@ -155,6 +160,16 @@ export class FeedPage implements OnInit {
       ).subscribe(searchTerm => {
         this.performSearch(searchTerm);
       });
+          // Subscribe to bookmark changes
+    this.bookmarkService.userBookmarks$.subscribe(bookmarks => {
+      this.userBookmarks = bookmarks;
+      // Update isBookmarked for all posts
+      this.posts = this.posts.map(post => ({
+        ...post,
+        isBookmarked: this.bookmarkService.isBookmarked(post.key, bookmarks)
+      }));
+    });
+  
     }
 
     ionViewDidEnter() {
@@ -177,7 +192,9 @@ export class FeedPage implements OnInit {
             if (userData) {
               this.userReactions = userData.userReactions || [];
               this.userNotifications = userData.userNotifications || [];
+              this.userBookmarks = userData.userBookmarks || [];
               this.loggedInUser = userData;
+              console.info('this.userBookmarks', this.userBookmarks);
               this.getFeedData();
             }
           });
@@ -348,7 +365,6 @@ export class FeedPage implements OnInit {
       // first find the post in the collection
 
       const postIndex = this.posts.findIndex(el => el.key ===  post.key);
-      console.info('postIndex', postIndex);
       const p = this.posts[postIndex];
 
       const r = p.reactions.find(el => el.addedByUser.addedByKey === this.loggedInUserId && el.reactionType === reactionType);
@@ -363,7 +379,7 @@ export class FeedPage implements OnInit {
                       },
           reactionType: reactionType
         };
-        console.info('post.key', post.key)
+
         this.dataProvider.updatePostReactions(post.key, react).then(() => {
           this.posts[postIndex].showSmiley = true
           // Update user notifications.
@@ -587,14 +603,7 @@ export class FeedPage implements OnInit {
         post.key = p.id;
         post.showMore = false;
         const startDate = new Date(post.date);
-      // Do your operations
-        const endDate   = new Date();
-        const seconds = (endDate.getTime() - startDate.getTime()) / 1000;
-        if (seconds > 120) {
-        post.showNewIcon = false;
-      } else {
-        post.showNewIcon = true;
-      }
+        
 
         if (post.type === 'poll') {
           const today = new Date();
@@ -651,9 +660,13 @@ export class FeedPage implements OnInit {
             post.reactionType = '';
           }
         });
-        // post.postTags = post.postTags.filter(x => x.isChecked !== false);
+        console.info('this.userBookmarks?.includes(p.id) ', this.userBookmarks?.includes(p.id) )
+        post.isBookmarked = this.userBookmarks?.includes(p.id) || false;
         this.addOrUpdatePost(post);
       });
+
+      // check for bookmarks
+      //this.checkBookmarkStatus();
     }
 
     doRefresh(event) {
@@ -899,6 +912,28 @@ export class FeedPage implements OnInit {
       ];
       return colors[index % colors.length];
     }
-  
-  
+    
+    // async toggleBookmark(post: any) {
+    //   try {
+    //     this.loadingProvider.show();
+    //     console.log('toggling bookmark')
+    //     const userId = this.loggedInUserId;
+    //     post.isBookmarked = await this.bookmarkService.toggleBookmark(post, userId, this.userBookmarks);
+    //     this.loadingProvider.hide();
+
+    //   } catch (error) {
+    //     console.error('Error toggling bookmark:', error);
+    //     this.loadingProvider.hide();
+    //   }
+    // }
+
+    async toggleBookmark(post: any) {
+      const userId = this.loggedInUserId;
+      post.isBookmarked = await this.bookmarkService.toggleBookmark(
+        post, 
+        userId, 
+        this.userBookmarks
+      );
+    }
+
 }
