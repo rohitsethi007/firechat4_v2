@@ -97,7 +97,7 @@
                 </ion-button>
 
                 <ion-button (click)="toggleBookmark(post)">
-                  <ion-icon size="small" class="icon" [name]="post.isBookmarked ? 'bookmark' : 'bookmark-outline'"></ion-icon>
+                  <ion-icon size="small" class="icon"  [color]="post.isBookmarked ? 'primary' : 'medium'" [name]="post.isBookmarked ? 'bookmark' : 'bookmark-outline'"></ion-icon>
                 </ion-button>
                 <ion-button (click)="sharePost(post)">
                   <ion-icon name="share-social-outline"></ion-icon>

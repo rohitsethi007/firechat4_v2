@@ -139,56 +139,107 @@
                      search-icon="search-outline">
       </ion-searchbar>
 
-      <!-- Empty State -->
-      <div class="empty-state" *ngIf="accounts?.length === 0">
-        <ion-icon name="search-outline"></ion-icon>
-        <h2>No Users Found</h2>
-        <p>Try searching for people to connect with</p>
-      </div>
+<!-- Discovery Methods when no search is active -->
+<div *ngIf="!searchUser">
 
-      <!-- Users List -->
-      <ion-list lines="none" class="users-list" *ngIf="accounts?.length > 0">
-        <ion-item *ngFor="let account of accounts | searchFilter: [excludedIds, searchUser]"
-                  button
-                  detail="false"
-                  class="user-item"
-                  (click)="viewUser(account.$key)">
-          <ion-avatar slot="start">
-            <img [src]="account.img" [alt]="account.name" onError="this.src='./assets/images/default-dp.png'">
-          </ion-avatar>
-          <ion-label>
-            <h2>{{account.name}}</h2>
-            <p>@{{account.username}}</p>
-          </ion-label>
-          
-          <!-- Add Friend Button -->
-          <ion-button *ngIf="getStatus(account) === 0"
-                      fill="solid"
-                      color="primary"
-                      (click)="sendFriendRequest(account); $event.stopPropagation();">
-            <ion-icon name="person-add-outline" slot="start"></ion-icon>
-            Add
-          </ion-button>
+  <ion-list lines="none" class="users-list" *ngIf="groupMembers?.length > 0">
+    <ion-item *ngFor="let account of groupMembers"
+              button
+              detail="false"
+              class="user-item"
+              (click)="viewUser(account.$key)">
+      <!-- Same item template as your existing one -->
+      <ion-avatar slot="start">
+        <img [src]="account.img" [alt]="account.name" onError="this.src='./assets/images/default-dp.png'">
+      </ion-avatar>
+      <ion-label>
+        <h2>{{account.name}}</h2>
+        <p>@{{account.username}}</p>
+      </ion-label>
+      
+      <!-- Your existing button logic -->
+      <ion-button *ngIf="getStatus(account) === 0"
+                  fill="solid"
+                  color="primary"
+                  (click)="sendFriendRequest(account); $event.stopPropagation();">
+        <ion-icon name="person-add-outline" slot="start"></ion-icon>
+        Add
+      </ion-button>
+      <!-- Include your Cancel and Accept button logic here -->
+    </ion-item>
+  </ion-list>
 
-          <!-- Cancel Request Button -->
-          <ion-button *ngIf="getStatus(account) === 1"
-                      fill="outline"
-                      color="medium"
-                      (click)="cancelFriendRequest(account); $event.stopPropagation();">
-            <ion-icon name="close-outline" slot="start"></ion-icon>
-            Cancel
-          </ion-button>
+  <!-- Import Options -->
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Import Contacts</ion-label>
+    </ion-list-header>
 
-          <!-- Accept Request Button -->
-          <ion-button *ngIf="getStatus(account) === 2"
-                      fill="solid"
-                      color="primary"
-                      (click)="acceptFriendRequest(account); $event.stopPropagation();">
-            <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-            Accept
-          </ion-button>
-        </ion-item>
-      </ion-list>
+    <ion-item button (click)="importPhoneContacts()" detail="true">
+      <ion-icon name="phone-portrait-outline" slot="start"></ion-icon>
+      <ion-label>
+        <h2>Phone Contacts</h2>
+        <p>Find friends from your contact list</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item button (click)="importFacebookContacts()" detail="true">
+      <ion-icon name="logo-facebook" slot="start"></ion-icon>
+      <ion-label>
+        <h2>Facebook</h2>
+        <p>Connect with Facebook friends</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item button (click)="importTwitterContacts()" detail="true">
+      <ion-icon name="logo-twitter" slot="start"></ion-icon>
+      <ion-label>
+        <h2>Twitter</h2>
+        <p>Find friends from Twitter</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</div>
+
+<!-- Search Results -->
+<div *ngIf="searchUser">
+  <!-- Your existing empty state -->
+  <div class="empty-state" *ngIf="accounts?.length === 0">
+    <ion-icon name="search-outline"></ion-icon>
+    <h2>No Users Found</h2>
+    <p>Try searching for people to connect with</p>
+  </div>
+
+  <!-- Your existing users list -->
+  <ion-list lines="none" class="users-list" *ngIf="accounts?.length > 0">
+    <ion-item *ngFor="let account of accounts | searchFilter: [excludedIds, searchUser]"
+              button
+              detail="false"
+              class="user-item"
+              (click)="viewUser(account.$key)">
+      <!-- Your existing item template -->
+      <ion-avatar slot="start">
+        <img [src]="account.img" [alt]="account.name" onError="this.src='./assets/images/default-dp.png'">
+      </ion-avatar>
+      <ion-label>
+        <h2>{{account.name}}</h2>
+        <p>@{{account.username}}</p>
+      </ion-label>
+      
+      <!-- Your existing buttons -->
+      <ion-button *ngIf="getStatus(account) === 0"
+                  fill="solid"
+                  color="primary"
+                  (click)="sendFriendRequest(account); $event.stopPropagation();">
+        <ion-icon name="person-add-outline" slot="start"></ion-icon>
+        Add
+      </ion-button>
+
+      <!-- Include your Cancel and Accept button logic here -->
+    </ion-item>
+  </ion-list>
+</div>
+
     </div>
   </div>
 </ion-content>

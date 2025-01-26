@@ -21,6 +21,7 @@ import { map } from 'rxjs/operators';
 import { EmojiPickerComponentModule } from '../components/emoji-picker/emoji-picker.module';
 import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { BookmarkService } from '../services/bookmark.service';
 interface Reaction {
   payload: any;
   id?: string;
@@ -46,6 +47,7 @@ interface Checkin {
 interface UserDocument {
   userReactions: any[];
   userNotifications: any[];
+  userBookmarks: any[];
   username: string;
   img: string;
   groups: string[];
@@ -100,6 +102,9 @@ export class PostPage implements OnInit {
   private checkinSubscription: Subscription;
   loggedInUser: UserDocument | null = null;
   userNotifications: any[] = [];
+  userBookmarks: any[] = [];
+
+  isBookmarked: false;
 
   newComment: string = '';
   currentUserAvatar: string; // Set this from your auth service
@@ -173,7 +178,8 @@ export class PostPage implements OnInit {
     public geolocation: Geolocation,
     public alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
-    private afAuth: AngularFireAuth
+    private afAuth: AngularFireAuth,
+    private bookmarkService: BookmarkService
   ) {
    // this.reviewMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FkjD2RUnc.jpg?alt=media&token=d0073c88-58cf-4fc0-9e5c-c6a491bb2673');
     this.post = {reactionType: '', addedByUser: {}, data: {}, date: firebase.default.firestore.Timestamp.now(), reviewMedia: []};
@@ -182,9 +188,6 @@ export class PostPage implements OnInit {
         Validators.required
       ]))
     });
-
-    this.getPostDetails();
-
   }
 
   ionViewDidEnter() {
@@ -202,6 +205,10 @@ export class PostPage implements OnInit {
           if (userData) {
             this.userNotifications = userData.userNotifications || [];
             this.loggedInUser = userData;
+            this.userBookmarks = userData.userBookmarks || [];
+            console.info('userData', userData)
+
+            this.getPostDetails();
           }
         });
       });
@@ -255,6 +262,7 @@ export class PostPage implements OnInit {
                     this.post.reactionType = '';
                   }
                   p.totalReactionCount = totalReactionCount;
+                  
                 }
               },
               error: (error) => {
@@ -320,14 +328,16 @@ export class PostPage implements OnInit {
              console.error('Error fetching reactions:', error);
            }
          });
-
+         console.info('this.userBookmarks', this.userBookmarks)
+         console.info('post.id', post.id) 
+         p.isBookmarked = this.userBookmarks?.includes(post.id) || false;
         // poll related data
         if (p.type === 'poll') {
           console.log('inside poll');
           this.initializePollData(p)
         }
         this.post = p;
-
+        console.info('post', this.post)
         this.loadComments();
       }
       this.loadingProvider.hide();
@@ -647,9 +657,13 @@ viewGroup(groupId) {
     // Implement your share logic here
   }
   
-  toggleBookmark(post: any) {
-    post.isBookmarked = !post.isBookmarked;
-    // Implement your bookmark logic here
+  async toggleBookmark(post: any) {
+    const userId = this.loggedInUserId;
+    post.isBookmarked = await this.bookmarkService.toggleBookmark(
+      post, 
+      userId, 
+      this.userBookmarks
+    );
   }
   
 private initializePollData(p: any) {
@@ -928,4 +942,7 @@ private buildCommentTree(comments: Comment[], maxDepth: number = 2): Comment[] {
 
   return rootComments;
 }
+
 }
+
+

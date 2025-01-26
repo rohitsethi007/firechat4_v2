@@ -54,8 +54,7 @@ export class GroupsPage implements OnInit {
       groups.forEach(element => {
         let group = element.payload.doc.data();
         group.key = element.payload.doc.id;
-        console.info('group', group.members)
-        console.info('loggedInUserId', this.loggedInUserId)
+
         if (group.members.some(e => e === this.loggedInUserId )) {
           group.isUserMember = true;
         } else {

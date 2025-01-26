@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { NavController } from '@ionic/angular';
 import * as firebase from 'firebase/app';
-
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-group-join',
@@ -16,21 +16,20 @@ export class GroupJoinPage implements OnInit {
   groupId: any;
   group: any = {};
   termsAgreed = false;
+  loggedInUserId: any;
 
   constructor(
     private dataProvider: DataService,
+    private afAuth: AngularFireAuth,
     private route: ActivatedRoute,
     private firestore: AngularFirestore,
     public navCtrl: NavController
   ) {
     this.groupId = this.route.snapshot.params.id;
-    this.dataProvider.getCurrentUser().then((u) => {
-      u.get().subscribe((u: any) => {
-        let user = u.data();
-        user.userId = firebase.default.auth().currentUser.uid;
-        console.info('user', user);
-        this.loggedInUser = user;
-      });
+    this.afAuth.currentUser.then(user => {
+      this.loggedInUserId = user?.uid;
+      this.loggedInUser = user;
+      console.info('userId', user)
     })
   }
 
@@ -47,6 +46,7 @@ export class GroupJoinPage implements OnInit {
   }
 
   joinGroup() {
+    console.info('loggedinuser', this.loggedInUser)
     if (this.loggedInUser.groups) {
       this.loggedInUser.groups.push(this.groupId);
     } else {
@@ -54,11 +54,11 @@ export class GroupJoinPage implements OnInit {
     }
 
      // Update group data on the database.
-    this.dataProvider.getUser(this.loggedInUser.userId).update({
+    this.dataProvider.getUser(this.loggedInUserId).update({
       groups: this.loggedInUser.groups
     }).then(() => {
       // Add friend as members of the group.
-      this.group.members.push(firebase.default.auth().currentUser.uid);
+      this.group.members.push(this.loggedInUserId);
 
       // Update group data on the database.
       this.dataProvider.getGroup(this.groupId).update({

@@ -21,7 +21,7 @@ export class FriendsPage implements OnInit {
   title: any;
   requestsSent: any = [];
   friendRequestCount = 0;
-
+  loggedInUserId: any;
   alert: any;
   account: any;
 
@@ -47,8 +47,10 @@ export class FriendsPage implements OnInit {
     this.title = 'Friends';
     this.searchFriend = '';
 
-    if (this.afAuth.currentUser != null) {
-      this.dataProvider.getRequests(this.dataProvider.getCurrentUserId()).snapshotChanges().subscribe((requestsRes: any) => {
+    this.afAuth.currentUser.then(user => {
+      this.loggedInUserId = user?.uid;
+      console.info('this.afAuth.currentUser', this.loggedInUserId)
+      this.dataProvider.getRequests(this.loggedInUserId).snapshotChanges().subscribe((requestsRes: any) => {
         if (requestsRes.payload != null) {
         const requests = requestsRes.payload.data();
         if (requests != null) {
@@ -58,7 +60,7 @@ export class FriendsPage implements OnInit {
         } else { this.friendRequestCount = 0; }
       }
       });
-    }
+    });
   }
 
   segmentChanged($event) {

@@ -12,7 +12,7 @@
 
     <ion-tab-button tab="tab2">
       <ion-icon size="large" name="list"></ion-icon>
-      <ion-badge *ngIf="friendRequestCount != null">{{friendRequestCount}}</ion-badge>
+
       <ion-label size="small">Groups</ion-label>
     </ion-tab-button>
 
@@ -24,7 +24,7 @@
 
     <ion-tab-button tab="tab4">
       <ion-icon size="large" name="people"></ion-icon>
-      <!-- <ion-badge *ngIf="getUnreadGroupMessagesCount() != null">{{getUnreadGroupMessagesCount()}}</ion-badge> -->
+      <ion-badge *ngIf="friendRequestCount != null">{{friendRequestCount}}</ion-badge>
       <ion-label size="small">Friends</ion-label>
     </ion-tab-button>
 

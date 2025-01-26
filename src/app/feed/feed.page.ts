@@ -194,7 +194,7 @@ export class FeedPage implements OnInit {
               this.userNotifications = userData.userNotifications || [];
               this.userBookmarks = userData.userBookmarks || [];
               this.loggedInUser = userData;
-              console.info('this.userBookmarks', this.userBookmarks);
+
               this.getFeedData();
             }
           });
@@ -206,7 +206,6 @@ export class FeedPage implements OnInit {
       try{
       this.loadingProvider.show();
       if (!searchTerm) {
-        console.info('NO searchTerm:', searchTerm)
         this.firstDataSet = this.firestore.collection('posts').ref
         .where('groupId', 'in', this.loggedInUser.groups)
         .orderBy('date', 'desc')
@@ -217,8 +216,6 @@ export class FeedPage implements OnInit {
             this.loadEachPostData(po);
         });
       } else {
-        console.info('GOT searchTerm:', searchTerm)
-
          // Split search term into keywords
           const searchTerms = searchTerm.toLowerCase()
           .split(' ')
@@ -232,7 +229,6 @@ export class FeedPage implements OnInit {
           .orderBy('date', 'desc')
           .limit(20);
             this.firstDataSet.get().then((po: any) => {
-              console.info('found search results:', po.data)
               this.lastDataSet = po.docs[po.docs.length - 1];
         
               this.posts = [];
@@ -660,7 +656,7 @@ export class FeedPage implements OnInit {
             post.reactionType = '';
           }
         });
-        console.info('this.userBookmarks?.includes(p.id) ', this.userBookmarks?.includes(p.id) )
+       
         post.isBookmarked = this.userBookmarks?.includes(p.id) || false;
         this.addOrUpdatePost(post);
       });
