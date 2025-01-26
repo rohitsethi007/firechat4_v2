@@ -171,8 +171,10 @@ export class LoginService {
 
   createNewUser(userId, name, username, email, description = "I'm available", provider, img = "./assets/images/default-dp.png") {
     let dateCreated = new Date();
+    let publicVisibility = false;
+    let showOnline = false;
     this.firestore.collection('accounts').doc(userId).set({
-      dateCreated, username, name, userId, email, description, provider, img
+      dateCreated, username, name, userId, email, description, provider, img, publicVisibility, showOnline
     }).then(() => {
       this.router.navigateByUrl('tabs');
     });
