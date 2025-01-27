@@ -69,8 +69,8 @@ export class DataService {
   }
 
   // Get conversations of the current logged in user.
-  getConversations() {
-    return this.firestore.doc('accounts/' + this.getCurrentUserId()).collection('conversations');
+  getConversations(userId) {
+    return this.firestore.doc('accounts/' + userId).collection('conversations');
     // return this.afdb.list('/accounts/' + this.afAuth.currentUser.uid + '/conversations');
   }
 

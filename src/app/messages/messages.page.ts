@@ -5,6 +5,33 @@ import { DataService } from '../services/data.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 
+// First, define interfaces for your data structures
+interface Message {
+  sender: string;
+  message: string;
+  type: string;
+  date: any; // or use Date or firebase.firestore.Timestamp
+}
+
+interface ConversationData {
+  messages: Message[];
+  participants: string[];
+  conversationId: string;
+  // add other properties your conversation has
+}
+
+interface Conversation {
+  key: string;
+  conversationId: string;
+  friend?: any;
+  date?: any;
+  sender?: string;
+  message?: string;
+  unreadMessagesCount?: number;
+  messagesRead?: number;
+  // add other properties your conversation has
+}
+
 @Component({
   selector: 'app-messages',
   templateUrl: './messages.page.html',
@@ -15,6 +42,7 @@ export class MessagesPage implements OnInit {
   conversations: any;
   updateDateTime: any;
   searchFriend: any = '';
+  loggedInUserId: any;
 
   constructor(
     private router: Router,
@@ -25,83 +53,16 @@ export class MessagesPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.afAuth.currentUser.then(user => {
+      this.loggedInUserId = user?.uid;
+    });
   }
+  
 
   ionViewDidEnter() {
     this.loadingProvider.show();
 
-    // Get info of conversations of current logged in user.
-    this.dataProvider.getConversations().snapshotChanges().subscribe((conversationsInfoRes: any) => {
-      let conversations = [];
-      console.log('conversationsInfoRes',conversationsInfoRes);
-      conversations = conversationsInfoRes.map(c => ({ key: c.payload.doc.id, ...c.payload.doc.data() }));
-      
-      console.log('conversations:', conversations);
-      if (conversations.length > 0) {
-        conversations.forEach((conversation) => {
-          console.log('conversation',conversation);
-          if (conversation) {
-            // Get conversation partner info.
-            this.dataProvider.getUser(conversation.key).get().subscribe((user) => {
-              conversation.friend = user.data();
-              // Get conversation info.
-
-              this.dataProvider.getConversation(conversation.conversationId).snapshotChanges().subscribe(async (obj: any) => {
-                // Get last message of conversation.
-                console.log(obj.payload.data());
-                if (obj.payload.data() != null) {
-                  let lastMessage = obj.payload.data().messages[obj.payload.data().messages.length - 1];
-                  conversation.date = lastMessage.date;
-                  conversation.sender = lastMessage.sender;
-                  // Set unreadMessagesCount
-                  conversation.unreadMessagesCount = obj.payload.data().messages.length - conversation.messagesRead;
-                  console.log(obj.payload.data().messages.length + "-" + conversation.messagesRead);
-                  console.log(conversation.unreadMessagesCount);
-                  let userId = await this.afAuth.currentUser.then((u) => { return u.uid});
-                  // Process last message depending on messageType.
-                  if (lastMessage.type == 'text') {
-
-                    if (lastMessage.sender == userId) {
-                      conversation.message = 'You: ' + lastMessage.message;
-                    } else {
-                      conversation.message = lastMessage.message;
-                    }
-                  } else {
-                    if (lastMessage.sender == userId) {
-                      conversation.message = 'You sent a photo message.';
-                    } else {
-                      conversation.message = 'has sent you a photo message.';
-                    }
-                  }
-                  // Add or update conversation.
-                  this.addOrUpdateConversation(conversation);
-                }
-              });
-            });
-          }
-
-        });
-
-        this.loadingProvider.hide();
-      }
-      else {
-        this.conversations = [];
-        this.loadingProvider.hide();
-      }
-    });
-
-    // Update conversations' last active date time elapsed every minute based on Moment.js.
-    var that = this;
-    if (!that.updateDateTime) {
-      that.updateDateTime = setInterval(function () {
-        if (that.conversations) {
-          that.conversations.forEach((conversation) => {
-            let date = conversation.date;
-            conversation.date = new Date(date);
-          });
-        }
-      }, 60000);
-    }
+    this.loadConversations();
   }
 
   // Add or update conversation for real-time sync based on our observer, sort by active date.
@@ -149,4 +110,110 @@ export class MessagesPage implements OnInit {
       return '';
   }
 
+  async loadConversations() {
+    try {
+      const userId = await this.afAuth.currentUser;
+      if (!userId) {
+        console.error('No user logged in');
+        return;
+      }
+  
+      this.dataProvider.getConversations(this.loggedInUserId).snapshotChanges().subscribe({
+        next: async (conversationsInfoRes: any) => {
+          console.log('Raw conversations response:', conversationsInfoRes);
+          
+          if (!conversationsInfoRes || conversationsInfoRes.length === 0) {
+            console.log('No conversations found');
+            this.conversations = [];
+            this.loadingProvider.hide();
+            return;
+          }
+  
+          let conversations: Conversation[] = conversationsInfoRes.map(c => ({
+            key: c.payload.doc.id,
+            ...c.payload.doc.data()
+          }));
+  
+          console.log('Mapped conversations:', conversations);
+  
+          const conversationPromises = conversations.map(async (conversation) => {
+            try {
+              const userSnapshot = await this.dataProvider.getUser(conversation.key).get().toPromise();
+              if (!userSnapshot.exists) {
+                console.log(`No user found for conversation ${conversation.key}`);
+                return null;
+              }
+  
+              conversation.friend = userSnapshot.data();
+  
+              const conversationSnapshot = await this.dataProvider
+                .getConversation(conversation.conversationId)
+                .get()
+                .toPromise();
+  
+              if (!conversationSnapshot.exists) {
+                console.log(`No conversation found for ID ${conversation.conversationId}`);
+                return null;
+              }
+  
+              const conversationData = conversationSnapshot.data() as ConversationData;
+              
+              if (!conversationData?.messages?.length) {
+                console.log(`No messages in conversation ${conversation.conversationId}`);
+                return null;
+              }
+  
+              const lastMessage = conversationData.messages[conversationData.messages.length - 1];
+              
+              conversation.date = lastMessage.date;
+              conversation.sender = lastMessage.sender;
+              conversation.unreadMessagesCount = 
+                conversationData.messages.length - (conversation.messagesRead || 0);
+  
+              const currentUserId = userId.uid;
+              if (lastMessage.type === 'text') {
+                conversation.message = lastMessage.sender === currentUserId
+                  ? `You: ${lastMessage.message}`
+                  : lastMessage.message;
+              } else {
+                conversation.message = lastMessage.sender === currentUserId
+                  ? 'You sent a photo message.'
+                  : 'has sent you a photo message.';
+              }
+  
+              return conversation;
+            } catch (error) {
+              console.error(`Error processing conversation:`, error);
+              return null;
+            }
+          });
+  
+          const processedConversations = await Promise.all(conversationPromises);
+          
+          const validConversations = processedConversations
+            .filter((conv): conv is Conversation => conv !== null)
+            .sort((a, b) => b.date - a.date);
+  
+          console.log('Processed conversations:', validConversations);
+  
+          validConversations.forEach(conversation => {
+            this.addOrUpdateConversation(conversation);
+          });
+  
+        },
+        error: (error) => {
+          console.error('Error fetching conversations:', error);
+          this.loadingProvider.hide();
+        },
+        complete: () => {
+          this.loadingProvider.hide();
+        }
+      });
+  
+    } catch (error) {
+      console.error('Error in loadConversations:', error);
+      this.loadingProvider.hide();
+    }
+  }
+  
 }
