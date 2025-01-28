@@ -1,67 +1,95 @@
-<ion-header>
-  <ion-toolbar color="primary">
+<ion-header class="ion-no-border">
+  <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-    <ion-title (click)="viewUser(userId)">{{title}}</ion-title>
+    <div class="chat-header">
+      <ion-avatar>
+        <img [src]="userAvatar || './assets/images/default-dp.png'" alt="User avatar">
+      </ion-avatar>
+      <div class="user-details">
+        <h2>{{title}}</h2>
+        <p *ngIf="isOnline">Online</p>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [scrollEvents]="true" #content>
-  <div class="messages" #contentArea>
-    <p class="center" *ngIf="startIndex > 0"><span tappable (click)="loadPreviousMessages()">Load previous
-        messages</span></p>
-    <div *ngFor="let message of messagesToShow">
-      <div *ngIf="isSender(message)" class="chatbox right sender">
-        <div *ngIf="message.type == 'text'">
-          <p style="margin:0">{{message.message}}</p>
+
+<ion-content [scrollEvents]="true" #content class="chat-content">
+  <div class="messages-container" #contentArea>
+    <ion-button 
+      *ngIf="startIndex > 0" 
+      fill="clear" 
+      class="load-more-btn"
+      (click)="loadPreviousMessages()">
+      Load previous messages
+    </ion-button>
+
+    <div class="message-wrapper" *ngFor="let message of messagesToShow; trackBy: trackByFn">
+      <div class="message-bubble" [ngClass]="{'sender': isSender(message), 'receiver': !isSender(message)}">
+        <!-- Text Message -->
+        <div *ngIf="message.type === 'text'" class="message-text">
+          {{message.message}}
         </div>
-        <div *ngIf="message.type == 'location'" [innerHtml]="message.message"></div>
-        <div *ngIf="message.type == 'contact'" [innerHtml]="message.message"></div>
-        <div *ngIf="message.type == 'image'">
-          <img tappable (click)="enlargeImage(message.message)" src="{{message.message}}" />
+
+        <!-- Image Message -->
+        <div *ngIf="message.type === 'image'" class="message-image-container">
+          <img [src]="message.message" 
+               (click)="enlargeImage(message.message)"
+               loading="lazy"
+               alt="Shared image">
         </div>
-        <div *ngIf="message.type == 'video'">
-          <video controls width="100%">
-            <source src="{{message.message}}" type="video/mp4">
+
+        <!-- Video Message -->
+        <div *ngIf="message.type === 'video'" class="message-video-container">
+          <video controls playsinline>
+            <source [src]="message.message" type="video/mp4">
           </video>
         </div>
-        <span>{{message.date | DateFormat}}</span>
-      </div>
-      <div *ngIf="!isSender(message)" class="chatbox left">
-        <div *ngIf="message.type == 'text'">
-          <p style="margin:0">{{message.message}}</p>
+
+        <!-- Location Message -->
+        <div *ngIf="message.type === 'location'" class="message-location">
+          <div [innerHtml]="message.message"></div>
         </div>
-        <div *ngIf="message.type == 'location'" [innerHtml]="message.message"></div>
-        <div *ngIf="message.type == 'contact'" [innerHtml]="message.message"></div>
-        <div *ngIf="message.type == 'image'">
-          <img tappable (click)="enlargeImage(message.message)" src="{{message.message}}" />
+
+        <!-- Contact Message -->
+        <div *ngIf="message.type === 'contact'" class="message-contact">
+          <div [innerHtml]="message.message"></div>
         </div>
-        <div *ngIf="message.type == 'video'">
-          <video controls width="100%">
-            <source src="{{message.message}}" type="video/mp4">
-          </video>
+
+        <div class="message-timestamp">
+          {{message.date | DateFormat}}
         </div>
-        <span>{{message.date | DateFormat}}</span>
       </div>
     </div>
-
   </div>
 </ion-content>
 
-<ion-footer>
+<ion-footer class="ion-no-border">
   <ion-toolbar>
-    <ion-item class="bottom_bar">
-      <ion-textarea style="margin:0" rows="0" placeholder="Type your message" [(ngModel)]="message">
+    <div class="input-container">
+      <ion-textarea
+        #messageInput
+        [(ngModel)]="message"
+        placeholder="Message"
+        [autoGrow]="true"
+        [rows]="1"
+        class="message-input">
       </ion-textarea>
-      <ion-buttons slot="end" style="margin-left:4px;">
-        <ion-button fill="clear" (click)="attach()">
-          <ion-icon name="attach"></ion-icon>
+
+      <div class="action-buttons">
+        <ion-button class="attachment-btn" fill="clear" (click)="attach()">
+          <ion-icon slot="icon-only" name="attach-outline"></ion-icon>
         </ion-button>
-        <ion-button color="primary" fill="clear" (click)="send('text')" [disabled]="!message">
-          send
+        <ion-button 
+          class="send-btn" 
+          [disabled]="!message?.trim()"
+          (click)="send('text')">
+          <ion-icon slot="icon-only" name="send"></ion-icon>
         </ion-button>
-      </ion-buttons>
-    </ion-item>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-footer>
+

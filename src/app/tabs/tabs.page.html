@@ -18,7 +18,7 @@
 
     <ion-tab-button tab="tab3">
       <ion-icon size="large" name="chatbubbles"></ion-icon>
-      <!-- <ion-badge *ngIf="getUnreadGroupMessagesCount() != null">{{getUnreadGroupMessagesCount()}}</ion-badge> -->
+      <ion-badge *ngIf="totalUnreadMessages > 0">{{totalUnreadMessages}}</ion-badge>
       <ion-label size="small">Messages</ion-label>
     </ion-tab-button>
 

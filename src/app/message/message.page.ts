@@ -11,7 +11,11 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { ImagemodalPage } from '../imagemodal/imagemodal.page';
 import { AngularFirestore } from '@angular/fire/firestore';
-
+interface ConversationData {
+  messages?: Array<any>;
+  dateCreated?: string;
+  users?: string[];
+}
 @Component({
   selector: 'app-message',
   templateUrl: './message.page.html',
@@ -166,16 +170,33 @@ export class MessagePage implements OnInit {
 
   // Check if currentPage is active, then update user's messagesRead.
   setMessagesRead() {
-    firebase.default.database().ref('/conversations/' + this.conversationId + '/messages').once('value', snap => {
-      console.log(snap.val());
-
-      if (snap.val() != null) {
-        this.firestore.doc('/accounts/' + this.loggedInUserId + '/conversations/' + this.userId).update({
-          messagesRead: snap.val().length
+    if (this.conversationId) {
+      // Get messages from Firestore conversation
+      this.firestore.doc(`conversations/${this.conversationId}`)
+        .get()
+        .subscribe(doc => {
+          if (doc.exists) {
+            const data = doc.data() as ConversationData;
+            const messagesLength = data.messages?.length || 0;
+            
+            console.log('Total messages:', messagesLength);
+  
+            // Update the messagesRead count in user's conversation reference
+            this.firestore.doc(`/accounts/${this.loggedInUserId}/conversations/${this.userId}`)
+              .update({
+                messagesRead: messagesLength
+              })
+              .then(() => {
+                console.log('Messages marked as read:', messagesLength);
+              })
+              .catch(error => {
+                console.error('Error updating messagesRead:', error);
+              });
+          }
         });
-      }
-    });
+    }
   }
+  
 
   scrollBottom() {
     console.log("Calling Sb")
@@ -359,5 +380,9 @@ export class MessagePage implements OnInit {
     }).then(res => {
       res.present();
     });
+  }
+
+  getUnreadUserMessagesCount() {
+    
   }
 }

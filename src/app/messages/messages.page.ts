@@ -55,6 +55,7 @@ export class MessagesPage implements OnInit {
   ngOnInit() {
     this.afAuth.currentUser.then(user => {
       this.loggedInUserId = user?.uid;
+      
     });
   }
   
