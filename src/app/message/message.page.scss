@@ -233,3 +233,178 @@ ion-footer {
   --color: var(--sender-message-bg);
   font-size: 14px;
 }
+
+.custom-action-sheet {
+  --background: var(--ion-color-light);
+  border-radius: 20px;
+  
+  .action-sheet-group {
+    background: var(--ion-color-light);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .action-sheet-title {
+    color: var(--ion-color-dark);
+    font-size: 1.1em;
+    font-weight: 600;
+    padding: 16px;
+  }
+
+  .action-sheet-button {
+    color: var(--ion-color-dark);
+    font-size: 1em;
+    min-height: 56px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    
+    ion-icon {
+      margin-right: 32px;
+      font-size: 24px;
+      padding: 8px;
+      border: 2px solid #2dd36f;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(45, 211, 111, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    &:hover {
+      background: var(--ion-color-light-shade);
+      
+      ion-icon {
+        background: rgba(45, 211, 111, 0.2);
+        transform: scale(1.05);
+      }
+    }
+
+    &.action-sheet-cancel-btn {
+      color: var(--ion-color-danger);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      margin-top: 8px;
+      
+      ion-icon {
+        border-color: var(--ion-color-danger);
+        background: rgba(235, 68, 90, 0.1);
+      }
+
+      &:hover ion-icon {
+        background: rgba(235, 68, 90, 0.2);
+      }
+    }
+  }
+
+  // Custom icon colors with green outline maintained
+  .action-sheet-camera-btn ion-icon {
+    color: var(--ion-color-primary);
+  }
+
+  .action-sheet-gallery-btn ion-icon {
+    color: var(--ion-color-secondary);
+  }
+
+  .action-sheet-video-btn ion-icon {
+    color: var(--ion-color-tertiary);
+  }
+
+  .action-sheet-location-btn ion-icon {
+    color: var(--ion-color-success);
+  }
+
+  .action-sheet-contact-btn ion-icon {
+    color: var(--ion-color-warning);
+  }
+}
+
+.location-alert {
+  .alert-wrapper {
+    --min-width: 320px;
+    --max-width: 90%;
+    border-radius: 16px;
+  }
+
+  .alert-head {
+    padding: 16px;
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+  }
+
+  .location-preview {
+    padding: 8px 0;
+    text-align: center;
+
+    .location-icon {
+      margin-bottom: 16px;
+      
+      ion-icon {
+        font-size: 32px;
+        --ionicon-stroke-width: 2px;
+      }
+    }
+
+    .location-details {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--ion-color-dark);
+      
+      a {
+        color: var(--ion-color-primary);
+        text-decoration: none;
+      }
+    }
+  }
+
+  .alert-button-group {
+    padding: 8px;
+    display: flex;
+    gap: 8px;
+
+    button {
+      margin: 0;
+      border-radius: 8px;
+      text-transform: none;
+      flex: 1;
+    }
+
+    .location-cancel-btn {
+      --background: var(--ion-color-light);
+      --color: var(--ion-color-medium);
+      border: 1px solid var(--ion-color-medium);
+    }
+
+    .location-share-btn {
+      --background: var(--ion-color-primary);
+      --color: white;
+    }
+  }
+}
+
+.error-alert {
+  .alert-wrapper {
+    border-radius: 16px;
+  }
+
+  .alert-head {
+    padding: 16px;
+    h2 {
+      color: var(--ion-color-danger);
+    }
+  }
+
+  .alert-message {
+    color: var(--ion-color-dark);
+  }
+}
+
+
+
+

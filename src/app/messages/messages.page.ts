@@ -4,6 +4,8 @@ import { LoadingService } from '../services/loading.service';
 import { DataService } from '../services/data.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { of, Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 // First, define interfaces for your data structures
 interface Message {
@@ -43,7 +45,9 @@ export class MessagesPage implements OnInit {
   updateDateTime: any;
   searchFriend: any = '';
   loggedInUserId: any;
-
+  private subscriptions: Subscription[] = [];
+  unreadMessageCount: number = 0;
+  
   constructor(
     private router: Router,
     private afAuth: AngularFireAuth,
@@ -56,9 +60,67 @@ export class MessagesPage implements OnInit {
     this.afAuth.currentUser.then(user => {
       this.loggedInUserId = user?.uid;
       
+        // Set up unread messages count subscription
+    this.subscriptions.push(
+      this.afAuth.authState.pipe(
+        switchMap(user => {
+          if (!user) {
+            console.log('No user logged in');
+            return of(0);
+          }
+          
+          return this.dataProvider.getConversations(user.uid).snapshotChanges().pipe(
+            switchMap(async (conversationsInfoRes: any) => {
+              let totalUnread = 0;
+              
+              if (!conversationsInfoRes || conversationsInfoRes.length === 0) {
+                return totalUnread;
+              }
+
+              const conversations = conversationsInfoRes.map(c => ({
+                key: c.payload.doc.id,
+                ...c.payload.doc.data()
+              }));
+
+              for (const conversation of conversations) {
+                try {
+                  const conversationSnapshot = await this.dataProvider
+                    .getConversation(conversation.conversationId)
+                    .get()
+                    .toPromise();
+
+                  if (conversationSnapshot.exists) {
+                    const conversationData = conversationSnapshot.data() as ConversationData;
+                    if (conversationData?.messages?.length) {
+                      const unreadCount = 
+                        conversationData.messages.length - (conversation.messagesRead || 0);
+                      totalUnread += unreadCount;
+                    }
+                  }
+                } catch (error) {
+                  console.error(`Error calculating unread messages:`, error);
+                }
+              }
+              
+              return totalUnread;
+            })
+          );
+        })
+      ).subscribe({
+        next: (count) => {
+        },
+        error: (error) => {
+          console.error('Error in unread messages subscription:', error);
+        }
+      })
+    );
     });
   }
-  
+  ngOnDestroy() {
+    // Clean up subscriptions
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
 
   ionViewDidEnter() {
     this.loadingProvider.show();

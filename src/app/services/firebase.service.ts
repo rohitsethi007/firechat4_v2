@@ -9,6 +9,9 @@ import { take } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class FirebaseService {
+  joinGroup(id: any) {
+    throw new Error('Method not implemented.');
+  }
 
   constructor(
     public firestore: AngularFirestore,
