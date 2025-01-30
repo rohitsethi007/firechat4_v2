@@ -11,30 +11,7 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { ImagemodalPage } from '../imagemodal/imagemodal.page';
 import { AngularFirestore } from '@angular/fire/firestore';
-interface ConversationData {
-  messages?: Array<any>;
-  dateCreated?: string;
-  users?: string[];
-}
-interface LocationData {
-  latitude: number;
-  longitude: number;
-}
-
-// Update the interface to match the Contact plugin's types
-interface ContactData {
-  displayName: string | null;
-  name?: {
-    givenName?: string;
-    familyName?: string;
-  };
-  phoneNumbers?: Array<{
-    value?: string;
-    type?: string;
-    id?: string;
-    pref?: boolean;
-  }>;
-}
+import { ConversationData, LocationData, ContactData } from '../models/interfaces';
 
 @Component({
   selector: 'app-message',

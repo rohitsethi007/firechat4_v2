@@ -6,33 +6,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { of, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-
-// First, define interfaces for your data structures
-interface Message {
-  sender: string;
-  message: string;
-  type: string;
-  date: any; // or use Date or firebase.firestore.Timestamp
-}
-
-interface ConversationData {
-  messages: Message[];
-  participants: string[];
-  conversationId: string;
-  // add other properties your conversation has
-}
-
-interface Conversation {
-  key: string;
-  conversationId: string;
-  friend?: any;
-  date?: any;
-  sender?: string;
-  message?: string;
-  unreadMessagesCount?: number;
-  messagesRead?: number;
-  // add other properties your conversation has
-}
+import { ConversationData, Conversation} from '../models/interfaces';
 
 @Component({
   selector: 'app-messages',

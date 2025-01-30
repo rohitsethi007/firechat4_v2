@@ -22,66 +22,8 @@ import { EmojiPickerComponentModule } from '../components/emoji-picker/emoji-pic
 import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { BookmarkService } from '../services/bookmark.service';
-interface Reaction {
-  payload: any;
-  id?: string;
-  addedByUser: {
-    addedByImg: string;
-    addedByKey: string;
-    addedByUsername: string;
-  };
-  dateCreated: string;
-  reactionType: string;
-}
-interface Checkin {
-  payload: any;
-  id?: string;
-  addedByUser: {
-    addedByImg: string;
-    addedByKey: string;
-    addedByUsername: string;
-  };
-  dateCreated: string;
-}
-// Add interface for user data
-interface UserDocument {
-  userReactions: any[];
-  userNotifications: any[];
-  userBookmarks: any[];
-  username: string;
-  img: string;
-  groups: string[];
-  // add other properties as needed
-}
-interface PollOption {
-  name: string;
-  members: string[] | null;
-}
-// First, define your interfaces
-interface Comment {
-  id?: string;
-  postId: string;
-  content: string;
-  addedByUser: {
-    addedByKey: string;
-    addedByUsername: string;
-    addedByImg: string;
-  };
-  createdAt: any;
-  parentId?: string; // Reference to parent comment
-  likes?: number;
-  likedBy?: string[]; // Array of user IDs who liked the comment
-  replies?: Comment[]; // Array to hold replies
-  showReplyInput?: boolean;
-  replyText?: string;
-}
-interface PollData {
-  pollOptions: PollOption[];
-  dateEnding: any; // Replace 'any' with proper Firebase Timestamp type if available
-}
-interface FirestoreComment extends Omit<Comment, 'id'> {
-  // This interface represents the data as it exists in Firestore
-}
+import { Reaction, Checkin, UserDocument, PollOption, Comment, PollData} from '../models/interfaces';
+
 @Component({
   selector: 'app-post',
   templateUrl: './post.page.html',

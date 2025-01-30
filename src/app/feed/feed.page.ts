@@ -25,18 +25,7 @@ import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.co
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { BookmarkService } from '../services/bookmark.service';
-
-// Add interface for user data
-interface UserDocument {
-  userReactions: any[];
-  userNotifications: any[];
-  userBookmarks: any[];
-  username: string;
-  img: string;
-  groups: string[];
-  userId: string;
-  // add other properties as needed
-}
+import { UserDocument } from '../models/interfaces' 
 
 @Component({
   selector: 'app-feed',

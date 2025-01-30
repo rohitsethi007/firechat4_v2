@@ -11,25 +11,8 @@ import * as firebase from 'firebase/app';
 import { AngularFirestore } from '@angular/fire/firestore';
 
 import * as moment from 'moment';
-import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
+import { Event, Group } from '../models/interfaces'
 
-interface Event {
-  groupId: string;
-  groupName: string;
-  date: Date;
-  time: string;
-  title: string;
-  location: string;
-  videoLink?: string;
-  bannerImage?: string;
-  createdAt: Date;
-}
-
-interface Group {
-  name: string;
-  posts: string[];
-  // other properties
-}
 
 @Component({
   selector: 'app-new-event',

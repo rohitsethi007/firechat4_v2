@@ -35,10 +35,7 @@ import { SharedModule } from './services/share.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ImagemodalPageModule } from './imagemodal/imagemodal.module';
-import { TagModalPageModule } from './tag-modal/tag-modal.module';
 import { UserProfileModalPageModule } from './user-profile-modal/user-profile-modal.module';
-import { PopoverPageModule } from './popover/popover.module';
-import { ReviewModalPageModule } from './review-modal/review-modal.module';
 import { ReactionListModalPageModule } from './reaction-list-modal/reaction-list-modal.module';
 import { Chooser } from '@ionic-native/chooser/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
@@ -66,9 +63,6 @@ import { FilterComponent } from './feed/filter.component';
     FormsModule,
     ReactiveFormsModule,
     ImagemodalPageModule,
-    ReviewModalPageModule,
-    TagModalPageModule,
-    PopoverPageModule,
     ReactionListModalPageModule,
     UserProfileModalPageModule
   ],
