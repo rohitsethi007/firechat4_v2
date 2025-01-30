@@ -64,11 +64,12 @@ export class ProfilePage implements OnInit {
   ) {
    
     this.loggedInUserId = firebase.auth().currentUser.uid;
-    this.userId = this.route.snapshot.params.id;
-
-    if (this.userId === this.loggedInUserId) {
+    this.userId = this.route.snapshot?.params.id;
+   if (this.userId === undefined || this.userId === this.loggedInUserId) {
+    console.info('enter 1');
       this.myProfile = true;
     } else {
+      console.info('enter 2');
       this.myProfile = false;
     }
 

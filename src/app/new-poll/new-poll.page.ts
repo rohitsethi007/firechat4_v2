@@ -84,7 +84,6 @@ export class NewPollPage implements OnInit {
         addedByUser: this.addedByUser,
         date: '',
         title: '',
-        // postTags: [],
         groupId: '',
         groupName: '',
         type: 'poll',
@@ -141,8 +140,6 @@ export class NewPollPage implements OnInit {
       this.poll.groupName = this.group.name;
       this.poll.date = new Date();
       this.poll.title = this.pollForm.value.description;
-      // this.poll.postTags = [];
-      // this.poll.postTags = this.postTags;
 
       const today = new Date();
       const dd = today.getDate();
