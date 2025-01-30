@@ -50,12 +50,6 @@ const routes: Routes = [
   { path: 'group-search', loadChildren: './group-search/group-search.module#GroupSearchPageModule' },
   { path: 'group-join/:id', loadChildren: './group-join/group-join.module#GroupJoinPageModule' },
   { path: 'feed-search', loadChildren: './feed-search/feed-search.module#FeedSearchPageModule' },
-
-
-
-
-
-
 ];
 @NgModule({
   imports: [
