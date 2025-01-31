@@ -26,12 +26,12 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { BookmarkService } from '../services/bookmark.service';
 import { UserDocument } from '../models/interfaces' 
-
+   
 @Component({
   selector: 'app-feed',
   templateUrl: './feed.page.html',
   styleUrls: ['./feed.page.scss'],
-})
+})   
 export class FeedPage implements OnInit {
     @ViewChild(IonInfiniteScroll, {static: true}) infiniteScroll: IonInfiniteScroll;
     @ViewChild('searchbar') searchbar: IonSearchbar;
