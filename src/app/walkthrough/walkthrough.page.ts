@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild, HostBinding } from '@angular/core';
 
-import { IonSlides, MenuController } from '@ionic/angular';
+import { IonicSlides, MenuController } from '@ionic/angular';
 
 @Component({
   selector: 'app-walkthrough',
