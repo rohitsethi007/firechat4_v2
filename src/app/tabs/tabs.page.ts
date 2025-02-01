@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { Auth } from '@angular/fire/auth';
 import { combineLatest, Observable, of, Subscription } from 'rxjs';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { Firestore } from '@angular/fire/firestore';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -32,8 +32,8 @@ export class TabsPage {
     public dataProvider: DataService,
     public storage: Storage,
     private router: Router,
-    private afAuth: AngularFireAuth,
-    public firestore: AngularFirestore
+    private afAuth: Auth,
+    public firestore: Firestore
     ) {
 
   // Get friend requests count.
