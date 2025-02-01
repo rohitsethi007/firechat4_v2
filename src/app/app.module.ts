@@ -43,51 +43,50 @@ import { FCM } from '@ionic-native/fcm/ngx';
 import { FilterComponent } from './feed/filter.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    FilterComponent
-  ],
-  entryComponents: [],
-  imports: [
-    BrowserModule,
-    IonicModule.forRoot({
-      mode: 'md',
-    }),
-    IonicStorageModule.forRoot(),
-    AppRoutingModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
-    AngularFireStorageModule,
-    AngularFireAuthModule,
-    SharedModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ImagemodalPageModule,
-    ReactionListModalPageModule,
-    UserProfileModalPageModule
-  ],
-  providers: [
-    StatusBar,
-    SplashScreen,
-    GooglePlus,
-    Facebook,
-    Camera,
-    MediaCapture,
-    File,
-    FileTransfer,
-    FilePath,
-    FileChooser,
-    FirebaseX,
-    Geolocation,
-    ImagePicker,
-    Contacts,
-    Chooser,
-    Keyboard,
-    LocalNotifications,
-    FCM,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        FilterComponent
+    ],
+    imports: [
+        BrowserModule,
+        IonicModule.forRoot({
+            mode: 'md',
+        }),
+        IonicStorageModule.forRoot(),
+        AppRoutingModule,
+        AngularFireModule.initializeApp(environment.firebase),
+        AngularFirestoreModule,
+        AngularFireStorageModule,
+        AngularFireAuthModule,
+        SharedModule,
+        FormsModule,
+        ReactiveFormsModule,
+        ImagemodalPageModule,
+        ReactionListModalPageModule,
+        UserProfileModalPageModule
+    ],
+    providers: [
+        StatusBar,
+        SplashScreen,
+        GooglePlus,
+        Facebook,
+        Camera,
+        MediaCapture,
+        File,
+        FileTransfer,
+        FilePath,
+        FileChooser,
+        FirebaseX,
+        Geolocation,
+        ImagePicker,
+        Contacts,
+        Chooser,
+        Keyboard,
+        LocalNotifications,
+        FCM,
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
 
