@@ -41,12 +41,4 @@ export class LoginPage implements OnInit {
       console.log('invalid');
     }
   }
-
-  loginWithFacebook() {
-    this.loginService.fbLogin();
-  }
-
-  loginWithGoogle() {
-    this.loginService.gLogin();
-  }
 }

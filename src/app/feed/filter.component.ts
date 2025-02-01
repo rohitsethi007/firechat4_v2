@@ -238,7 +238,7 @@ import { DataService } from '../services/data.service';
       align-items: center;
       justify-content: center;
       margin-bottom: 4px;
-      overflow: hidden; // Added for image containment
+      overflow: hidden; 
 
       img {
         width: 100%;
@@ -374,16 +374,16 @@ import { DataService } from '../services/data.service';
   gap: 8px;
 
   .filter-chip {
-    padding: 8px 4px; // Reduced padding
+    padding: 8px 4px;
     
     ion-icon {
-      font-size: 20px; // Slightly smaller icon
-      margin-bottom: 2px; // Reduced spacing between icon and text
+      font-size: 20px; 
+      margin-bottom: 2px; 
     }
 
     span {
-      font-size: 11px; // Smaller text
-      font-weight: 500; // Medium weight for better readability at small size
+      font-size: 11px;
+      font-weight: 500; 
       line-height: 1;
       text-align: center;
       -webkit-transform: translate3d(0,0,0);

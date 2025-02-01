@@ -163,6 +163,8 @@ export class DataService {
                   return this.firestore.doc('posts/' + postId).update({
                     postMediaImgs: postMediaUrls
                   });
+                } else {
+                  return null;
                 }
               })
               .then(() => {

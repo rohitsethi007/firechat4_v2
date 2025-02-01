@@ -192,7 +192,7 @@ export class FeedPage implements OnInit {
     }
 
     async getFeedData(event?: any, searchTerm?: string) {
-      try{
+    try{
       this.loadingProvider.show();
       if (!searchTerm) {
         this.firstDataSet = this.firestore.collection('posts').ref
@@ -231,9 +231,7 @@ export class FeedPage implements OnInit {
       console.error('Error fetching feed data:', error);
       this.isSearchActive = false;
       this.loadingProvider.hide();
-      return [];
     }
-
     }
 
     addOrUpdatePost(post) {
