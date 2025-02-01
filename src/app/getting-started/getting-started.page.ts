@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild, HostBinding } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { Router, NavigationExtras } from '@angular/router';
 import { IonSlides, MenuController } from '@ionic/angular';
 
@@ -16,18 +16,18 @@ export class GettingStartedPage implements OnInit, AfterViewInit {
   @ViewChild(IonSlides, { static: true }) slides: IonSlides;
   @HostBinding('class.last-slide-active') isLastSlide = false;
 
-  gettingStartedForm: FormGroup;
+  gettingStartedForm: UntypedFormGroup;
 
   constructor(public menu: MenuController, public router: Router) {
-    this.gettingStartedForm = new FormGroup({
-      browsingCategory: new FormControl('men'),
-      followingInterests: new FormGroup({
-        tops: new FormControl(),
-        dresses: new FormControl(),
-        jeans: new FormControl(),
-        jackets: new FormControl(),
-        shoes: new FormControl(),
-        glasses: new FormControl()
+    this.gettingStartedForm = new UntypedFormGroup({
+      browsingCategory: new UntypedFormControl('men'),
+      followingInterests: new UntypedFormGroup({
+        tops: new UntypedFormControl(),
+        dresses: new UntypedFormControl(),
+        jeans: new UntypedFormControl(),
+        jackets: new UntypedFormControl(),
+        shoes: new UntypedFormControl(),
+        glasses: new UntypedFormControl()
       })
     });
   }

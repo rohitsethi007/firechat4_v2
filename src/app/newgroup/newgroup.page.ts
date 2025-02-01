@@ -7,7 +7,7 @@ import { Camera } from '@ionic-native/camera/ngx';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, UntypedFormControl } from '@angular/forms';
 import { PickerController } from '@ionic/angular';
 import { PickerOptions } from '@ionic/core';
 
@@ -19,7 +19,7 @@ import { PickerOptions } from '@ionic/core';
 export class NewgroupPage implements OnInit {
 
   group: any;
-  groupForm: FormGroup;
+  groupForm: UntypedFormGroup;
   friends: any;
   searchFriend: any;
   groupMembers: any;
@@ -30,7 +30,7 @@ export class NewgroupPage implements OnInit {
   groupTags: any;
   category: any = {text: '', value: ''};
   account: any;
-  myForm: FormGroup;
+  myForm: UntypedFormGroup;
   submitAttempt = false;
   categoriesOption: any;
   categories: any;
@@ -44,21 +44,21 @@ export class NewgroupPage implements OnInit {
     private afAuth: AngularFireAuth,
     public loadingProvider: LoadingService,
     public camera: Camera,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private pickerController: PickerController
   ) {
-    this.myForm = new FormGroup(
+    this.myForm = new UntypedFormGroup(
       {
-        groupName: new FormControl('', Validators.compose([
+        groupName: new UntypedFormControl('', Validators.compose([
           Validators.required
         ])),
-        groupDescription: new FormControl('', Validators.compose([
+        groupDescription: new UntypedFormControl('', Validators.compose([
           Validators.required
         ])),
-        groupTags: new FormControl('', Validators.compose([
+        groupTags: new UntypedFormControl('', Validators.compose([
           Validators.required
         ])),
-        img: new FormControl('')
+        img: new UntypedFormControl('')
       });
   }
 

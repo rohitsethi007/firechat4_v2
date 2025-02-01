@@ -1,9 +1,9 @@
-import { ValidatorFn, FormArray } from '@angular/forms';
+import { ValidatorFn, UntypedFormArray } from '@angular/forms';
 
 export class CheckboxCheckedValidator {
 
   static tagsSelected(min) {
-    const validator: ValidatorFn = (formArray: FormArray) => {
+    const validator: ValidatorFn = (formArray: UntypedFormArray) => {
       const totalSelected = formArray.controls
         .map(control => control.value)
         .reduce((prev, next) => next ? prev + next : prev, 0);

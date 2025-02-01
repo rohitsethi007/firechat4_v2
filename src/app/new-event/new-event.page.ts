@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
 import { ActionSheetController, NavController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../services/data.service';
@@ -23,7 +23,7 @@ export class NewEventPage implements OnInit {
   private title: any;
   private event: any;
   private user: any;
-  private eventForm: FormGroup;
+  private eventForm: UntypedFormGroup;
   private groupId: any;
   private group: any;
   private eventId: any;
@@ -54,7 +54,7 @@ export class NewEventPage implements OnInit {
     public actionSheet: ActionSheetController,
     public imageProvider: ImageService,
     public firestore: AngularFirestore,
-    public formBuilder: FormBuilder
+    public formBuilder: UntypedFormBuilder
   ) {
     this.groupId = this.route.snapshot.params.id;
 

@@ -8,7 +8,7 @@ import { ImageService } from '../services/image.service';
 import { Camera } from '@ionic-native/camera/ngx';
 import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Validator } from 'src/environments/validator';
 
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
@@ -38,7 +38,7 @@ export class ProfilePage implements OnInit {
   groups: any = [];
   friends: any = [];
   myProfile = false;
-  myForm: FormGroup;
+  myForm: UntypedFormGroup;
   submitAttempt = false;
   errorMessages: any = [];
   alert: any;
@@ -55,7 +55,7 @@ export class ProfilePage implements OnInit {
     private fcm: FirebaseX,
     public firebaseProvider: FirebaseService,
     private platform: Platform,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     public modalCtrl: ModalController,

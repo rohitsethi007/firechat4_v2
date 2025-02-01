@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, ActionSheetController, AlertController, ModalController } from '@ionic/angular';
-import { Validators, FormGroup, FormControl } from '@angular/forms';
+import { Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { DataService } from '../services/data.service';
 import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
@@ -58,7 +58,7 @@ export class PostPage implements OnInit {
   // Poll related fields
   private poll: any;
   private pollId: any;
-  private pollOptionForm: FormGroup;
+  private pollOptionForm: UntypedFormGroup;
   private optionsArray: string[];
   chartData: ChartDataSets[] = [
     {
@@ -125,8 +125,8 @@ export class PostPage implements OnInit {
   ) {
    // this.reviewMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FkjD2RUnc.jpg?alt=media&token=d0073c88-58cf-4fc0-9e5c-c6a491bb2673');
     this.post = {reactionType: '', addedByUser: {}, data: {}, date: firebase.default.firestore.Timestamp.now(), reviewMedia: []};
-    this.pollOptionForm = new FormGroup({
-      selected_poll_option: new FormControl('', Validators.compose([
+    this.pollOptionForm = new UntypedFormGroup({
+      selected_poll_option: new UntypedFormControl('', Validators.compose([
         Validators.required
       ]))
     });

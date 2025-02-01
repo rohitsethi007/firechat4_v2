@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { ActionSheetController, IonSlides } from '@ionic/angular';
-import { FormArray, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormArray, UntypedFormGroup, Validators, UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { ImageService } from '../services/image.service';
@@ -19,7 +19,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 export class NewPostPage implements OnInit {
   // @ViewChild('slideWithNav', { static: false }) slideWithNav: IonSlides;
 
-  private postForm: FormGroup;
+  private postForm: UntypedFormGroup;
   private post: any;
   private postId: any;
   private groupId: any;
@@ -56,14 +56,14 @@ export class NewPostPage implements OnInit {
       this.step = 2;
     }
 
-    this.postForm = new FormGroup(
+    this.postForm = new UntypedFormGroup(
       {
-        title: new FormControl('', Validators.compose([
+        title: new UntypedFormControl('', Validators.compose([
             // Validators.minLength(5),
             // Validators.maxLength(20),
             Validators.required
           ])),
-        message: new FormControl('', Validators.compose([
+        message: new UntypedFormControl('', Validators.compose([
           // Validators.minLength(10),
           // Validators.maxLength(100),
           Validators.required

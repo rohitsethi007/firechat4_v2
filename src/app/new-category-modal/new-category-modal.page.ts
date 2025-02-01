@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
@@ -8,10 +8,10 @@ import { AngularFirestore } from '@angular/fire/firestore';
   styleUrls: ['./new-category-modal.page.scss'],
 })
 export class NewCategoryModalPage implements OnInit {
-  categoryForm: FormGroup;
+  categoryForm: UntypedFormGroup;
  
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private firestore: AngularFirestore
   ) { }
 
@@ -21,7 +21,7 @@ export class NewCategoryModalPage implements OnInit {
 
   buildForm() {
     this.categoryForm = this.formBuilder.group({
-      name: new FormControl('', Validators.compose([
+      name: new UntypedFormControl('', Validators.compose([
         Validators.required
       ])),
       dateCreated:  new Date(),

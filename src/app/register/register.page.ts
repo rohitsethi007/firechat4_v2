@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../services/login.service';
 
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Validator } from 'src/environments/validator';
 
 @Component({
@@ -16,13 +16,13 @@ export class RegisterPage implements OnInit {
   password: any;
   img: any;
 
-  myForm: FormGroup;
+  myForm: UntypedFormGroup;
   submitAttempt = false;
   errorMessages: any = [];
 
   constructor(
     private loginService: LoginService,
-    private formBuilder: FormBuilder
+    private formBuilder: UntypedFormBuilder
   ) {
     this.errorMessages = Validator.errorMessages
     this.myForm = this.formBuilder.group({

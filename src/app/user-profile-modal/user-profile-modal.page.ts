@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams} from '@ionic/angular';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Validator } from 'src/environments/validator';
 import { LoadingService } from '../services/loading.service';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -12,14 +12,14 @@ import { AngularFirestore } from '@angular/fire/firestore';
 })
 export class UserProfileModalPage implements OnInit {
   user: any;
-  myForm: FormGroup;
+  myForm: UntypedFormGroup;
   submitAttempt = false;
   errorMessages: any = [];
 
   constructor(
     private modal: ModalController,
     private navParam: NavParams,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private firestore: AngularFirestore,
     private loadingProvider: LoadingService,
     ) {

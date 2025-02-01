@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Validators, FormGroup, FormControl, FormArray } from '@angular/forms';
+import { Validators, UntypedFormGroup, UntypedFormControl, FormArray } from '@angular/forms';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
 import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
@@ -16,7 +16,7 @@ export class NewPollPage implements OnInit {
   private poll: any;
   private user: any;
   private title: any;
-  private pollForm: FormGroup;
+  private pollForm: UntypedFormGroup;
   private groupId: any;
   private group: any;
   private pollId: any;
@@ -43,24 +43,24 @@ export class NewPollPage implements OnInit {
       this.step = 2;
     }
 
-    this.pollForm = new FormGroup({
-      description: new FormControl('', Validators.compose([
+    this.pollForm = new UntypedFormGroup({
+      description: new UntypedFormControl('', Validators.compose([
         // Validators.minLength(10),
         // Validators.maxLength(50),
         Validators.required
       ])),
-      pollOption1: new FormControl('', Validators.compose([
+      pollOption1: new UntypedFormControl('', Validators.compose([
         // Validators.minLength(1),
         // Validators.maxLength(20),
         Validators.required
       ])),
-      pollOption2: new FormControl('', Validators.compose([
+      pollOption2: new UntypedFormControl('', Validators.compose([
         // Validators.minLength(1),
         // Validators.maxLength(20),
         Validators.required
       ])),
-      pollOption3: new FormControl(''),
-      pollOption4: new FormControl(''),
+      pollOption3: new UntypedFormControl(''),
+      pollOption4: new UntypedFormControl(''),
       // tags: new FormArray([], CheckboxCheckedValidator.tagsSelected(1))
       });
    }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../services/login.service';
 
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Validator } from 'src/environments/validator';
 
 @Component({
@@ -13,13 +13,13 @@ export class ForgotPage implements OnInit {
 
   email: any;
   password: any;
-  myForm: FormGroup;
+  myForm: UntypedFormGroup;
   submitAttempt = false;
   errorMessages: any = [];
 
   constructor(
     private loginService: LoginService,
-    private formBuilder: FormBuilder
+    private formBuilder: UntypedFormBuilder
   ) {
 
     this.errorMessages = Validator.errorMessages
