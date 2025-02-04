@@ -4,8 +4,10 @@ import { Validators, UntypedFormGroup, UntypedFormControl, FormArray } from '@an
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
 import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
-import * as firebase from 'firebase/app';
-import { AngularFirestore } from '@angular/fire/firestore';
+
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
 
 @Component({
   selector: 'app-new-poll', 
@@ -99,7 +101,7 @@ export class NewPollPage implements OnInit {
         // Get User Groups List
         if (this.user.groups) {
           this.firestore.collection('groups').ref
-          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.groups)
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.groups)
           .get().then((group: any) => {
             this.groups = [];
             group.forEach(g => {

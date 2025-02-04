@@ -3,14 +3,15 @@ import { ImageService } from '../services/image.service';
 import { DataService } from '../services/data.service';
 import { AlertController } from '@ionic/angular';
 import { LoadingService } from '../services/loading.service';
-import { Camera } from '@ionic-native/camera/ngx';
+
 import { Router } from '@angular/router';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { UntypedFormBuilder, UntypedFormGroup, Validators, UntypedFormControl } from '@angular/forms';
 import { PickerController } from '@ionic/angular';
 import { PickerOptions } from '@ionic/core';
 
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
 @Component({
   selector: 'app-newgroup',
   templateUrl: './newgroup.page.html',
@@ -43,7 +44,6 @@ export class NewgroupPage implements OnInit {
     public firestore: AngularFirestore,
     private afAuth: AngularFireAuth,
     public loadingProvider: LoadingService,
-    public camera: Camera,
     private formBuilder: UntypedFormBuilder,
     private pickerController: PickerController
   ) {

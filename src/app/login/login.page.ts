@@ -35,6 +35,7 @@ export class LoginPage implements OnInit {
   login() {
     this.submitAttempt = true;
     if (this.myForm.valid) {
+      console.log('valid');
       this.loginService.login(this.email, this.password);
     }
     else {

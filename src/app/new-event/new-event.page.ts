@@ -6,11 +6,11 @@ import { DataService } from '../services/data.service';
 import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
 import { HttpClient } from '@angular/common/http';
-import { Camera } from '@ionic-native/camera/ngx';
-import * as firebase from 'firebase/app';
-import { AngularFirestore } from '@angular/fire/firestore';
 
-import * as moment from 'moment';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
+
 import { Event, Group } from '../models/interfaces'
 
 
@@ -50,7 +50,6 @@ export class NewEventPage implements OnInit {
     public loadingProvider: LoadingService,
     public navCtrl: NavController,
     private http: HttpClient,
-    public camera: Camera,
     public actionSheet: ActionSheetController,
     public imageProvider: ImageService,
     public firestore: AngularFirestore,
@@ -120,7 +119,7 @@ export class NewEventPage implements OnInit {
         // Get User Groups List
         if (this.user.groups) {
           this.firestore.collection('groups').ref
-          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.groups)
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.groups)
           .get().then((group: any) => {
             this.groups = [];
             group.forEach(g => {

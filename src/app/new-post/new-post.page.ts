@@ -1,15 +1,14 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { ActionSheetController, IonSlides } from '@ionic/angular';
+import { ActionSheetController, IonicSlides } from '@ionic/angular';
 import { FormArray, UntypedFormGroup, Validators, UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
 import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
-import { Camera } from '@ionic-native/camera/ngx';
-import * as firebase from 'firebase/app';
-import { AngularFirestore } from '@angular/fire/firestore';
 
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
 
 @Component({
   selector: 'app-new-post',
@@ -41,7 +40,6 @@ export class NewPostPage implements OnInit {
     public dataProvider: DataService,
     public imageProvider: ImageService,
     public loadingProvider: LoadingService,
-    public camera: Camera,
     public actionSheet: ActionSheetController,
     public firestore: AngularFirestore,
     private ngZone: NgZone 
@@ -132,7 +130,7 @@ export class NewPostPage implements OnInit {
                 // Get User Groups List
             if (this.user.groups) {
               this.firestore.collection('groups').ref
-              .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.user.groups)
+              .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.groups)
               .get().then((group: any) => {
                 this.groups = [];
                 group.forEach(g => {

@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { SharedModule } from '../services/share.module';
 import { IonicModule } from '@ionic/angular';
-import { ChartsModule } from 'ng2-charts';
+import { NgChartsModule } from 'ng2-charts';
 import { PostPage } from './post.page';
 import { ComponentsModule } from '../components/components.module';
 
@@ -22,7 +22,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    ChartsModule,
+    NgChartsModule,
     SharedModule,
     ComponentsModule,
     RouterModule.forChild(routes)

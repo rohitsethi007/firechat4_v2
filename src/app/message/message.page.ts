@@ -1,17 +1,22 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import * as firebase from 'firebase';
+
 import { DataService } from '../services/data.service';
-import { Camera } from '@ionic-native/camera/ngx';
+
 import { ActionSheetController, AlertController, ModalController, IonContent } from '@ionic/angular';
 import { LoadingService } from '../services/loading.service';
 import { ImageService } from '../services/image.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Contacts } from '@ionic-native/contacts/ngx';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Camera, CameraSource, CameraResultType } from '@capacitor/camera';
+import { Contacts } from '@capacitor-community/contacts';
+import { Keyboard } from '@capacitor/keyboard';
+import { Geolocation } from '@capacitor/geolocation';
+
 import { ImagemodalPage } from '../imagemodal/imagemodal.page';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { ConversationData, LocationData, ContactData } from '../models/interfaces';
+
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
 
 @Component({
   selector: 'app-message',
@@ -47,11 +52,9 @@ export class MessagePage implements OnInit {
     public alertCtrl: AlertController,
     public imageProvider: ImageService,
     public modalCtrl: ModalController,
-    public camera: Camera,
-    public keyboard: Keyboard,
     public actionSheet: ActionSheetController,
-    public contacts: Contacts,
-    public geolocation: Geolocation
+    public geolocation: Geolocation,
+    public afAuth: AngularFireAuth
   ) { }
 
   ngOnInit() {
@@ -60,7 +63,7 @@ export class MessagePage implements OnInit {
 
   ionViewDidEnter() {
     this.userId = this.route.snapshot.params.id;
-    this.loggedInUserId = firebase.default.auth().currentUser.uid;
+    this.loggedInUserId = firebase.auth().currentUser.uid;
     console.log(this.userId);
 
     // Get friend details.
@@ -297,13 +300,13 @@ export class MessagePage implements OnInit {
           text: 'Camera',
           icon: 'camera-outline',
           cssClass: 'actionicon',
-          handler: () => this.handlePhotoUpload(this.camera.PictureSourceType.CAMERA)
+          handler: () => this.handlePhotoUpload(CameraSource.Camera)
         },
         {
           text: 'Photo Library',
           icon: 'images-outline',
           cssClass: 'actionicon',
-          handler: () => this.handlePhotoUpload(this.camera.PictureSourceType.PHOTOLIBRARY)
+          handler: () => this.handlePhotoUpload(CameraSource.Photos)
         },
         {
           text: 'Video',
@@ -317,12 +320,12 @@ export class MessagePage implements OnInit {
           cssClass: 'actionicon',
           handler: () => this.handleLocation()
         },
-        {
-          text: 'Contact',
-          icon: 'person-outline',
-          cssClass: 'actionicon',
-          handler: () => this.handleContact()
-        },
+        // {
+        //   text: 'Contact',
+        //   icon: 'person-outline',
+        //   cssClass: 'actionicon',
+        //   handler: () => this.handleContact()
+        // },
         {
           text: 'Cancel',
           icon: 'close',
@@ -339,7 +342,7 @@ export class MessagePage implements OnInit {
   
   
   
-  private async handlePhotoUpload(sourceType: number): Promise<void> {
+  private async handlePhotoUpload(sourceType: CameraSource): Promise<void> {
     try {
       const url = await this.imageProvider.uploadPhotoMessage(
         this.conversationId, 
@@ -363,13 +366,38 @@ export class MessagePage implements OnInit {
   }
   private async handleLocation(): Promise<void> {
     try {
-      const position = await this.geolocation.getCurrentPosition({
+      // Check location permissions first
+      const permissionStatus = await Geolocation.checkPermissions();
+      
+      if (permissionStatus.location === 'denied') {
+        const request = await Geolocation.requestPermissions();
+        if (request.location === 'denied') {
+          await this.showErrorAlert('Location permission is required to share your location.');
+          return;
+        }
+      }
+  
+      // Show loading if you have a loading provider
+      if (this.loadingProvider) {
+        await this.loadingProvider.show();
+      }
+  
+      // Get current position
+      const position = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
         timeout: 5000
       });
   
-      const locationMessage = "Location:<br> lat:" + position.coords.latitude + "<br> lng:" + position.coords.longitude;
-      const mapUrl = "<a href='https://www.google.com/maps/search/" + position.coords.latitude + "," + position.coords.longitude + "'>View on Map</a>";
+      // Hide loading
+      if (this.loadingProvider) {
+        await this.loadingProvider.hide();
+      }
   
+      // Create location message using template literals
+      const locationMessage = `Location:<br> lat:${position.coords.latitude}<br> lng:${position.coords.longitude}`;
+      const mapUrl = `<a href='https://www.google.com/maps/search/${position.coords.latitude},${position.coords.longitude}'>View on Map</a>`;
+  
+      // Create and show confirmation alert
       const alert = await this.alertCtrl.create({
         header: 'Share Location',
         cssClass: 'location-alert',
@@ -392,53 +420,77 @@ export class MessagePage implements OnInit {
           {
             text: 'Share',
             cssClass: 'location-share-btn',
-            handler: () => {
-              this.message = locationMessage + "<br>" + mapUrl;
-              this.send("location");
+            handler: async () => {
+              try {
+                this.message = `${locationMessage}<br>${mapUrl}`;
+                await this.send("location");
+              } catch (error) {
+                console.error('Error sending location message:', error);
+                await this.showErrorAlert('Failed to send location message.');
+              }
             }
           }
         ]
       });
   
       await alert.present();
+  
     } catch (error) {
       console.error('Error getting location:', error);
       
-      const errorAlert = await this.alertCtrl.create({
-        header: 'Location Error',
-        cssClass: 'error-alert',
-        message: 'Unable to get your location. Please check your GPS settings and try again.',
-        buttons: [{
-          text: 'OK',
-          role: 'cancel'
-        }]
-      });
-      await errorAlert.present();
-    }
-  }
+      // Hide loading if it was shown
+      if (this.loadingProvider) {
+        await this.loadingProvider.hide();
+      }
   
-  
-  private async handleContact(): Promise<void> {
-    try {
-      const contact = await this.contacts.pickContact();
+      let errorMessage = 'Unable to get your location. Please check your GPS settings and try again.';
       
-      // Transform the contact to match our interface
-      const contactData: ContactData = {
-        displayName: contact.displayName,
-        name: {
-          givenName: contact.name?.givenName || '',
-          familyName: contact.name?.familyName || ''
-        },
-        phoneNumbers: contact.phoneNumbers || []
-      };
+      if (error.message.includes('timeout')) {
+        errorMessage = 'Location request timed out. Please try again.';
+      } else if (error.message.includes('denied')) {
+        errorMessage = 'Location permission is required to share your location.';
+      }
   
-      const contactMessage = this.formatContactMessage(contactData);
-      this.message = contactMessage;
-      await this.send('contact');
-    } catch (error) {
-      console.error('Error picking contact:', error);
+      await this.showErrorAlert(errorMessage);
     }
   }
+  
+  // Helper method for showing error alerts
+  private async showErrorAlert(message: string): Promise<void> {
+    const errorAlert = await this.alertCtrl.create({
+      header: 'Location Error',
+      cssClass: 'error-alert',
+      message: message,
+      buttons: [{
+        text: 'OK',
+        role: 'cancel'
+      }]
+    });
+    await errorAlert.present();
+  }
+  
+  
+  // private async handleContact(): Promise<void> {
+  //   try {
+  //     const contact = await this.contacts.pickContact();
+      
+  //     // Transform the contact to match our interface
+  //     const contactData: ContactData = {
+  //       displayName: contact.displayName,
+  //       name: {
+  //         givenName: contact.name?.givenName || '',
+  //         familyName: contact.name?.familyName || ''
+  //       },
+  //       phoneNumbers: contact.phoneNumbers || []
+  //     };
+  
+  //     const contactMessage = this.formatContactMessage(contactData);
+  //     this.message = contactMessage;
+  //     await this.send('contact');
+  //   } catch (error) {
+  //     console.error('Error picking contact:', error);
+  //   }
+  // }
 
   
   

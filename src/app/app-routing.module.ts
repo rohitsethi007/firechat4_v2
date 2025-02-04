@@ -25,8 +25,6 @@ const routes: Routes = [
   { path: 'profile/:id', loadChildren: () => import('./profile/profile.module').then(m => m.ProfilePageModule), canActivate: [AuthGuardService] },
   { path: 'forgot', loadChildren: () => import('./forgot/forgot.module').then(m => m.ForgotPageModule), canActivate: [AuthGuardService] },
   { path: 'new-poll/:id', loadChildren: () => import('./new-poll/new-poll.module').then(m => m.NewPollPageModule), canActivate: [AuthGuardService] },
-  { path: 'walkthrough', loadChildren: () => import('./walkthrough/walkthrough.module').then(m => m.WalkthroughPageModule) },
-  { path: 'getting-started', loadChildren: () => import('./getting-started/getting-started.module').then(m => m.GettingStartedPageModule) },
   { path: 'new-event/:id', loadChildren: () => import('./new-event/new-event.module').then(m => m.NewEventPageModule), canActivate: [AuthGuardService] },
   { path: 'new-post/:id', loadChildren: () => import('./new-post/new-post.module').then(m => m.NewPostPageModule), canActivate: [AuthGuardService] },
   { path: 'post/:id', loadChildren: () => import('./post/post.module').then(m => m.PostPageModule), canActivate: [AuthGuardService] },

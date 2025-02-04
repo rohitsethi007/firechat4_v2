@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { ActivatedRoute } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { Firestore } from '@angular/fire/firestore';
 import { NavController } from '@ionic/angular';
 import * as firebase from 'firebase/app';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+
 
 @Component({
   selector: 'app-group-join',
@@ -22,15 +23,22 @@ export class GroupJoinPage implements OnInit {
     private dataProvider: DataService,
     private afAuth: AngularFireAuth,
     private route: ActivatedRoute,
-    private firestore: AngularFirestore,
+    private firestore: Firestore,
     public navCtrl: NavController
   ) {
     this.groupId = this.route.snapshot.params.id;
-    this.afAuth.currentUser.then(user => {
-      this.loggedInUserId = user?.uid;
-      this.loggedInUser = user;
-      console.info('userId', user)
-    })
+    console.info('groupId', this.groupId);
+    this.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.loggedInUserId = user.uid;
+        this.loggedInUser = user;
+        console.info('userId', user);
+      } else {
+        this.loggedInUserId = null;
+        this.loggedInUser = null;
+        console.info('userId', user);
+      }
+    });
   }
 
   ngOnInit() {

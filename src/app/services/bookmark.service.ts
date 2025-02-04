@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { Firestore } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
 
-import { AngularFireAuth } from '@angular/fire/auth';
-import * as firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
+
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -45,13 +45,13 @@ export class BookmarkService {
 
       if (isCurrentlyBookmarked) {
         await userRef.update({
-          bookmarks: firebase.default.firestore.FieldValue.arrayRemove(post.key)
+          bookmarks: firebase.firestore.FieldValue.arrayRemove(post.key)
         });
         // Update local state
         this.userBookmarks.next(currentBookmarks.filter(id => id !== post.key));
       } else {
         await userRef.update({
-          bookmarks: firebase.default.firestore.FieldValue.arrayUnion(post.key)
+          bookmarks: firebase.firestore.FieldValue.arrayUnion(post.key)
         });
         // Update local state
         this.userBookmarks.next([...currentBookmarks, post.key]);

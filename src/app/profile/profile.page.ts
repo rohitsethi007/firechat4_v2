@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../services/login.service';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { AlertController, Platform, ModalController, IonRouterOutlet } from '@ionic/angular';
 import { ImageService } from '../services/image.service';
-import { Camera } from '@ionic-native/camera/ngx';
-import { FirebaseX } from '@ionic-native/firebase-x/ngx';
+import { PushNotifications } from '@capacitor/push-notifications';
+import { FirebaseMessaging } from '@capacitor-firebase/messaging';
+import { FirebaseAnalytics } from '@capacitor-firebase/analytics';
 
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Validator } from 'src/environments/validator';
@@ -14,9 +14,9 @@ import { Validator } from 'src/environments/validator';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { FirebaseService } from '../services/firebase.service';
 import { UserProfileModalPage } from '../user-profile-modal/user-profile-modal.page';
-import { AngularFirestore } from '@angular/fire/firestore';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import firebase from 'firebase/compat/app';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Component({
   selector: 'app-profile',
@@ -51,8 +51,6 @@ export class ProfilePage implements OnInit {
     private afAuth: AngularFireAuth,
     private imageProvider: ImageService,
     public alertCtrl: AlertController,
-    private camera: Camera,
-    private fcm: FirebaseX,
     public firebaseProvider: FirebaseService,
     private platform: Platform,
     private formBuilder: UntypedFormBuilder,
@@ -60,7 +58,7 @@ export class ProfilePage implements OnInit {
     private router: Router,
     public modalCtrl: ModalController,
     private routerOutlet: IonRouterOutlet,
-    private alertController: AlertController,
+    private alertController: AlertController
   ) {
    
     this.loggedInUserId = firebase.auth().currentUser.uid;
@@ -294,46 +292,6 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  async changeNotification() {
-    let uid = await this.afAuth.currentUser.then((u) => u.uid);
-    if (this.platform.is('desktop')) {
-      this.user.isPushEnabled = false;
-      this.loadingProvider.showToast("Notification only working on mobile device")
-    }
-    else {
-      console.log(this.user.isPushEnabled);
-      if (this.user.isPushEnabled == true) {
-        //Registering for push notification
-        this.fcm.hasPermission().then(hasPermission => {
-          if (!hasPermission) {
-            this.fcm.grantPermission().then(data => console.log(data));
-          }
-          else {
-            this.fcm.getToken().then(token => {
-              console.log(token);
-              this.firestore.doc('/accounts/' + uid).update({ isPushEnabled: true, pushToken: token });
-              this.user.isPushEnabled = true;
-            }).catch(err => {
-              console.log(err);
-            });
-            this.fcm.onTokenRefresh().subscribe(token => {
-              console.log(token);
-              this.firestore.doc('/accounts/' + uid).update({ isPushEnabled: true, pushToken: token });
-            });
-          }
-        });
-        this.fcm.onMessageReceived().subscribe(data => {
-          console.log(data);
-        });
-      }
-      else {
-        this.user.isPushEnabled == false;
-        this.firestore.doc('/accounts/' + uid).update({ isPushEnabled: false, pushToken: '' });
-      }
-    }
-  }
-
-
   setPhoto() {
     this.alertCtrl.create({
       header: 'Set Profile Photo',
@@ -347,15 +305,13 @@ export class ProfilePage implements OnInit {
           text: 'Choose from Gallery',
           handler: () => {
             // Call imageProvider to process, upload, and update user photo.
-            this.imageProvider.setProfilePhoto(this.user, this.camera.PictureSourceType.PHOTOLIBRARY);
-          }
+            this.imageProvider.setProfilePhoto(this.user, 'PHOTOLIBRARY');          }
         },
         {
           text: 'Take Photo',
           handler: () => {
             // Call imageProvider to process, upload, and update user photo.
-            this.imageProvider.setProfilePhoto(this.user, this.camera.PictureSourceType.CAMERA);
-          }
+            this.imageProvider.setProfilePhoto(this.user, 'CAMERA');          }
         }
       ]
     }).then(r => r.present());
@@ -513,5 +469,127 @@ export class ProfilePage implements OnInit {
         console.error('Error leaving group:', error);
         // Handle error (show toast message)
       });
+  }
+
+  async changeNotification() {
+    try {
+      // Get current user
+      const user = await this.afAuth.currentUser;
+      if (!user) {
+        this.loadingProvider.showToast('User not authenticated');
+        return;
+      }
+      const uid = user.uid;
+  
+      // Check if desktop
+      if (this.platform.is('desktop')) {
+        this.user.isPushEnabled = false;
+        await this.firestore.doc(`/accounts/${uid}`).update({ 
+          isPushEnabled: false, 
+          pushToken: '' 
+        });
+        this.loadingProvider.showToast('Notifications only work on mobile devices');
+        return;
+      }
+  
+      // Handle mobile push notification logic
+      if (this.user.isPushEnabled) {
+        await this.enablePushNotifications(uid);
+      } else {
+        await this.disablePushNotifications(uid);
+      }
+    } catch (error) {
+      console.error('Error in changeNotification:', error);
+      this.loadingProvider.showToast('Failed to update notification settings');
+    }
+  }
+  
+  private async enablePushNotifications(uid: string) {
+    try {
+      // Request permission
+      const permissionStatus = await PushNotifications.requestPermissions();
+      
+      if (permissionStatus.receive === 'granted') {
+        // Register for push notifications
+        await PushNotifications.register();
+  
+        // Set up listeners
+        this.setupPushListeners();
+  
+        // Get the token
+        const token = await FirebaseMessaging.getToken();           
+        (token) => {
+            console.log('Push registration success:', token);
+            return token;
+          }
+     
+  
+        // Update Firestore
+        await this.firestore.doc(`/accounts/${uid}`).update({
+          isPushEnabled: true,
+          pushToken: token
+        });
+        
+        this.user.isPushEnabled = true;
+        this.loadingProvider.showToast('Push notifications enabled');
+      } else {
+        this.user.isPushEnabled = false;
+        await this.firestore.doc(`/accounts/${uid}`).update({
+          isPushEnabled: false,
+          pushToken: ''
+        });
+        this.loadingProvider.showToast('Push notification permission denied');
+      }
+    } catch (error) {
+      console.error('Error enabling push notifications:', error);
+      throw error;
+    }
+  }
+  
+  private async disablePushNotifications(uid: string) {
+    try {
+      // Remove all listeners
+      await PushNotifications.removeAllListeners();
+      
+      // Update Firestore
+      await this.firestore.doc(`/accounts/${uid}`).update({
+        isPushEnabled: false,
+        pushToken: ''
+      });
+      
+      this.user.isPushEnabled = false;
+      this.loadingProvider.showToast('Push notifications disabled');
+    } catch (error) {
+      console.error('Error disabling push notifications:', error);
+      throw error;
+    }
+  }
+  
+  private setupPushListeners() {
+    // Registration error listener
+    PushNotifications.addListener('registrationError', (error) => {
+      console.error('Push registration error:', error);
+    });
+  
+    // Notification received listener
+    PushNotifications.addListener('pushNotificationReceived', (notification) => {
+      console.log('Push notification received:', notification);
+    });
+  
+    // Notification action performed listener
+    PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
+      console.log('Push notification action performed:', notification);
+    });
+  
+    // Token refresh listener
+    PushNotifications.addListener('registration', async (token) => {
+      console.log('Push token refreshed:', token);
+      const user = await this.afAuth.currentUser;
+      if (user) {
+        await this.firestore.doc(`/accounts/${user.uid}`).update({
+          pushToken: token
+        });
+      }
+    });
   }
 }

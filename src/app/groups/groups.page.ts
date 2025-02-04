@@ -1,19 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { LoadingService } from '../services/loading.service';
 import { DataService } from '../services/data.service';
 import { Router } from '@angular/router';
+import { register } from 'swiper/element/bundle';
+import { AlertController, IonicSlides } from '@ionic/angular';
+import firebase from 'firebase/compat/app';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Swiper } from 'swiper';
 
-import { AngularFireAuth } from '@angular/fire/auth';
-import { AlertController } from '@ionic/angular';
-import { AngularFirestore } from '@angular/fire/firestore';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+// Register Swiper custom elements
+register();
+
 @Component({
   selector: 'app-groups',
   templateUrl: './groups.page.html',
   styleUrls: ['./groups.page.scss', './groups.shell.scss'],
 })
-export class GroupsPage implements OnInit {
+export class GroupsPage implements OnInit, AfterViewInit {
+  @ViewChild('swiper') swiperRef: ElementRef | undefined;
+  swiper?: Swiper;
   groups: any[] = [];
   filteredGroups: any[] = []; // Add this for search functionality
   searchTerm: string = ''; // Add this for search functionality
@@ -23,9 +29,25 @@ export class GroupsPage implements OnInit {
   unreadMessagesCount: any;
   loggedInUserId: any;
   slideOpts = {
-    slidesPerView: 'auto',
-    spaceBetween: 8,
-    freeMode: true
+    slidesPerView: 3,
+    spaceBetween: 10,
+    breakpoints: {
+      // when window width is >= 320px
+      320: {
+        slidesPerView: 2,
+        spaceBetween: 10
+      },
+      // when window width is >= 480px
+      480: {
+        slidesPerView: 3,
+        spaceBetween: 15
+      },
+      // when window width is >= 640px
+      640: {
+        slidesPerView: 4,
+        spaceBetween: 20
+      }
+    }
   };
 
 
@@ -38,36 +60,88 @@ export class GroupsPage implements OnInit {
     private alertController: AlertController,
   ) {}
 
+  ngAfterViewInit() {
+    // Configure Swiper
+    const swiperEl = this.swiperRef?.nativeElement;
+    if (swiperEl) {
+      swiperEl.initialize();
+    }
+    const swiperParams = {
+      modules: [IonicSlides],
+      slidesPerView: 3,
+      spaceBetween: 20,
+      grabCursor: true,
+      navigation: true,
+      pagination: {
+        clickable: true
+      },
+      // Add these parameters for browser testing
+      simulateTouch: true,
+      mousewheel: true,
+      keyboard: true,
+      breakpoints: {
+        320: {
+          slidesPerView: 2,
+          spaceBetween: 10
+        },
+        480: {
+          slidesPerView: 3,
+          spaceBetween: 15
+        },
+        640: {
+          slidesPerView: 4,
+          spaceBetween: 20
+        }
+      }
+    };
+
+    // Assign parameters to Swiper element
+    Object.assign(swiperEl, swiperParams);
+  }
+  prevSlide() {
+    const swiperEl = this.swiperRef?.nativeElement;
+    swiperEl?.swiper.slidePrev();
+  }
+
+  nextSlide() {
+    const swiperEl = this.swiperRef?.nativeElement;
+    swiperEl?.swiper.slideNext();
+  }
   ionViewWillEnter() {
-    console.log('Entering feed view');
-    
+    setTimeout(() => {
+      if (this.swiper) {
+        this.swiper.update();
+      }
+    }, 100);
+
     this.afAuth.currentUser.then(user => {
       this.loggedInUserId = user?.uid;
-      console.log('Current user:', this.loggedInUserId);
-          // Initialize
-    this.searchGroup = '';
-    this.loadingProvider.show();
-    this.loadAllCategories();
-    // Get groups
-    this.dataProvider.getGroups().snapshotChanges().subscribe((groups: any) => {
-      this.groups = [];
-      groups.forEach(element => {
-        let group = element.payload.doc.data();
-        group.key = element.payload.doc.id;
+      // Initialize
+      this.searchGroup = '';
+      this.loadingProvider.show();
+      this.loadAllCategories();
+      // Get groups
+      this.dataProvider.getGroups().snapshotChanges().subscribe((groups: any) => {
+        this.groups = [];
+        groups.forEach(element => {
+          let group = element.payload.doc.data();
+          group.key = element.payload.doc.id;
 
-        if (group.members.some(e => e === this.loggedInUserId )) {
-          group.isUserMember = true;
-        } else {
-          group.isUserMember = false;
-        }
-        this.groups.push(group);
+          if (group.members.some(e => e === this.loggedInUserId )) {
+            group.isUserMember = true;
+          } else {
+            group.isUserMember = false;
+          }
+          this.groups.push(group);
+        });
+        this.filteredGroups = this.groups; // Initialize filtered groups
+        this.loadingProvider.hide(); // Hide loading after groups are loaded
       });
-      this.filteredGroups = this.groups; // Initialize filtered groups
-      this.loadingProvider.hide(); // Hide loading after groups are loaded
-    });
-    });
+      });
   }
+
   ngOnInit() {}
+  
   // Add this new method for search functionality
   filterGroups() {
     if (!this.searchTerm?.trim()) {
@@ -83,6 +157,7 @@ export class GroupsPage implements OnInit {
       );
     });
   }
+
   loadAllCategories() {
     this.firestore.collection('categories').ref.orderBy('sort', 'asc').onSnapshot((catsRes: any) => {
       if (catsRes) {
@@ -90,7 +165,6 @@ export class GroupsPage implements OnInit {
         catsRes.forEach(cat => {
           let category = cat.data();
           category.key = cat.id;
-          console.log('category', category);
           this.categories.push(category);
         });
       }
@@ -165,7 +239,6 @@ export class GroupsPage implements OnInit {
         // Update local group data
         group.isUserMember = false;
         group.members = updatedMembers;
-        console.log('Successfully left group');
       })
       .catch(error => {
         console.error('Error leaving group:', error);

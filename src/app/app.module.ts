@@ -1,101 +1,74 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+// Ionic imports
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage-angular';
 
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
+// Firebase imports - Use compat version for better compatibility
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { environment } from 'src/environments/environment.prod';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getAuth, provideAuth } from '@angular/fire/auth';
 
+// Components and Modules
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
-import { AngularFireModule } from '@angular/fire';
-import { AngularFireStorageModule } from '@angular/fire/storage';
-import { AngularFireAuthModule } from '@angular/fire/auth';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { environment } from '../environments/environment.prod';
-
-import { GooglePlus } from '@ionic-native/google-plus/ngx';
-import { Facebook } from '@ionic-native/facebook/ngx';
-import { FirebaseX } from '@ionic-native/firebase-x/ngx';
-import { Camera } from '@ionic-native/camera/ngx';
-import { MediaCapture } from '@ionic-native/media-capture/ngx';
-import { ImagePicker } from '@ionic-native/image-picker/ngx';
-import { File } from '@ionic-native/file/ngx';
-import { FileTransfer } from '@ionic-native/file-transfer/ngx';
-import { FileChooser } from '@ionic-native/file-chooser/ngx';
-import { FilePath } from '@ionic-native/file-path/ngx';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { Contacts } from '@ionic-native/contacts/ngx';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
-
+import { FilterComponent } from './feed/filter.component';
 import { SharedModule } from './services/share.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { ImagemodalPageModule } from './imagemodal/imagemodal.module';
 import { UserProfileModalPageModule } from './user-profile-modal/user-profile-modal.module';
 import { ReactionListModalPageModule } from './reaction-list-modal/reaction-list-modal.module';
-import { Chooser } from '@ionic-native/chooser/ngx';
-import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
-import { FCM } from '@ionic-native/fcm/ngx';
-import { FilterComponent } from './feed/filter.component';
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        FilterComponent
-    ],
-    imports: [
-        BrowserModule,
-        IonicModule.forRoot({
-            mode: 'md',
-        }),
-        IonicStorageModule.forRoot(),
-        AppRoutingModule,
-        AngularFireModule.initializeApp(environment.firebase),
-        AngularFirestoreModule,
-        AngularFireStorageModule,
-        AngularFireAuthModule,
-        SharedModule,
-        FormsModule,
-        ReactiveFormsModule,
-        ImagemodalPageModule,
-        ReactionListModalPageModule,
-        UserProfileModalPageModule
-    ],
-    providers: [
-        StatusBar,
-        SplashScreen,
-        GooglePlus,
-        Facebook,
-        Camera,
-        MediaCapture,
-        File,
-        FileTransfer,
-        FilePath,
-        FileChooser,
-        FirebaseX,
-        Geolocation,
-        ImagePicker,
-        Contacts,
-        Chooser,
-        Keyboard,
-        LocalNotifications,
-        FCM,
-        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
-    ],
-    bootstrap: [AppComponent]
+  declarations: [
+    AppComponent,
+    FilterComponent
+  ],
+  imports: [
+    BrowserModule,
+    HammerModule,
+    IonicModule.forRoot({
+      mode: 'md',
+    }),
+    // Firebase imports
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule,
+    AngularFireAuthModule,
+    AngularFireStorageModule,
+    
+    IonicStorageModule.forRoot(),
+    AppRoutingModule,
+    SharedModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ImagemodalPageModule,
+    ReactionListModalPageModule,
+    UserProfileModalPageModule
+  ],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()) 
+  ],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
 
+// Keep your FileReader extension if needed
 export class FileReaderA extends window.FileReader {
-	constructor() {
-		super();
-		const zoneOriginalInstance = (this as any)['__zone_symbol__originalInstance'];
-		return zoneOriginalInstance || this;
-	}
+  constructor() {
+    super();
+    const zoneOriginalInstance = (this as any)['__zone_symbol__originalInstance'];
+    return zoneOriginalInstance || this;
+  }
 }
 
 window.FileReader = FileReaderA;

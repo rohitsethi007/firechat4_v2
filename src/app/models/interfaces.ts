@@ -8,6 +8,10 @@ export interface UserDocument {
     img: string;
     groups: string[];
     userId: string;
+    name: string;
+    dateCreated: Date;
+    publicVisibility: boolean;
+    showOnline: boolean;
 }
 
 // Messages Interfaces

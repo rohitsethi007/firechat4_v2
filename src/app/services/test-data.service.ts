@@ -1,7 +1,7 @@
 // // test-data.service.ts
 // import { Injectable } from '@angular/core';
-// import { AngularFireAuth } from '@angular/fire/auth';
-// import { AngularFirestore } from '@angular/fire/firestore';
+// 
+// import { Firestore } from '@angular/fire/firestore';
 // import { FirebaseService } from './firebase.service';
 // import { DataService } from './data.service';
 // import { LoadingService } from './loading.service';
@@ -15,8 +15,8 @@
 //   private testPosts: Map<string, string[]> = new Map(); // userId -> postIds
 
 //   constructor(
-//     private afAuth: AngularFireAuth,
-//     private firestore: AngularFirestore,
+//     private afAuth: Auth,
+//     private firestore: Firestore,
 //     private firebaseService: FirebaseService,
 //     private dataService: DataService,
 //     private loadingService: LoadingService

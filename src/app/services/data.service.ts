@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { Storage } from '@ionic/storage';
-// import * as firebase from 'firebase';
-import * as firebase from 'firebase/app';
 import { ImageService } from './image.service';
+
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
 
 @Injectable({
   providedIn: 'root'
@@ -108,7 +108,7 @@ export class DataService {
     this.firestore.doc('posts/' + pollKey).update ({
       data: pollData
     }).then(() => {
-      const increment = firebase.default.firestore.FieldValue.increment(1);
+      const increment = firebase.firestore.FieldValue.increment(1);
       this.firestore.collection('posts').doc(pollKey).update({
         totalPollCount : increment
       });
@@ -250,7 +250,7 @@ export class DataService {
 
   updatePostReviews(postKey, review) {
     return this.firestore.collection('posts').doc(postKey).collection('reviews').add(review).then(() => {
-      const increment = firebase.default.firestore.FieldValue.increment(1);
+      const increment = firebase.firestore.FieldValue.increment(1);
       this.firestore.collection('posts').doc(postKey).update({
         totalReviewCount : increment
       });
@@ -263,7 +263,7 @@ export class DataService {
  
   addPostReactions(postKey, reaction) {
     return this.firestore.collection('posts').doc(postKey).collection('reactions').add(reaction).then(() => {
-      const increment = firebase.default.firestore.FieldValue.increment(1);
+      const increment = firebase.firestore.FieldValue.increment(1);
       this.firestore.collection('posts').doc(postKey).update({
         totalReactionCount : increment
       });
@@ -275,7 +275,7 @@ export class DataService {
     console.info('postkey', postKey)
     return this.firestore.collection('posts').doc(postKey).collection('reactions').add(reaction).then(() => {
       console.info('reaction added')
-      const increment = firebase.default.firestore.FieldValue.increment(1);
+      const increment = firebase.firestore.FieldValue.increment(1);
       this.firestore.collection('posts').doc(postKey).update({
         totalReactionCount : increment
       });
@@ -284,7 +284,7 @@ export class DataService {
 
   removePostReaction(postKey, reactionKey) {
     this.firestore.collection('posts').doc(postKey).collection('reactions').doc(reactionKey).delete().then(() => {
-      const decrement = firebase.default.firestore.FieldValue.increment(-1);
+      const decrement = firebase.firestore.FieldValue.increment(-1);
       this.firestore.collection('posts').doc(postKey).update({
         totalReactionCount : decrement
       });

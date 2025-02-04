@@ -2,31 +2,24 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { PopoverController, NavController, ActionSheetController, AlertController, ModalController, IonRouterOutlet, IonInfiniteScroll } from '@ionic/angular';
 import { LoadingService } from '../services/loading.service';
-import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { FilterComponent } from './filter.component';
 
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { NgAnalyzeModulesHost } from '@angular/compiler';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
-import { EmojiPickerComponentModule } from '../components/emoji-picker/emoji-picker.module';
 import { IonSearchbar } from '@ionic/angular';
 
-import { FCM } from '@ionic-native/fcm/ngx';
 import { Platform } from '@ionic/angular';
-import algoliasearch from 'algoliasearch';
-import { constants } from 'perf_hooks';
-import * as firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/firestore';
 
 import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { BookmarkService } from '../services/bookmark.service';
 import { UserDocument } from '../models/interfaces' 
-   
+
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
+
 @Component({
   selector: 'app-feed',
   templateUrl: './feed.page.html',
@@ -88,7 +81,6 @@ export class FeedPage implements OnInit {
       public dataProvider: DataService,
       public navCtrl: NavController,
       public modalCtrl: ModalController,
-      public firestore: AngularFirestore,
       public alertCtrl: AlertController,
       private routerOutlet: IonRouterOutlet,
       public loadingProvider: LoadingService,
@@ -96,8 +88,7 @@ export class FeedPage implements OnInit {
       private route: ActivatedRoute,
       private router: Router,
       private afAuth: AngularFireAuth,
-      private localNotifications: LocalNotifications,
-      private fcm: FCM,
+      public firestore: AngularFirestore,
       public plt: Platform,
       private popoverCtrl: PopoverController,
       private bookmarkService: BookmarkService
@@ -383,9 +374,9 @@ export class FeedPage implements OnInit {
         });
       } else {
         this.firestore.collection('posts').doc(post.key).collection('reactions').doc(r.key).update({
-          reactionType: firebase.default.firestore.FieldValue.arrayUnion(reactionType)
+          reactionType: firebase.firestore.FieldValue.arrayUnion(reactionType)
       }).then(() => {
-        const increment = firebase.default.firestore.FieldValue.increment(1);
+        const increment = firebase.firestore.FieldValue.increment(1);
         this.firestore.collection('posts').doc(post.key).update({
           totalReactionCount : increment
         });
@@ -763,20 +754,20 @@ export class FeedPage implements OnInit {
           .collection('searches')
           .add({
             term: searchTerm,
-            timestamp: firebase.default.firestore.FieldValue.serverTimestamp()
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
           });
 
         // Update trending searches count
         const trendingRef = this.firestore.collection('trendingSearches').doc(searchTerm);
         await trendingRef.set({
           term: searchTerm,
-          count: firebase.default.firestore.FieldValue.increment(1)
+          count: firebase.firestore.FieldValue.increment(1)
         }, { merge: true });
       } else {
         // Update timestamp of existing search
         const existingDoc = existingSearches.docs[0];
         await existingDoc.ref.update({
-          timestamp: firebase.default.firestore.FieldValue.serverTimestamp()
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
       }
     }

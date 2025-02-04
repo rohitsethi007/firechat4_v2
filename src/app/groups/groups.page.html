@@ -41,13 +41,22 @@
 
  <!-- Categories Slider -->
  <div class="slider-container ion-margin-top">
-  <ion-slides class="categories-slider" [options]="slideOpts">
-    <ion-slide *ngFor="let category of categories" (click)="searchGroupByCategory(category)">
-      <ion-card class="category-card">
-        <ion-img [src]="category.img" [alt]="category.name"></ion-img>
-      </ion-card>
-    </ion-slide>
-  </ion-slides>
+  <swiper-container #swiper
+  [init]="false"
+  class="categories-slider"
+  slides-per-view="3"
+  space-between="20"
+  navigation="true"
+  pagination="true"
+  mousewheel="true"
+  keyboard="true">
+  <swiper-slide *ngFor="let category of categories">
+    <ion-card class="category-card" (click)="searchGroupByCategory(category)">
+      <ion-img [src]="category.img" [alt]="category.name"></ion-img>
+    </ion-card>
+  </swiper-slide>
+</swiper-container>
+
 </div>
 
   <!-- Suggested Groups Section -->

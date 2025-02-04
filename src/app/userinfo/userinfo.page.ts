@@ -4,7 +4,15 @@ import { LoadingService } from '../services/loading.service';
 import { AlertController, ModalController } from '@ionic/angular';
 import { FirebaseService } from '../services/firebase.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import * as firebase from 'firebase';
+
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+import 'firebase/compat/storage';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+
+
 
 @Component({
   selector: 'app-userinfo',
@@ -31,7 +39,9 @@ export class UserinfoPage implements OnInit {
     public loadingProvider: LoadingService,
     public alertCtrl: AlertController,
     public firebaseProvider: FirebaseService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private afAuth: AngularFireAuth,
+    private firestore: AngularFirestore
   ) { }
 
   ngOnInit() {
@@ -47,38 +57,55 @@ export class UserinfoPage implements OnInit {
       this.user = { $key: user.key, ...user.payload.data() };
       console.log(this.user);
       this.loadingProvider.hide();
-    });
-    // Get friends of current logged in user.
-    this.dataProvider.getUser(firebase.default.auth().currentUser.uid).snapshotChanges().subscribe((user: any) => {
-      if (user.payload.data() != null)
-        this.friends = user.payload.data().friends;
-    });
-    // Get requests of current logged in user.
-    this.dataProvider.getRequests(firebase.default.auth().currentUser.uid).snapshotChanges().subscribe(((requests: any) => {
-      console.log(requests.payload.data())
-      if (requests.payload.data() != null) {
-        this.friendRequests = requests.payload.data().friendRequests;
-        this.requestsSent = requests.payload.data().requestsSent;
-      }
-    }));
+
+      // Get friends of current logged in user.
+      this.dataProvider.getUser(this.userId).snapshotChanges().subscribe((user: any) => {
+        if (user.payload.data() != null)
+          this.friends = user.payload.data().friends;
+      });
+      // Get requests of current logged in user.
+      this.dataProvider.getRequests(this.userId).snapshotChanges().subscribe(((requests: any) => {
+        console.log(requests.payload.data())
+        if (requests.payload.data() != null) {
+          this.friendRequests = requests.payload.data().friendRequests;
+          this.requestsSent = requests.payload.data().requestsSent;
+        }
+      }));
+  });
   }
 
-  block() {
-    this.loadingProvider.show();
-    console.log("block function");
-    firebase.default.database().ref('accounts/' + firebase.default.auth().currentUser.uid + '/conversations/' + this.userId).update({
-      blocked: true
-    }).then(() => {
+  async block() {
+    try {
+      this.loadingProvider.show();
+      console.log("block function");
+
+      const currentUser = await this.afAuth.currentUser;
+      
+      if (!currentUser) {
+        throw new Error('No user logged in');
+      }
+
+      // Update the conversations collection in Firestore
+      await this.firestore
+        .collection('accounts')
+        .doc(currentUser.uid)
+        .collection('conversations')
+        .doc(this.userId)
+        .set({
+          blocked: true
+        }, { merge: true });
+
       this.loadingProvider.hide();
       this.loadingProvider.showToast("User Blocked");
       this.router.navigateByUrl('/');
-    }).catch(() => {
+      
+    } catch (error) {
+      console.error('Error blocking user:', error);
       this.loadingProvider.hide();
       this.loadingProvider.showToast("Something went wrong");
-    });
-
+    }
   }
-
+  
   // Enlarge user's profile image.
   enlargeImage(img) {
     // let imageModal = this.modalCtrl.create("ImageModalPage", { img: img });

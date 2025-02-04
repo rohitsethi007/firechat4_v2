@@ -3,9 +3,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
 import { AlertController } from '@ionic/angular';
-import { AngularFirestore } from '@angular/fire/firestore';
-import * as firebase from 'firebase/app';
-
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
 @Component({
   selector: 'app-groupinfo',
   templateUrl: './groupinfo.page.html',
@@ -56,7 +56,7 @@ export class GroupinfoPage implements OnInit {
         // get group Posts
         if (this.group.posts) {
           this.firestore.collection('posts').ref
-          .where(firebase.default.firestore.FieldPath.documentId(), 'in', this.group.posts)
+          .where(firebase.firestore.FieldPath.documentId(), 'in', this.group.posts)
           .get().then((po: any) => {
             this.groupPosts = [];
             this.loadEachPostData(po);

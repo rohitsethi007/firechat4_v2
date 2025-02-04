@@ -1,14 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Plugins, CameraResultType, CameraSource } from '@capacitor/core';
-import * as firebase from 'firebase';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { MediaCapture, MediaFile, CaptureError, CaptureVideoOptions } from '@ionic-native/media-capture/ngx';
-import { File } from '@ionic-native/file/ngx';
-import { FilePath } from '@ionic-native/file-path/ngx';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, StorageReference, uploadBytesResumable,UploadTask,
+  UploadTaskSnapshot  } from 'firebase/storage';
+import { Firestore } from '@angular/fire/firestore';
 import { LoadingService } from './loading.service';
-import { ImagePicker } from '@ionic-native/image-picker/ngx';
-
-const { Camera } = Plugins;
+import { Camera, CameraResultType, CameraSource, Photo, GalleryPhoto, GalleryPhotos } from '@capacitor/camera';
 
 @Injectable({
   providedIn: 'root'
@@ -43,20 +39,17 @@ export class ImageService {
   };
 
   constructor(
-    public firestore: AngularFirestore,
-    public loadingProvider: LoadingService,
-    public mediaCapture: MediaCapture,
-    private imagePicker: ImagePicker,
-    public file: File,
-    private filePath: FilePath) {
+    public firestore: Firestore,
+    public loadingProvider: LoadingService
+  ) {
   }
 
   // Function to convert dataURI to Blob needed by Firebase
-  imgURItoBlob(dataURI) {
-    var binary = atob(dataURI.split(',')[1]);
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-    var array = [];
-    for (var i = 0; i < binary.length; i++) {
+  imgURItoBlob(dataURI: string) {
+    const binary = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const array = [];
+    for (let i = 0; i < binary.length; i++) {
       array.push(binary.charCodeAt(i));
     }
     return new Blob([new Uint8Array(array)], {
@@ -65,15 +58,16 @@ export class ImageService {
   }
 
   // Generate a random filename of length for the image to be uploaded
-  generateFilename() {
-    var length = 8;
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < length; i++) {
+  generateFilename(): string {
+    const length = 8;
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let text = "";
+    for (let i = 0; i < length; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text + ".jpg";
   }
+
 
   async setProfilePhoto(user, sourceType) {
     console.log(user);
@@ -90,7 +84,8 @@ export class ImageService {
         'contentType': imgBlob.type
       };
       let name = this.generateFilename();
-      let dpStorageRef = firebase.default.storage().ref().child('images/' + user.userId + '/' + name);
+      const storage = getStorage();
+      let dpStorageRef = ref(storage, 'images/' + user.userId + '/' + name);
       
       // Rest of your existing upload code...
       
@@ -130,41 +125,64 @@ export class ImageService {
         let metadata = {
           'contentType': imgBlob.type
         };
-        let gPPStorageRef = firebase.default.storage().ref().child('images/' + firebase.default.auth().currentUser.uid + '/' + this.generateFilename());
+
+        const storage = getStorage();
+        const storageRef = ref(storage, `images/${group.id}/${this.generateFilename()}`);
         
-        const snapshot = await gPPStorageRef.put(imgBlob, metadata);
-        this.deleteImageFile(group.img);
-        const url = await gPPStorageRef.getDownloadURL();
+        await uploadBytes(storageRef, imgBlob, metadata);
+        
+        // Delete previous image if exists
+        if (group.img) {
+          this.deleteImageFile(group.img);
+        }
+        
+        const url = await getDownloadURL(storageRef);
         group.img = url;
         this.loadingProvider.hide();
         resolve(group);
       } catch (error) {
         this.loadingProvider.hide();
         this.loadingProvider.showToast("Something went wrong");
+        console.error(error);
       }
     });
   }
 
   //Delete the image given the url.
-  deleteImageFile(path) {
-    var fileName = path.substring(path.lastIndexOf('%2F') + 3, path.lastIndexOf('?'));
-    // tslint:disable-next-line: max-line-length
-    firebase.default.storage().ref().child('images/' + firebase.default.auth().currentUser.uid + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
+  deleteImageFile(path: string) {
+    try {
+      const storage = getStorage();
+      const fileName = path.substring(path.lastIndexOf('%2F') + 3, path.lastIndexOf('?'));
+      const imageRef = ref(storage, `images/${fileName}`);
+      deleteObject(imageRef).catch((error) => console.log(error));
+    } catch (error) {
+      console.error('Error deleting image:', error);
+    }
   }
 
   //Delete the user.img given the user.
   deleteUserImageFile(user) {
-    var fileName = user.img.substring(user.img.lastIndexOf('%2F') + 3, user.img.lastIndexOf('?'));
-    // tslint:disable-next-line: max-line-length
-    firebase.default.storage().ref().child('images/' + user.userId + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
+    try {
+      const storage = getStorage();
+      const fileName = user.img.substring(user.img.lastIndexOf('%2F') + 3, user.img.lastIndexOf('?'));
+      const imageRef = ref(storage, `images/${user.userId}/${fileName}`);
+      deleteObject(imageRef).catch((error) => console.log(error));
+    } catch (error) {
+      console.error('Error deleting user image:', error);
+    }
   }
 
   // Delete group image file on group storage reference.
-  deleteGroupImageFile(groupId, path) {
-    var fileName = path.substring(path.lastIndexOf('%2F') + 3, path.lastIndexOf('?'));
-    firebase.default.storage().ref().child('images/' + groupId + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
+  deleteGroupImageFile(groupId: string, path: string) {
+    try {
+      const storage = getStorage();
+      const fileName = path.substring(path.lastIndexOf('%2F') + 3, path.lastIndexOf('?'));
+      const imageRef = ref(storage, `images/${groupId}/${fileName}`);
+      deleteObject(imageRef).catch((error) => console.log(error));
+    } catch (error) {
+      console.error('Error deleting group image:', error);
+    }
   }
-
  // Update uploadPhotoMessage method
  async uploadPhotoMessage(conversationId, sourceType): Promise<any> {
   return new Promise(async (resolve) => {
@@ -198,15 +216,19 @@ export class ImageService {
           let metadata = {
             'contentType': imgBlob.type
           };
-          let upRef = firebase.default.storage().ref().child('images/posts/' + this.generateFilename());
+  
+          const storage = getStorage();
+          const storageRef = ref(storage, `images/posts/${this.generateFilename()}`);
           
-          await upRef.put(imgBlob, metadata);
-          const url = await upRef.getDownloadURL();
+          await uploadBytes(storageRef, imgBlob, metadata);
+          const url = await getDownloadURL(storageRef);
+          
           this.loadingProvider.hide();
           resolve(url);
         } catch (error) {
           this.loadingProvider.hide();
           this.loadingProvider.showToast("Something went wrong");
+          console.error(error);
         }
       });
     }
@@ -229,328 +251,698 @@ export class ImageService {
     });
   }
 
-  getDownloadUrlImage(postId, imageBase64: any): Promise<any> {
-    return new Promise(resolve => {
-      // Process the returned imageURI.
-      let imgBlob = this.imgURItoBlob(imageBase64);
+  async getDownloadUrlImage(postId: string, imageBase64: any): Promise<any> {
+    return new Promise(async (resolve) => {
+      try {
+        // Process the returned imageURI
+        let imgBlob = this.imgURItoBlob(imageBase64);
+        let metadata = {
+          'contentType': imgBlob.type
+        };
+  
+        // Generate filename and upload to Firebase Storage
+        const storage = getStorage();
+        const upRef = ref(storage, `images/posts/${postId}${this.generateFilename()}`);
+        
+        // Upload the image
+        await uploadBytes(upRef, imgBlob, metadata);
+        
+        // Get the download URL
+        const url = await getDownloadURL(upRef);
+        resolve(url);
+        
+      } catch (error) {
+        console.error('Error in upload or getting URL:', error);
+        resolve(null); // or handle the error as needed
+      }
+    });
+  }
+  
+
+
+  async deletePostPhoto(url: string) {
+    try {
+      const fileName = url.substring(url.lastIndexOf('%2F') + 3, url.lastIndexOf('?'));
+      const storage = getStorage();
+      const imageRef = ref(storage, `images/posts/${fileName}`);
+      await deleteObject(imageRef);
+    } catch (error) {
+      console.error('Error deleting post photo:', error);
+    }
+  }
+  
+
+  async uploadPostReactionPhoto(postId: string, userId: string, sourceType: CameraSource): Promise<any> {
+    return new Promise(async (resolve) => {
+      this.photoMessageOptions.source = sourceType;
+      this.loadingProvider.show();
+      
+      try {
+        const image = await Camera.getPhoto(this.photoMessageOptions);
+        const imageData = image.dataUrl.split(',')[1];
+        
+        let imgBlob = this.imgURItoBlob("data:image/jpeg;base64," + imageData);
+        let metadata = {
+          'contentType': imgBlob.type
+        };
+  
+        const storage = getStorage();
+        const upRef = ref(storage, `images/posts/${postId}/${userId}/${this.generateFilename()}`);
+        
+        // Upload the image
+        await uploadBytes(upRef, imgBlob, metadata);
+        
+        // Get the download URL
+        const url = await getDownloadURL(upRef);
+        
+        this.loadingProvider.hide();
+        resolve(url);
+      } catch (error) {
+        this.loadingProvider.hide();
+        this.loadingProvider.showToast("Something went wrong");
+        console.error('Error uploading reaction photo:', error);
+        resolve(null);
+      }
+    });
+  }
+  
+
+  async uploadPostVideo(): Promise<string> {
+    try {
+      this.loadingProvider.show();
+  
+      // Check permissions first
+      const permissionStatus = await Camera.checkPermissions();
+      if (permissionStatus.camera !== 'granted') {
+        await Camera.requestPermissions();
+      }
+  
+      // Use getPhoto with video options
+      const videoResult = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+        saveToGallery: true,
+        // Enable video capture
+        width: 1920,
+        height: 1080,
+        presentationStyle: 'fullscreen',
+        promptLabelHeader: 'Record Video',
+        promptLabelCancel: 'Cancel',
+        promptLabelPhoto: 'Record',
+      });
+  
+      if (!videoResult.webPath) {
+        throw new Error('No video captured');
+      }
+  
+      // Generate unique filename
+      const timestamp = new Date().getTime();
+      const randomString = Math.random().toString(36).substring(2, 8);
+      const fileName = `video_${timestamp}_${randomString}.mp4`;
+  
+      try {
+        // Convert video to blob
+        const response = await fetch(videoResult.webPath);
+        const videoBlob = await response.blob();
+  
+        // Validate video size (example: 100MB limit)
+        const MAX_SIZE = 100 * 1024 * 1024; // 100MB in bytes
+        if (videoBlob.size > MAX_SIZE) {
+          throw new Error('Video file is too large. Maximum size is 100MB.');
+        }
+  
+        // Upload to Firebase with progress tracking
+        const storage = getStorage();
+        const storageRef = ref(storage, `videos/posts/${fileName}`);
+        const uploadTask = uploadBytesResumable(storageRef, videoBlob, {
+          contentType: 'video/mp4'
+        });
+  
+        return new Promise((resolve, reject) => {
+          uploadTask.on('state_changed',
+            // Progress observer
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log('Upload is ' + progress + '% done');
+              this.loadingProvider.show() //(`Uploading video: ${Math.round(progress)}%`);
+            },
+            // Error observer
+            (error) => {
+              this.loadingProvider.hide();
+              console.error('Upload failed:', error);
+              reject(error);
+            },
+            // Completion observer
+            async () => {
+              try {
+                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                
+                // Clean up temporary files
+                try {
+                  await Filesystem.deleteFile({
+                    path: fileName,
+                    directory: Directory.Cache
+                  });
+                } catch (cleanupError) {
+                  console.warn('Error cleaning up temporary file:', cleanupError);
+                }
+  
+                this.loadingProvider.hide();
+                resolve(downloadURL);
+              } catch (error) {
+                this.loadingProvider.hide();
+                reject(error);
+              }
+            }
+          );
+        });
+  
+      } catch (error) {
+        throw new Error(`Error processing video: ${error.message}`);
+      }
+  
+    } catch (error) {
+      this.loadingProvider.hide();
+      console.error('Error in uploadPostVideo:', error);
+      throw error;
+    }
+  }
+  
+
+  async deletePostReactionPhoto(postId: string, url: string) {
+    try {
+      const fileName = url.substring(url.lastIndexOf('%2F') + 3, url.lastIndexOf('?'));
+      const storage = getStorage();
+      const imageRef = ref(storage, `images/${postId}/${fileName}`);
+      
+      await deleteObject(imageRef);
+    } catch (error) {
+      console.error('Error deleting reaction photo:', error);
+      throw error;
+    }
+  }
+  
+
+  // Upload group photo message and return a promise as url.
+  async uploadGroupPhotoMessage(groupId: string, sourceType: CameraSource): Promise<string> {
+    try {
+      this.photoMessageOptions.source = sourceType;
+      this.loadingProvider.show();
+      
+      const image = await Camera.getPhoto(this.photoMessageOptions);
+      const imageData = image.dataUrl.split(',')[1];
+      
+      const imgBlob = this.imgURItoBlob("data:image/jpeg;base64," + imageData);
+      const metadata = {
+        contentType: imgBlob.type
+      };
+  
+      // Get storage reference
+      const storage = getStorage();
+      const storageRef = ref(storage, `images/${groupId}/${this.generateFilename()}`);
+      
+      // Upload the image
+      await uploadBytes(storageRef, imgBlob, metadata);
+      
+      // Get the download URL
+      const url = await getDownloadURL(storageRef);
+      
+      this.loadingProvider.hide();
+      return url;
+  
+    } catch (error) {
+      this.loadingProvider.hide();
+      this.loadingProvider.showToast("Something went wrong");
+      console.error('Error uploading group photo:', error);
+      throw error;
+    }
+  }
+  
+
+  async uploadGroupVideoMessage(groupId: string): Promise<string> {
+    try {
+      this.loadingProvider.show();
+  
+      // Check camera permissions
+      const permissionStatus = await Camera.checkPermissions();
+      if (permissionStatus.camera !== 'granted') {
+        await Camera.requestPermissions();
+      }
+  
+      // Capture video using Camera API
+      const videoResult = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+        saveToGallery: true,
+        width: 1920,
+        height: 1080,
+        presentationStyle: 'fullscreen',
+        promptLabelHeader: 'Record Video',
+        promptLabelCancel: 'Cancel',
+        promptLabelPhoto: 'Record'
+      });
+  
+      if (!videoResult.webPath) {
+        throw new Error('No video captured');
+      }
+  
+      // Generate unique filename
+      const timestamp = new Date().getTime();
+      const randomString = Math.random().toString(36).substring(2, 8);
+      const filename = `video_${timestamp}_${randomString}.mp4`;
+  
+      console.log("Video path:", videoResult.webPath);
+  
+      try {
+        // Convert video to blob
+        const response = await fetch(videoResult.webPath);
+        const videoBlob = await response.blob();
+  
+        // Validate video size (optional)
+        const MAX_SIZE = 100 * 1024 * 1024; // 100MB limit
+        if (videoBlob.size > MAX_SIZE) {
+          throw new Error('Video file is too large. Maximum size is 100MB.');
+        }
+  
+        console.log('Video blob size:', videoBlob.size);
+  
+        // Get storage reference
+        const storage = getStorage();
+        const storageRef = ref(storage, `videos/${groupId}/${filename}`);
+  
+        // Create upload task with progress monitoring
+        const uploadTask = uploadBytesResumable(storageRef, videoBlob, {
+          contentType: 'video/mp4'
+        });
+  
+        // Return promise that resolves with download URL
+        return new Promise((resolve, reject) => {
+          uploadTask.on('state_changed',
+            // Progress observer
+            (snapshot: UploadTaskSnapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log(`Upload progress: ${Math.round(progress)}%`);
+              this.loadingProvider.showToast(`Uploading video: ${Math.round(progress)}%`);
+            },
+            // Error observer
+            (error) => {
+              console.error('Upload error:', error);
+              this.loadingProvider.hide();
+              reject(error);
+            },
+            // Completion observer
+            async () => {
+              try {
+                const downloadURL = await getDownloadURL(storageRef);
+  
+                // Clean up any temporary files
+                try {
+                  await Filesystem.deleteFile({
+                    path: filename,
+                    directory: Directory.Cache
+                  });
+                } catch (cleanupError) {
+                  console.warn('Error cleaning up temporary file:', cleanupError);
+                  // Don't throw error here as upload was successful
+                }
+  
+                this.loadingProvider.hide();
+                resolve(downloadURL);
+              } catch (error) {
+                this.loadingProvider.hide();
+                reject(error);
+              }
+            }
+          );
+        });
+  
+      } catch (error) {
+        throw new Error(`Error processing video: ${error.message}`);
+      }
+  
+    } catch (error) {
+      this.loadingProvider.hide();
+      console.error('Error uploading group video:', error);
+      throw error;
+    }
+  }
+  
+  
+
+  async uploadVideoMessage(conversationId: string): Promise<string> {
+    try {
+      this.loadingProvider.show();
+  
+      // Check camera permissions
+      const permissionStatus = await Camera.checkPermissions();
+      if (permissionStatus.camera !== 'granted') {
+        await Camera.requestPermissions();
+      }
+  
+      // Capture video using Camera API
+      const videoResult = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+        saveToGallery: true,
+        width: 1920,
+        height: 1080,
+        presentationStyle: 'fullscreen'
+      });
+  
+      if (!videoResult.webPath) {
+        throw new Error('No video captured');
+      }
+  
+      // Generate unique filename
+      const timestamp = new Date().getTime();
+      const randomString = Math.random().toString(36).substring(2, 8);
+      const filename = `video_${timestamp}_${randomString}.mp4`;
+  
+      try {
+        // Convert video to blob
+        const response = await fetch(videoResult.webPath);
+        const videoBlob = await response.blob();
+  
+        // Optional: Validate video size
+        const MAX_SIZE = 100 * 1024 * 1024; // 100MB limit
+        if (videoBlob.size > MAX_SIZE) {
+          throw new Error('Video file is too large. Maximum size is 100MB.');
+        }
+  
+        // Upload to Firebase Storage
+        const storage = getStorage();
+        const storageRef = ref(storage, `videos/${conversationId}/${filename}`);
+        const uploadTask = uploadBytesResumable(storageRef, videoBlob, {
+          contentType: 'video/mp4'
+        });
+  
+        return new Promise((resolve, reject) => {
+          uploadTask.on('state_changed',
+            // Progress observer
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log(`Upload progress: ${progress.toFixed(2)}%`);
+              this.loadingProvider.showToast(`Uploading video: ${Math.round(progress)}%`);
+            },
+            // Error observer
+            (error) => {
+              this.loadingProvider.hide();
+              console.error('Upload failed:', error);
+              reject(error);
+            },
+            // Completion observer
+            async () => {
+              try {
+                const downloadURL = await getDownloadURL(storageRef);
+  
+                // Clean up temporary files
+                try {
+                  await Filesystem.deleteFile({
+                    path: filename,
+                    directory: Directory.Cache
+                  });
+                } catch (cleanupError) {
+                  console.warn('Error cleaning up temporary file:', cleanupError);
+                  // Don't throw error here as upload was successful
+                }
+  
+                this.loadingProvider.hide();
+                resolve(downloadURL);
+              } catch (error) {
+                this.loadingProvider.hide();
+                console.error('Error getting download URL:', error);
+                reject(error);
+              }
+            }
+          );
+        });
+  
+      } catch (error) {
+        throw new Error(`Error processing video: ${error.message}`);
+      }
+  
+    } catch (error) {
+      this.loadingProvider.hide();
+      console.error('Error in uploadVideoMessage:', error);
+      throw error;
+    }
+  }
+  
+  
+  
+
+  // Upload group photo message and return a promise as url.
+  async uploadGroupPhotoResource(groupId, sourceType): Promise<any> {
+  return new Promise(async (resolve) => {
+    this.photoMessageOptions.source = sourceType;
+    this.loadingProvider.show();
+    
+    try {
+      const image = await Camera.getPhoto(this.photoMessageOptions);
+      const imageData = image.dataUrl.split(',')[1];
+      
+      let imgBlob = this.imgURItoBlob("data:image/jpeg;base64," + imageData);
       let metadata = {
         'contentType': imgBlob.type
       };
 
-      // Generate filename and upload to Firebase Storage.
-      let upRef = firebase.default.storage().ref().child('images/posts/' + postId + this.generateFilename());
-      upRef.put(imgBlob, metadata).then((snapshot) => {
-        // URL of the uploaded image!
-        upRef.getDownloadURL().then(url => {
-          resolve(url);
-        }).catch((err) => {console.log('Error occurred while downloading the url of images.')});
-      }).catch((error) => {
-        console.log('Error occured while uploading images:', error);
-      });
+      const storage = getStorage();
+      const storageRef = ref(storage, `images/${groupId}/${this.generateFilename()}`);
+      
+      await uploadBytes(storageRef, imgBlob, metadata);
+      const url = await getDownloadURL(storageRef);
+      
+      this.loadingProvider.hide();
+      resolve(url);
+    } catch (error) {
+      this.loadingProvider.hide();
+      this.loadingProvider.showToast("Something went wrong");
+    }
   });
 }
+async uploadGroupVideoResource(groupId: string): Promise<string> {
+  try {
+    this.loadingProvider.show();
 
+    // Check camera permissions
+    const permissionStatus = await Camera.checkPermissions();
+    if (permissionStatus.camera !== 'granted') {
+      await Camera.requestPermissions();
+    }
 
-  deletePostPhoto(url) {
-    var fileName = url.substring(url.lastIndexOf('%2F') + 3, url.lastIndexOf('?'));
-    firebase.default.storage().ref().child('images/posts/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
- 
-  }
-
-  async uploadPostReactionPhoto(postId, userId, sourceType): Promise<any> {
-    return new Promise(async (resolve) => {
-      this.photoMessageOptions.source = sourceType;
-      this.loadingProvider.show();
-      
-      try {
-        const image = await Camera.getPhoto(this.photoMessageOptions);
-        const imageData = image.dataUrl.split(',')[1];
-        
-        let imgBlob = this.imgURItoBlob("data:image/jpeg;base64," + imageData);
-        let metadata = {
-          'contentType': imgBlob.type
-        };
-        let upRef = firebase.default.storage().ref().child('images/posts' + postId + '/' + userId + '/' + this.generateFilename());
-        
-        await upRef.put(imgBlob, metadata);
-        const url = await upRef.getDownloadURL();
-        this.loadingProvider.hide();
-        resolve(url);
-      } catch (error) {
-        this.loadingProvider.hide();
-        this.loadingProvider.showToast("Something went wrong");
-      }
+    // Capture video
+    const videoResult = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      resultType: CameraResultType.Uri,
+      source: CameraSource.Camera,
+      saveToGallery: true,
+      width: 1920,
+      height: 1080
     });
-  }
 
-  uploadPostVideo(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      let options: CaptureVideoOptions = { 
-        limit: 1,
-        duration: 30
-      };
+    if (!videoResult.webPath) {
+      throw new Error('No video captured');
+    }
 
-      this.mediaCapture.captureVideo(options).then(async (data: MediaFile[]) => {
-        try {
-          let capturedFile = data[0];
-          let fileName = capturedFile.name;
-          let dir = capturedFile['localURL'].split('/');
-          dir.pop();
-          let fromDirectory = dir.join('/');
-          let toDirectory = this.file.dataDirectory;
+    // Generate unique filename
+    const timestamp = new Date().getTime();
+    const filename = `video_${timestamp}.mp4`;
 
-          this.loadingProvider.show();
+    try {
+      // Convert video to blob
+      const response = await fetch(videoResult.webPath);
+      const videoBlob = await response.blob();
 
-          // Move the file to permanent storage
-          await this.file.moveFile(fromDirectory, fileName, toDirectory, fileName);
+      console.log('Video blob size:', videoBlob.size);
 
-          // Read the file
-          const videoBlob = await this.file.readAsArrayBuffer(toDirectory, fileName);
+      // Upload to Firebase Storage
+      const storage = getStorage();
+      const storageRef = ref(storage, `videos/${groupId}/${filename}`);
+      const uploadTask = uploadBytesResumable(storageRef, videoBlob);
 
-          // Upload to Firebase
-          const storageRef = firebase.default.storage().ref()
-            .child(`videos/posts/${new Date().getTime()}_${fileName}`);
-
-          const uploadTask = await storageRef.put(videoBlob, {
-            contentType: 'video/mp4'
-          });
-
-          const downloadURL = await storageRef.getDownloadURL();
-
-          // Clean up - remove temporary file
-          await this.file.removeFile(toDirectory, fileName);
-
-          this.loadingProvider.hide();
-          resolve(downloadURL);
-
-        } catch (error) {
-          this.loadingProvider.hide();
-          console.error('Error in uploadPostVideo:', error);
-          reject(error);
-        }
-      }).catch((error: CaptureError) => {
-        console.error('Error capturing video:', error);
-        reject(error);
-      });
-    });
-  }
-
-  deletePostReactionPhoto(postId,url){
-    var fileName = url.substring(url.lastIndexOf('%2F') + 3, url.lastIndexOf('?'));
-    firebase.default.storage().ref().child('images/' + postId + '/' + fileName).delete().then(() => { }).catch((error) => { console.log(error) });
-  }
-
-  // Upload group photo message and return a promise as url.
-  async uploadGroupPhotoMessage(groupId, sourceType): Promise<any> {
-    return new Promise(async (resolve) => {
-      this.photoMessageOptions.source = sourceType;
-      this.loadingProvider.show();
-      
-      try {
-        const image = await Camera.getPhoto(this.photoMessageOptions);
-        const imageData = image.dataUrl.split(',')[1];
-        
-        let imgBlob = this.imgURItoBlob("data:image/jpeg;base64," + imageData);
-        let metadata = {
-          'contentType': imgBlob.type
-        };
-        let ugpRef = firebase.default.storage().ref().child('images/' + groupId + '/' + this.generateFilename());
-        
-        await ugpRef.put(imgBlob, metadata);
-        const url = await ugpRef.getDownloadURL();
-        this.loadingProvider.hide();
-        resolve(url);
-      } catch (error) {
-        this.loadingProvider.hide();
-        this.loadingProvider.showToast("Something went wrong");
-      }
-    });
-  }
-
-  uploadGroupVideoMessage(groupId): Promise<any> {
-    return new Promise(resolve => {
-      this.loadingProvider.show();
-      this.mediaCapture.captureVideo().then(data => {
-        let videoUrl = data[0].fullPath;
-        var filename = videoUrl.substr(videoUrl.lastIndexOf('/') + 1);
-        var dirpath = videoUrl.substr(0, videoUrl.lastIndexOf('/') + 1);
-        dirpath = dirpath.includes("file://") ? dirpath : "file://" + dirpath;
-
-        console.log("video path: " + videoUrl);
-        let x = videoUrl.split("/");
-        let filepath = videoUrl.substring(0, videoUrl.lastIndexOf("/"));
-        let name = x[x.length - 1];
-        console.log(filepath + " - " + name);
-        this.file.readAsArrayBuffer(dirpath, filename).then(success => {
-          console.log(success);
-          let blob = new Blob([success], { type: "video/mp4" });
-          console.log(blob);
-          let upload = firebase.default.storage().ref().child('videos/' + groupId + "/" + name).put(blob);
-          upload.then(res => {
-            let process = res.bytesTransferred / res.totalBytes * 100;
-            console.log(process);
+      return new Promise((resolve, reject) => {
+        uploadTask.on('state_changed',
+          // Progress observer
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(`Upload progress: ${progress.toFixed(2)}%`);
+            this.loadingProvider.show()//(`Uploading: ${Math.round(progress)}%`);
+          },
+          // Error observer
+          (error) => {
             this.loadingProvider.hide();
-
-            resolve(res.downloadURL);
-          }, err => {
-            this.loadingProvider.hide();
-            console.log("Failed")
-          });
-
-        });
-      }, err => {
-        this.loadingProvider.hide();
-        console.log("Media Err = " + err);
-      });
-    });
-  }
-
-  uploadVideoMessage(conversationId): Promise<any> {
-    return new Promise(resolve => {
-      this.loadingProvider.show();
-      this.mediaCapture.captureVideo().then(data => {
-        let videoUrl = data[0].fullPath;
-        console.log("video path: " + videoUrl);
-        let x = videoUrl.split("/");
-        let filepath = videoUrl.substring(0, videoUrl.lastIndexOf("/"));
-        let name = x[x.length - 1];
-        console.log(filepath + " - " + name);
-        this.file.readAsArrayBuffer(filepath, name).then(success => {
-          console.log(success);
-          let blob = new Blob([success], { type: "video/mp4" });
-          console.log(blob);
-          // let timestamp = (Math.floor(Date.now() / 1000)).toString();
-
-          let uploadRef = firebase.default.storage().ref().child('videos/' + name);
-          uploadRef.put(blob).then(res => {
-            let process = res.bytesTransferred / res.totalBytes * 100;
-            console.log(process);
-            this.loadingProvider.hide();
-            uploadRef.getDownloadURL().then(url => { 
-              resolve(url);
-            })
-
-          }, err => {
-            this.loadingProvider.hide();
-            console.log("Failed")
-          });
-        });
-      }, err => {
-        this.loadingProvider.hide();
-        console.log("Media Err = " + err);
-      });
-    });
-  }
-
-  // Upload group photo message and return a promise as url.
-  async uploadGroupPhotoResource(groupId, sourceType): Promise<any> {
-    return new Promise(async (resolve) => {
-      this.photoMessageOptions.source = sourceType;
-      this.loadingProvider.show();
-      
-      try {
-        const image = await Camera.getPhoto(this.photoMessageOptions);
-        const imageData = image.dataUrl.split(',')[1];
-        
-        let imgBlob = this.imgURItoBlob("data:image/jpeg;base64," + imageData);
-        let metadata = {
-          'contentType': imgBlob.type
-        };
-        let ugpRef = firebase.default.storage().ref().child('images/' + groupId + '/' + this.generateFilename());
-        
-        await ugpRef.put(imgBlob, metadata);
-        const url = await ugpRef.getDownloadURL();
-        this.loadingProvider.hide();
-        resolve(url);
-      } catch (error) {
-        this.loadingProvider.hide();
-        this.loadingProvider.showToast("Something went wrong");
-      }
-    });
-  }
-
-
-  uploadGroupVideoResource(groupId): Promise<any> {
-    return new Promise(resolve => {
-      this.loadingProvider.show();
-      this.mediaCapture.captureVideo().then(data => {
-        let videoUrl = data[0].fullPath;
-        console.log("video path: " + videoUrl);
-        let x = videoUrl.split("/");
-        let filepath = videoUrl.substring(0, videoUrl.lastIndexOf("/"));
-        let name = x[x.length - 1];
-        console.log(filepath + " - " + name);
-        this.file.readAsArrayBuffer(filepath, name).then(success => {
-          console.log(success);
-          let blob = new Blob([success], { type: "video/mp4" });
-          console.log(blob);
-          let upload = firebase.default.storage().ref().child('videos/' + groupId + "/" + name).put(blob);
-          upload.then(res => {
-            let process = res.bytesTransferred / res.totalBytes * 100;
-            console.log(process);
-            this.loadingProvider.hide();
-
-            resolve(res.downloadURL);
-          }, err => {
-            this.loadingProvider.hide();
-            console.log("Failed")
-          });
-
-        });
-      }, err => {
-        this.loadingProvider.hide();
-        console.log("Media Err = " + err);
-      });
-    });
-  }
-
-  async getGroupVideoResource(resourceurl) {
-   return await firebase.default.storage().ref().child(resourceurl).getDownloadURL().then(function(url) {
-    return url;  
-  }).catch(function(error) {
-      // Handle any errors
-    });
-  }
-
-  async getImages(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      const options = {
-        maximumImagesCount: 4,
-        width: 500,
-        height: 500,
-        quality: 75
-      };
-  
-      this.imagePicker.getPictures(options)
-        .then(async (results) => {
-          try {
-            const uploadedUrls: string[] = [];
-            
-            for (let result of results) {
-              // Convert to blob
-              const response = await fetch(result);
-              const blob = await response.blob();
-              
-              // Upload to Firebase
-              const fileName = this.generateFilename();
-              const storageRef = firebase.default.storage()
-                .ref()
-                .child('images/' + fileName);
-              
-              await storageRef.put(blob);
-              const downloadUrl = await storageRef.getDownloadURL();
-              uploadedUrls.push(downloadUrl);
-            }
-            
-            resolve(uploadedUrls);
-          } catch (error) {
+            console.error('Upload failed:', error);
             reject(error);
+          },
+          // Completion observer
+          async () => {
+            try {
+              const downloadURL = await getDownloadURL(storageRef);
+              
+              // Clean up temporary files
+              try {
+                await Filesystem.deleteFile({
+                  path: filename,
+                  directory: Directory.Cache
+                });
+              } catch (cleanupError) {
+                console.warn('Cleanup error:', cleanupError);
+              }
+
+              this.loadingProvider.hide();
+              resolve(downloadURL);
+            } catch (error) {
+              this.loadingProvider.hide();
+              reject(error);
+            }
           }
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
+        );
+      });
+
+    } catch (error) {
+      throw new Error(`Error processing video: ${error.message}`);
+    }
+
+  } catch (error) {
+    this.loadingProvider.hide();
+    console.error('Error in uploadGroupVideoResource:', error);
+    throw error;
   }
+}
+
+  async getGroupVideoResource(resourceurl: string): Promise<string> {
+  try {
+    const storage = getStorage();
+    const videoRef = ref(storage, resourceurl);
+    const url = await getDownloadURL(videoRef);
+    return url;
+  } catch (error) {
+    console.error('Error getting video URL:', error);
+    throw error;
+  }
+}
+async getImages(): Promise<string[]> {
+  try {
+    const uploadedUrls: string[] = [];
+    
+    // Allow multiple photo selection
+    const result = await Camera.pickImages({
+      quality: 75,
+      limit: 4
+    });
+
+    this.loadingProvider.show();
+
+    for (let i = 0; i < result.photos.length; i++) {
+      try {
+        this.loadingProvider.showToast(
+          `Uploading image ${i + 1} of ${result.photos.length}`
+        );
+
+        // Read the file
+        const photo = result.photos[i];
+        const response = await fetch(photo.webPath);
+        const blob = await response.blob();
+
+        // Upload to Firebase
+        const storage = getStorage();
+        const fileName = this.generateFilename();
+        const storageRef = ref(storage, `images/${fileName}`);
+
+        // Create upload task
+        const uploadTask = uploadBytesResumable(storageRef, blob);
+
+        // Monitor upload progress
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(`Upload progress for image ${i + 1}: ${progress}%`);
+          },
+          (error) => {
+            console.error(`Error uploading image ${i + 1}:`, error);
+          }
+        );
+
+        // Wait for upload to complete
+        await uploadTask;
+
+        // Get download URL
+        const downloadUrl = await getDownloadURL(storageRef);
+        uploadedUrls.push(downloadUrl);
+
+      } catch (error) {
+        console.error(`Error processing image ${i + 1}:`, error);
+      }
+    }
+
+    this.loadingProvider.hide();
+
+    if (uploadedUrls.length === 0) {
+      throw new Error('No images were successfully uploaded');
+    }
+
+    return uploadedUrls;
+
+  } catch (error) {
+    this.loadingProvider.hide();
+    console.error('Error in getImages:', error);
+    throw error;
+  }
+}
+
+// For single image capture
+async captureImage(): Promise<string> {
+  try {
+    const image = await Camera.getPhoto({
+      quality: 75,
+      allowEditing: true,
+      resultType: CameraResultType.Uri,
+      source: CameraSource.Camera
+    });
+
+    if (!image.webPath) {
+      throw new Error('No image path available');
+    }
+
+    this.loadingProvider.show();
+
+    // Convert to blob
+    const response = await fetch(image.webPath);
+    const blob = await response.blob();
+
+    // Upload to Firebase
+    const storage = getStorage();
+    const fileName = this.generateFilename();
+    const storageRef = ref(storage, `images/${fileName}`);
+
+    // Upload with progress monitoring
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+    uploadTask.on('state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload progress:', progress);
+      }
+    );
+
+    await uploadTask;
+    const downloadUrl = await getDownloadURL(storageRef);
+
+    this.loadingProvider.hide();
+    return downloadUrl;
+
+  } catch (error) {
+    this.loadingProvider.hide();
+    console.error('Error capturing image:', error);
+    throw error;
+  }
+}
 
 }

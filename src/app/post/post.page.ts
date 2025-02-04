@@ -6,23 +6,49 @@ import { DataService } from '../services/data.service';
 import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { Contacts } from '@ionic-native/contacts/ngx';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { Camera } from '@ionic-native/camera/ngx';
-import { Chart } from 'chart.js';
-import { ChartDataSets } from 'chart.js';
-import { Color, Label } from 'ng2-charts';
+import { Contacts } from '@capacitor-community/contacts';
+import { Camera, CameraSource, CameraResultType } from '@capacitor/camera';
+import { Keyboard } from '@capacitor/keyboard';
+import { Geolocation } from '@capacitor/geolocation';
 
-import * as firebase from 'firebase/app';
+import { Chart, ChartConfiguration, ChartData, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+
+// Register the required Chart.js components
+import { 
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement // for pie charts
+} from 'chart.js';
+// Register the components
+Chart.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+);
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EmojiPickerComponentModule } from '../components/emoji-picker/emoji-picker.module';
 import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
-import { AngularFireAuth } from '@angular/fire/auth';
+
 import { BookmarkService } from '../services/bookmark.service';
 import { Reaction, Checkin, UserDocument, PollOption, Comment, PollData} from '../models/interfaces';
+
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
 
 @Component({
   selector: 'app-post',
@@ -45,7 +71,7 @@ export class PostPage implements OnInit {
   loggedInUser: UserDocument | null = null;
   userNotifications: any[] = [];
   userBookmarks: any[] = [];
-
+  private keyboard = Keyboard;
   isBookmarked: false;
 
   newComment: string = '';
@@ -60,20 +86,25 @@ export class PostPage implements OnInit {
   private pollId: any;
   private pollOptionForm: UntypedFormGroup;
   private optionsArray: string[];
-  chartData: ChartDataSets[] = [
-    {
+   // Update chart properties
+   chartData: ChartData = {
+    labels: [],
+    datasets: [{
       data: [],
-      label: 'Votes'
-    }
-  ];
-  chartLabels: Label[] = [];
-  chartOptions = {
+      label: 'Votes',
+      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+      borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+      borderWidth: 0
+    }]
+  };
+
+  chartOptions: ChartConfiguration['options'] = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
         display: true,
-        position: 'right', // Changed to right to save vertical space
+        position: 'right',
         align: 'center',
         labels: {
           boxWidth: 10,
@@ -85,14 +116,7 @@ export class PostPage implements OnInit {
       }
     }
   };
-  
-  chartColors: Color[] = [
-    {
-      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
-      borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
-      borderWidth: 0
-    }
-  ];
+
   showLegend = true;
   chartType = 'pie'; // or 'bar' depending on your preference
 
@@ -114,9 +138,6 @@ export class PostPage implements OnInit {
     public actionSheet: ActionSheetController,
     private modalCtrl: ModalController,
     public imageProvider: ImageService,
-    public camera: Camera,
-    public keyboard: Keyboard,
-    public contacts: Contacts,
     public geolocation: Geolocation,
     public alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
@@ -124,7 +145,7 @@ export class PostPage implements OnInit {
     private bookmarkService: BookmarkService
   ) {
    // this.reviewMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FkjD2RUnc.jpg?alt=media&token=d0073c88-58cf-4fc0-9e5c-c6a491bb2673');
-    this.post = {reactionType: '', addedByUser: {}, data: {}, date: firebase.default.firestore.Timestamp.now(), reviewMedia: []};
+    this.post = {reactionType: '', addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now(), reviewMedia: []};
     this.pollOptionForm = new UntypedFormGroup({
       selected_poll_option: new UntypedFormControl('', Validators.compose([
         Validators.required
@@ -133,7 +154,7 @@ export class PostPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.loggedInUserId = firebase.default.auth().currentUser.uid;
+    this.loggedInUserId = firebase.auth().currentUser.uid;
     console.log('Entering feed view');
     
     this.afAuth.currentUser.then(user => {
@@ -307,7 +328,7 @@ export class PostPage implements OnInit {
         text: 'Camera',
         handler: () => {
           this.uploadingImage = true;
-          this.imageProvider.uploadPostReactionPhoto(this.postId, this.loggedInUserId, this.camera.PictureSourceType.CAMERA).then((url) => {
+          this.imageProvider.uploadPostReactionPhoto(this.postId, this.loggedInUserId, CameraSource.Camera).then((url) => {
             this.reviewMedia.push(url);
             this.uploadingImage = false;
           });
@@ -316,7 +337,7 @@ export class PostPage implements OnInit {
         text: 'Photo Library',
         handler: () => {
           this.uploadingImage = true;
-          this.imageProvider.uploadPostReactionPhoto(this.postId, this.loggedInUserId, this.camera.PictureSourceType.PHOTOLIBRARY).then((url) => {
+          this.imageProvider.uploadPostReactionPhoto(this.postId, this.loggedInUserId, CameraSource.Photos).then((url) => {
             this.reviewMedia.push(url);
             this.uploadingImage = false;
           });
@@ -565,9 +586,9 @@ viewGroup(groupId) {
       });
     } else {
       this.firestore.collection('posts').doc(post.key).collection('reactions').doc(r.key).update({
-        reactionType: firebase.default.firestore.FieldValue.arrayUnion(reactionType)
+        reactionType: firebase.firestore.FieldValue.arrayUnion(reactionType)
     }).then(() => {
-      const increment = firebase.default.firestore.FieldValue.increment(1);
+      const increment = firebase.firestore.FieldValue.increment(1);
       this.firestore.collection('posts').doc(post.key).update({
         totalReactionCount : increment
       });
@@ -608,51 +629,61 @@ viewGroup(groupId) {
     );
   }
   
-private initializePollData(p: any) {
-  if (p.type !== 'poll') return;
+  private initializePollData(p: any) {
+    if (p.type !== 'poll') return;
 
-  console.log('Initializing poll data');
+    console.log('Initializing poll data');
 
-  try {
-    // Reset arrays
-    this.chartLabels = [];
-    this.chartData[0].data = [];
+    try {
+      // Create new arrays for labels and data
+      const labels: string[] = [];
+      const data: number[] = [];
 
-    // Process poll options
-    p.data.pollOptions.forEach((option: PollOption, index: number) => {
-      if (option) {
-        const voteCount = option.members?.length || 0;
-        console.log(`Option ${option.name}: ${voteCount} votes`);
-        
-        this.chartData[0].data.push(voteCount);
-        this.chartLabels.push(option.name);
-      }
-    });
+      // Process poll options
+      p.data.pollOptions.forEach((option: PollOption) => {
+        if (option) {
+          const voteCount = option.members?.length || 0;
+          console.log(`Option ${option.name}: ${voteCount} votes`);
+          
+          labels.push(option.name);
+          data.push(voteCount);
+        }
+      });
 
-    // Force chart update
-    this.chartData = [...this.chartData];
-    
-    // Check if user has voted
-    this.voted = p.data.pollOptions.some((option: PollOption) => 
-      option.members?.includes(this.loggedInUserId)
-    );
+      // Update chart data
+      this.chartData = {
+        labels: labels,
+        datasets: [{
+          data: data,
+          label: 'Votes',
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+          borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+          borderWidth: 0
+        }]
+      };
 
-    // Check if poll is closed
-    const today = new Date();
-    const pollEndDate = p.data.dateEnding.toDate();
-    this.pollClosed = pollEndDate < today;
+      // Check if user has voted
+      this.voted = p.data.pollOptions.some((option: PollOption) => 
+        option.members?.includes(this.loggedInUserId)
+      );
 
-    console.log('Chart initialization complete:', {
-      data: this.chartData[0].data,
-      labels: this.chartLabels,
-      voted: this.voted,
-      closed: this.pollClosed
-    });
+      // Check if poll is closed
+      const today = new Date();
+      const pollEndDate = p.data.dateEnding.toDate();
+      this.pollClosed = pollEndDate < today;
 
-  } catch (error) {
-    console.error('Error initializing poll data:', error);
+      console.log('Chart initialization complete:', {
+        data: this.chartData.datasets[0].data,
+        labels: this.chartData.labels,
+        voted: this.voted,
+        closed: this.pollClosed
+      });
+
+    } catch (error) {
+      console.error('Error initializing poll data:', error);
+    }
   }
-}
+
 
 copyLink(link: string) {
   navigator.clipboard.writeText(link);

@@ -6,7 +6,6 @@ import { SearchPipe } from '../pipes/search';
 import { DateFormatPipe } from '../pipes/date';
 import { PollPipe } from '../pipes/poll';
 import { ResourcePipe } from '../pipes/resource';
-import { FloorPipe } from 'angular-pipes';
 import { ReversePipe } from '../pipes/reverse.pipe';
 
 @NgModule({
@@ -20,7 +19,6 @@ import { ReversePipe } from '../pipes/reverse.pipe';
         DateFormatPipe,
         PollPipe,
         ResourcePipe,
-        FloorPipe,
         ReversePipe
     ],
     exports: [
@@ -31,7 +29,6 @@ import { ReversePipe } from '../pipes/reverse.pipe';
         DateFormatPipe,
         PollPipe,
         ResourcePipe,
-        FloorPipe,
         ReversePipe
     ]
 })
