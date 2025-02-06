@@ -19,7 +19,9 @@ export class DataService {
     private storage: Storage,
     private firestore: AngularFirestore,
     public imageProvider: ImageService
-  ) { }
+  ) { 
+    this.initStorage();
+  }
 
 
   // Get all users
@@ -315,4 +317,8 @@ export class DataService {
      console.log('inside getFromStorageAsync');
      return await this.storage.get(section).then((val) => val);
    }
+
+   private async initStorage() {
+    await this.storage.create();
+  }
 }

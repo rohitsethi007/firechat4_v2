@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, ActionSheetController, AlertController, ModalController } from '@ionic/angular';
 import { Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
@@ -9,7 +9,7 @@ import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-moda
 import { Contacts } from '@capacitor-community/contacts';
 import { Camera, CameraSource, CameraResultType } from '@capacitor/camera';
 import { Keyboard } from '@capacitor/keyboard';
-import { Geolocation } from '@capacitor/geolocation';
+// import { Geolocation } from '@capacitor/geolocation';
 
 import { Chart, ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
@@ -88,31 +88,31 @@ export class PostPage implements OnInit {
   private optionsArray: string[];
    // Update chart properties
    chartData: ChartData = {
-    labels: [],
+    labels: ['Label 1', 'Label 2', 'Label 3'],
     datasets: [{
-      data: [],
-      label: 'Votes',
-      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
-      borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
-      borderWidth: 0
+      data: [65, 59, 80],
+      label: 'Poll Results',
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)'
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)'
+      ],
+      borderWidth: 1
     }]
   };
 
+
   chartOptions: ChartConfiguration['options'] = {
     responsive: true,
-    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: true,
-        position: 'right',
-        align: 'center',
-        labels: {
-          boxWidth: 10,
-          padding: 6,
-          font: {
-            size: 11
-          }
-        }
+        position: 'top',
       }
     }
   };
@@ -138,7 +138,7 @@ export class PostPage implements OnInit {
     public actionSheet: ActionSheetController,
     private modalCtrl: ModalController,
     public imageProvider: ImageService,
-    public geolocation: Geolocation,
+    // public geolocation: Geolocation,
     public alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
     private afAuth: AngularFireAuth,
@@ -152,7 +152,15 @@ export class PostPage implements OnInit {
       ]))
     });
   }
-
+  // async getCurrentPosition() {
+  //   try {
+  //     // Use Geolocation directly as a static class
+  //     const coordinates = await Geolocation.getCurrentPosition();
+  //     console.log('Current position:', coordinates);
+  //   } catch (error) {
+  //     console.error('Error getting location', error);
+  //   }
+  // }
   ionViewDidEnter() {
     this.loggedInUserId = firebase.auth().currentUser.uid;
     console.log('Entering feed view');
@@ -656,9 +664,17 @@ viewGroup(groupId) {
         datasets: [{
           data: data,
           label: 'Votes',
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
-          borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
-          borderWidth: 0
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)'
+          ],
+          borderWidth: 1
         }]
       };
 

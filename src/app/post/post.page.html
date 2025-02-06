@@ -261,12 +261,9 @@
           <h4>Results</h4>
           <div class="poll-chart">
             <canvas baseChart
-                  [datasets]="chartData" 
-                  [labels]="chartLabels" 
-                  [options]="chartOptions" 
-                  [colors]="chartColors"
-                  [legend]="showLegend" 
-                  [chartType]="chartType">
+              [data]="chartData"
+              [options]="chartOptions"
+              [type]="chartType">
             </canvas>
           </div>
         </div>

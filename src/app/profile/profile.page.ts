@@ -62,14 +62,18 @@ export class ProfilePage implements OnInit {
   ) {
    
     this.loggedInUserId = firebase.auth().currentUser.uid;
+    console.info('profile page, loggedinuser', this.loggedInUserId)
     this.userId = this.route.snapshot.params.id;
-
+    console.info('profile page, userId', this.userId)
     if (this.userId === this.loggedInUserId) {
       this.myProfile = true;
     } else {
       this.myProfile = false;
     }
+    if (typeof this.userId === 'undefined') {      this.myProfile = true;
+    }
 
+    console.info('profile page, myProfile', this.myProfile)
     this.errorMessages = Validator.errorMessages;
     this.myForm = this.formBuilder.group({
       name: Validator.nameValidator,
@@ -88,7 +92,7 @@ export class ProfilePage implements OnInit {
   }
 
   getUserData() {
-    this.dataProvider.getUser(this.userId).snapshotChanges().subscribe((user: any) => {
+    this.dataProvider.getUser(this.loggedInUserId).snapshotChanges().subscribe((user: any) => {
       let account = user.payload.data();
       if (account != null) {
         this.user = account;

@@ -23,8 +23,12 @@
       "dom"
     ],
     "types": [
-      "node"
+      "node",
+      "@capacitor/camera"
     ],
+    "paths": {
+      "@capacitor/camera": ["./node_modules/@capacitor/camera"]
+    },
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
