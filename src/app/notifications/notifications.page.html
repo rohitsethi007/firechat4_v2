@@ -1,5 +1,5 @@
 <!-- notifications.page.html -->
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/feed"></ion-back-button>
@@ -7,7 +7,7 @@
     <ion-title>Notifications</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="clearAll()" *ngIf="notifications.length > 0">
-        <ion-icon name="trash-outline"></ion-icon>
+        <ion-icon color= "primary" name="trash-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
