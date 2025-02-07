@@ -5,6 +5,7 @@ import { Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms
 import { DataService } from '../services/data.service';
 import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
+import { NotificationsService } from '../services/notifications.service';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
 import { Contacts } from '@capacitor-community/contacts';
 import { Camera, CameraSource, CameraResultType } from '@capacitor/camera';
@@ -138,6 +139,7 @@ export class PostPage implements OnInit {
     public actionSheet: ActionSheetController,
     private modalCtrl: ModalController,
     public imageProvider: ImageService,
+    public notificationsService: NotificationsService,
     // public geolocation: Geolocation,
     public alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
@@ -783,8 +785,20 @@ async submitComment() {
     
     // Update comment count
     this.post.totalReviewCount++;
-    
-    // Optionally, refresh comments
+
+    // add Notifications
+    await this.notificationsService.createNotification({
+      type:  'comment' as const,  // use type assertion,
+      fromUser: {
+        userId: this.loggedInUserId,
+        username: this.loggedInUser.username,
+        userImg: this.loggedInUser.img
+      },
+      toUserId: this.post.addedByUser.addedByKey,
+      postId: this.postId,
+      content: 'commented on your post'
+    });
+     
     this.loadComments();
   } catch (error) {
     console.error('Error submitting comment:', error);

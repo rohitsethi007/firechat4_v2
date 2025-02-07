@@ -1,0 +1,60 @@
+<!-- notifications.page.html -->
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/feed"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Notifications</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="clearAll()" *ngIf="notifications.length > 0">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngIf="loading" class="ion-padding ion-text-center">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <ion-list *ngIf="!loading">
+    <ion-item *ngFor="let notification of notifications" 
+              [class.unread]="!notification.read"
+              (click)="handleNotificationClick(notification)"
+              button>
+      <ion-avatar slot="start">
+        <img [src]="notification.fromUser?.userImg || 'assets/default-avatar.png'" 
+             [alt]="notification.fromUser?.username">
+      </ion-avatar>
+      
+      <ion-label>
+        <h2>
+          <span class="username">{{ notification.fromUser?.username }}</span>
+          <span class="notification-content">{{ notification.content }}</span>
+        </h2>
+        <p class="timestamp">
+          {{ notification.createdAt?.toDate() | date:'short' }}
+        </p>
+      </ion-label>
+
+      <ion-icon 
+        *ngIf="!notification.read" 
+        name="ellipse" 
+        color="primary" 
+        slot="end" 
+        size="small">
+      </ion-icon>
+    </ion-item>
+
+    <ion-item *ngIf="notifications.length === 0" lines="none">
+      <ion-label class="ion-text-center">
+        <p>No notifications yet</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

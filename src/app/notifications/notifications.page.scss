@@ -1,0 +1,54 @@
+// notifications.page.scss
+ion-content {
+    --background: var(--ion-color-light);
+  }
+  
+  ion-item {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    margin-bottom: 1px;
+  
+    &.unread {
+      --background: var(--ion-color-light-tint);
+      
+      ion-label {
+        font-weight: 500;
+      }
+    }
+  
+    ion-avatar {
+      width: 40px;
+      height: 40px;
+      margin-right: 16px;
+    }
+  
+    .username {
+      font-weight: 500;
+      color: var(--ion-color-dark);
+    }
+  
+    .notification-content {
+      margin-left: 4px;
+      color: var(--ion-color-medium);
+    }
+  
+    .timestamp {
+      margin-top: 4px;
+      color: var(--ion-color-medium);
+      font-size: 12px;
+    }
+  
+    ion-icon[name="ellipse"] {
+      font-size: 12px;
+    }
+  }
+  
+  .spinner-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  

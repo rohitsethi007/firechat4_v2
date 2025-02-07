@@ -12,8 +12,9 @@ import { Platform } from '@ionic/angular';
 
 import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { BookmarkService } from '../services/bookmark.service';
+import { NotificationsService } from '../services/notifications.service';
 import { UserDocument } from '../models/interfaces' 
 
 import { AngularFireAuth } from '@angular/fire/compat/auth';
@@ -50,6 +51,8 @@ export class FeedPage implements OnInit {
     unreadMessagesCount: any;
     friendRequestCount: any;
     unreadGroupMessagesCount: any;
+    unreadNotifications = 0;
+    private notificationsSub: Subscription;
     groupList: any;
     groupsInfo: any;
     conversationList: any;
@@ -91,7 +94,8 @@ export class FeedPage implements OnInit {
       public firestore: AngularFirestore,
       public plt: Platform,
       private popoverCtrl: PopoverController,
-      private bookmarkService: BookmarkService
+      private bookmarkService: BookmarkService,
+      private notificationsService: NotificationsService
     ) 
     {
       this.plt.ready()
@@ -149,9 +153,28 @@ export class FeedPage implements OnInit {
         isBookmarked: this.bookmarkService.isBookmarked(post.key, bookmarks)
       }));
     });
+
+     // Subscribe to unread notifications count
+     this.notificationsSub = this.notificationsService.getUserNotifications()
+     .subscribe({
+       next: (notifications) => {
+         console.log('Raw notifications:', notifications); // Debug log
+         this.unreadNotifications = notifications.filter(n => !n.read).length;
+         console.info('Unread notifications:', this.unreadNotifications);
+       },
+       error: (error) => {
+         console.error('Error fetching notifications:', error);
+       }
+     });
   
     }
 
+    ngOnDestroy() {
+      if (this.notificationsSub) {
+        this.notificationsSub.unsubscribe();
+      }
+    }
+    
     ionViewDidEnter() {
       this.isSearchActive = false;
     }

@@ -35,7 +35,11 @@ const routes: Routes = [
   { path: 'admin-categories', loadChildren: () => import('./admin-categories/admin-categories.module').then(m => m.AdminCategoriesPageModule) },
   { path: 'new-category-modal', loadChildren: () => import('./new-category-modal/new-category-modal.module').then(m => m.NewCategoryModalPageModule) },
   { path: 'group-search', loadChildren: () => import('./group-search/group-search.module').then(m => m.GroupSearchPageModule) },
-  { path: 'group-join/:id', loadChildren: () => import('./group-join/group-join.module').then(m => m.GroupJoinPageModule) }  
+  { path: 'group-join/:id', loadChildren: () => import('./group-join/group-join.module').then(m => m.GroupJoinPageModule) },   {
+    path: 'notifications',
+    loadChildren: () => import('./notifications/notifications.module').then( m => m.NotificationsPageModule)
+  }
+ 
 ];
 @NgModule({
   imports: [

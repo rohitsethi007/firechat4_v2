@@ -38,9 +38,9 @@
             </div>
 
             <div class="action-buttons">
-              <ion-button fill="clear" class="action-btn" routerLink="/messages">
+              <ion-button fill="clear" class="action-btn" routerLink="/notifications">
                 <ion-icon name="notifications-outline"></ion-icon>
-                <ion-badge *ngIf="unreadCount > 0">{{unreadCount}}</ion-badge>
+                <ion-badge *ngIf="unreadNotifications > 0" class="notifications-badge">{{unreadNotifications}}</ion-badge>
               </ion-button>
 
               <ion-button fill="clear" class="action-btn" (click)="showGroupOptions()">

@@ -90,19 +90,11 @@ export class NewPostPage implements OnInit {
     }
   }
 
-  // TAGS Commented
-  // addTagControls() {
-  //   this.postTags.forEach((o, i) => {
-  //     const control = new FormControl(i === 0); // if first item set to true, else false
-  //     (this.postForm.controls.tags as FormArray).push(control);
-  //   });
-  // }
-
   ngOnInit() {
     this.dataProvider.getCurrentUser().then((u) => {
       u.snapshotChanges().subscribe((value: any) => {
         this.user = value.payload.data();
-        console.info('value', value)
+        console.info('value', value.payload.data())
         this.addedByUser = {
         addedByKey: value.payload.data().userId,
         addedByUsername: value.payload.data().username,

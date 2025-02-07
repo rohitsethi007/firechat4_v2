@@ -74,10 +74,8 @@ ion-header {
     .regular-header {
       .search-container {
         display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 0 16px;
-        
+        align-items: right;
+        --padding-end: 1px !important;
         .search-box {
           flex: 1;
           display: flex;
@@ -105,7 +103,8 @@ ion-header {
         .action-buttons {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 1px;
+          --padding-end: 1px !important;
 
           .action-btn {
             position: relative;

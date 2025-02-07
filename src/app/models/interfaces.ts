@@ -140,3 +140,20 @@ export interface Message {
     pollOptions: PollOption[];
     dateEnding: any; // Replace 'any' with proper Firebase Timestamp type if available
   }
+
+  export interface Notification {
+    id: string;
+    type: 'comment' | 'reaction' | 'message';
+    fromUser: {
+      userId: string;
+      username: string;
+      userImg: string;
+    };
+    toUserId: string;
+    postId?: string;  // for comments and reactions
+    read: boolean;
+    createdAt: any;
+    content: string;
+    data?: any;  // additional data specific to notification type
+  }
+  
