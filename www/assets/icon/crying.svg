@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="2048px" height="2048px" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 2048 2048"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil0 {fill:none}
+    .fil4 {fill:#42A5F5}
+    .fil2 {fill:#5D4037}
+    .fil1 {fill:#FFD54F}
+    .fil3 {fill:#5D4037;fill-rule:nonzero}
+    .fil5 {fill:#90CAF9;fill-rule:nonzero}
+   ]]>
+  </style>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <rect class="fil0" width="2048" height="2048"/>
+  <rect class="fil0" x="255.999" y="255.999" width="1536" height="1536"/>
+  <path class="fil1" d="M1024 255.999c424.155,0 768.001,343.845 768.001,768.001 0,424.155 -343.845,768.001 -768.001,768.001 -424.155,0 -768.001,-343.845 -768.001,-768.001 0,-424.155 343.845,-768.001 768.001,-768.001z"/>
+  <path class="fil2" d="M725.095 1438.65c48.4241,-265.148 584.952,-254.331 626.623,0 -101.645,-131.661 -435.684,-194.516 -626.623,0z"/>
+  <path class="fil3" d="M1527.23 771.256c-15.4406,-129.835 -178.303,-168.401 -252.652,-79.578 101.413,-41.6835 193.207,-8.72245 219.479,81.743 15.3319,17.9929 25.3264,12.6118 33.1736,-2.16496z"/>
+  <path class="fil3" d="M1425.34 790.566c-96.7642,35.9528 -146.633,35.9327 -237.708,-0.0968505 23.9858,129.481 187.993,151.468 237.708,0.0968505z"/>
+  <path class="fil3" d="M549.578 771.256c15.4406,-129.835 178.303,-168.401 252.652,-79.578 -101.413,-41.6835 -193.207,-8.72245 -219.479,81.743 -15.3319,17.9929 -25.3264,12.6118 -33.1736,-2.16496z"/>
+  <path class="fil3" d="M651.473 790.566c96.7642,35.9528 146.633,35.9327 237.708,-0.0968505 -23.9858,129.481 -187.993,151.468 -237.708,0.0968505z"/>
+  <g id="_452677496">
+   <path id="_452677616" class="fil4" d="M693.843 1189.99c3.87166,63.4571 -64.4965,112.043 -126.598,79.017 -62.0906,-33.0189 -60.3898,-117.602 -4.33465,-149.676l154.586 -132.855 -23.654 203.515z"/>
+   <polygon id="_452677568" class="fil5" points="690.893,1090.25 675.254,1182.7 660.475,1180.22 676.113,1087.77 "/>
+  </g>
+ </g>
+</svg>

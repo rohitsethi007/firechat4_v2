@@ -3,6 +3,7 @@ import { LoginService } from '../services/login.service';
 
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Validator } from 'src/environments/validator';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -15,6 +16,8 @@ export class RegisterPage implements OnInit {
   email: any;
   password: any;
   img: any;
+  loading = false;
+  showPassword = false;
 
   myForm: UntypedFormGroup;
   submitAttempt = false;
@@ -22,7 +25,8 @@ export class RegisterPage implements OnInit {
 
   constructor(
     private loginService: LoginService,
-    private formBuilder: UntypedFormBuilder
+    private formBuilder: UntypedFormBuilder,
+    private router: Router
   ) {
     this.errorMessages = Validator.errorMessages
     this.myForm = this.formBuilder.group({
@@ -36,13 +40,31 @@ export class RegisterPage implements OnInit {
   ngOnInit() {
   }
 
-  register() {
+  async register() {
     this.submitAttempt = true;
+    
     if (this.myForm.valid) {
-      this.loginService.register(this.name, this.username, this.email, this.password, this.img);
-    }
-    else {
-      console.log("Invalid")
+      this.loading = true;
+      try {
+        // Register the user
+        const userCredential = await this.loginService.register(
+          this.name,
+          this.username,
+          this.email,
+          this.password
+        );
+
+        // Redirect to categories selection
+        this.router.navigate(['/groups'], {
+          replaceUrl: true // This prevents going back to register page
+        });
+        
+      } catch (error) {
+        console.error('Registration error:', error);
+        // Handle specific error cases here
+      } finally {
+        this.loading = false;
+      }
     }
   }
 }

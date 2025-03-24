@@ -1,0 +1,52 @@
+<!-- src/app/intro/intro.page.html -->
+<ion-content>
+  <div class="slides-container">
+    <!-- Splash Screen -->
+    <div class="slide slide-0" [class.active]="currentSlide === 0">
+      <div class="splash-container">
+        <img src="assets/splash-image.png" alt="Welcome">
+        <ion-button (click)="next()" expand="block" fill="clear">
+          Get Started
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Sign Up Options -->
+    <div class="slide slide-1" [class.active]="currentSlide === 1">
+      <div class="signup-container">
+        <img src="assets/logo.png" alt="Logo" class="logo">
+        
+        <div class="auth-buttons">
+          <ion-button expand="block" (click)="signInWithPhone()" class="phone-button">
+            <ion-icon slot="start" name="call-outline"></ion-icon>
+            Continue with Phone
+          </ion-button>
+          <ion-button expand="block" (click)="signInWithEmail()" class="email-button">
+            <ion-icon slot="start" name="mail-outline"></ion-icon>
+            Continue with Email
+          </ion-button>
+
+          <ion-button expand="block" (click)="signInWithFacebook()" class="facebook-button">
+            <ion-icon slot="start" name="logo-facebook"></ion-icon>
+            Continue with Facebook
+          </ion-button>
+
+          <ion-button expand="block" (click)="signInWithGoogle()" class="google-button">
+            <ion-icon slot="start" name="logo-google"></ion-icon>
+            Continue with Google
+          </ion-button>
+
+          <ion-button expand="block" (click)="signInWithApple()" class="apple-button">
+            <ion-icon slot="start" name="logo-apple"></ion-icon>
+            Continue with Apple
+          </ion-button>
+        </div>
+
+        <p class="login-text">
+          Already a member? 
+          <a (click)="goToLogin()">Log In</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</ion-content>

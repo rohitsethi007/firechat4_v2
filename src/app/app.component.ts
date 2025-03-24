@@ -3,6 +3,7 @@ import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { Storage } from '@ionic/storage-angular';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,8 @@ export class AppComponent {
   constructor(
     private platform: Platform,
     private router: Router,
-    private afAuth: AngularFireAuth
+    private afAuth: AngularFireAuth,
+    private storage: Storage
   ) {
     this.initializeApp();
   }
@@ -26,18 +28,26 @@ export class AppComponent {
           await StatusBar.setStyle({ style: Style.Dark });
           await StatusBar.setBackgroundColor({ color: '#3880ff' });
         }
+
+        await this.storage.create();
+        const introCompleted = await this.storage.get('introCompleted');
+        if (!introCompleted) {
+          this.router.navigate(['/intro']);
+        }
       } catch (err) {
         console.warn('Status Bar not available:', err);
       }
 
       this.platform.backButton.subscribe(() => null);
 
-      this.afAuth.onAuthStateChanged(user => {
+      this.afAuth.onAuthStateChanged(user => { 
         this.router.navigateByUrl('/app/tabs/tab1', { 
           skipLocationChange: true, 
           replaceUrl: true 
         });
       });
+
+
     });
   }
 

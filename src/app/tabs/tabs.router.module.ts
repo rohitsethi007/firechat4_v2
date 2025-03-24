@@ -22,7 +22,7 @@ const routes: Routes = [
         path: 'tab2',
         children: [
           {
-            path: '',
+            path: '', 
             loadChildren: () => 
               import('../groups/groups.module').then(m => m.GroupsPageModule)
              // canActivate: [AuthGuardService]
@@ -36,7 +36,7 @@ const routes: Routes = [
             path: '',
             loadChildren: () =>
               import('../messages/messages.module').then(m => m.MessagesPageModule),
-              canActivate: [AuthGuardService]
+              // canActivate: [AuthGuardService]
           }
         ]
       },
@@ -47,7 +47,7 @@ const routes: Routes = [
             path: '',
             loadChildren: () =>
               import('../friends/friends.module').then(m => m.FriendsPageModule),
-              canActivate: [AuthGuardService]
+              // canActivate: [AuthGuardService]
           }
         ]
        },
@@ -58,7 +58,7 @@ const routes: Routes = [
             path: '',
             loadChildren: () =>
               import('../profile/profile.module').then(m => m.ProfilePageModule),
-              canActivate: [AuthGuardService]
+              // canActivate: [AuthGuardService]
           }
         ]
        },
@@ -69,7 +69,7 @@ const routes: Routes = [
             path: '',
             loadChildren: () =>
               import('../admin-categories/admin-categories.module').then(m => m.AdminCategoriesPageModule),
-              canActivate: [AuthGuardService]
+              // canActivate: [AuthGuardService]
           }
         ]
       },

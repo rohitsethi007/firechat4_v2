@@ -1,72 +1,130 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="/intro" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Register</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <h2 class="auth-title">
-    Welcome!
-  </h2>
-<!--  <div class="center ion-padding">
-    <img src="assets/images/logo.png" style="width:80px;height:80px;" />
-  </div>-->
-  <form [formGroup]="myForm">
-    <ion-list class="inputs-list" lines="full">
-      <ion-item>
-        <ion-label position="stacked">Fullname</ion-label>
-        <ion-input type="text" formControlName="name" [(ngModel)]="name"></ion-input>
-        <div *ngFor="let validation of errorMessages.name">
-          <p class="error-message"
-            *ngIf="myForm.get('name').hasError(validation.type) && (myForm.get('name').dirty || myForm.get('name').touched || submitAttempt) ">
-            {{validation.message}}
-          </p>
+  <div class="auth-container">
+    <h1 class="auth-title">Create Account</h1>
+    <p class="auth-subtitle">Fill in your details to get started</p>
+
+    <form [formGroup]="myForm" class="auth-form">
+      <div class="form-fields">
+        <!-- Full Name Field -->
+        <div class="form-field">
+          <ion-item class="custom-input">
+            <ion-label position="stacked">Full Name</ion-label>
+            <ion-input 
+              type="text" 
+              formControlName="name" 
+              [(ngModel)]="name"
+              placeholder="Enter your full name">
+            </ion-input>
+          </ion-item>
+          <div class="error-container">
+            <div *ngFor="let validation of errorMessages.name">
+              <p class="error-message" 
+                *ngIf="myForm.get('name').hasError(validation.type) && 
+                      (myForm.get('name').dirty || myForm.get('name').touched || submitAttempt)">
+                {{validation.message}}
+              </p>
+            </div>
+          </div>
         </div>
-      </ion-item>
-      <ion-item>
-        <ion-label position="stacked">Username</ion-label>
-        <ion-input type="text" formControlName="username" [(ngModel)]="username"></ion-input>
-        <div *ngFor="let validation of errorMessages.username">
-          <p class="error-message"
-            *ngIf="myForm.get('username').hasError(validation.type) && (myForm.get('username').dirty || myForm.get('username').touched || submitAttempt) ">
-            {{validation.message}}
-          </p>
+
+        <!-- Username Field -->
+        <div class="form-field">
+          <ion-item class="custom-input">
+            <ion-label position="stacked">Username</ion-label>
+            <ion-input 
+              type="text" 
+              formControlName="username" 
+              [(ngModel)]="username"
+              placeholder="Choose a username">
+            </ion-input>
+          </ion-item>
+          <div class="error-container">
+            <div *ngFor="let validation of errorMessages.username">
+              <p class="error-message" 
+                *ngIf="myForm.get('username').hasError(validation.type) && 
+                      (myForm.get('username').dirty || myForm.get('username').touched || submitAttempt)">
+                {{validation.message}}
+              </p>
+            </div>
+          </div>
         </div>
-      </ion-item>
-      <ion-item>
-        <ion-label position="stacked">Email</ion-label>
-        <ion-input type="text" formControlName="email" [(ngModel)]="email"></ion-input>
-        <div *ngFor="let validation of errorMessages.email">
-          <p class="error-message"
-            *ngIf="myForm.get('email').hasError(validation.type) && (myForm.get('email').dirty || myForm.get('email').touched || submitAttempt) ">
-            {{validation.message}}
-          </p>
+
+        <!-- Email Field -->
+        <div class="form-field">
+          <ion-item class="custom-input">
+            <ion-label position="stacked">Email</ion-label>
+            <ion-input 
+              type="email" 
+              formControlName="email" 
+              [(ngModel)]="email"
+              placeholder="Enter your email">
+            </ion-input>
+          </ion-item>
+          <div class="error-container">
+            <div *ngFor="let validation of errorMessages.email">
+              <p class="error-message" 
+                *ngIf="myForm.get('email').hasError(validation.type) && 
+                      (myForm.get('email').dirty || myForm.get('email').touched || submitAttempt)">
+                {{validation.message}}
+              </p>
+            </div>
+          </div>
         </div>
-      </ion-item>
-      <ion-item>
-        <ion-label position="stacked">Password</ion-label>
-        <ion-input type="password" formControlName="password" [(ngModel)]="password"></ion-input>
-        <div *ngFor="let validation of errorMessages.password">
-          <p class="error-message"
-            *ngIf="myForm.get('password').hasError(validation.type) && (myForm.get('password').dirty || myForm.get('password').touched || submitAttempt) ">
-            {{validation.message}}
-          </p>
+
+        <!-- Password Field -->
+        <div class="form-field">
+          <ion-item class="custom-input">
+            <ion-label position="stacked">Password</ion-label>
+            <ion-input 
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password" 
+              [(ngModel)]="password"
+              placeholder="Create a password">
+            </ion-input>
+            <ion-button 
+              fill="clear" 
+              slot="end" 
+              (click)="showPassword = !showPassword">
+              <ion-icon [name]="showPassword ? 'eye-off' : 'eye'"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <div class="error-container">
+            <div *ngFor="let validation of errorMessages.password">
+              <p class="error-message" 
+                *ngIf="myForm.get('password').hasError(validation.type) && 
+                      (myForm.get('password').dirty || myForm.get('password').touched || submitAttempt)">
+                {{validation.message}}
+              </p>
+            </div>
+          </div>
         </div>
-      </ion-item>
-      <div class="ion-padding">
-        <ion-button class="signup-btn" expand="block" (click)="register()">
-          Register
-        </ion-button>
-        <ion-row class="other-auth-options-row">
-          <ion-button class="login-btn" fill="clear" [routerLink]="['/login']">
-            Already have an account?
-          </ion-button>
-        </ion-row>
-    
       </div>
-    </ion-list>
-  </form>
+
+      <!-- Register Button -->
+      <ion-button 
+        expand="block" 
+        class="register-button" 
+        (click)="register()"
+        [disabled]="loading">
+        <ion-spinner *ngIf="loading"></ion-spinner>
+        <span *ngIf="!loading">Create Account</span>
+      </ion-button>
+
+      <!-- Login Link -->
+      <div class="auth-footer">
+        <p>
+          Already have an account? 
+          <a [routerLink]="['/login']">Sign In</a>
+        </p>
+      </div>
+    </form>
+  </div>
 </ion-content>

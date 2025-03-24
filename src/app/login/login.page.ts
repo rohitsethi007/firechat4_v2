@@ -3,7 +3,7 @@ import { LoginService } from '../services/login.service';
 
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Validator } from '../../environments/validator';
-
+import { Router } from '@angular/router';   
 
 @Component({
   selector: 'app-login',
@@ -19,7 +19,8 @@ export class LoginPage implements OnInit {
 
   constructor(
     private loginService: LoginService,
-    private formBuilder: UntypedFormBuilder
+    private formBuilder: UntypedFormBuilder,
+    private router: Router
   ) {
     this.errorMessages = Validator.errorMessages
     this.myForm = this.formBuilder.group({
@@ -37,6 +38,9 @@ export class LoginPage implements OnInit {
     if (this.myForm.valid) {
       console.log('valid');
       this.loginService.login(this.email, this.password);
+      this.router.navigate(['/feed'], {
+        replaceUrl: true // This prevents going back to register page
+      });
     }
     else {
       console.log('invalid');

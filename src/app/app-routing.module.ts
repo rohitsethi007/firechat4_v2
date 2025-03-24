@@ -3,7 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuardService } from './services/auth-guard.service';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'intro', pathMatch: 'full' },
   {
     path: 'app',
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
@@ -11,6 +11,7 @@ const routes: Routes = [
   { path: 'tabs',
   loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule) 
 },
+  { path: 'intro', loadChildren: () => import('./intro/intro.module').then(m => m.IntroPageModule), canActivate: [AuthGuardService] },
   { path: 'friends', loadChildren: () => import('./friends/friends.module').then(m => m.FriendsPageModule), canActivate: [AuthGuardService] },
   { path: 'groupinfo/:id', loadChildren: () => import('./groupinfo/groupinfo.module').then(m => m.GroupinfoPageModule), canActivate: [AuthGuardService]},
   { path: 'groups', loadChildren: () => import('./groups/groups.module').then(m => m.GroupsPageModule), canActivate: [AuthGuardService] },
@@ -38,6 +39,10 @@ const routes: Routes = [
   { path: 'group-join/:id', loadChildren: () => import('./group-join/group-join.module').then(m => m.GroupJoinPageModule) },   {
     path: 'notifications',
     loadChildren: () => import('./notifications/notifications.module').then( m => m.NotificationsPageModule)
+  },
+  {
+    path: 'intro',
+    loadChildren: () => import('./intro/intro.module').then( m => m.IntroPageModule)
   }
  
 ];

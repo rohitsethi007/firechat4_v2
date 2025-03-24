@@ -20,7 +20,7 @@ export class TabsPage {
   groupList: any;
   groupsInfo: any;
   conversationList: any;
-  conversationsInfo: any;
+  conversationsInfo: any; 
   isSuperAdmin: false;
   loggedInUserId: any;
   private unreadSubscription: Subscription;

@@ -10,6 +10,7 @@ import { LoadingService } from './loading.service';
 
 import { environment } from 'src/environments/environment.prod';
 import { Router } from '@angular/router';
+import { Storage } from '@ionic/storage-angular';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,8 @@ export class LoginService {
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
     private loadingProvider: LoadingService,
-    private router: Router
+    private router: Router,
+    private storage: Storage
   ) { }
 
   ngOnInit() {
@@ -43,7 +45,7 @@ export class LoginService {
       });
   }
 
-  register(name: string, username: string, email: string, password: string, img: string) {
+  register(name: string, username: string, email: string, password: string) {
     this.loadingProvider.show();
     return this.afAuth.createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
@@ -51,7 +53,7 @@ export class LoginService {
         console.info('New user created:', user);
         
         if (user) {
-          return this.createNewUser(user.uid, name, username, user.email, "I am available", "Firebase", img);
+          return this.createNewUser(user.uid, name, username, user.email, "I am available", "Firebase");
         } else {
           return null;
         }
@@ -143,6 +145,9 @@ export class LoginService {
 
     try {
       await this.firestore.collection('accounts').doc(userId).set(userData);
+     // Store auth state
+      await this.storage.set('isAuthenticated', true);
+    
       this.router.navigateByUrl('tabs');
     } catch (error) {
       console.error('Error creating new user:', error);

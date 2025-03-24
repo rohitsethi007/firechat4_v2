@@ -25,6 +25,7 @@ import { SharedModule } from './services/share.module';
 import { ImagemodalPageModule } from './imagemodal/imagemodal.module';
 import { UserProfileModalPageModule } from './user-profile-modal/user-profile-modal.module';
 import { ReactionListModalPageModule } from './reaction-list-modal/reaction-list-modal.module';
+import { PhoneAuthComponentModule } from './components/phone-auth/phone-auth.module';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { ReactionListModalPageModule } from './reaction-list-modal/reaction-list
     ReactiveFormsModule,
     ImagemodalPageModule,
     ReactionListModalPageModule,
-    UserProfileModalPageModule
+    UserProfileModalPageModule,
+    PhoneAuthComponentModule
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

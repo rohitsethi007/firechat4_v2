@@ -39,18 +39,19 @@ export namespace Validator {
     export const errorMessages = {
         email: [
             { type: 'required', message: 'Email is required' },
-            { type: 'pattern', message: 'Email looks like invalid' },
+            { type: 'pattern', message: 'Please enter a valid email address' }
         ],
         password: [
             { type: 'required', message: 'Password is required' },
-            { type: 'minlength', message: 'Password must be 6 char' },
+            { type: 'minlength', message: 'Password must be at least 6 characters long' }
         ],
         name: [
             { type: 'required', message: 'Name is required' },
+            { type: 'minlength', message: 'Name must be at least 2 characters long' }
         ],
         username: [
             { type: 'required', message: 'Username is required' },
-            { type: 'minlength', message: 'Username must be 5 char' },
+            { type: 'minlength', message: 'Username must be at least 3 characters long' }
         ],
         bio: [
             { type: 'required', message: 'Bio is required' },
