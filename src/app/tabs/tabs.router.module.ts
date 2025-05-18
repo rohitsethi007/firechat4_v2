@@ -5,7 +5,7 @@ import { AuthGuardService } from '../services/auth-guard.service';
 
 const routes: Routes = [
   {
-    path: 'tabs',
+    path: '',
     component: TabsPage,
     children: [
       {
