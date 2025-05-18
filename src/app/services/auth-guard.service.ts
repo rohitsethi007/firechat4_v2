@@ -13,13 +13,19 @@ export class AuthGuardService  {
 
 async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
     console.log(route);
-    const val = await this.dataService.getFromStorageAsync('currentUser');
-    console.log('val:' + val);
-    if (val === null) {
+    try {
+      const val = await this.dataService.getFromStorageAsync('currentUser');
+      console.log('val:' + val);
+      if (val === null) {
+        this.router.navigate(['/login']);
+        return false;
+      } else {
+        return true;
+      }
+    } catch (error) {
+      console.error('Auth guard error:', error);
       this.router.navigate(['/login']);
       return false;
-    } else {
-      return true;
     }
   }
 }

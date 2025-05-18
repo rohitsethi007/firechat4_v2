@@ -1,0 +1,69 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Choose Your Interests</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="interest-container">
+    <h1>Select Groups</h1>
+    <p class="subtitle">Join groups that match your interests</p>
+    
+    <!-- Categories Section -->
+    <div class="categories-section">
+      <h2>Popular Categories</h2>
+      <div class="categories-grid">
+        <ion-chip 
+          *ngFor="let category of categories" 
+          [color]="selectedCategories.includes(category.key) ? 'primary' : 'medium'"
+          (click)="toggleCategory(category)">
+          <ion-avatar>
+            <img [src]="category.img" [alt]="category.name">
+          </ion-avatar>
+          <ion-label>{{category.name}}</ion-label>
+        </ion-chip>
+      </div>
+    </div>
+    
+    <!-- Groups Section -->
+    <div class="groups-section">
+      <h2>Suggested Groups</h2>
+      <ion-list>
+        <ion-item *ngFor="let group of filteredGroups" class="group-item">
+          <ion-thumbnail slot="start">
+            <ion-img [src]="group.img" [alt]="group.name"></ion-img>
+          </ion-thumbnail>
+          
+          <ion-label>
+            <h3>{{group.name}}</h3>
+            <p>
+              <ion-icon name="people-outline"></ion-icon>
+              {{group.members?.length || 0}} Members
+            </p>
+          </ion-label>
+          
+          <ion-checkbox 
+            slot="end" 
+            [(ngModel)]="group.selected"
+            (ionChange)="updateSelectedGroups()">
+          </ion-checkbox>
+        </ion-item>
+      </ion-list>
+    </div>
+    
+    <div class="selection-info">
+      <p class="selection-count" [ngClass]="{'error': selectedGroups.length === 0 || selectedGroups.length > 5}">
+        Selected: {{selectedGroups.length}}/5
+        <span *ngIf="selectedGroups.length === 0" class="error-message">Please select at least 1 group</span>
+        <span *ngIf="selectedGroups.length > 5" class="error-message">Maximum 5 groups allowed</span>
+      </p>
+    </div>
+    
+    <div class="action-buttons">
+      <ion-button expand="block" color="primary" (click)="confirmSelection()" 
+        [disabled]="selectedGroups.length === 0 || selectedGroups.length > 5">
+        Continue
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

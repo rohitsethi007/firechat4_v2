@@ -149,7 +149,7 @@ export class LoginService {
      // Store auth state
       await this.storage.set('isAuthenticated', true);
     
-      this.router.navigateByUrl('tabs');
+      // Don't navigate here, let the registration flow handle navigation
     } catch (error) {
       console.error('Error creating new user:', error);
       throw error;
