@@ -110,7 +110,7 @@ export class NewPostPage implements OnInit {
             postTags: [],
             groupId: '',
             groupName: '',
-            type: 'event',
+            type: 'general',
             data: {},
             totalReactionCount: 0,
             totalReviewCount: 0,
@@ -165,7 +165,7 @@ export class NewPostPage implements OnInit {
       this.dataProvider.addPost(this.post).then((success) => {
         const postId = success.id;
         this.postId = postId;
-        console.log('step 1')
+
         // Update group data on the database.
         if (this.group.posts === undefined) {
           this.group.posts = [];
@@ -209,12 +209,6 @@ export class NewPostPage implements OnInit {
 
     this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
       this.group = group.payload.data();
-      // this.group.groupTags.forEach((element: any) => {
-      //   this.postTags.push({val: element, isChecked: false});
-      //});
-      // TAGS Commented
-      // this.addTagControls();
-
   });
 
    }

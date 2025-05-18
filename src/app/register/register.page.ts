@@ -52,8 +52,8 @@ export class RegisterPage implements OnInit {
           this.username,
           this.email,
           this.password
-        );
-
+        ) as { uid: string };
+        console.info('userCredential:', userCredential.uid);  
         // Redirect to categories selection
         this.router.navigate(['/groups'], {
           replaceUrl: true // This prevents going back to register page

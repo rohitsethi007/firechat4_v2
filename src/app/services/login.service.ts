@@ -45,7 +45,7 @@ export class LoginService {
       });
   }
 
-  register(name: string, username: string, email: string, password: string) {
+  async register(name: string, username: string, email: string, password: string) {
     this.loadingProvider.show();
     return this.afAuth.createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
@@ -53,10 +53,11 @@ export class LoginService {
         console.info('New user created:', user);
         
         if (user) {
-          return this.createNewUser(user.uid, name, username, user.email, "I am available", "Firebase");
+           this.createNewUser(user.uid, name, username, user.email, "I am available", "Firebase");
         } else {
-          return null;
+           null;
         }
+        return user;  
       })
       .catch((err) => {
         console.log(err);

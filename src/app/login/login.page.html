@@ -1,57 +1,67 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="/intro"></ion-back-button>
     </ion-buttons>
-    <ion-title>Log In</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div class="center ion-padding">
-    <img src="assets/images/logo.png" style="width:80px;height:80px;" />
-  </div>
-  <form [formGroup]="myForm">
-    <ion-list lines="none">
-      <ion-item>
-        <ion-label position="stacked">Email</ion-label>
-        <ion-input type="email" formControlName="email" email="true" [(ngModel)]="email"></ion-input>
-        <div *ngFor="let validation of errorMessages.email">
-          <p class="error"
-            *ngIf="myForm.get('email').hasError(validation.type) && (myForm.get('email').dirty || myForm.get('email').touched || submitAttempt) ">
-            {{validation.message}}
-          </p>
-        </div>
+  <div class="login-container">
+    <div class="logo">
+      <img src="assets/images/logo.png" alt="FireChat Logo" class="chat-logo">
+    </div>
+    
+    <h1>Sign In</h1>
+    
+    <form [formGroup]="myForm">
+      <ion-item class="custom-item">
+        <ion-label position="floating">Email</ion-label>
+        <ion-input type="email" formControlName="email" [(ngModel)]="email"></ion-input>
       </ion-item>
-      <ion-item>
-        <ion-label position="stacked">Password</ion-label>
+      <div *ngFor="let validation of errorMessages.email">
+        <div class="error-message" *ngIf="myForm.get('email').hasError(validation.type) && (myForm.get('email').dirty || myForm.get('email').touched || submitAttempt)">
+          {{validation.message}}
+        </div>
+      </div>
+      
+      <ion-item class="custom-item">
+        <ion-label position="floating">Password</ion-label>
         <ion-input type="password" formControlName="password" [(ngModel)]="password"></ion-input>
-        <div *ngFor="let validation of errorMessages.password">
-          <p class="error"
-            *ngIf="myForm.get('password').hasError(validation.type) && (myForm.get('password').dirty || myForm.get('password').touched || submitAttempt) ">
-            {{validation.message}}
-          </p>
-        </div>
-
       </ion-item>
-      <div style="float:right;">
-        <ion-button fill="clear" color="medium" size="small" routerLink="/forgot">
-          Forgot?
-        </ion-button>
+      <div *ngFor="let validation of errorMessages.password">
+        <div class="error-message" *ngIf="myForm.get('password').hasError(validation.type) && (myForm.get('password').dirty || myForm.get('password').touched || submitAttempt)">
+          {{validation.message}}
+        </div>
       </div>
-      <div class="ion-padding">
-        &nbsp;
-        <ion-button expand="block" color="primary" (click)="login()">
-          Login
-        </ion-button>
-
-        &nbsp;&nbsp;&nbsp;
-
-        <ion-button fill="clear" expand="block" routerLink="/register">
-          Create New Account
-        </ion-button>
-
+      
+      <div class="forgot-password">
+        <ion-button fill="clear" size="small" routerLink="/forgot">Forgot Password?</ion-button>
       </div>
-    </ion-list>
-  </form>
+      
+      <ion-button expand="block" class="login-btn" (click)="login()">
+        <ion-icon name="log-in-outline" slot="start"></ion-icon>
+        Sign In
+      </ion-button>
+      
+      <div class="social-login">
+        <div class="divider">or continue with</div>
+        <div class="social-buttons">
+          <ion-button fill="outline" class="social-btn" (click)="loginWithGoogle()">
+            <ion-icon name="logo-google"></ion-icon>
+          </ion-button>
+          <ion-button fill="outline" class="social-btn" (click)="loginWithApple()">
+            <ion-icon name="logo-apple"></ion-icon>
+          </ion-button>
+          <ion-button fill="outline" class="social-btn" (click)="loginWithFacebook()">
+            <ion-icon name="logo-facebook"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+      
+      <div class="signup-link">
+        <p>Don't have an account? <a (click)="goToRegister()">Sign Up</a></p>
+      </div>
+    </form>
+  </div>
 </ion-content>

@@ -1,10 +1,13 @@
 // // test-data.service.ts
 // import { Injectable } from '@angular/core';
-// 
-// import { Firestore } from '@angular/fire/firestore';
-// import { FirebaseService } from './firebase.service';
+
 // import { DataService } from './data.service';
+// import { LoginService } from './login.service';
 // import { LoadingService } from './loading.service';
+
+// import { AngularFireAuth } from '@angular/fire/compat/auth';
+// import { AngularFirestore } from '@angular/fire/compat/firestore';
+// import firebase from 'firebase/compat/app';
 
 // @Injectable({
 //   providedIn: 'root'
@@ -15,31 +18,28 @@
 //   private testPosts: Map<string, string[]> = new Map(); // userId -> postIds
 
 //   constructor(
-//     private afAuth: Auth,
-//     private firestore: Firestore,
-//     private firebaseService: FirebaseService,
+//     private afAuth: AngularFireAuth,
+//     public firestore: AngularFirestore,
 //     private dataService: DataService,
+//     private loginService: LoginService,
 //     private loadingService: LoadingService
 //   ) {}
 
 //   async loadTestData() {
 //     try {
-//       this.loadingService.show('Creating test data...');
+//       this.loadingService.showToast('Creating test data...');
       
 //       // Create 10 test users
 //       for (let i = 0; i < 10; i++) {
-//         this.loadingService.show(`Creating test user ${i + 1}/10...`);
+//         this.loadingService.showToast(`Creating test user ${i + 1}/10...`);
 //         const user = await this.createTestUser(i);
         
-//         // Sign in as this user
-//         await this.firebaseService.login(user.email, user.password);
-        
 //         // Join random groups for this user
-//         this.loadingService.show(`Joining groups for user ${i + 1}...`);
+//         this.loadingService.showToast(`Joining groups for user ${i + 1}...`);
 //         await this.joinRandomGroups(user.uid);
         
 //         // Create posts for this user
-//         this.loadingService.show(`Creating posts for user ${i + 1}...`);
+//         this.loadingService.showToast(`Creating posts for user ${i + 1}...`);
 //         await this.createTestPosts(user.uid);
 //       }
       
@@ -54,23 +54,23 @@
 
 //   async clearTestData() {
 //     try {
-//       this.loadingService.show('Clearing test data...');
+//       this.loadingService.showToast('Clearing test data...');
       
 //       // Delete posts for each user
 //       for (const [userId, postIds] of this.testPosts) {
-//         this.loadingService.show(`Deleting posts for user...`);
+//         this.loadingService.showToast(`Deleting posts for user...`);
 //         await this.deleteTestPosts(userId, postIds);
 //       }
       
 //       // Remove users from their groups
 //       for (const [userId, groupIds] of this.testGroups) {
-//         this.loadingService.show(`Removing user from groups...`);
+//         this.loadingService.showToast(`Removing user from groups...`);
 //         await this.leaveTestGroups(userId, groupIds);
 //       }
       
 //       // Delete all test users
 //       for (const user of this.testUsers) {
-//         this.loadingService.show(`Deleting test user...`);
+//         this.loadingService.showToast(`Deleting test user...`);
 //         await this.deleteTestUser(user.uid);
 //       }
       
@@ -95,16 +95,28 @@
 //     };
 
 //     // Register user using your existing register function
-//     const userCredential = await this.firebaseService.register(testUser);
-//     testUser.uid = userCredential.user.uid;
+//     const userCredential = await this.loginService.register(testUser.name, testUser.username, testUser.email, testUser.password) as { uid: string };
+//     testUser.uid = userCredential.uid;
 //     this.testUsers.push(testUser);
 //     return testUser;
 //   }
 
 //   private async joinRandomGroups(userId: string) {
 //     // Get all available groups
-//     const groupsSnapshot = await this.firestore.collection('groups').get().toPromise();
-//     const allGroups = groupsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+//     const allGroups = []
+//     var user:any;
+//     this.dataService.getUser(userId).snapshotChanges().subscribe((user: any) => {
+//        user = user.payload.data();
+//       });
+
+//     this.dataService.getGroups().snapshotChanges().subscribe((groups: any) => {
+//         groups.forEach(element => {
+//             let group = element.payload.doc.data();
+//             group.key = element.payload.doc.id;
+
+//             allGroups.push(group);
+//         });
+//     });
     
 //     // Randomly select 3 groups
 //     const selectedGroups = this.shuffleArray(allGroups).slice(0, 3);
@@ -112,8 +124,20 @@
     
 //     // Join each group
 //     for (const group of selectedGroups) {
-//       await this.firebaseService.joinGroup(group.id);
-//       groupIds.push(group.id);
+//         user.groups.push(group.groupId)
+//         // Update group data on the database.
+//         this.dataService.getUser(userId).update({
+//         groups: user.groups
+//         }).then(() => {
+//         // Add friend as members of the group.
+//         group.members.push(userId);
+
+//         // Update group data on the database.
+//         this.dataService.getGroup(group.groupId).update({
+//             members: group.members,
+//             messages: group.messages
+//         });
+//         })
 //     }
     
 //     this.testGroups.set(userId, groupIds);
@@ -121,70 +145,112 @@
 
 //   private async createTestPosts(userId: string) {
 //     const postIds: string[] = [];
-    
+//     var userGroups: [];
+//     var group: any;
+
+//     this.dataService.getUser(userId).snapshotChanges().subscribe((user: any) => {
+//         user = user.payload.data();
+//         userGroups = user.groups;
+//        });
+
 //     // Create 10 posts of each type
 //     for (let i = 0; i < 10; i++) {
 //       // General post
-//       const generalPost = {
-//         content: `Test general post ${i + 1} by user ${userId}`,
-//         type: 'text',
-//         timestamp: Date.now() + i
-//       };
-//       const generalPostRef = await this.firebaseService.createPost(generalPost);
-//       postIds.push(generalPostRef.id);
-
-//       // Event post
-//       const eventPost = {
-//         content: `Test Event ${i + 1}`,
-//         type: 'event',
-//         eventDate: new Date(Date.now() + (i + 1) * 86400000), // Future dates
-//         eventLocation: `Test Location ${i + 1}`,
-//         eventDescription: `This is test event ${i + 1} by user ${userId}`
-//       };
-//       const eventPostRef = await this.firebaseService.createEventPost(eventPost);
-//       postIds.push(eventPostRef.id);
-
-//       // Poll post
-//       const pollPost = {
-//         content: `Test Poll Question ${i + 1}`,
-//         type: 'poll',
-//         options: [
-//           `Option 1 for poll ${i + 1}`,
-//           `Option 2 for poll ${i + 1}`,
-//           `Option 3 for poll ${i + 1}`
-//         ],
-//         endDate: new Date(Date.now() + (i + 1) * 86400000)
-//       };
-//       const pollPostRef = await this.firebaseService.createPollPost(pollPost);
-//       postIds.push(pollPostRef.id);
-//     }
+//       var generalPost: any;
+//       generalPost.date = new Date();
+//       generalPost.title = 'Test Post';
+//       generalPost.data.message = 'But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure';
+//       generalPost.postTags = [];
+//       generalPost.groupId = this.shuffleArray(userGroups).slice(0, 1);
+//       generalPost.type = 'general';
     
-//     this.testPosts.set(userId, postIds);
-//   }
+//       this.dataService.addPost(generalPost).then((success) => {
+//         const postId = success.id;
+ 
+//         this.dataService.getGroup(generalPost.groupId).snapshotChanges().subscribe((group) => {
+//             group = group.payload.data();
+//         });
 
-//   private async deleteTestPosts(userId: string, postIds: string[]) {
-//     for (const postId of postIds) {
-//       await this.firestore.doc(`posts/${postId}`).delete();
-//     }
-//     this.testPosts.delete(userId);
-//   }
+//         // Update group data on the database.
+//         if (group.posts === undefined) {
+//           group.posts = [];
+//         }
+//         group.posts.push(postId);
+//         this.dataService.getGroup(generalPost.groupId).update({
+//           posts: group.posts
+//         });
 
-//   private async leaveTestGroups(userId: string, groupIds: string[]) {
-//     for (const groupId of groupIds) {
-//       await this.firebaseService.leaveGroup(groupId);
-//     }
-//     this.testGroups.delete(userId);
-//   }
 
-//   private async deleteTestUser(userId: string) {
-//     // Delete user data
-//     await this.firestore.doc(`accounts/${userId}`).delete();
-//     // Delete auth user
-//     const user = await this.afAuth.currentUser;
-//     if (user && user.uid === userId) {
-//       await user.delete();
+//         var userNotifications: string[];
+//         userNotifications.push(postId);
+//         this.dataService.getUser(userId).update({
+//           userNotifications: userNotifications
+//         });
+
+//         // Update user activity.
+
+//         var userPosts: string[];
+//         userPosts.push(postId);
+//         this.dataService.getUser(userId).update({
+//           userPosts: userPosts
+//         });
+
+      
 //     }
+
+//     //   // Event post
+//     //   const eventPost = {
+//     //     content: `Test Event ${i + 1}`,
+//     //     type: 'event',
+//     //     eventDate: new Date(Date.now() + (i + 1) * 86400000), // Future dates
+//     //     eventLocation: `Test Location ${i + 1}`,
+//     //     eventDescription: `This is test event ${i + 1} by user ${userId}`
+//     //   };
+//     //   const eventPostRef = await this.firebaseService.createEventPost(eventPost);
+//     //   postIds.push(eventPostRef.id);
+
+//     //   // Poll post
+//     //   const pollPost = {
+//     //     content: `Test Poll Question ${i + 1}`,
+//     //     type: 'poll',
+//     //     options: [
+//     //       `Option 1 for poll ${i + 1}`,
+//     //       `Option 2 for poll ${i + 1}`,
+//     //       `Option 3 for poll ${i + 1}`
+//     //     ],
+//     //     endDate: new Date(Date.now() + (i + 1) * 86400000)
+//     //   };
+//     //   const pollPostRef = await this.firebaseService.createPollPost(pollPost);
+//     //   postIds.push(pollPostRef.id);
+//     // }
+    
+
 //   }
+// }
+
+// //   private async deleteTestPosts(userId: string, postIds: string[]) {
+// //     for (const postId of postIds) {
+// //       await this.firestore.doc(`posts/${postId}`).delete();
+// //     }
+// //     this.testPosts.delete(userId);
+// //   }
+
+// //   private async leaveTestGroups(userId: string, groupIds: string[]) {
+// //     for (const groupId of groupIds) {
+// //       await this.firebaseService.leaveGroup(groupId);
+// //     }
+// //     this.testGroups.delete(userId);
+// //   }
+
+// //   private async deleteTestUser(userId: string) {
+// //     // Delete user data
+// //     await this.firestore.doc(`accounts/${userId}`).delete();
+// //     // Delete auth user
+// //     const user = await this.afAuth.currentUser;
+// //     if (user && user.uid === userId) {
+// //       await user.delete();
+// //     }
+// //   }
 
 //   private shuffleArray(array: any[]) {
 //     for (let i = array.length - 1; i > 0; i--) {

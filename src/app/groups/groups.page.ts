@@ -61,42 +61,45 @@ export class GroupsPage implements OnInit, AfterViewInit {
   ) {}
 
   ngAfterViewInit() {
-    // Configure Swiper
-    const swiperEl = this.swiperRef?.nativeElement;
-    if (swiperEl) {
-      swiperEl.initialize();
-    }
-    const swiperParams = {
-      modules: [IonicSlides],
-      slidesPerView: 3,
-      spaceBetween: 20,
-      grabCursor: true,
-      navigation: true,
-      pagination: {
-        clickable: true
-      },
-      // Add these parameters for browser testing
-      simulateTouch: true,
-      mousewheel: true,
-      keyboard: true,
-      breakpoints: {
-        320: {
-          slidesPerView: 2,
-          spaceBetween: 10
-        },
-        480: {
+    setTimeout(() => {
+      // Configure Swiper
+      const swiperEl = this.swiperRef?.nativeElement;
+      if (swiperEl) {
+        const swiperParams = {
           slidesPerView: 3,
-          spaceBetween: 15
-        },
-        640: {
-          slidesPerView: 4,
-          spaceBetween: 20
-        }
-      }
-    };
+          spaceBetween: 20,
+          grabCursor: true,
+          navigation: true,
+          pagination: {
+            clickable: true
+          },
+          // Add these parameters for browser testing
+          simulateTouch: true,
+          mousewheel: true,
+          keyboard: true,
+          breakpoints: {
+            320: {
+              slidesPerView: 2,
+              spaceBetween: 10
+            },
+            480: {
+              slidesPerView: 3,
+              spaceBetween: 15
+            },
+            640: {
+              slidesPerView: 4,
+              spaceBetween: 20
+            }
+          }
+        };
 
-    // Assign parameters to Swiper element
-    Object.assign(swiperEl, swiperParams);
+        // Assign parameters to Swiper element
+        Object.assign(swiperEl, swiperParams);
+        
+        // Initialize swiper
+        swiperEl.initialize();
+      }
+    }, 300);
   }
   prevSlide() {
     const swiperEl = this.swiperRef?.nativeElement;
@@ -109,10 +112,11 @@ export class GroupsPage implements OnInit, AfterViewInit {
   }
   ionViewWillEnter() {
     setTimeout(() => {
-      if (this.swiper) {
-        this.swiper.update();
+      const swiperEl = this.swiperRef?.nativeElement;
+      if (swiperEl && swiperEl.swiper) {
+        swiperEl.swiper.update();
       }
-    }, 100);
+    }, 300);
 
     this.afAuth.currentUser.then(user => {
       this.loggedInUserId = user?.uid;
@@ -136,8 +140,16 @@ export class GroupsPage implements OnInit, AfterViewInit {
         });
         this.filteredGroups = this.groups; // Initialize filtered groups
         this.loadingProvider.hide(); // Hide loading after groups are loaded
+        
+        // Update swiper after data is loaded
+        setTimeout(() => {
+          const swiperEl = this.swiperRef?.nativeElement;
+          if (swiperEl && swiperEl.swiper) {
+            swiperEl.swiper.update();
+          }
+        }, 300);
       });
-      });
+    });
   }
 
   ngOnInit() {}

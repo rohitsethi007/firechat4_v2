@@ -11,11 +11,12 @@ export class AuthGuardService  {
     private router: Router,
     public dataService: DataService) {}
 
-canActivate(route: ActivatedRouteSnapshot): boolean {
+async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
     console.log(route);
-    const val = this.dataService.getFromStorageAsync('currentUser');
+    const val = await this.dataService.getFromStorageAsync('currentUser');
     console.log('val:' + val);
     if (val === null) {
+      this.router.navigate(['/login']);
       return false;
     } else {
       return true;

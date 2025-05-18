@@ -209,14 +209,22 @@ export class FeedPage implements OnInit {
     try{
       this.loadingProvider.show();
       if (!searchTerm) {
-        this.firstDataSet = this.firestore.collection('posts').ref
-        .where('groupId', 'in', this.loggedInUser.groups)
-        .orderBy('date', 'desc')
-        .limit(5);
-          this.firstDataSet.get().then((po: any) => {
-            this.lastDataSet = po.docs[po.docs.length - 1];
-            this.posts = [];
-            this.loadEachPostData(po);
+        // Check if user has groups before using 'in' filter
+        if (this.loggedInUser && this.loggedInUser.groups && this.loggedInUser.groups.length > 0) {
+          this.firstDataSet = this.firestore.collection('posts').ref
+          .where('groupId', 'in', this.loggedInUser.groups)
+          .orderBy('date', 'desc')
+          .limit(5);
+        } else {
+          // If no groups, fetch recent posts without the 'in' filter
+          this.firstDataSet = this.firestore.collection('posts').ref
+          .orderBy('date', 'desc')
+          .limit(5);
+        }
+        this.firstDataSet.get().then((po: any) => {
+          this.lastDataSet = po.docs[po.docs.length - 1];
+          this.posts = [];
+          this.loadEachPostData(po);
         });
       } else {
          // Split search term into keywords
@@ -575,10 +583,18 @@ export class FeedPage implements OnInit {
         event.target.disabled = true;
       } else {
         if (this.lastDataSet) {
-        this.nextDataSet = this.firestore.collection('posts').ref
-                            .where('groupId', 'in', this.loggedInUser.groups)
-                            .orderBy('date', 'desc')
-                            .startAfter(this.lastDataSet).limit(5);
+        // Check if user has groups before using 'in' filter
+        if (this.loggedInUser && this.loggedInUser.groups && this.loggedInUser.groups.length > 0) {
+          this.nextDataSet = this.firestore.collection('posts').ref
+                              .where('groupId', 'in', this.loggedInUser.groups)
+                              .orderBy('date', 'desc')
+                              .startAfter(this.lastDataSet).limit(5);
+        } else {
+          // If no groups, fetch recent posts without the 'in' filter
+          this.nextDataSet = this.firestore.collection('posts').ref
+                              .orderBy('date', 'desc')
+                              .startAfter(this.lastDataSet).limit(5);
+        }
         this.nextDataSet.onSnapshot((po: any) => {
         this.lastDataSet = po.docs[po.docs.length - 1];
         console.log('po.docs.length', po.docs.length);

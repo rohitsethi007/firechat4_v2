@@ -41,10 +41,29 @@ export class AppComponent {
       this.platform.backButton.subscribe(() => null);
 
       this.afAuth.onAuthStateChanged(user => { 
-        this.router.navigateByUrl('/app/tabs/tab1', { 
-          skipLocationChange: true, 
-          replaceUrl: true 
-        });
+        // Get current URL path
+        const currentUrl = this.router.url;
+        
+        if (user) {
+          // User is authenticated
+          if (currentUrl === '/login' || currentUrl === '/register' || currentUrl === '/') {
+            // If on auth pages, redirect to feed
+            this.router.navigateByUrl('/app/tabs/tab1', { 
+              skipLocationChange: true, 
+              replaceUrl: true 
+            });
+          }
+          // Allow navigation to intro page even when authenticated
+        } else {
+          // User is not authenticated
+          if (currentUrl !== '/login' && currentUrl !== '/register' && 
+              currentUrl !== '/intro' && currentUrl !== '/forgot') {
+            // If not on auth pages, redirect to login
+            this.router.navigateByUrl('/login', {
+              replaceUrl: true
+            });
+          }
+        }
       });
 
 

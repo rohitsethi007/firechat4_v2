@@ -1,52 +1,86 @@
-<!-- src/app/intro/intro.page.html -->
 <ion-content>
   <div class="slides-container">
-    <!-- Splash Screen -->
-    <div class="slide slide-0" [class.active]="currentSlide === 0">
-      <div class="splash-container">
-        <img src="assets/splash-image.png" alt="Welcome">
-        <ion-button (click)="next()" expand="block" fill="clear">
-          Get Started
+    <!-- Slide 1 -->
+    <div class="slide" [ngClass]="{'active': currentSlide === 0}">
+      <div class="slide-bg slide-bg-1"></div>
+      <div class="content">
+        <img src="assets/images/logo.png" class="logo">
+        <h1>Welcome to FireChat</h1>
+        <p>Connect with friends and communities in a whole new way</p>
+        <ion-button expand="block" (click)="nextSlide()" class="action-button">
+          Get Started <ion-icon name="arrow-forward" slot="end"></ion-icon>
         </ion-button>
       </div>
     </div>
-
-    <!-- Sign Up Options -->
-    <div class="slide slide-1" [class.active]="currentSlide === 1">
-      <div class="signup-container">
-        <img src="assets/logo.png" alt="Logo" class="logo">
-        
-        <div class="auth-buttons">
-          <ion-button expand="block" (click)="signInWithPhone()" class="phone-button">
-            <ion-icon slot="start" name="call-outline"></ion-icon>
-            Continue with Phone
-          </ion-button>
-          <ion-button expand="block" (click)="signInWithEmail()" class="email-button">
-            <ion-icon slot="start" name="mail-outline"></ion-icon>
-            Continue with Email
-          </ion-button>
-
-          <ion-button expand="block" (click)="signInWithFacebook()" class="facebook-button">
-            <ion-icon slot="start" name="logo-facebook"></ion-icon>
-            Continue with Facebook
-          </ion-button>
-
-          <ion-button expand="block" (click)="signInWithGoogle()" class="google-button">
-            <ion-icon slot="start" name="logo-google"></ion-icon>
-            Continue with Google
-          </ion-button>
-
-          <ion-button expand="block" (click)="signInWithApple()" class="apple-button">
-            <ion-icon slot="start" name="logo-apple"></ion-icon>
-            Continue with Apple
+    
+    <!-- Slide 2 -->
+    <div class="slide" [ngClass]="{'active': currentSlide === 1}">
+      <div class="slide-bg slide-bg-2">
+        <img src="assets/images/walkthrough-illustration-1.svg" class="bg-image">
+      </div>
+      <div class="content feature-slide">
+        <div class="text-top">
+          <h2>Connect Instantly</h2>
+          <p>Chat with friends and family in real-time with our powerful messaging system</p>
+        </div>
+        <div class="button-bottom">
+          <ion-button expand="block" (click)="nextSlide()" class="action-button">
+            Continue <ion-icon name="arrow-forward" slot="end"></ion-icon>
           </ion-button>
         </div>
-
-        <p class="login-text">
-          Already a member? 
-          <a (click)="goToLogin()">Log In</a>
-        </p>
       </div>
     </div>
+    
+    <!-- Slide 3 -->
+    <div class="slide" [ngClass]="{'active': currentSlide === 2}">
+      <div class="slide-bg slide-bg-3">
+        <img src="assets/images/walkthrough-illustration-2.svg" class="bg-image">
+      </div>
+      <div class="content feature-slide">
+        <div class="text-top">
+          <h2>Join Communities</h2>
+          <p>Find groups that match your interests and connect with like-minded people</p>
+        </div>
+        <div class="button-bottom">
+          <ion-button expand="block" (click)="nextSlide()" class="action-button">
+            Continue <ion-icon name="arrow-forward" slot="end"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Slide 4 -->
+    <div class="slide" [ngClass]="{'active': currentSlide === 3}">
+      <div class="slide-bg slide-bg-4">
+        <img src="assets/images/walkthrough-illustration-3.svg" class="bg-image">
+      </div>
+      <div class="content feature-slide">
+        <div class="text-top">
+          <h2>Get Started Now</h2>
+          <p>Create an account or log in to start connecting</p>
+        </div>
+        <div class="button-bottom">
+          <ion-button expand="block" (click)="goToRegister()" class="register-button">
+            <ion-icon name="person-add" slot="start"></ion-icon>
+            Create Account
+          </ion-button>
+          <ion-button expand="block" (click)="goToLogin()" class="login-button">
+            <ion-icon name="log-in" slot="start"></ion-icon>
+            Log In
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="pagination">
+    <span class="dot" [ngClass]="{'active': currentSlide === 0}" (click)="goToSlide(0)"></span>
+    <span class="dot" [ngClass]="{'active': currentSlide === 1}" (click)="goToSlide(1)"></span>
+    <span class="dot" [ngClass]="{'active': currentSlide === 2}" (click)="goToSlide(2)"></span>
+    <span class="dot" [ngClass]="{'active': currentSlide === 3}" (click)="goToSlide(3)"></span>
+  </div>
+  
+  <div class="skip-button" *ngIf="currentSlide < 3" (click)="goToSlide(3)">
+    Skip
   </div>
 </ion-content>
