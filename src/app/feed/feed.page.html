@@ -103,7 +103,7 @@
     <div class="search-results-header">
       <div class="results-info">
         <h2>Results for "{{ searchQuery }}"</h2>
-        <p>{{ posts.length }} results found</p>
+        <p>{{ searchResults.length }} results found</p>
       </div>
       <ion-button fill="clear" (click)="clearSearch()">
         <ion-icon name="close-circle-outline"></ion-icon>
@@ -119,7 +119,7 @@
     </div>
 
     <!-- No Results State -->
-    <div class="no-results" *ngIf="posts.length === 0">
+    <div class="no-results" *ngIf="searchResults.length === 0">
       <ion-icon name="search-outline"></ion-icon>
       <h3>No results found</h3>
       <p>Try different keywords or check spelling</p>

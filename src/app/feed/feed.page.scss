@@ -4,7 +4,7 @@
 
 }
 ion-content {
-  --background: #ffffff;  // Set white background for ion-content
+  --background: #ffffff !important;  // Set white background for ion-content
 }
 // Header Styling
 // feed.page.scss
@@ -80,7 +80,7 @@ ion-header {
           flex: 1;
           display: flex;
           align-items: center;
-          background: var(--ion-color-light);
+          background: #f4f5f8;
           border-radius: 8px;
           padding: 8px 12px;
           height: 40px;
@@ -263,6 +263,10 @@ ion-header {
 // feed.page.scss
 // Add these styles to your existing SCSS
 
+.search-results-container {
+  background: #ffffff;
+}
+
 .search-results-header {
   padding: 16px;
   background: #ffffff;
@@ -273,6 +277,17 @@ ion-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
+  .back-button {
+    margin-right: 8px;
+    
+    ion-button {
+      margin: 0;
+      --padding-start: 0;
+      --padding-end: 4px;
+      height: 40px;
+    }
+  }
 
   .results-info {
     h2 {
@@ -326,8 +341,8 @@ ion-header {
 // Dark mode support
 @media (prefers-color-scheme: dark) {
   .search-results-header {
-    background: #1e1e1e;
-    border-bottom-color: rgba(255, 255, 255, 0.1);
+    background: #ffffff;
+    border-bottom-color: #f0f0f0;
   }
 }
 
@@ -350,34 +365,7 @@ ion-header {
 
 // Dark mode support
 @media (prefers-color-scheme: dark) {
-  .search-content {
-    background: #1a1a1a;
-
-    .search-section {
-      background: #2d2d2d;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-
-      .section-header h2 {
-        color: #ffffff;
-      }
-
-      .search-items .search-item {
-        border-bottom-color: #3d3d3d;
-
-        .search-term span {
-          color: #ffffff;
-        }
-      }
-
-      .trending-items .trending-item .trend-content {
-        background: #333333;
-
-        .trend-info .trend-term {
-          color: #ffffff;
-        }
-      }
-    }
-  }
+  /* Removed dark mode styles for search content to keep it white */
 }
 
 
@@ -388,10 +376,15 @@ ion-header {
 @media (prefers-color-scheme: dark) {
   ion-header {
     .search-box {
-      background: rgba(var(--ion-color-light-rgb), 0.05) !important;
+      background: #f4f5f8 !important;
+      
+      ion-icon, ion-input {
+        color: #666 !important;
+        --placeholder-color: #666 !important;
+      }
 
       &.focused {
-        background: rgba(var(--ion-color-light-rgb), 0.1) !important;
+        background: #ffffff !important;
       }
     }
 

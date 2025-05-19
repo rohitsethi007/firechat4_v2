@@ -235,7 +235,7 @@ export class FeedPage implements OnInit {
           console.info('GOT searchTerms:', searchTerms)
           // Search using array-contains-any
           this.firstDataSet = this.firestore.collection('posts').ref
-          // .where('groupId', 'in', this.loggedInUser.groups)
+          .where('groupId', 'in', this.loggedInUser.groups)
           .where('searchKeywords', 'array-contains-any', searchTerms)
           .orderBy('date', 'desc')
           .limit(20);
