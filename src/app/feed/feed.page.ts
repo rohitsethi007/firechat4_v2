@@ -453,7 +453,16 @@ export class FeedPage implements OnInit {
     }
 
     viewPost(post) {
-      this.router.navigateByUrl('post/' + post.key);
+      // Check if user is logged in before navigating
+      this.afAuth.currentUser.then(user => {
+        if (user) {
+          this.router.navigateByUrl('/post/' + post.key);
+        } else {
+          // Store the post ID to navigate after login
+          localStorage.setItem('pendingPostView', post.key);
+          this.router.navigateByUrl('/login');
+        }
+      });
     }
 
     viewUser(userId) {

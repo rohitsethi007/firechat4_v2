@@ -29,7 +29,7 @@ const routes: Routes = [
   { path: 'new-poll/:id', loadChildren: () => import('./new-poll/new-poll.module').then(m => m.NewPollPageModule), canActivate: [AuthGuardService] },
   { path: 'new-event/:id', loadChildren: () => import('./new-event/new-event.module').then(m => m.NewEventPageModule), canActivate: [AuthGuardService] },
   { path: 'new-post/:id', loadChildren: () => import('./new-post/new-post.module').then(m => m.NewPostPageModule), canActivate: [AuthGuardService] },
-  { path: 'post/:id', loadChildren: () => import('./post/post.module').then(m => m.PostPageModule), canActivate: [AuthGuardService] },
+  { path: 'post/:id', loadChildren: () => import('./post/post.module').then(m => m.PostPageModule) },
   { path: 'reaction-list-modal', loadChildren: () => import('./reaction-list-modal/reaction-list-modal.module').then(m => m.ReactionListModalPageModule) },
   { path: 'feed', loadChildren: () => import('./feed/feed.module').then(m => m.FeedPageModule) },
   { path: 'user-profile-modal', loadChildren: () => import('./user-profile-modal/user-profile-modal.module').then(m => m.UserProfileModalPageModule) },
