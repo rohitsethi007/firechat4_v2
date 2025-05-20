@@ -17,528 +17,65 @@
 @import "~@ionic/angular/css/structure.css";
 @import "~@ionic/angular/css/typography.css";
 @import '~@ionic/angular/css/display.css';
-// /* Optional CSS utils that can be commented out */
+
+/* Optional CSS utils that can be commented out */
 @import "~@ionic/angular/css/padding.css";
 @import "~@ionic/angular/css/float-elements.css";
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
-@import 'swiper/css';
-@import 'swiper/css/navigation';
-@import 'swiper/css/pagination';
-
-.chatbox{
-  padding:3px;
-  border-radius: 5px;
-  max-width: 70%;
-  min-width: 70%;
-  margin: 5px;
-}
-.chatbox span{
-  font-size: 12px;
-}
-.right{
-  border-radius: 5px;
-  background: #eee;
-  // color: #444;
-  float: right;
-  text-align: right;
-  padding-right: 5px
-}
-.left{
-  border-radius: 5px;
-  background: #eee;
-  // color:#444;
-  float: left;
-  text-align: left;
-  padding-left: 5px
-}
-
-.GroupAction {
-  .action-sheet-icon  {
-    color: var(--ion-color-secondary) !important;
-  }
-}
-
-ion-content ion-card{
-  width: 100%;
-  padding-top: 0px;
-  margin-top: 0px;
-  margin-left: 0px;
-  color:black
-}
-
-ion-card ion-card-header{
-  padding-top: 0px;
-  margin-top: 0px;
-  padding-bottom: 0px;
-}
-
-ion-thumbnail {
-  --border-radius: 50px
-}
-
-ion-list-header {
-  font-weight: 500px;
-  font-size: 18px;
-  line-height: 23px;
-}
-
-// Add this in your global styles or component styles
-:root {
-  --action-sheet-background: #ffffff;
-  --action-sheet-border-radius: 16px;
-  --button-height: 56px;
-
-  --swiper-theme-color: var(--ion-color-primary);
-  --swiper-navigation-size: 24px;
-}
-
-swiper-container {
-  --swiper-navigation-color: var(--ion-color-primary);
-  --swiper-pagination-color: var(--ion-color-primary);
-}
-
-// Action Sheet Styles
-.action-sheet-button {
-  display: flex;
-  align-items: center;
-  height: var(--button-height);
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--ion-color-dark);
-  
-  ion-icon {
-    margin-right: 16px;
-    font-size: 20px;
-  }
-
-  &.danger {
-    color: var(--ion-color-danger);
-    
-    ion-icon {
-      color: var(--ion-color-danger);
-    }
-  }
-
-  &.active {
-    color: var(--ion-color-primary);
-    
-    ion-icon {
-      color: var(--ion-color-primary);
-    }
-  }
-}
-
-// Specific button styles
-.delete-button {
-  ion-icon {
-    color: var(--ion-color-danger);
-  }
-}
-
-.notification-button {
-  ion-icon {
-    color: var(--ion-color-primary);
-  }
-}
-
-.report-button {
-  ion-icon {
-    color: var(--ion-color-warning);
-  }
-}
-
-.cancel-button {
-  border-top: 1px solid var(--ion-color-light);
-  color: var(--ion-color-medium);
-  
-  ion-icon {
-    color: var(--ion-color-medium);
-  }
-}
-
-// Action Sheet Animation
-.post-options-action-sheet {
-  --height: auto;
-  
-  .action-sheet-wrapper {
-    position: fixed;
-    bottom: 0;
-    max-height: 70vh; // Maximum height of 70% of viewport
-    
-    .action-sheet-container {
-      border-radius: 16px 16px 0 0;
-      background: var(--action-sheet-background);
-      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
-      padding-bottom: env(safe-area-inset-bottom); // For iOS safe area
-
-      .action-sheet-group {
-        margin: 0;
-        border-radius: 16px 16px 0 0;
-        
-        .action-sheet-button {
-          padding: 16px;
-          height: 56px;
-          display: flex;
-          align-items: center;
-          font-size: 16px;
-          font-weight: 500;
-          color: var(--ion-color-dark);
-          
-          ion-icon {
-            margin-right: 16px;
-            font-size: 20px;
-          }
-
-          &.danger {
-            color: var(--ion-color-danger);
-          }
-        }
-
-        .action-sheet-selected {
-          background: var(--ion-color-light-shade);
-        }
-
-        .action-sheet-cancel {
-          border-top: 1px solid var(--ion-color-light);
-        }
-      }
-    }
-  }
-}
-// Global Form Styles
-ion-content {
-  --background: #f5f5f5;
-}
-
-// Common Form Container
-.validations-form {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 16px;
-  
-  ion-list {
-    background: white;
-    padding: 0;
-  }
-}
-
-// Card Style Forms
-ion-card.form-card {
-  background: transparent;
-  border-radius: 16px;
-  margin: 16px;
-  padding: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-
-  ion-card-header {
-    padding: 16px;
-    
-    ion-card-title {
-      font-size: 20px;
-      font-weight: 600;
-    }
-    
-    ion-card-subtitle {
-      font-size: 14px;
-      color: var(--ion-color-medium);
-    }
-  }
-}
-
-// Common Input Styles
-ion-item {
-  background: transparent;
-  --border-radius: 12px;
-  --padding-start: 16px;
-  --padding-end: 16px;
-  --highlight-height: 0;
-  margin: 8px 0;
-  border-radius: 12px;
-
-  &.item-has-focus {
-    background: transparent;
-  }
-
-  ion-label {
-    --color: var(--ion-color-dark);
-    font-weight: 500;
-  }
-
-  ion-input, ion-textarea, ion-select {
-    --padding-start: 12px;
-    --padding-end: 12px;
-    font-size: 15px;
-    --placeholder-color: var(--ion-color-medium);
-    --placeholder-opacity: 0.7;
-  }
-
-  ion-textarea {
-    min-height: 100px;
-  }
-}
-
-// Form Groups
-.form-group {
-  margin-bottom: 16px;
-  
-  ion-label {
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: var(--ion-color-dark);
-  }
-}
-
-// Error Messages
-.error-message {
-  color: var(--ion-color-danger);
-  font-size: 12px;
-  margin: 4px 16px;
-  display: flex;
-  align-items: center;
-
-  ion-icon {
-    margin-right: 4px;
-    font-size: 16px;
-  }
-}
-
-// Form Buttons
-.form-buttons {
-  display: flex;
-  gap: 12px;
-  padding: 16px;
-  justify-content: flex-end;
-
-  ion-button {
-    --border-radius: 12px;
-    --padding-top: 16px;
-    --padding-bottom: 16px;
-    --padding-start: 24px;
-    --padding-end: 24px;
-    font-weight: 500;
-  }
-}
-
-// Toggle Items
-ion-item.toggle-item {
-  --background: transparent;
-  --border-style: none;
-  --padding-start: 0;
-  --inner-padding-end: 0;
-
-  ion-toggle {
-    padding-right: 0;
-  }
-}
-
-// Select Items
-ion-select {
-  width: 100%;
-  max-width: 100%;
-  --padding-start: 0;
-}
-
-// Checkbox Items
-ion-checkbox {
-  --size: 20px;
-  --checkbox-background-checked: var(--ion-color-primary);
-  margin-right: 12px;
-}
-
-.custom-alert {
+/* Custom styles for action sheets */
+.share-action-sheet {
   --backdrop-opacity: 0.6;
-  --background: #ffffff;
-
-  .alert-wrapper {
-    border-radius: 28px;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-    padding: 24px;
-    max-width: 320px;
+  
+  .action-sheet-container {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    overflow: hidden;
   }
-
-  .alert-head {
-    padding: 0;
-    margin-bottom: 16px;
-    text-align: center;
+  
+  .action-sheet-group {
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+  }
+  
+  .action-sheet-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+    padding: 16px;
+  }
+  
+  .action-sheet-button {
+    padding: 16px;
+    height: 56px;
+    contain: strict;
     
-    .alert-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--ion-color-dark);
-      margin: 0;
+    .action-sheet-button-inner {
+      justify-content: flex-start;
     }
-  }
-
-  .alert-message {
-    color: var(--ion-color-medium);
-    font-size: 15px;
-    line-height: 1.5;
-    padding: 0;
-    margin-bottom: 24px;
-    text-align: center;
-
-    strong {
-      color: var(--ion-color-dark);
-      font-weight: 600;
-    }
-  }
-
-  .alert-button-group {
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
     
-    button {
-      margin: 0;
-      border-radius: 14px;
-      padding: 16px;
-      font-size: 16px;
-      font-weight: 600;
-      text-transform: none;
-      transition: all 0.2s ease;
-
-      &:active {
-        transform: scale(0.98);
-      }
-    }
-
-    .alert-button-cancel {
-      color: var(--ion-color-medium);
-      background: var(--ion-color-light);
-      
-      &:active {
-        background: var(--ion-color-light-shade);
-      }
-    }
-
-    .alert-button-delete,
-    .alert-button-confirm {
-      color: var(--ion-color-primary-contrast);
-      background: var(--ion-color-primary);
-      
-      &:active {
-        background: var(--ion-color-primary-shade);
-      }
+    ion-icon {
+      margin-right: 32px;
+      font-size: 24px;
     }
   }
-
-  // Friend request specific styling
-  &.friend-request-alert {
-    .alert-message {
-      &::before {
-        content: '';
-        display: block;
-        width: 64px;
-        height: 64px;
-        margin: 0 auto 16px;
-        background: var(--ion-color-primary);
-        opacity: 0.1;
-        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M376 144c-3.92 52.87-44 96-88 96s-84.15-43.12-88-96c-4-55 35-96 88-96s92 42 88 96z' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32'/%3E%3Cpath d='M288 304c-87 0-175.3 48-191.64 138.6-2 10.92 4.21 21.4 15.65 21.4H464c11.44 0 17.62-10.48 15.65-21.4C463.3 352 375 304 288 304z' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32'/%3E%3Cpath fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32' d='M88 176v112M144 232H32'/%3E%3C/svg%3E") no-repeat center;
-        mask-size: contain;
-        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M376 144c-3.92 52.87-44 96-88 96s-84.15-43.12-88-96c-4-55 35-96 88-96s92 42 88 96z' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32'/%3E%3Cpath d='M288 304c-87 0-175.3 48-191.64 138.6-2 10.92 4.21 21.4 15.65 21.4H464c11.44 0 17.62-10.48 15.65-21.4C463.3 352 375 304 288 304z' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32'/%3E%3Cpath fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32' d='M88 176v112M144 232H32'/%3E%3C/svg%3E") no-repeat center;
-        -webkit-mask-size: contain;
-        border-radius: 32px;
-      }
-    }
-  }
-}
-
-// Dark mode support
-@media (prefers-color-scheme: dark) {
-  .custom-alert {
-    --background: var(--ion-background-color);
-
-    .alert-button-group {
-      .alert-button-cancel {
-        background: rgba(var(--ion-color-light-rgb), 0.1);
-        color: var(--ion-color-light);
-        
-        &:active {
-          background: rgba(var(--ion-color-light-rgb), 0.2);
-        }
-      }
-    }
-  }
-}
-
-
-.custom-toast {
-  --background: var(--ion-color-primary);
-  --box-shadow: 0 3px 12px rgba(var(--ion-color-primary-rgb), 0.2);
-  --border-radius: 12px;
-  --min-height: 48px;
-  --color: #ffffff;
   
-  font-weight: 500;
-  font-size: 14px;
-  
-  &::part(message) {
-    padding: 12px 16px;
-  }
-
-  &.ios {
-    --width: 90%;
-    max-width: 340px;
-    margin-top: env(safe-area-inset-top);
-  }
-
-  .toast-wrapper {
-    padding: 0;
-  }
-
-  &.toast-translucent.ios {
-    background: rgba(var(--ion-color-primary-rgb), 0.95);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-}
-.emoji-picker-popover {
-  --width: auto;
-  --min-width: 200px;
-  --height: auto;
-  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  
-  .popover-content {
-    border-radius: 12px;
-  }
-
-  &.ios {
-    --backdrop-opacity: 0.2;
+  .action-sheet-cancel {
+    margin-top: 8px;
+    border-radius: 0;
   }
 }
 
-// Optional: Add animation for the popover
-.emoji-picker-popover .popover-content {
-  animation: scale-in 0.2s ease-out;
+/* Make action sheet slide up from bottom on iOS and Android */
+.ios .share-action-sheet .action-sheet-wrapper,
+.md .share-action-sheet .action-sheet-wrapper {
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.36, 0.66, 0.04, 1);
 }
 
-@keyframes scale-in {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+.ios .share-action-sheet.action-sheet-open .action-sheet-wrapper,
+.md .share-action-sheet.action-sheet-open .action-sheet-wrapper {
+  transform: translateY(0%);
 }
-// global.scss or styles.scss
-.filter-popover {
-  --width: 332px; // 300px content + 32px padding
-  --max-width: 90%;
-  
-  .popover-content {
-    border-radius: 16px;
-  }
-
-  &.ion-popover {
-    --backdrop-opacity: 0.3;
-  }
-}
-
-

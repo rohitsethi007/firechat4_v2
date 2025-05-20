@@ -626,8 +626,77 @@ viewGroup(groupId) {
     }
   }
   
-  sharePost(post: any) {
-    // Implement your share logic here
+  async sharePost(post: any) {
+    try {
+      // Create share content based on post type
+      let shareText = '';
+      let shareUrl = window.location.origin + '/post/' + post.key;
+      
+      if (post.title) {
+        shareText += post.title;
+      }
+      
+      if (post.data && post.data.message) {
+        shareText += (shareText ? ': ' : '') + (post.data.message.length > 100 ? 
+          post.data.message.substring(0, 100) + '...' : post.data.message);
+      }
+      
+      // Use the Web Share API if available
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: post.title || 'Check out this post',
+            text: shareText,
+            url: shareUrl
+          });
+        } catch (shareError) {
+          // Only show error if it's not an AbortError (user canceled)
+          if (!(shareError instanceof DOMException && shareError.name === 'AbortError')) {
+            console.error('Share error:', shareError);
+          }
+        }
+      } else {
+        // Fallback for browsers that don't support Web Share API
+        const actionSheet = await this.actionSheet.create({
+          header: 'Share Post',
+          cssClass: 'share-action-sheet',
+          buttons: [
+            {
+              text: 'Copy Link',
+              icon: 'link-outline',
+              handler: () => {
+                this.copyToClipboard(shareUrl);
+                this.loadingProvider.showToast('Link copied to clipboard');
+              }
+            },
+            {
+              text: 'Share via Email',
+              icon: 'mail-outline',
+              handler: () => {
+                window.location.href = `mailto:?subject=${encodeURIComponent(post.title || 'Check out this post')}&body=${encodeURIComponent(shareText + '\\n\\n' + shareUrl)}`;
+              }
+            },
+            {
+              text: 'Cancel',
+              icon: 'close',
+              role: 'cancel'
+            }
+          ]
+        });
+        await actionSheet.present();
+      }
+    } catch (error) {
+      console.error('Error sharing post:', error);
+    }
+  }
+  
+  private copyToClipboard(text: string) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
   }
   
   async toggleBookmark(post: any) {
