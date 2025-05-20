@@ -10,7 +10,7 @@ export class ReactionListModalPage implements OnInit {
   items: any = [];
 
   constructor(
-    private modal: ModalController,
+    private modalCtrl: ModalController,
     private navParam: NavParams
   ) {
     let r = this.navParam.data.reactions;
@@ -25,7 +25,7 @@ export class ReactionListModalPage implements OnInit {
   }
 
   dismissModal() {
-    this.modal.dismiss();
+    this.modalCtrl.dismiss();
   }
 
 

@@ -198,7 +198,7 @@
                               <ion-icon *ngIf="item.reactionType !== ''" size="medium" class="icon" [src]="'./assets/icon/' + item.reactionType + '.svg'"></ion-icon>
                             </div>
                           </ion-button>
-                          <ion-button (click)="showReactionsList(post)" class="reaction-count-button">
+                          <ion-button (click)="showReactionsList(item)" class="reaction-count-button">
                             <div class="reaction-count-container">
                               <div class="stacked-icons">
                                 <ion-icon size="small" src="./assets/icon/smile.svg" class="icon smile"></ion-icon>

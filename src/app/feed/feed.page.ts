@@ -437,19 +437,35 @@ export class FeedPage implements OnInit {
     }  
 
     async showReactionsList(post) {
-      if (post.totalReactionCount === 0) {
+      // Check if post exists and has reactions
+      if (!post || post.totalReactionCount === 0) {
         return;
       }
-    // first find the post in the collection
-      const postIndex = this.posts.findIndex(el => el.key ===  post.key);
-      const p = this.posts[postIndex];
-      const modal = await this.modalCtrl.create({
-        component: ReactionListModalPage,
-        componentProps: {
-          reactions: p.reactions
+      
+      try {
+        // Find the post in the collection
+        const postIndex = this.posts.findIndex(el => el.key === post.key);
+        if (postIndex === -1) {
+          console.error('Post not found in posts array');
+          return;
         }
-      });
-      return await modal.present();
+        
+        const p = this.posts[postIndex];
+        if (!p.reactions) {
+          console.error('No reactions found for this post');
+          return;
+        }
+        
+        const modal = await this.modalCtrl.create({
+          component: ReactionListModalPage,
+          componentProps: {
+            reactions: p.reactions
+          }
+        });
+        return await modal.present();
+      } catch (error) {
+        console.error('Error showing reactions list:', error);
+      }
     }
 
     viewPost(post) {
