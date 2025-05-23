@@ -9,6 +9,7 @@ import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-moda
 import { IonSearchbar } from '@ionic/angular';
 
 import { Platform } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
 
 import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -95,7 +96,8 @@ export class FeedPage implements OnInit {
       public plt: Platform,
       private popoverCtrl: PopoverController,
       private bookmarkService: BookmarkService,
-      private notificationsService: NotificationsService
+      private notificationsService: NotificationsService,
+      private storage: Storage
     ) 
     {
       this.plt.ready()
@@ -336,7 +338,12 @@ export class FeedPage implements OnInit {
     }
 
     newPost() {
-      this.router.navigateByUrl('/new-post/' + this.groupId);
+      // Store current user in storage to pass auth guard
+      this.dataProvider.getCurrentUserId().then(userId => {
+        this.storage.set('currentUser', userId).then(() => {
+          this.router.navigateByUrl('/new-post');
+        });
+      });
     }
 
     newResource() {
@@ -482,7 +489,16 @@ export class FeedPage implements OnInit {
     }
 
     viewUser(userId) {
-      this.router.navigateByUrl('/profile/' + userId);
+      // Check if user is logged in before navigating
+      this.afAuth.currentUser.then(user => {
+        if (user) {
+          this.router.navigateByUrl('/profile/' + userId);
+        } else {
+          // Store the profile ID to navigate after login
+          localStorage.setItem('pendingProfileView', userId);
+          this.router.navigateByUrl('/login');
+        }
+      });
     }
 
     viewGroup(groupId) {

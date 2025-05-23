@@ -23,7 +23,7 @@ export class NewPostPage implements OnInit {
   private postId: any;
   private groupId: any;
   private group: any;
-  private postTags: any;
+  private postTags: any = [];
   private title: any;
   private addedByUser: any;
   private user: any;
@@ -48,7 +48,7 @@ export class NewPostPage implements OnInit {
     this.postMediaVideo = [];
     this.groupId = this.route.snapshot.params.id;
     this.group = {name: ''}
-    if (this.groupId === 'undefined') {
+    if (!this.groupId || this.groupId === 'undefined') {
       this.step = 1;
     } else {
       this.step = 2;
@@ -138,9 +138,11 @@ export class NewPostPage implements OnInit {
   
               this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
                 this.group = group.payload.data();
-                this.group.groupTags.forEach((element: any) => {
-                  this.postTags.push({val: element, isChecked: false});
-                });
+                if (this.group && this.group.groupTags) {
+                  this.group.groupTags.forEach((element: any) => {
+                    this.postTags.push({val: element, isChecked: false});
+                  });
+                }
                 //TAGS commented
                 // this.addTagControls();
               });
@@ -156,10 +158,9 @@ export class NewPostPage implements OnInit {
     this.post.date = new Date();
     this.post.title = this.postForm.value.title;
     this.post.data.message = this.postForm.value.message;
-    this.post.postTags = [];
-    this.post.postTags = this.postTags;
-    this.post.groupId = this.groupId;
-    this.post.groupName = this.group.name;
+    this.post.postTags = this.postTags || [];
+    this.post.groupId = this.groupId || '';
+    this.post.groupName = this.group?.name || '';
     this.post.type = 'general';
   // Add post to database.
       this.dataProvider.addPost(this.post).then((success) => {
@@ -196,8 +197,8 @@ export class NewPostPage implements OnInit {
         });
     }).then(() => {
       this.loadingProvider.hide();
-      this.router.navigateByUrl('/app/tabs/tab1');
-    });;
+      this.router.navigateByUrl('/tabs/tab1');
+    });
 
     
    }

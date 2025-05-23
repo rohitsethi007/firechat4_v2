@@ -42,7 +42,10 @@ export class FriendsPage implements OnInit {
     private router: Router
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    // Initialize friends list on component load
+    this.getFriends();
+  }
 
   ionViewDidEnter() {
     this.tab = 'friends';
@@ -62,6 +65,8 @@ export class FriendsPage implements OnInit {
         } else { this.friendRequestCount = 0; }
       }
       });
+      // Load friends list on initial load
+      this.getFriends();
     });
   }
 
@@ -142,6 +147,7 @@ export class FriendsPage implements OnInit {
 
   // Proceed to chat page.
   message(userId) {
+    console.info('userId', userId)
     this.router.navigateByUrl('/message/' + userId);
   }
 
@@ -304,7 +310,7 @@ export class FriendsPage implements OnInit {
   async sendFriendRequest(user: any) {
     const alert = await this.alertCtrl.create({
       header: 'Send Friend Request',
-      message: `Would you like to connect with <strong>${user.name}</strong>?`,
+      message: `Would you like to connect with ${user.name}?`,
       cssClass: 'custom-alert friend-request-alert',
       buttons: [
         {
@@ -329,14 +335,7 @@ export class FriendsPage implements OnInit {
   async acceptFriendRequest(user: any) {
     const alert = await this.alertCtrl.create({
       header: 'Friend Request',
-      message: `<div class="request-content">
-                  <div class="user-avatar">
-                    <img src="${user.img || './assets/images/default-dp.png'}" alt="${user.name}">
-                  </div>
-                  <div class="request-text">
-                    <strong>${user.name}</strong> wants to connect with you
-                  </div>
-                </div>`,
+      message: user.name + ' wants to connect with you',
       cssClass: 'custom-alert incoming-request-alert',
       buttons: [
         {
@@ -362,7 +361,7 @@ export class FriendsPage implements OnInit {
   cancelFriendRequest(user) {
     this.alert = this.alertCtrl.create({
       header: 'Friend Request Pending',
-      message: 'Do you want to delete your friend request to <b>' + user.name + '</b>?',
+      message: 'Do you want to delete your friend request to ' + user.name + '?',
       buttons: [
         {
           text: 'Cancel',

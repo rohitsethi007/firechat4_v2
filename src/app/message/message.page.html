@@ -26,7 +26,7 @@
       Load previous messages
     </ion-button>
 
-    <div class="message-wrapper" *ngFor="let message of messagesToShow; trackBy: trackByFn">
+    <div class="message-wrapper" *ngFor="let message of messagesToShow">
       <div class="message-bubble" [ngClass]="{'sender': isSender(message), 'receiver': !isSender(message)}">
         <!-- Text Message -->
         <div *ngIf="message.type === 'text'" class="message-text">
@@ -50,12 +50,12 @@
 
         <!-- Location Message -->
         <div *ngIf="message.type === 'location'" class="message-location">
-          <div [innerHtml]="message.message"></div>
+          <div [innerHTML]="message.message"></div>
         </div>
 
         <!-- Contact Message -->
         <div *ngIf="message.type === 'contact'" class="message-contact">
-          <div [innerHtml]="message.message"></div>
+          <div [innerHTML]="message.message"></div>
         </div>
 
         <div class="message-timestamp">

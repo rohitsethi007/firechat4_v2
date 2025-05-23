@@ -136,18 +136,19 @@ export class DataService {
     let searchKeywords: string;
     const searchableText = [
       post.title || '',
-      post.data?.message || ''
+      (post.data && post.data.message) || ''
     ].join(' ').toLowerCase();
 
     // Generate keywords including phrases
     const keywords = this.generateSearchKeywords(searchableText);
 
+    let finalSearchableText;
     if (post.type !== 'general') {
-      const searchableText = `${post.title}`.toLowerCase();
+      finalSearchableText = post.title.toLowerCase();
     } else {
-      const searchableText = `${post.title} ${post.data.message}`.toLowerCase();
+      finalSearchableText = (post.title + ' ' + post.data.message).toLowerCase();
     }
-    post.searchableText = searchableText;
+    post.searchableText = finalSearchableText;
     post.searchKeywords = Array.from(new Set(keywords)); // Remove duplicates;
 
 
@@ -222,7 +223,7 @@ export class DataService {
         // Add important word combinations (phrases)
         for (let i = 0; i < words.length - 1; i++) {
           if (words[i] === word) {
-            const phrase = `${words[i]} ${words[i + 1]}`;
+            const phrase = words[i] + ' ' + words[i + 1];
             keywords.add(phrase);
           }
         }

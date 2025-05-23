@@ -43,6 +43,8 @@ export class ProfilePage implements OnInit {
   errorMessages: any = [];
   alert: any;
 
+  friendRequestStatus: 'none' | 'pending' | 'accepted' = 'none';
+
   constructor(
     private loginService: LoginService,
     private dataProvider: DataService,
@@ -70,7 +72,9 @@ export class ProfilePage implements OnInit {
     } else {
       this.myProfile = false;
     }
-    if (typeof this.userId === 'undefined') {      this.myProfile = true;
+    if (typeof this.userId === 'undefined') {
+      this.myProfile = true;
+      this.userId = this.loggedInUserId; // Set userId to loggedInUserId when undefined
     }
 
     console.info('profile page, myProfile', this.myProfile)
@@ -89,10 +93,36 @@ export class ProfilePage implements OnInit {
 
   ionViewDidEnter() {
     this.getUserData();
+    if (!this.myProfile) {
+      this.checkFriendRequestStatus();
+    }
+  }
+  
+  checkFriendRequestStatus() {
+    // Check if there's a pending friend request
+    this.firestore.collection('friendRequests', ref => 
+      ref.where('fromUserId', '==', this.loggedInUserId)
+         .where('toUserId', '==', this.userId)
+    )
+    .get()
+    .subscribe(snapshot => {
+      if (!snapshot.empty) {
+        this.friendRequestStatus = 'pending';
+      } else {
+        // Check if they're already friends (which would set messageMe to true)
+        if (this.messageMe) {
+          this.friendRequestStatus = 'accepted';
+        } else {
+          this.friendRequestStatus = 'none';
+        }
+      }
+    });
   }
 
   getUserData() {
-    this.dataProvider.getUser(this.loggedInUserId).snapshotChanges().subscribe((user: any) => {
+    // If userId is undefined, use loggedInUserId instead
+    const userIdToFetch = this.userId || this.loggedInUserId;
+    this.dataProvider.getUser(userIdToFetch).snapshotChanges().subscribe((user: any) => {
       let account = user.payload.data();
       if (account != null) {
         this.user = account;
@@ -400,16 +430,22 @@ export class ProfilePage implements OnInit {
   connectUser() {
     this.alert = this.alertCtrl.create({
       header: 'Send Friend Request',
-      message: 'Do you want to send friend request to <b>' + this.user.name + '</b>?',
+      message: `Do you want to send friend request to ${this.user.name}?`,
+      cssClass: 'custom-alert',
       buttons: [
         {
           text: 'Cancel',
+          cssClass: 'alert-button-cancel',
+          role: 'cancel',
           handler: data => { }
         },
         {
-          text: 'Send',
+          text: 'Send Request',
+          cssClass: 'alert-button-confirm',
           handler: () => {
             this.firebaseProvider.sendFriendRequest(this.userId);
+            this.friendRequestStatus = 'pending'; // Update status immediately
+            this.loadingProvider.showToast('Friend request sent to ' + this.user.name);
           }
         }
       ]

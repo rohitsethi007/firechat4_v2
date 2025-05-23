@@ -55,16 +55,17 @@ export class MessagePage implements OnInit {
     public actionSheet: ActionSheetController,
     public geolocation: Geolocation,
     public afAuth: AngularFireAuth
-  ) { }
+  ) {     }
 
   ngOnInit() {
+    console.log('inside message',this.userId);
     this.scrollBottom();
   }
 
   ionViewDidEnter() {
     this.userId = this.route.snapshot.params.id;
     this.loggedInUserId = firebase.auth().currentUser.uid;
-    console.log(this.userId);
+    console.log('inside message',this.userId);
 
     // Get friend details.
     this.dataProvider.getUser(this.userId).snapshotChanges().subscribe((user: any) => {
@@ -506,15 +507,15 @@ export class MessagePage implements OnInit {
   
   private formatContactMessage(contact: ContactData): string {
     // Add parentheses to properly group the operators
-    const name = (contact.displayName ?? 
-      (`${contact.name?.givenName || ''} ${contact.name?.familyName || ''}`.trim())) || 'Unknown';
+    const name = contact.displayName || 
+      ((contact.name && contact.name.givenName || '') + ' ' + (contact.name && contact.name.familyName || '')).trim() || 'Unknown';
     
     // Safely access phone number with additional null checks
-    const phoneNumber = contact.phoneNumbers?.[0]?.value || '';
+    const phoneNumber = contact.phoneNumbers && contact.phoneNumbers.length > 0 ? contact.phoneNumbers[0].value : '';
     
     return phoneNumber ? 
-      `<b>Name:</b> ${name}<br><b>Mobile:</b> <a href='tel:${phoneNumber}'>${phoneNumber}</a>` :
-      `<b>Name:</b> ${name}`;
+      '<b>Name:</b> ' + name + '<br><b>Mobile:</b> <a href="tel:' + phoneNumber + '">' + phoneNumber + '</a>' :
+      '<b>Name:</b> ' + name;
   }
   
 

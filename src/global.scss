@@ -79,3 +79,66 @@
 .md .share-action-sheet.action-sheet-open .action-sheet-wrapper {
   transform: translateY(0%);
 }
+
+/* Custom Alert Styles */
+.custom-alert {
+  --backdrop-opacity: 0.6;
+  
+  .alert-wrapper {
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    max-width: 320px;
+  }
+  
+  .alert-head {
+    padding: 16px 20px 8px;
+    
+    .alert-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+  }
+  
+  .alert-message {
+    padding: 0 20px 16px;
+    color: var(--ion-color-medium);
+    font-size: 15px;
+    line-height: 1.5;
+    
+    b, strong {
+      color: var(--ion-color-dark);
+      font-weight: 600;
+    }
+  }
+  
+  .alert-button-group {
+    padding: 8px;
+    display: flex;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+  }
+  
+  .alert-button {
+    border-radius: 12px;
+    margin: 4px;
+    padding: 10px;
+    height: 44px;
+    font-size: 15px;
+    font-weight: 500;
+    
+    &.alert-button-cancel {
+      color: var(--ion-color-medium);
+    }
+    
+    &.alert-button-confirm {
+      background: var(--ion-color-primary);
+      color: white;
+    }
+    
+    &.alert-button-delete {
+      background: var(--ion-color-danger);
+      color: white;
+    }
+  }
+}

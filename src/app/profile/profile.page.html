@@ -47,19 +47,31 @@
 
         <!-- Action Buttons for non-profile owner -->
         <div class="action-buttons" *ngIf="!myProfile">
-          <ion-button *ngIf="!messageMe" 
+          <!-- Connect button - shown when no friend request exists -->
+          <ion-button *ngIf="!messageMe && friendRequestStatus === 'none'" 
                       (click)="connectUser()" 
                       expand="block" 
                       class="connect-button">
             <ion-icon name="person-add-outline"></ion-icon>
-            Connect with me
+            Connect
           </ion-button>
+          
+          <!-- Request sent button - shown when request is pending -->
+          <ion-button *ngIf="!messageMe && friendRequestStatus === 'pending'" 
+                      disabled="true"
+                      expand="block" 
+                      class="request-sent-button">
+            <ion-icon name="time-outline"></ion-icon>
+            Request Sent
+          </ion-button>
+          
+          <!-- Message button - shown when users are friends -->
           <ion-button *ngIf="messageMe" 
                       (click)="messageUser()" 
                       expand="block" 
                       class="message-button">
             <ion-icon name="chatbubble-outline"></ion-icon>
-            Message me
+            Message
           </ion-button>
         </div>
       </div>

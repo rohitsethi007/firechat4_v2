@@ -40,7 +40,25 @@ export class LoginPage implements OnInit {
     // Check if user is already logged in
     this.afAuth.authState.subscribe(user => {
       if (user) {
-        this.router.navigate(['/tabs/tab1'], { replaceUrl: true });
+        // Check if there's a pending profile view
+        const pendingProfileId = localStorage.getItem('pendingProfileView');
+        if (pendingProfileId) {
+          // Clear the stored profile ID
+          localStorage.removeItem('pendingProfileView');
+          // Navigate to the profile
+          this.router.navigate(['/profile/' + pendingProfileId], { replaceUrl: true });
+        } 
+        // Check if there's a pending post view
+        else if (localStorage.getItem('pendingPostView')) {
+          const pendingPostId = localStorage.getItem('pendingPostView');
+          // Clear the stored post ID
+          localStorage.removeItem('pendingPostView');
+          // Navigate to the post
+          this.router.navigate(['/post/' + pendingPostId], { replaceUrl: true });
+        } 
+        else {
+          this.router.navigate(['/tabs/tab1'], { replaceUrl: true });
+        }
       }
     });
   }
