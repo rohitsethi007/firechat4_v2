@@ -7,9 +7,7 @@ import { LoadingService } from '../services/loading.service';
 import { ImageService } from '../services/image.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Camera, CameraSource, CameraResultType } from '@capacitor/camera';
-import { Contacts } from '@capacitor-community/contacts';
 import { Keyboard } from '@capacitor/keyboard';
-import { Geolocation } from '@capacitor/geolocation';
 
 import { ImagemodalPage } from '../imagemodal/imagemodal.page';
 import { ConversationData, LocationData, ContactData } from '../models/interfaces';
@@ -53,7 +51,6 @@ export class MessagePage implements OnInit {
     public imageProvider: ImageService,
     public modalCtrl: ModalController,
     public actionSheet: ActionSheetController,
-    public geolocation: Geolocation,
     public afAuth: AngularFireAuth
   ) {     }
 
@@ -316,18 +313,6 @@ export class MessagePage implements OnInit {
           handler: () => this.handleVideoUpload()
         },
         {
-          text: 'Location',
-          icon: 'location-outline',
-          cssClass: 'actionicon',
-          handler: () => this.handleLocation()
-        },
-        // {
-        //   text: 'Contact',
-        //   icon: 'person-outline',
-        //   cssClass: 'actionicon',
-        //   handler: () => this.handleContact()
-        // },
-        {
           text: 'Cancel',
           icon: 'close',
           cssClass: 'cancelAction',
@@ -363,96 +348,6 @@ export class MessagePage implements OnInit {
       await this.send('video');
     } catch (error) {
       console.error('Error uploading video:', error);
-    }
-  }
-  private async handleLocation(): Promise<void> {
-    try {
-      // Check location permissions first
-      const permissionStatus = await Geolocation.checkPermissions();
-      
-      if (permissionStatus.location === 'denied') {
-        const request = await Geolocation.requestPermissions();
-        if (request.location === 'denied') {
-          await this.showErrorAlert('Location permission is required to share your location.');
-          return;
-        }
-      }
-  
-      // Show loading if you have a loading provider
-      if (this.loadingProvider) {
-        await this.loadingProvider.show();
-      }
-  
-      // Get current position
-      const position = await Geolocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 5000
-      });
-  
-      // Hide loading
-      if (this.loadingProvider) {
-        await this.loadingProvider.hide();
-      }
-  
-      // Create location message using template literals
-      const locationMessage = `Location:<br> lat:${position.coords.latitude}<br> lng:${position.coords.longitude}`;
-      const mapUrl = `<a href='https://www.google.com/maps/search/${position.coords.latitude},${position.coords.longitude}'>View on Map</a>`;
-  
-      // Create and show confirmation alert
-      const alert = await this.alertCtrl.create({
-        header: 'Share Location',
-        cssClass: 'location-alert',
-        message: `
-          <div class="location-preview">
-            <div class="location-icon">
-              <ion-icon name="location-outline" color="primary"></ion-icon>
-            </div>
-            <div class="location-details">
-              ${locationMessage}
-            </div>
-          </div>
-        `,
-        buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel',
-            cssClass: 'location-cancel-btn'
-          },
-          {
-            text: 'Share',
-            cssClass: 'location-share-btn',
-            handler: async () => {
-              try {
-                this.message = `${locationMessage}<br>${mapUrl}`;
-                await this.send("location");
-              } catch (error) {
-                console.error('Error sending location message:', error);
-                await this.showErrorAlert('Failed to send location message.');
-              }
-            }
-          }
-        ]
-      });
-  
-      await alert.present();
-  
-    } catch (error) {
-      console.error('Error getting location:', error);
-      
-      // Hide loading if it was shown
-      if (this.loadingProvider) {
-        await this.loadingProvider.hide();
-      }
-  
-      let errorMessage = 'Unable to get your location. Please check your GPS settings and try again.';
-      
-      if (error.message.includes('timeout')) {
-        errorMessage = 'Location request timed out. Please try again.';
-      } else if (error.message.includes('denied')) {
-        errorMessage = 'Location permission is required to share your location.';
-      }
-  
-      await this.showErrorAlert(errorMessage);
     }
   }
   
