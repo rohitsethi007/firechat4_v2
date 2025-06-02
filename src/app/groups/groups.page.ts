@@ -124,30 +124,45 @@ export class GroupsPage implements OnInit, AfterViewInit {
       this.searchGroup = '';
       this.loadingProvider.show();
       this.loadAllCategories();
-      // Get groups
-      this.dataProvider.getGroups().snapshotChanges().subscribe((groups: any) => {
-        this.groups = [];
-        groups.forEach(element => {
-          let group = element.payload.doc.data();
-          group.key = element.payload.doc.id;
-
-          if (group.members.some(e => e === this.loggedInUserId )) {
-            group.isUserMember = true;
-          } else {
-            group.isUserMember = false;
-          }
-          this.groups.push(group);
+      
+      // First get the user's groups
+      this.dataProvider.getCurrentUser().then((userRef) => {
+        userRef.get().subscribe((userData: any) => {
+          const userGroups = userData.data()?.groups || [];
+          console.log('User is member of groups:', userGroups);
+          
+          // Get all groups
+          this.dataProvider.getGroups().snapshotChanges().subscribe((groups: any) => {
+            this.groups = [];
+            groups.forEach(element => {
+              let group = element.payload.doc.data();
+              group.key = element.payload.doc.id;
+              
+              // Check if the user is a member using the user's groups array
+              if (Array.isArray(userGroups) && userGroups.includes(group.key)) {
+                group.isUserMember = true;
+              } else {
+                // Double-check with the group's members array as a fallback
+                if (group.members && Array.isArray(group.members) && group.members.includes(this.loggedInUserId)) {
+                  group.isUserMember = true;
+                } else {
+                  group.isUserMember = false;
+                }
+              }
+              this.groups.push(group);
+            });
+            this.filteredGroups = this.groups; // Initialize filtered groups
+            this.loadingProvider.hide(); // Hide loading after groups are loaded
+            
+            // Update swiper after data is loaded
+            setTimeout(() => {
+              const swiperEl = this.swiperRef?.nativeElement;
+              if (swiperEl && swiperEl.swiper) {
+                swiperEl.swiper.update();
+              }
+            }, 300);
+          });
         });
-        this.filteredGroups = this.groups; // Initialize filtered groups
-        this.loadingProvider.hide(); // Hide loading after groups are loaded
-        
-        // Update swiper after data is loaded
-        setTimeout(() => {
-          const swiperEl = this.swiperRef?.nativeElement;
-          if (swiperEl && swiperEl.swiper) {
-            swiperEl.swiper.update();
-          }
-        }, 300);
       });
     });
   }
@@ -186,7 +201,10 @@ export class GroupsPage implements OnInit, AfterViewInit {
   // Open Group Chat.
   viewGroup(group) {
     if (group.isUserMember) {
-      this.router.navigateByUrl('group/' + group.key);
+      this.router.navigateByUrl('groupinfo/' + group.key);
+    } else {
+      // If user is not a member, redirect to join page
+      this.joinGroup(group.key);
     }
   }
   
@@ -198,9 +216,34 @@ export class GroupsPage implements OnInit, AfterViewInit {
   }
 
   joinGroup(groupId) {
-    this.router.navigateByUrl('group-join/' + groupId);
+    // Check if user is already a member of this group
+    const group = this.groups.find(g => g.key === groupId);
+    if (group && group.isUserMember) {
+      // User is already a member, just navigate to the group
+      this.router.navigateByUrl('groupinfo/' + groupId);
+    } else {
+      // User is not a member, navigate to join page
+      this.router.navigateByUrl('group-join/' + groupId);
+    }
   }
   async confirmLeaveGroup(group: any) {
+    // Count how many groups the user is a member of
+    const userGroups = this.groups.filter(g => g.isUserMember);
+    
+    // If user is only in one group, don't allow leaving
+    if (userGroups.length <= 1) {
+      const alert = await this.alertController.create({
+        header: 'Cannot Leave Group',
+        message: 'You must be a member of at least one group. Please join another group before leaving this one.',
+        buttons: ['OK'],
+        cssClass: 'custom-alert'
+      });
+      
+      await alert.present();
+      return;
+    }
+    
+    // Otherwise show the normal leave confirmation
     const alert = await this.alertController.create({
       header: 'Leave Group',
       message: 'Are you sure you want to leave this group? Your posts will remain in the group but you will no longer have access to group content.',
@@ -225,6 +268,8 @@ export class GroupsPage implements OnInit, AfterViewInit {
   }
 
   leaveGroup(group: any) {
+    this.loadingProvider.show();
+    
     // Remove user from group members
     const updatedMembers = group.members.filter(memberId => memberId !== this.loggedInUserId);
     
@@ -248,13 +293,16 @@ export class GroupsPage implements OnInit, AfterViewInit {
     // Commit the batch
     batch.commit()
       .then(() => {
-        // Update local group data
-        group.isUserMember = false;
-        group.members = updatedMembers;
+        // Reload the groups to refresh the UI
+        this.ionViewWillEnter();
+        
+        // Show success message
+        this.loadingProvider.showToast('You have left the group');
       })
       .catch(error => {
         console.error('Error leaving group:', error);
-        // Handle error (show toast message)
+        this.loadingProvider.showToast('Error leaving group. Please try again.');
+        this.loadingProvider.hide();
       });
   }
   

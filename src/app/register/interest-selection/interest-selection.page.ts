@@ -171,7 +171,7 @@ export class InterestSelectionPage implements OnInit {
       await batch.commit();
       
       // Navigate to feed page
-      this.router.navigateByUrl('/feed', { replaceUrl: true });
+      this.router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
     } catch (error) {
       console.error('Error saving group selections:', error);
       this.loadingProvider.showToast('Error saving your selections. Please try again.');

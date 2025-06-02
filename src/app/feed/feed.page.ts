@@ -212,22 +212,31 @@ export class FeedPage implements OnInit {
       this.loadingProvider.show();
       if (!searchTerm) {
         // Check if user has groups before using 'in' filter
-        if (this.loggedInUser && this.loggedInUser.groups && this.loggedInUser.groups.length > 0) {
+        if (this.loggedInUser && this.loggedInUser.groups && Array.isArray(this.loggedInUser.groups) && this.loggedInUser.groups.length > 0) {
+          console.log('User is in groups:', this.loggedInUser.groups);
           this.firstDataSet = this.firestore.collection('posts').ref
           .where('groupId', 'in', this.loggedInUser.groups)
           .orderBy('date', 'desc')
           .limit(5);
+          
+          this.firstDataSet.get().then((po: any) => {
+            this.lastDataSet = po.docs[po.docs.length - 1];
+            this.posts = [];
+            this.loadEachPostData(po);
+          });
         } else {
+          console.log('User has no groups or groups is not an array');
           // If no groups, fetch recent posts without the 'in' filter
           this.firstDataSet = this.firestore.collection('posts').ref
           .orderBy('date', 'desc')
           .limit(5);
+          
+          this.firstDataSet.get().then((po: any) => {
+            this.lastDataSet = po.docs[po.docs.length - 1];
+            this.posts = [];
+            this.loadEachPostData(po);
+          });
         }
-        this.firstDataSet.get().then((po: any) => {
-          this.lastDataSet = po.docs[po.docs.length - 1];
-          this.posts = [];
-          this.loadEachPostData(po);
-        });
       } else {
          // Split search term into keywords
           const searchTerms = searchTerm.toLowerCase()
@@ -236,18 +245,32 @@ export class FeedPage implements OnInit {
           .map(term => term.trim());
           console.info('GOT searchTerms:', searchTerms)
           // Search using array-contains-any
-          this.firstDataSet = this.firestore.collection('posts').ref
-          .where('groupId', 'in', this.loggedInUser.groups)
-          .where('searchKeywords', 'array-contains-any', searchTerms)
-          .orderBy('date', 'desc')
-          .limit(20);
+          if (this.loggedInUser && this.loggedInUser.groups && Array.isArray(this.loggedInUser.groups) && this.loggedInUser.groups.length > 0) {
+            console.log('Searching posts in user groups:', this.loggedInUser.groups);
+            this.firstDataSet = this.firestore.collection('posts').ref
+              .where('groupId', 'in', this.loggedInUser.groups)
+              .where('searchKeywords', 'array-contains-any', searchTerms)
+              .orderBy('date', 'desc')
+              .limit(20);
+              
             this.firstDataSet.get().then((po: any) => {
               this.lastDataSet = po.docs[po.docs.length - 1];
-        
               this.posts = [];
               this.loadEachPostData(po);
+            });
+          } else {
+            console.log('Searching posts without group filter');
+            this.firstDataSet = this.firestore.collection('posts').ref
+              .where('searchKeywords', 'array-contains-any', searchTerms)
+              .orderBy('date', 'desc')
+              .limit(20);
               
-        });
+            this.firstDataSet.get().then((po: any) => {
+              this.lastDataSet = po.docs[po.docs.length - 1];
+              this.posts = [];
+              this.loadEachPostData(po);
+            });
+          }
       }
       this.isSearchActive = false;
       this.loadingProvider.hide();
@@ -625,25 +648,37 @@ export class FeedPage implements OnInit {
       } else {
         if (this.lastDataSet) {
         // Check if user has groups before using 'in' filter
-        if (this.loggedInUser && this.loggedInUser.groups && this.loggedInUser.groups.length > 0) {
+        if (this.loggedInUser && this.loggedInUser.groups && Array.isArray(this.loggedInUser.groups) && this.loggedInUser.groups.length > 0) {
+          console.log('Loading more posts from user groups:', this.loggedInUser.groups);
           this.nextDataSet = this.firestore.collection('posts').ref
                               .where('groupId', 'in', this.loggedInUser.groups)
                               .orderBy('date', 'desc')
                               .startAfter(this.lastDataSet).limit(5);
+                              
+          this.nextDataSet.onSnapshot((po: any) => {
+            this.lastDataSet = po.docs[po.docs.length - 1];
+            console.log('po.docs.length', po.docs.length);
+            if (po.docs.length > 0) {
+              this.loadEachPostData(po);
+            }
+            event.target.complete();
+          });
         } else {
+          console.log('Loading more posts without group filter');
           // If no groups, fetch recent posts without the 'in' filter
           this.nextDataSet = this.firestore.collection('posts').ref
                               .orderBy('date', 'desc')
                               .startAfter(this.lastDataSet).limit(5);
-        }
-        this.nextDataSet.onSnapshot((po: any) => {
-        this.lastDataSet = po.docs[po.docs.length - 1];
-        console.log('po.docs.length', po.docs.length);
-        if (po.docs.length > 0) {
-          this.loadEachPostData(po);
-        }
-        event.target.complete();
+                              
+          this.nextDataSet.onSnapshot((po: any) => {
+            this.lastDataSet = po.docs[po.docs.length - 1];
+            console.log('po.docs.length', po.docs.length);
+            if (po.docs.length > 0) {
+              this.loadEachPostData(po);
+            }
+            event.target.complete();
           });
+        }
         } else {
           event.target.complete();
         }

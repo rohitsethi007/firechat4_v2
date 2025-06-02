@@ -11,6 +11,7 @@ const routes: Routes = [
   { path: 'tabs',
   loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule) 
 },
+  { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminPageModule) },
   { path: 'intro', loadChildren: () => import('./intro/intro.module').then(m => m.IntroPageModule) },
   { path: 'friends', loadChildren: () => import('./friends/friends.module').then(m => m.FriendsPageModule), canActivate: [AuthGuardService] },
   { path: 'groupinfo/:id', loadChildren: () => import('./groupinfo/groupinfo.module').then(m => m.GroupinfoPageModule), canActivate: [AuthGuardService]},

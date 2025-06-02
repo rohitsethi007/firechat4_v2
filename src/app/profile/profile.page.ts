@@ -534,12 +534,20 @@ export class ProfilePage implements OnInit {
   
       // Handle mobile push notification logic
       if (this.user.isPushEnabled) {
-        await this.enablePushNotifications(uid);
+        try {
+          await this.enablePushNotifications(uid);
+        } catch (err) {
+          // Reset the toggle if enabling fails
+          this.user.isPushEnabled = false;
+          console.error('Failed to enable notifications:', err);
+        }
       } else {
         await this.disablePushNotifications(uid);
       }
     } catch (error) {
       console.error('Error in changeNotification:', error);
+      // Reset the toggle state to its previous value
+      this.user.isPushEnabled = !this.user.isPushEnabled;
       this.loadingProvider.showToast('Failed to update notification settings');
     }
   }
@@ -557,12 +565,9 @@ export class ProfilePage implements OnInit {
         this.setupPushListeners();
   
         // Get the token
-        const token = await FirebaseMessaging.getToken();           
-        (token) => {
-            console.log('Push registration success:', token);
-            return token;
-          }
-     
+        const tokenResult = await FirebaseMessaging.getToken();
+        const token = tokenResult.token;
+        console.log('Push registration success:', token);
   
         // Update Firestore
         await this.firestore.doc(`/accounts/${uid}`).update({
@@ -582,7 +587,8 @@ export class ProfilePage implements OnInit {
       }
     } catch (error) {
       console.error('Error enabling push notifications:', error);
-      throw error;
+      this.user.isPushEnabled = false;
+      this.loadingProvider.showToast('Failed to enable notifications. Please try again.');
     }
   }
   
@@ -606,30 +612,42 @@ export class ProfilePage implements OnInit {
   }
   
   private setupPushListeners() {
-    // Registration error listener
-    PushNotifications.addListener('registrationError', (error) => {
-      console.error('Push registration error:', error);
-    });
-  
-    // Notification received listener
-    PushNotifications.addListener('pushNotificationReceived', (notification) => {
-      console.log('Push notification received:', notification);
-    });
-  
-    // Notification action performed listener
-    PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
-      console.log('Push notification action performed:', notification);
-    });
-  
-    // Token refresh listener
-    PushNotifications.addListener('registration', async (token) => {
-      console.log('Push token refreshed:', token);
-      const user = await this.afAuth.currentUser;
-      if (user) {
-        await this.firestore.doc(`/accounts/${user.uid}`).update({
-          pushToken: token
+    try {
+      // First remove any existing listeners to prevent duplicates
+      PushNotifications.removeAllListeners().then(() => {
+        // Registration error listener
+        PushNotifications.addListener('registrationError', (error) => {
+          console.error('Push registration error:', error);
+          this.loadingProvider.showToast('Push notification registration failed');
         });
-      }
-    });
+      
+        // Notification received listener
+        PushNotifications.addListener('pushNotificationReceived', (notification) => {
+          console.log('Push notification received:', notification);
+        });
+      
+        // Notification action performed listener
+        PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
+          console.log('Push notification action performed:', notification);
+        });
+      
+        // Token refresh listener
+        PushNotifications.addListener('registration', async (token) => {
+          console.log('Push token refreshed:', token);
+          try {
+            const user = await this.afAuth.currentUser;
+            if (user) {
+              await this.firestore.doc(`/accounts/${user.uid}`).update({
+                pushToken: token
+              });
+            }
+          } catch (error) {
+            console.error('Error updating token:', error);
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Error setting up push listeners:', error);
+    }
   }
 }

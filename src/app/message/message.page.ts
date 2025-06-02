@@ -429,4 +429,8 @@ export class MessagePage implements OnInit {
   getUnreadUserMessagesCount() {
     
   }
+
+  goToAdminPage() {
+    this.router.navigateByUrl('/admin');
+  }
 }

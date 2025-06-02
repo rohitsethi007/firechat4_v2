@@ -1,36 +1,53 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
-    </ion-buttons>
-    <ion-title class="title">Update Profile</ion-title>
+    <ion-title class="ion-text-center">Edit Profile</ion-title>
     <ion-buttons slot="end"> 
-      <ion-button (click)="dismissModal()"><ion-icon name="close-circle-outline"></ion-icon></ion-button>
+      <ion-button (click)="dismissModal()">
+        <ion-icon name="close-outline" size="large"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="forms-validations-content">
-    <form class="validations-form" [formGroup]="myForm">
-      <ion-list class="inputs-list" lines="none">
-        <ion-item class="input-item">
-          <ion-label position="stacked">Full Name:</ion-label>
-          <ion-input type="text" class="myform" placeholder="Full name" formControlName="name" [(ngModel)]="user.name"></ion-input>
+<ion-content class="ion-padding">
+  <div class="profile-form-container">
+    <form [formGroup]="myForm">
+      <div class="form-section">
+        <h2 class="section-title">Personal Information</h2>
+        
+        <ion-item class="custom-input">
+          <ion-label position="floating">Full Name</ion-label>
+          <ion-input type="text" formControlName="name" [(ngModel)]="user.name"></ion-input>
+          <ion-icon name="person-outline" slot="start"></ion-icon>
         </ion-item>
-        <ion-item class="input-item">
-          <ion-label position="stacked">Username:</ion-label>
-          <ion-input placeholder="Username" class="myform"  formControlName="username" type="text" [(ngModel)]="user.username"></ion-input>
+        
+        <ion-item class="custom-input">
+          <ion-label position="floating">Username</ion-label>
+          <ion-input type="text" formControlName="username" [(ngModel)]="user.username"></ion-input>
+          <ion-icon name="at-outline" slot="start"></ion-icon>
         </ion-item>
-        <ion-item class="input-item">
-          <ion-label position="stacked">My Story:</ion-label>
-          <ion-textarea rows="10" formControlName="bio" class="myform"  placeholder="Status" [(ngModel)]="user.description"></ion-textarea>
+        
+        <ion-item class="custom-input">
+          <ion-label position="floating">Email</ion-label>
+          <ion-input type="email" formControlName="email" [(ngModel)]="user.email" disabled></ion-input>
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
         </ion-item>
-        <ion-item class="input-item">
-          <ion-input placeholder="Email" class="myform"  type="text" formControlName="email" [(ngModel)]="user.email" disabled></ion-input>
+      </div>
+      
+      <div class="form-section">
+        <h2 class="section-title">About Me</h2>
+        <ion-item class="custom-textarea">
+          <ion-label position="floating">My Story</ion-label>
+          <ion-textarea rows="6" formControlName="bio" [(ngModel)]="user.description" placeholder="Tell others about yourself..."></ion-textarea>
         </ion-item>
-        <div class="ion-padding">
-          <ion-button class="save" color="secondary" expand="block" (click)="save()">Save Changes</ion-button>
-        </div>
-      </ion-list>
+      </div>
+      
+      <div class="form-actions">
+        <ion-button expand="block" (click)="save()" [disabled]="!myForm.valid" class="save-button">
+          <ion-icon name="save-outline" slot="start"></ion-icon>
+          Save Changes
+        </ion-button>
+      </div>
     </form>
+  </div>
 </ion-content>

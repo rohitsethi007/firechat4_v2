@@ -54,10 +54,8 @@ export class RegisterPage implements OnInit {
           this.password
         ) as { uid: string };
         console.info('userCredential:', userCredential.uid);  
-        // Redirect to interest selection page
-        this.router.navigate(['/interest-selection'], {
-          replaceUrl: true // This prevents going back to register page
-        });
+        
+        // Navigation is now handled in the login service
         
       } catch (error) {
         console.error('Registration error:', error);

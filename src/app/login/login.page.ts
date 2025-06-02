@@ -38,7 +38,7 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     // Check if user is already logged in
-    this.afAuth.authState.subscribe(user => {
+    this.afAuth.authState.subscribe(async user => {
       if (user) {
         // Check if there's a pending profile view
         const pendingProfileId = localStorage.getItem('pendingProfileView');
@@ -57,7 +57,15 @@ export class LoginPage implements OnInit {
           this.router.navigate(['/post/' + pendingPostId], { replaceUrl: true });
         } 
         else {
-          this.router.navigate(['/tabs/tab1'], { replaceUrl: true });
+          // Check if user has selected groups
+          const hasGroups = await this.loginService.checkUserGroups(user.uid);
+          if (hasGroups) {
+            // User has groups, go to feed
+            this.router.navigate(['/tabs/tab1'], { replaceUrl: true });
+          } else {
+            // User has no groups, go to interest selection
+            this.router.navigate(['/interest-selection'], { replaceUrl: true });
+          }
         }
       }
     });
@@ -70,12 +78,7 @@ export class LoginPage implements OnInit {
       console.log('valid');
       this.loginService.login(this.email, this.password)
         .then((result) => {
-          if (result) {
-            // Authentication successful
-            this.router.navigate(['/tabs/tab1'], {
-              replaceUrl: true // This prevents going back to login page
-            });
-          }
+          // Navigation is handled in the login service
           this.loadingProvider.hide();
         })
         .catch(error => {
@@ -113,9 +116,20 @@ export class LoginPage implements OnInit {
             'Google',
             user.photoURL || './assets/images/default-dp.png'
           );
+          
+          // If new user, redirect to interest selection
+          this.router.navigate(['/interest-selection'], { replaceUrl: true });
+        } else {
+          // Check if user has selected groups
+          const hasGroups = await this.loginService.checkUserGroups(user.uid);
+          if (hasGroups) {
+            // User has groups, go to feed
+            this.router.navigate(['/tabs/tab1'], { replaceUrl: true });
+          } else {
+            // User has no groups, go to interest selection
+            this.router.navigate(['/interest-selection'], { replaceUrl: true });
+          }
         }
-        
-        this.router.navigate(['/tabs/tab1'], { replaceUrl: true });
       }
       this.loadingProvider.hide();
     } catch (error) {
@@ -147,9 +161,20 @@ export class LoginPage implements OnInit {
             'Apple',
             user.photoURL || './assets/images/default-dp.png'
           );
+          
+          // If new user, redirect to interest selection
+          this.router.navigate(['/interest-selection'], { replaceUrl: true });
+        } else {
+          // Check if user has selected groups
+          const hasGroups = await this.loginService.checkUserGroups(user.uid);
+          if (hasGroups) {
+            // User has groups, go to feed
+            this.router.navigate(['/tabs/tab1'], { replaceUrl: true });
+          } else {
+            // User has no groups, go to interest selection
+            this.router.navigate(['/interest-selection'], { replaceUrl: true });
+          }
         }
-        
-        this.router.navigate(['/tabs/tab1'], { replaceUrl: true });
       }
       this.loadingProvider.hide();
     } catch (error) {
@@ -183,9 +208,20 @@ export class LoginPage implements OnInit {
               'Facebook',
               user.photoURL || './assets/images/default-dp.png'
             );
+            
+            // If new user, redirect to interest selection
+            this.router.navigate(['/interest-selection'], { replaceUrl: true });
+          } else {
+            // Check if user has selected groups
+            const hasGroups = await this.loginService.checkUserGroups(user.uid);
+            if (hasGroups) {
+              // User has groups, go to feed
+              this.router.navigate(['/tabs/tab1'], { replaceUrl: true });
+            } else {
+              // User has no groups, go to interest selection
+              this.router.navigate(['/interest-selection'], { replaceUrl: true });
+            }
           }
-          
-          this.router.navigate(['/tabs/tab1'], { replaceUrl: true });
         }
       } catch (fbError) {
         console.warn('Facebook popup auth failed, trying redirect:', fbError);

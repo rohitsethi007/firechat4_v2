@@ -91,6 +91,10 @@ export class TabsPage {
   viewProfile() {
     this.router.navigateByUrl('/profile/' + this.dataProvider.getCurrentUserId());
   }
+  
+  goToAdminPage() {
+    this.router.navigateByUrl('/admin');
+  }
 
   // getFriendRequests() {
   //   this.friendRequests = [];

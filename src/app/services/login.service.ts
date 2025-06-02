@@ -1,11 +1,8 @@
 import { Injectable } from '@angular/core';
-// import { Auth } from '@angular/fire/auth';
-// import { Firestore, collection, doc, setDoc, serverTimestamp } from '@angular/fire/firestore';
 import { UserDocument } from '../models/interfaces';
 import firebase from 'firebase/compat/app';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-//createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail
 import { LoadingService } from './loading.service';
 
 import { environment } from 'src/environments/environment.prod';
@@ -29,20 +26,32 @@ export class LoginService {
     this.testFirebaseConnection();
   }
   
-  login(email: string, password: string) {
+  async login(email: string, password: string) {
     this.loadingProvider.show();
     console.info('im in login')
-    return this.afAuth.signInWithEmailAndPassword(email, password)
-      .then((result) => {
-        console.info('result', result)
-        // Handle successful login
-        return result;
-      })
-      .catch(err => {
-        console.log(err);
-        this.loadingProvider.hide();
-        this.loadingProvider.showToast(err.message)
-      });
+    try {
+      const result = await this.afAuth.signInWithEmailAndPassword(email, password);
+      
+      if (result && result.user) {
+        // Check if user has selected groups
+        const userData = await this.getUserData(result.user.uid);
+        if (userData && userData.groups && Array.isArray(userData.groups) && userData.groups.length > 0) {
+          // User has groups, go to feed
+          this.router.navigate(['/tabs/tab1'], { replaceUrl: true });
+        } else {
+          // User has no groups, go to interest selection
+          this.router.navigate(['/interest-selection'], { replaceUrl: true });
+        }
+      }
+      
+      this.loadingProvider.hide();
+      return result;
+    } catch (err) {
+      console.log(err);
+      this.loadingProvider.hide();
+      this.loadingProvider.showToast(err.message);
+      throw err;
+    }
   }
 
   async register(name: string, username: string, email: string, password: string) {
@@ -53,11 +62,15 @@ export class LoginService {
         console.info('New user created:', user);
         
         if (user) {
-           this.createNewUser(user.uid, name, username, user.email, "I am available", "Firebase");
+           return this.createNewUser(user.uid, name, username, user.email, "I am available", "Firebase")
+             .then(() => {
+               // After user creation, redirect to interest selection
+               this.router.navigateByUrl('/interest-selection', { replaceUrl: true });
+               return user;
+             });
         } else {
-           null;
+           return null;
         }
-        return user;  
       })
       .catch((err) => {
         console.log(err);
@@ -65,7 +78,6 @@ export class LoginService {
         this.loadingProvider.showToast(err.message);
       });
   }
-
 
   async reset(email: string): Promise<void> {
     if (!email) {
@@ -146,10 +158,11 @@ export class LoginService {
 
     try {
       await this.firestore.collection('accounts').doc(userId).set(userData);
-     // Store auth state
+      // Store auth state
       await this.storage.set('isAuthenticated', true);
-    
-      // Don't navigate here, let the registration flow handle navigation
+      
+      // Return success
+      return Promise.resolve();
     } catch (error) {
       console.error('Error creating new user:', error);
       throw error;
@@ -159,6 +172,31 @@ export class LoginService {
   logout() {
     return this.afAuth.signOut()
       .then(() => this.router.navigateByUrl('/login', { replaceUrl: true }));
+  }
+  
+  // Get user data to check if they have selected groups
+  async getUserData(userId: string): Promise<any> {
+    try {
+      const doc = await this.firestore.collection('accounts').doc(userId).get().toPromise();
+      if (doc && doc.exists) {
+        return doc.data() as any;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting user data:', error);
+      return null;
+    }
+  }
+
+  // Check if user has selected groups and redirect accordingly
+  async checkUserGroups(userId: string): Promise<boolean> {
+    try {
+      const userData = await this.getUserData(userId);
+      return !!(userData && userData.groups && Array.isArray(userData.groups) && userData.groups.length > 0);
+    } catch (error) {
+      console.error('Error checking user groups:', error);
+      return false;
+    }
   }
 
   testFirebaseConnection() {

@@ -48,25 +48,51 @@ export class GroupJoinPage implements OnInit {
   getGroupData() {
     this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((p: any) => {
       let group = p.payload.data();
-      group.key = p.key;
+      group.key = p.payload.id;
+      
+      // Check if user is already a member
+      if (group.members && Array.isArray(group.members) && group.members.includes(this.loggedInUserId)) {
+        group.isUserMember = true;
+      } else {
+        group.isUserMember = false;
+      }
+      
       this.group = group;
     });
   }
 
   joinGroup() {
     console.info('loggedinuser', this.loggedInUser)
+    
+    // First check if user is already a member of this group
+    if (this.group.members && this.group.members.includes(this.loggedInUserId)) {
+      // User is already a member, just navigate back
+      this.navCtrl.back();
+      return;
+    }
+    
+    // Add group to user's groups
     if (this.loggedInUser.groups) {
-      this.loggedInUser.groups.push(this.groupId);
+      if (!this.loggedInUser.groups.includes(this.groupId)) {
+        this.loggedInUser.groups.push(this.groupId);
+      }
     } else {
       this.loggedInUser.groups = [this.groupId];
     }
 
-     // Update group data on the database.
+    // Update group data on the database.
     this.dataProvider.getUser(this.loggedInUserId).update({
       groups: this.loggedInUser.groups
     }).then(() => {
-      // Add friend as members of the group.
-      this.group.members.push(this.loggedInUserId);
+      // Initialize members array if it doesn't exist
+      if (!this.group.members) {
+        this.group.members = [];
+      }
+      
+      // Add user as member of the group if not already a member
+      if (!this.group.members.includes(this.loggedInUserId)) {
+        this.group.members.push(this.loggedInUserId);
+      }
 
       // Update group data on the database.
       this.dataProvider.getGroup(this.groupId).update({
