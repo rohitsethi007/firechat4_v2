@@ -656,7 +656,7 @@ ion-header {
               .message {
                 font-size: 13px;
                 line-height: 1.4;
-                color: #262626;
+                color: var(--ion-text-color);
                 word-wrap: break-word;
               }
             }
@@ -862,7 +862,7 @@ ion-header {
             .comment-content {
               .comment-text {
                 .username, .message {
-                  color: #e4e6eb;
+                  color: var(--ion-text-color);
                 }
               }
     

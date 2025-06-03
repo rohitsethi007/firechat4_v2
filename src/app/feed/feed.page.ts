@@ -693,6 +693,11 @@ export class FeedPage implements OnInit {
         post.showMore = false;
         const startDate = new Date(post.date);
         
+        // Use totalCommentCount for display if available
+        if (post.totalCommentCount !== undefined) {
+          post.totalReviewCount = post.totalCommentCount;
+        }
+        
 
         if (post.type === 'poll') {
           const today = new Date();

@@ -208,6 +208,11 @@ export class PostPage implements OnInit {
         this.title = post.data().title;
         let totalReactionCount = 0;
         let totalReviewCount = 0;
+        
+        // Initialize totalCommentCount if it doesn't exist
+        if (p.totalCommentCount === undefined) {
+          p.totalCommentCount = 0;
+        }
 
         // get Reactions Collection
         this.reactionSubscription = this.firestore
@@ -845,15 +850,23 @@ async submitComment() {
       likes: 0
     };
 
+    // Add the comment
     await this.firestore
       .collection('comments')
       .add(commentData);
 
+    // Update the post's comment count in Firestore
+    await this.firestore.collection('posts').doc(this.post.key).update({
+      totalCommentCount: firebase.firestore.FieldValue.increment(1),
+      totalReviewCount: firebase.firestore.FieldValue.increment(1)
+    });
+
     // Clear input after successful submission
     this.newComment = '';
     
-    // Update comment count
-    this.post.totalReviewCount++;
+    // Update comment count in local post object
+    this.post.totalReviewCount = (this.post.totalReviewCount || 0) + 1;
+    this.post.totalCommentCount = (this.post.totalCommentCount || 0) + 1;
 
     // add Notifications
     await this.notificationsService.createNotification({
@@ -895,6 +908,15 @@ loadComments() {
 
       // Build tree with max 2 levels
       this.comments = this.buildCommentTree(allComments, 2);
+      
+      // Update the comment count in the post object and in Firestore
+      const commentCount = allComments.length;
+      this.post.totalReviewCount = commentCount;
+      
+      // Update the count in Firestore if it doesn't match
+      this.firestore.collection('posts').doc(this.post.key).update({
+        totalCommentCount: commentCount
+      });
     });
 }
 
