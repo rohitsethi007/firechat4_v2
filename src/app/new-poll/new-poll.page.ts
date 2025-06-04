@@ -225,7 +225,7 @@ export class NewPollPage implements OnInit {
         ]);
 
 
-        this.router.navigateByUrl('/app/tabs/tab1');
+        this.router.navigateByUrl('/tabs/tab1');
       }
 
   selectGroup(groupId) {

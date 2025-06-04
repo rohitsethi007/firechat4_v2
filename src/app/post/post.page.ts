@@ -517,12 +517,56 @@ viewGroup(groupId) {
   vote() {
     const pollOptionIndex = this.pollOptionForm.value["selected_poll_option"];
     console.log('pollOptionIndex', pollOptionIndex);
-    const members = [];
-    members.push(this.loggedInUserId);
-    this.post.data.pollOptions[pollOptionIndex].members = members;
+    
+    // Initialize members array if it doesn't exist
+    if (!this.post.data.pollOptions[pollOptionIndex].members) {
+      this.post.data.pollOptions[pollOptionIndex].members = [];
+    }
+    
+    // Add current user to members
+    this.post.data.pollOptions[pollOptionIndex].members.push(this.loggedInUserId);
+    
+    // Set voted flag
     this.voted = true;
+    
+    // Update poll in database
     this.dataProvider.updatePollMembers(this.postId, this.post.data);
-    this.ngOnInit();
+    
+    // Manually update the chart data
+    const labels: string[] = [];
+    const data: number[] = [];
+    
+    // Process poll options
+    this.post.data.pollOptions.forEach((option: PollOption) => {
+      if (option) {
+        const voteCount = option.members?.length || 0;
+        labels.push(option.name);
+        data.push(voteCount);
+      }
+    });
+    
+    // Update chart data
+    this.chartData = {
+      labels: labels,
+      datasets: [{
+        data: data,
+        label: 'Votes',
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)'
+        ],
+        borderWidth: 1
+      }]
+    };
+    
+    // Show success message
+    this.loadingProvider.showToast('Your vote has been recorded');
   }
 
   async showEmojiPicker(event: any, item: any) {

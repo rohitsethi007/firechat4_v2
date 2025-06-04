@@ -107,11 +107,11 @@ export class DataService {
   }
 
   updatePollMembers(pollKey, pollData) {
-    this.firestore.doc('posts/' + pollKey).update ({
+    return this.firestore.doc('posts/' + pollKey).update ({
       data: pollData
     }).then(() => {
       const increment = firebase.firestore.FieldValue.increment(1);
-      this.firestore.collection('posts').doc(pollKey).update({
+      return this.firestore.collection('posts').doc(pollKey).update({
         totalPollCount : increment
       });
     });
