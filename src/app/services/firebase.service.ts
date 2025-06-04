@@ -4,6 +4,8 @@ import { DataService } from './data.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { take } from 'rxjs/operators';
+import firebase from 'firebase/compat/app';
+import { NotificationsService } from './notifications.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,63 +19,87 @@ export class FirebaseService {
     public firestore: AngularFirestore,
     public loadingProvider: LoadingService,
     private afAuth: AngularFireAuth,
-    private dataProvider: DataService) { }
+    private dataProvider: DataService,
+    private notificationsService: NotificationsService) { }
 
   // Send friend request to userId.
   async sendFriendRequest(userId) {
     const loggedInUserId = await this.afAuth.currentUser.then((data) => { return data.uid});
     this.loadingProvider.show();
 
-    let requestsSent;
-    // Use take(1) so that subscription will only trigger once.
-    this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests: any) => {
-      if (requests.data() != null
-        && requests.data().requestsSent != null) {
-        requestsSent = requests.data().requestsSent;
-      }
-
-      if (requestsSent == null || requestsSent === undefined) {
-        requestsSent = [userId];
-      } else {
-        if (requestsSent.indexOf(userId) === -1) {
-          requestsSent.push(userId);
+    try {
+      // Get current user data for notification
+      const currentUserDoc = await this.dataProvider.getUser(loggedInUserId).get().toPromise();
+      const currentUserData = currentUserDoc.data() as { name: string; img?: string; username: string };
+      
+      let requestsSent;
+      // Use take(1) so that subscription will only trigger once.
+      this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests: any) => {
+        if (requests.data() != null
+          && requests.data().requestsSent != null) {
+          requestsSent = requests.data().requestsSent;
         }
-      }
 
-      // Add requestsSent information.
-      this.firestore.collection('requests').doc(loggedInUserId).set({
-        requestsSent
-      }).then((success) => {
-        let friendRequests;
-        // tslint:disable-next-line: no-shadowed-variable
-        this.dataProvider.getRequests(userId).get().subscribe((requests: any) => {
-          if (requests.data() != null
-            && requests.data().friendRequests != null) {
-            friendRequests = requests.data().friendRequests;
+        if (requestsSent == null || requestsSent === undefined) {
+          requestsSent = [userId];
+        } else {
+          if (requestsSent.indexOf(userId) === -1) {
+            requestsSent.push(userId);
           }
+        }
 
-          if (friendRequests == null) {
-            friendRequests = [loggedInUserId];
-          } else {
-            if (friendRequests.indexOf(userId) === -1) {
-              friendRequests.push(loggedInUserId);
+        // Add requestsSent information.
+        this.firestore.collection('requests').doc(loggedInUserId).set({
+          requestsSent
+        }).then((success) => {
+          let friendRequests;
+          // tslint:disable-next-line: no-shadowed-variable
+          this.dataProvider.getRequests(userId).get().subscribe((requests: any) => {
+            if (requests.data() != null
+              && requests.data().friendRequests != null) {
+              friendRequests = requests.data().friendRequests;
             }
-          }
-          // Add friendRequest information.
-          this.firestore.collection('requests').doc(userId).set({
-            friendRequests
-          }).then((succ) => {
-            this.loadingProvider.hide();
-            this.loadingProvider.showToast('Friend Request Sent');
-          }).catch((error) => {
-            this.loadingProvider.hide();
+
+            if (friendRequests == null) {
+              friendRequests = [loggedInUserId];
+            } else {
+              if (friendRequests.indexOf(userId) === -1) {
+                friendRequests.push(loggedInUserId);
+              }
+            }
+            // Add friendRequest information.
+            this.firestore.collection('requests').doc(userId).set({
+              friendRequests
+            }).then(async (succ) => {
+              // Create notification using the injected NotificationsService
+              await this.notificationsService.createNotification({
+                type: 'message' as const,
+                fromUser: {
+                  userId: loggedInUserId,
+                  username: currentUserData.username,
+                  userImg: currentUserData.img || './assets/images/default-dp.png'
+                },
+                toUserId: userId,
+                content: 'sent you a friend request'
+              });
+              
+              this.loadingProvider.hide();
+              this.loadingProvider.showToast('Friend Request Sent');
+            }).catch((error) => {
+              console.error('Error setting friend request:', error);
+              this.loadingProvider.hide();
+            });
           });
+        }).catch((error) => {
+          console.log('error', error);
+          this.loadingProvider.hide();
         });
-      }).catch((error) => {
-        console.log('error', error);
-        this.loadingProvider.hide();
       });
-    });
+    } catch (error) {
+      console.error('Error in sendFriendRequest:', error);
+      this.loadingProvider.hide();
+      this.loadingProvider.showToast('Failed to send friend request');
+    }
   }
 
   // Cancel friend request sent to userId.
@@ -81,36 +107,57 @@ export class FirebaseService {
     const loggedInUserId = await this.afAuth.currentUser.then((data) => { return data.uid});
     this.loadingProvider.show();
 
-    let requestsSent = [];
-    this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests: any) => {
-      requestsSent = requests.data().requestsSent;
-      requestsSent.splice(requestsSent.indexOf(userId), 1);
-      // Update requestSent information.
-      this.firestore.collection('requests').doc(loggedInUserId).set({
-        requestsSent
-      }).then((success) => {
-        let friendRequests;
-        this.dataProvider.getRequests(userId).get().subscribe((req: any) => {
-          friendRequests = req.data().friendRequests;
-          console.log(friendRequests);
-          friendRequests.splice(friendRequests.indexOf(loggedInUserId), 1);
-          // Update friendRequests information.
-          this.firestore.collection('requests').doc(userId).set({
-            friendRequests
-          }).then((succ) => {
-            console.log(succ);
-            this.loadingProvider.hide();
-            this.loadingProvider.showToast('Removed Friend Request');
-          }).catch((error) => {
-            console.log(error);
-            this.loadingProvider.hide();
+    try {
+      // Get current user data for notification
+      const currentUserDoc = await this.dataProvider.getUser(loggedInUserId).get().toPromise();
+      const currentUserData = currentUserDoc.data() as { name: string; img?: string; username: string };
+
+      let requestsSent = [];
+      this.dataProvider.getRequests(loggedInUserId).get().subscribe((requests: any) => {
+        requestsSent = requests.data().requestsSent;
+        requestsSent.splice(requestsSent.indexOf(userId), 1);
+        // Update requestSent information.
+        this.firestore.collection('requests').doc(loggedInUserId).set({
+          requestsSent
+        }).then((success) => {
+          let friendRequests;
+          this.dataProvider.getRequests(userId).get().subscribe((req: any) => {
+            friendRequests = req.data().friendRequests;
+            console.log(friendRequests);
+            friendRequests.splice(friendRequests.indexOf(loggedInUserId), 1);
+            // Update friendRequests information.
+            this.firestore.collection('requests').doc(userId).set({
+              friendRequests
+            }).then(async (succ) => {
+              // Create notification using the injected NotificationsService
+              await this.notificationsService.createNotification({
+                type: 'message' as const,
+                fromUser: {
+                  userId: loggedInUserId,
+                  username: currentUserData.username,
+                  userImg: currentUserData.img || './assets/images/default-dp.png'
+                },
+                toUserId: userId,
+                content: 'cancelled their friend request'
+              });
+              
+              console.log(succ);
+              this.loadingProvider.hide();
+              this.loadingProvider.showToast('Removed Friend Request');
+            }).catch((error) => {
+              console.log(error);
+              this.loadingProvider.hide();
+            });
           });
+        }).catch((error) => {
+          console.log(error);
+          this.loadingProvider.hide();
         });
-      }).catch((error) => {
-        console.log(error);
-        this.loadingProvider.hide();
       });
-    });
+    } catch (error) {
+      console.error('Error in cancelFriendRequest:', error);
+      this.loadingProvider.hide();
+    }
   }
 
   // Delete friend request.

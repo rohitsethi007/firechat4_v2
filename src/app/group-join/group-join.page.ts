@@ -71,36 +71,39 @@ export class GroupJoinPage implements OnInit {
       return;
     }
     
-    // Add group to user's groups
-    if (this.loggedInUser.groups) {
-      if (!this.loggedInUser.groups.includes(this.groupId)) {
-        this.loggedInUser.groups.push(this.groupId);
-      }
-    } else {
-      this.loggedInUser.groups = [this.groupId];
-    }
-
-    // Update group data on the database.
-    this.dataProvider.getUser(this.loggedInUserId).update({
-      groups: this.loggedInUser.groups
-    }).then(() => {
-      // Initialize members array if it doesn't exist
-      if (!this.group.members) {
-        this.group.members = [];
-      }
-      
-      // Add user as member of the group if not already a member
-      if (!this.group.members.includes(this.loggedInUserId)) {
-        this.group.members.push(this.loggedInUserId);
-      }
-
-      // Update group data on the database.
-      this.dataProvider.getGroup(this.groupId).update({
-        members: this.group.members,
-        messages: this.group.messages
+    // Get the current user data from Firestore to ensure we have the latest groups array
+    this.dataProvider.getCurrentUser().then((userRef) => {
+      userRef.get().subscribe((userData: any) => {
+        const currentUserData = userData.data();
+        let userGroups = currentUserData?.groups || [];
+        
+        // Add the new group if not already in the array
+        if (!userGroups.includes(this.groupId)) {
+          userGroups.push(this.groupId);
+        }
+        
+        // Update user's groups in Firestore
+        this.dataProvider.getUser(this.loggedInUserId).update({
+          groups: userGroups
+        }).then(() => {
+          // Initialize members array if it doesn't exist
+          if (!this.group.members) {
+            this.group.members = [];
+          }
+          
+          // Add user as member of the group if not already a member
+          if (!this.group.members.includes(this.loggedInUserId)) {
+            this.group.members.push(this.loggedInUserId);
+          }
+    
+          // Update group data on the database.
+          this.dataProvider.getGroup(this.groupId).update({
+            members: this.group.members
+          }).then(() => {
+            this.navCtrl.back();
+          });
+        });
       });
-    }).then(() => {
-      this.navCtrl.back();
     });
   }
 }

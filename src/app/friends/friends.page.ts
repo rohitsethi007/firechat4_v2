@@ -141,14 +141,41 @@ export class FriendsPage implements OnInit {
   }
 
   // Proceed to userInfo page.
-  viewUser(userId) {
-    this.router.navigateByUrl('/userinfo/' + userId);
+  async viewUser(userId) {
+    try {
+      // Force refresh the auth token
+      const user = await this.afAuth.currentUser;
+      if (user) {
+        this.router.navigate(['/userinfo', userId], { replaceUrl: false });
+      } else {
+        console.error('User not authenticated');
+        localStorage.setItem('pendingViewUser', userId);
+        this.router.navigateByUrl('/login');
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      this.router.navigateByUrl('/login');
+    }
   }
 
   // Proceed to chat page.
-  message(userId) {
-    console.info('userId', userId)
-    this.router.navigateByUrl('/message/' + userId);
+  async message(userId) {
+    console.info('userId', userId);
+    try {
+      // Force refresh the auth token
+      const user = await this.afAuth.currentUser;
+      if (user) {
+        // Navigate directly with state preservation
+        this.router.navigate(['/message', userId], { replaceUrl: false });
+      } else {
+        console.error('User not authenticated');
+        localStorage.setItem('pendingMessageUser', userId);
+        this.router.navigateByUrl('/login');
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      this.router.navigateByUrl('/login');
+    }
   }
 
 

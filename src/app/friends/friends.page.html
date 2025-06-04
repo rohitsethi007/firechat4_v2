@@ -49,7 +49,7 @@
                   button
                   detail="false"
                   class="friend-item"
-                  (click)="message(friend.$key); $event.stopPropagation();">
+                  [routerLink]="['/message', friend.$key]">
           <ion-avatar slot="start">
             <img [src]="friend.img" [alt]="friend.name" onError="this.src='./assets/images/default-dp.png'">
           </ion-avatar>
