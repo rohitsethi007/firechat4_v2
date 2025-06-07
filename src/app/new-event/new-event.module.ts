@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '../services/share.module'
@@ -21,6 +22,7 @@ const routes: Routes = [
     ReactiveFormsModule,
     SharedModule,
     IonicModule,
+    HttpClientModule,
     RouterModule.forChild(routes)
   ],
   declarations: [NewEventPage]

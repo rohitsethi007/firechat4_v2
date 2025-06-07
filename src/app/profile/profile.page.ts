@@ -17,6 +17,7 @@ import { UserProfileModalPage } from '../user-profile-modal/user-profile-modal.p
 import firebase from 'firebase/compat/app';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { BookmarkService } from '../services/bookmark.service';
 
 @Component({
   selector: 'app-profile',
@@ -35,6 +36,7 @@ export class ProfilePage implements OnInit {
   userPosts: any = [];
   userReactions: any = [];
   userComments: any = [];
+  userBookmarks: any = [];
   groups: any = [];
   friends: any = [];
   myProfile = false;
@@ -60,7 +62,8 @@ export class ProfilePage implements OnInit {
     private router: Router,
     public modalCtrl: ModalController,
     private routerOutlet: IonRouterOutlet,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private bookmarkService: BookmarkService
   ) {
    
     this.loggedInUserId = firebase.auth().currentUser.uid;
@@ -96,6 +99,7 @@ export class ProfilePage implements OnInit {
     if (!this.myProfile) {
       this.checkFriendRequestStatus();
     }
+    this.loadBookmarkedPosts();
   }
   
   checkFriendRequestStatus() {
@@ -139,7 +143,8 @@ export class ProfilePage implements OnInit {
         }
 
         // get user Reaction Posts
-        if (this.user.userReactions) {
+        if (this.user.userReactions && this.user.userReactions > 0) {
+          console.log('this.user.userReactions', this.user.userReactions);
           this.firestore.collection('posts').ref
           .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userReactions)
           .get().then((po: any) => {
@@ -148,18 +153,23 @@ export class ProfilePage implements OnInit {
           });
         }
 
-        // get user Posts
-        if (this.user.userComments) {
+        // get user Comments
+        if (this.user.userComments && this.user.userComments.length > 0) {
+          console.log('this.user.userComments', this.user.userComments);
           this.firestore.collection('posts').ref
           .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userComments)
           .get().then((po: any) => {
-          this.userComments = [];
-          this.loadEachPostData(po, 'userComments');
+            this.userComments = [];
+            this.loadEachPostData(po, 'userComments');
           });
+        } else {
+          this.userComments = [];
         }
 
+
         // Get User Friends list
-        if (this.user.friends) {
+        if (this.user.friends && this.user.friends.length > 0) {
+          console.log('this.user.friends', this.user.friends);
           this.firestore.collection('accounts').ref
           .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.friends)
           .get().then((user: any) => {
@@ -171,7 +181,6 @@ export class ProfilePage implements OnInit {
               this.addOrUpdateUserFriend(friend);
             });
 
-            console.log('this.friends', this.friends);
             // check if logged in user is a friend
             const foundFriend = this.friends.some(el => el.userId === this.loggedInUserId);
             if (foundFriend) {
@@ -193,6 +202,7 @@ export class ProfilePage implements OnInit {
               group = g.data();
               group.key = g.id;
               this.addOrUpdateUserGroup(group);
+
             });
           });
           }
@@ -215,7 +225,6 @@ export class ProfilePage implements OnInit {
   }
 
   addOrUpdateUserPost(post) {
-    console.info('adding post', post)
     if (!this.userPosts) {
       this.userPosts = [post];
     } else {
@@ -304,6 +313,15 @@ export class ProfilePage implements OnInit {
       }
     }
   }
+  
+  loadBookmarkedPosts() {
+    if (!this.myProfile) return; // Only load bookmarks for the user's own profile
+    
+    this.bookmarkService.getBookmarkedPosts().subscribe(posts => {
+      this.userBookmarks = posts;
+    });
+  }
+  
 
   changeStatus() {
     this.firestore.doc('accounts/' + this.user.userId).update({ showOnline: this.user.showOnline });
@@ -503,11 +521,10 @@ export class ProfilePage implements OnInit {
         // Update local group data
         group.isUserMember = false;
         group.members = updatedMembers;
-        console.log('Successfully left group');
       })
       .catch(error => {
         console.error('Error leaving group:', error);
-        // Handle error (show toast message)
+        this.loadingProvider.showToast('There was an issue performing this action, please try again or reach out to support if issue persists.');
       });
   }
 

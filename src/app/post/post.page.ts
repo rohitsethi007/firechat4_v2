@@ -659,18 +659,13 @@ viewGroup(groupId) {
     console.info('removePostReaction', post, reactionType);
     // first find the post in the collection
     const p = this.post;
-    const found = false;
-    if (p.reactions !== undefined) {
-      const values = Object.keys(p.reactions).map( function(e) {
-        return p.reactions[e];
-      });
-
+    if (p.reactions && p.reactions.length > 0) {
       const reaction = p.reactions.find(
         el => el.addedByUser.addedByKey === this.loggedInUserId);
 
-      if (reaction.reactionType === reactionType) {
-          console.info('here!!', post.key, reaction)
-        this.dataProvider.removePostReaction(post.key, reaction.key);
+      if (reaction && reaction.reactionType === reactionType && reaction.id) {
+        console.info('here!!', post.key, reaction)
+        this.dataProvider.removePostReaction(post.key, reaction.id);
       } 
     }
   }
@@ -748,13 +743,73 @@ viewGroup(groupId) {
     document.body.removeChild(textarea);
   }
   
+  // async toggleBookmark(post: any) {
+  //   try {
+  //     const userId = this.loggedInUserId;
+  //     const result = await this.bookmarkService.toggleBookmark(
+  //       post, 
+  //       userId, 
+  //       this.userBookmarks || []
+  //     );
+      
+  //     // Update local state immediately
+  //     post.isBookmarked = result;
+      
+  //     // Update userBookmarks array
+  //     if (result) {
+  //       if (!this.userBookmarks) this.userBookmarks = [];
+  //       if (!this.userBookmarks.includes(post.key)) {
+  //         this.userBookmarks.push(post.key);
+  //       }
+  //     } else {
+  //       if (this.userBookmarks) {
+  //         this.userBookmarks = this.userBookmarks.filter(id => id !== post.key);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error('Error toggling bookmark:', error);
+  //   }
+  // }
+
   async toggleBookmark(post: any) {
-    const userId = this.loggedInUserId;
-    post.isBookmarked = await this.bookmarkService.toggleBookmark(
-      post, 
-      userId, 
-      this.userBookmarks
-    );
+    if (!this.loggedInUserId) return;
+    
+    // Toggle UI state immediately for responsive feedback
+    post.isBookmarked = !post.isBookmarked;
+    
+    try {
+      // Initialize userBookmarks if needed
+      if (!this.userBookmarks) this.userBookmarks = [];
+      
+      // Update local bookmarks array
+      if (post.isBookmarked) {
+        if (!this.userBookmarks.includes(post.key)) {
+          this.userBookmarks.push(post.key);
+        }
+      } else {
+        this.userBookmarks = this.userBookmarks.filter(id => id !== post.key);
+      }
+      
+      // Update in database
+      const userRef = this.firestore.collection('accounts').doc(this.loggedInUserId);
+      if (post.isBookmarked) {
+        await userRef.update({
+          userBookmarks: firebase.firestore.FieldValue.arrayUnion(post.key)
+        });
+        // Update the bookmark service
+        this.bookmarkService.userBookmarks.next([...this.userBookmarks]);
+      } else {
+        await userRef.update({
+          userBookmarks: firebase.firestore.FieldValue.arrayRemove(post.key)
+        });
+        // Update the bookmark service
+        this.bookmarkService.userBookmarks.next([...this.userBookmarks]);
+      }
+    } catch (error) {
+      // Revert UI state if operation fails
+      post.isBookmarked = !post.isBookmarked;
+      console.error('Error toggling bookmark:', error);
+    }
   }
   
   private initializePollData(p: any) {

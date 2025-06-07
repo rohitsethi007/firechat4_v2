@@ -103,18 +103,6 @@
           </ion-toggle>
         </ion-item>
 
-        <ion-item>
-          <ion-icon name="notifications-outline" slot="start"></ion-icon>
-          <ion-label>
-            <h3>Enable Notifications</h3>
-            <p class="setting-description">Get instant alerts for new messages and friend requests</p>
-          </ion-label>
-          <ion-toggle [(ngModel)]="user.isPushEnabled" 
-                     [disabled]="isBrowser"
-                     (ionChange)="changeNotification()">
-          </ion-toggle>
-        </ion-item>
-
         <ion-item button routerLink="/blockedlist">
           <ion-icon name="ban-outline" slot="start"></ion-icon>
           <ion-label>
@@ -132,38 +120,65 @@
       </ion-list>
     </section>
 
-    <!-- Activity Section -->
-    <section class="activity-section">
-      <h2 class="section-title">Activity</h2>
-      <ion-list lines="none">
-        <ion-item *ngIf="userPosts.length === 0" class="empty-state" slot="start">
-          <ion-icon name="document-text-outline"></ion-icon>
-          <ion-label>
-            <p>You have not created or commented on any posts.</p>
-          </ion-label>
-        </ion-item>
+<!-- Activity Section -->
+<section class="activity-section">
+  <h2 class="section-title">Activity</h2>
+  <ion-list lines="none">
+    <ion-item *ngIf="userPosts.length === 0 && userReactions.length === 0" class="empty-state" slot="start">
+      <ion-icon name="document-text-outline"></ion-icon>
+      <ion-label>
+        <p>You have not created or commented on any posts.</p>
+      </ion-label>
+    </ion-item>
 
-        <ion-item *ngFor="let item of userPosts" class="activity-item">
-          <ion-icon name="create-outline" slot="start"></ion-icon>
-          <ion-label>
-            <p class="activity-text">
-              New post: <a [routerLink]="['/post', item.key]">"{{item.title}}"</a>
-            </p>
-            <p class="activity-date">{{item.date.toDate() | date:'mediumDate'}}</p>
-          </ion-label>
-        </ion-item>
+    <ion-item *ngFor="let item of userPosts" class="activity-item">
+      <ion-icon name="create-outline" slot="start"></ion-icon>
+      <ion-label>
+        <p class="activity-text">
+          New post: <a [routerLink]="['/post', item.key]">"{{item.title}}"</a>
+        </p>
+        <p class="activity-date">{{item.date.toDate() | date:'mediumDate'}}</p>
+      </ion-label>
+    </ion-item>
 
-        <ion-item *ngFor="let item of userReactions" class="activity-item">
-          <ion-icon name="heart-outline" slot="start"></ion-icon>
-          <ion-label>
-            <p class="activity-text">
-              Reacted on: <a [routerLink]="['/post', item.key]">"{{item.title}}"</a>
-            </p>
-            <p class="activity-date">{{item.date.toDate() | date:'mediumDate'}}</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </section>
+    <ion-item *ngFor="let item of userReactions" class="activity-item">
+      <ion-icon name="heart-outline" slot="start"></ion-icon>
+      <ion-label>
+        <p class="activity-text">
+          Reacted on: <a [routerLink]="['/post', item.key]">"{{item.title}}"</a>
+        </p>
+        <p class="activity-date">{{item.date.toDate() | date:'mediumDate'}}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</section>
+
+<!-- Bookmarked Posts Section -->
+<section class="bookmarks-section" *ngIf="myProfile">
+  <h2 class="section-title">Bookmarked Posts</h2>
+  <ion-list lines="none">
+    <ion-item *ngIf="userBookmarks.length === 0" class="empty-state">
+      <ion-icon name="bookmark-outline"></ion-icon>
+      <ion-label>
+        <p>You haven't bookmarked any posts yet.</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item *ngFor="let item of userBookmarks" class="bookmark-item">
+      <ion-icon name="bookmark-outline" slot="start" size="small"></ion-icon>
+      <ion-label>
+        <p class="bookmark-text">
+          <a [routerLink]="['/post', item.key]">"{{item.title}}"</a>
+        </p>
+        <p class="bookmark-date" *ngIf="item.date">{{item.date.toDate() | date:'mediumDate'}}</p>
+      </ion-label>
+    </ion-item>
+    
+  </ion-list>
+</section>
+
+<!-- Groups Section -->
+
 
     <!-- Groups Section -->
     <section class="groups-section">

@@ -378,19 +378,14 @@ export class FeedPage implements OnInit {
     }
 
     submitReactionPost(post, reactionType) {
-      console.info('post.reactionType', post.reactionType)
-      console.info('reactionType', reactionType)
     if (post.reactionType === '') {
-      console.info('1')
         this.addPostReaction(post, reactionType);
         post.totalReactionCount += 1;
       } else if(post.reactionType !== reactionType) {
-        console.info('2')
           this.removePostReaction(post, post.reactionType);
 
           this.addPostReaction(post, reactionType);
       } else if(post.reactionType === reactionType) {
-        console.info('3')
         this.removePostReaction(post, reactionType);
         post.totalReactionCount -= 1;
       }
@@ -698,7 +693,6 @@ export class FeedPage implements OnInit {
           post.totalReviewCount = post.totalCommentCount;
         }
         
-
         if (post.type === 'poll') {
           const today = new Date();
           const de = post.data.dateEnding.toDate();
@@ -728,6 +722,16 @@ export class FeedPage implements OnInit {
 
         }
         
+        // get checkins list
+        this.firestore.collection('posts').doc(post.key).collection('checkins').snapshotChanges().subscribe((checkins: any) => {
+          post.checkins = [];
+          checkins.forEach(element => {
+            const checkin = element.payload.doc.data();
+            checkin.key = element.payload.doc.id;
+            post.checkins.push(checkin);
+          });
+        });
+
         // get reactions list
         this.firestore.collection('posts').doc(post.key).collection('reactions').snapshotChanges().subscribe((reactions: any) => {
           post.reactions = [];
@@ -1022,12 +1026,44 @@ export class FeedPage implements OnInit {
     // }
 
     async toggleBookmark(post: any) {
-      const userId = this.loggedInUserId;
-      post.isBookmarked = await this.bookmarkService.toggleBookmark(
-        post, 
-        userId, 
-        this.userBookmarks
-      );
+      if (!this.loggedInUserId) return;
+      
+      // Toggle UI state immediately for responsive feedback
+      post.isBookmarked = !post.isBookmarked;
+      
+      try {
+        // Initialize userBookmarks if needed
+        if (!this.userBookmarks) this.userBookmarks = [];
+        
+        // Update local bookmarks array
+        if (post.isBookmarked) {
+          if (!this.userBookmarks.includes(post.key)) {
+            this.userBookmarks.push(post.key);
+          }
+        } else {
+          this.userBookmarks = this.userBookmarks.filter(id => id !== post.key);
+        }
+        
+        // Update in database
+        const userRef = this.firestore.collection('accounts').doc(this.loggedInUserId);
+        if (post.isBookmarked) {
+          await userRef.update({
+            userBookmarks: firebase.firestore.FieldValue.arrayUnion(post.key)
+          });
+          // Update the bookmark service's BehaviorSubject
+          this.bookmarkService.userBookmarks.next([...this.userBookmarks]);
+        } else {
+          await userRef.update({
+            userBookmarks: firebase.firestore.FieldValue.arrayRemove(post.key)
+          });
+          // Update the bookmark service's BehaviorSubject
+          this.bookmarkService.userBookmarks.next([...this.userBookmarks]);
+        }
+      } catch (error) {
+        // Revert UI state if operation fails
+        post.isBookmarked = !post.isBookmarked;
+        console.error('Error toggling bookmark:', error);
+      }
     }
 
     async sharePost(post: any) {

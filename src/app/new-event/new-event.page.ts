@@ -43,6 +43,8 @@ export class NewEventPage implements OnInit {
   // In your component class
   bannerImage: string | null = null;
   
+  now = new Date();
+  nowIso = this.now.toISOString();
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -90,8 +92,8 @@ export class NewEventPage implements OnInit {
       this.eventForm = this.formBuilder.group({
         addedByUser: this.addedByUser,
         title: ['', Validators.required],
-        eventDate: ['', Validators.required],
-        eventTime: ['', Validators.required],
+        eventDate: [this.nowIso, Validators.required],
+        eventTime: [this.nowIso, Validators.required],
         location: ['', Validators.required],
         videoLink: [''], // Optional field,
         groupId: '',
@@ -215,7 +217,7 @@ export class NewEventPage implements OnInit {
      })
    ]);
 
-      this.router.navigateByUrl('/app/tabs/tab1');
+      this.router.navigateByUrl('/tabs/tab1');
   
 }
 

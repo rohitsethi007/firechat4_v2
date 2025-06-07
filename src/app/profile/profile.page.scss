@@ -383,4 +383,56 @@ ion-header {
       }
     }
   }
+
+  // Bookmarked Posts Section
+.bookmarks-section {
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+
+  .section-title {
+    padding: 20px;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+    border-bottom: 1px solid var(--ion-color-light);
+  }
+
+  .bookmark-item {
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --min-height: 72px;
+    
+    ion-icon[slot="start"] {
+      color: var(--ion-color-medium);
+      font-size: 20px;
+    }
+
+    .bookmark-text {
+      font-size: 15px;
+      color: var(--ion-color-dark);
+      margin: 0 0 4px;
+
+      a {
+        color: var(--ion-color-primary);
+        text-decoration: none;
+      }
+    }
+
+    .bookmark-date {
+      font-size: 13px;
+      color: var(--ion-color-medium);
+      margin: 0;
+    }
+  }
+}
+
+// Fix for activity section links
+.activity-text a {
+  text-decoration: none;
+}
+
 }
