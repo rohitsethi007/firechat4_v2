@@ -1,262 +1,342 @@
-// // test-data.service.ts
-// import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { LoadingService } from './loading.service';
+import firebase from 'firebase/compat/app';
 
-// import { DataService } from './data.service';
-// import { LoginService } from './login.service';
-// import { LoadingService } from './loading.service';
+@Injectable({
+  providedIn: 'root'
+})
+export class TestDataService {
 
-// import { AngularFireAuth } from '@angular/fire/compat/auth';
-// import { AngularFirestore } from '@angular/fire/compat/firestore';
-// import firebase from 'firebase/compat/app';
+  constructor(
+    private firestore: AngularFirestore,
+    private auth: AngularFireAuth,
+    private loadingProvider: LoadingService
+  ) { }
 
-// @Injectable({
-//   providedIn: 'root'
-// })
-// export class TestDataService {
-//   private testUsers: any[] = [];
-//   private testGroups: Map<string, string[]> = new Map(); // userId -> groupIds
-//   private testPosts: Map<string, string[]> = new Map(); // userId -> postIds
-
-//   constructor(
-//     private afAuth: AngularFireAuth,
-//     public firestore: AngularFirestore,
-//     private dataService: DataService,
-//     private loginService: LoginService,
-//     private loadingService: LoadingService
-//   ) {}
-
-//   async loadTestData() {
-//     try {
-//       this.loadingService.showToast('Creating test data...');
+  async generateTestData(): Promise<void> {
+    try {
+      this.loadingProvider.show();
       
-//       // Create 10 test users
-//       for (let i = 0; i < 10; i++) {
-//         this.loadingService.showToast(`Creating test user ${i + 1}/10...`);
-//         const user = await this.createTestUser(i);
+      // Step 1: Get all available groups
+      const groupsSnapshot = await this.firestore.collection('groups').get().toPromise();
+      if (!groupsSnapshot || groupsSnapshot.empty) {
+        this.loadingProvider.hide();
+        this.loadingProvider.showToast('No groups found. Please create groups first.');
+        return;
+      }
+      
+      const groups = groupsSnapshot.docs.map(doc => {
+        const data = doc.data() as Record<string, any>;
+        return {
+          id: doc.id,
+          name: data.name || 'Unknown Group'
+        };
+      });
+      
+      console.log(`Found ${groups.length} groups`);
+      
+      // Step 2: Create 10 test users
+      const users = await this.createTestUsers();
+      console.log(`Created/found ${users.length} test users`);
+      
+      // Step 3: Join users to random groups
+      await this.assignUsersToGroups(users, groups);
+      
+      // Step 4: Create posts for each user in their groups
+      await this.createTestPosts(users, groups);
+      
+      this.loadingProvider.hide();
+      this.loadingProvider.showToast('Test data generated successfully!');
+      
+    } catch (error) {
+      this.loadingProvider.hide();
+      console.error('Error generating test data:', error);
+      this.loadingProvider.showToast('Error generating test data. Check console for details.');
+    }
+  }
+  
+  private async createTestUsers(): Promise<any[]> {
+    const users = [];
+    
+    for (let i = 1; i <= 10; i++) {
+      const email = `test${i}@test.com`;
+      const password = 'test123';
+      
+      try {
+        // Create user in Firebase Auth
+        const userCredential = await this.auth.createUserWithEmailAndPassword(email, password);
+        const userId = userCredential.user.uid;
         
-//         // Join random groups for this user
-//         this.loadingService.showToast(`Joining groups for user ${i + 1}...`);
-//         await this.joinRandomGroups(user.uid);
+        // Create user profile in Firestore
+        const userData = {
+          userId: userId,
+          email: email,
+          name: `Test User ${i}`,
+          username: `testuser${i}`,
+          img: `https://randomuser.me/api/portraits/${i % 2 === 0 ? 'men' : 'women'}/${i}.jpg`,
+          dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
+          groups: [],
+          userReactions: [],
+          userNotifications: [],
+          userBookmarks: [],
+          publicVisibility: true,
+          showOnline: true
+        };
         
-//         // Create posts for this user
-//         this.loadingService.showToast(`Creating posts for user ${i + 1}...`);
-//         await this.createTestPosts(user.uid);
-//       }
-      
-//       this.loadingService.hide();
-//       this.loadingService.showToast('Test data created successfully!');
-//     } catch (error) {
-//       console.error('Error loading test data:', error);
-//       this.loadingService.hide();
-//       this.loadingService.showToast('Error creating test data');
-//     }
-//   }
-
-//   async clearTestData() {
-//     try {
-//       this.loadingService.showToast('Clearing test data...');
-      
-//       // Delete posts for each user
-//       for (const [userId, postIds] of this.testPosts) {
-//         this.loadingService.showToast(`Deleting posts for user...`);
-//         await this.deleteTestPosts(userId, postIds);
-//       }
-      
-//       // Remove users from their groups
-//       for (const [userId, groupIds] of this.testGroups) {
-//         this.loadingService.showToast(`Removing user from groups...`);
-//         await this.leaveTestGroups(userId, groupIds);
-//       }
-      
-//       // Delete all test users
-//       for (const user of this.testUsers) {
-//         this.loadingService.showToast(`Deleting test user...`);
-//         await this.deleteTestUser(user.uid);
-//       }
-      
-//       this.loadingService.hide();
-//       this.loadingService.showToast('Test data cleared successfully!');
-//     } catch (error) {
-//       console.error('Error clearing test data:', error);
-//       this.loadingService.hide();
-//       this.loadingService.showToast('Error clearing test data');
-//     }
-//   }
-
-//   private async createTestUser(index: number) {
-//     const timestamp = Date.now();
-//     const testUser = {
-//       email: `testuser${index}_${timestamp}@test.com`,
-//       password: 'Test123!',
-//       name: `Test User ${index}`,
-//       username: `testuser${index}_${timestamp}`,
-//       bio: `This is test user ${index}'s account`,
-//       uid: '' // Will be set after registration
-//     };
-
-//     // Register user using your existing register function
-//     const userCredential = await this.loginService.register(testUser.name, testUser.username, testUser.email, testUser.password) as { uid: string };
-//     testUser.uid = userCredential.uid;
-//     this.testUsers.push(testUser);
-//     return testUser;
-//   }
-
-//   private async joinRandomGroups(userId: string) {
-//     // Get all available groups
-//     const allGroups = []
-//     var user:any;
-//     this.dataService.getUser(userId).snapshotChanges().subscribe((user: any) => {
-//        user = user.payload.data();
-//       });
-
-//     this.dataService.getGroups().snapshotChanges().subscribe((groups: any) => {
-//         groups.forEach(element => {
-//             let group = element.payload.doc.data();
-//             group.key = element.payload.doc.id;
-
-//             allGroups.push(group);
-//         });
-//     });
+        await this.firestore.doc(`accounts/${userId}`).set(userData);
+        
+        users.push({
+          id: userId,
+          ...userData
+        });
+        
+        console.log(`Created test user: ${email}`);
+      } catch (error) {
+        console.error(`Error creating test user ${email}:`, error);
+        // If user already exists, try to get their data
+        try {
+          const existingUser = await this.auth.signInWithEmailAndPassword(email, password);
+          const userId = existingUser.user.uid;
+          const userDoc = await this.firestore.doc(`accounts/${userId}`).get().toPromise();
+          
+          if (userDoc.exists) {
+            const userData = userDoc.data() as Record<string, any>;
+            users.push({
+              id: userId,
+              ...userData
+            });
+            console.log(`Using existing test user: ${email}`);
+          }
+        } catch (signInError) {
+          console.error(`Error signing in as existing user ${email}:`, signInError);
+        }
+      }
+    }
     
-//     // Randomly select 3 groups
-//     const selectedGroups = this.shuffleArray(allGroups).slice(0, 3);
-//     const groupIds: string[] = [];
-    
-//     // Join each group
-//     for (const group of selectedGroups) {
-//         user.groups.push(group.groupId)
-//         // Update group data on the database.
-//         this.dataService.getUser(userId).update({
-//         groups: user.groups
-//         }).then(() => {
-//         // Add friend as members of the group.
-//         group.members.push(userId);
-
-//         // Update group data on the database.
-//         this.dataService.getGroup(group.groupId).update({
-//             members: group.members,
-//             messages: group.messages
-//         });
-//         })
-//     }
-    
-//     this.testGroups.set(userId, groupIds);
-//   }
-
-//   private async createTestPosts(userId: string) {
-//     const postIds: string[] = [];
-//     var userGroups: [];
-//     var group: any;
-
-//     this.dataService.getUser(userId).snapshotChanges().subscribe((user: any) => {
-//         user = user.payload.data();
-//         userGroups = user.groups;
-//        });
-
-//     // Create 10 posts of each type
-//     for (let i = 0; i < 10; i++) {
-//       // General post
-//       var generalPost: any;
-//       generalPost.date = new Date();
-//       generalPost.title = 'Test Post';
-//       generalPost.data.message = 'But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure';
-//       generalPost.postTags = [];
-//       generalPost.groupId = this.shuffleArray(userGroups).slice(0, 1);
-//       generalPost.type = 'general';
-    
-//       this.dataService.addPost(generalPost).then((success) => {
-//         const postId = success.id;
- 
-//         this.dataService.getGroup(generalPost.groupId).snapshotChanges().subscribe((group) => {
-//             group = group.payload.data();
-//         });
-
-//         // Update group data on the database.
-//         if (group.posts === undefined) {
-//           group.posts = [];
-//         }
-//         group.posts.push(postId);
-//         this.dataService.getGroup(generalPost.groupId).update({
-//           posts: group.posts
-//         });
-
-
-//         var userNotifications: string[];
-//         userNotifications.push(postId);
-//         this.dataService.getUser(userId).update({
-//           userNotifications: userNotifications
-//         });
-
-//         // Update user activity.
-
-//         var userPosts: string[];
-//         userPosts.push(postId);
-//         this.dataService.getUser(userId).update({
-//           userPosts: userPosts
-//         });
-
+    return users;
+  }
+  
+  private async assignUsersToGroups(users: any[], groups: any[]): Promise<void> {
+    for (const user of users) {
+      // Select 5 random groups for each user
+      const shuffledGroups = [...groups].sort(() => 0.5 - Math.random());
+      const selectedGroups = shuffledGroups.slice(0, Math.min(5, groups.length));
       
-//     }
-
-//     //   // Event post
-//     //   const eventPost = {
-//     //     content: `Test Event ${i + 1}`,
-//     //     type: 'event',
-//     //     eventDate: new Date(Date.now() + (i + 1) * 86400000), // Future dates
-//     //     eventLocation: `Test Location ${i + 1}`,
-//     //     eventDescription: `This is test event ${i + 1} by user ${userId}`
-//     //   };
-//     //   const eventPostRef = await this.firebaseService.createEventPost(eventPost);
-//     //   postIds.push(eventPostRef.id);
-
-//     //   // Poll post
-//     //   const pollPost = {
-//     //     content: `Test Poll Question ${i + 1}`,
-//     //     type: 'poll',
-//     //     options: [
-//     //       `Option 1 for poll ${i + 1}`,
-//     //       `Option 2 for poll ${i + 1}`,
-//     //       `Option 3 for poll ${i + 1}`
-//     //     ],
-//     //     endDate: new Date(Date.now() + (i + 1) * 86400000)
-//     //   };
-//     //   const pollPostRef = await this.firebaseService.createPollPost(pollPost);
-//     //   postIds.push(pollPostRef.id);
-//     // }
+      const groupIds = selectedGroups.map(group => group.id);
+      
+      // Update user's groups array
+      await this.firestore.doc(`accounts/${user.id}`).update({
+        groups: groupIds
+      });
+      
+      // Update each group's members array
+      for (const group of selectedGroups) {
+        const groupRef = this.firestore.doc(`groups/${group.id}`);
+        const groupDoc = await groupRef.get().toPromise();
+        
+        if (groupDoc.exists) {
+          const groupData = groupDoc.data() as Record<string, any>;
+          const members = groupData?.members as string[] || [];
+          
+          if (!members.includes(user.id)) {
+            members.push(user.id);
+            await groupRef.update({ members });
+          }
+        }
+      }
+      
+      console.log(`Assigned user ${user.username} to ${groupIds.length} groups`);
+    }
+  }
+  
+  private async createTestPosts(users: any[], groups: any[]): Promise<void> {
+    let postCount = 0;
     
-
-//   }
-// }
-
-// //   private async deleteTestPosts(userId: string, postIds: string[]) {
-// //     for (const postId of postIds) {
-// //       await this.firestore.doc(`posts/${postId}`).delete();
-// //     }
-// //     this.testPosts.delete(userId);
-// //   }
-
-// //   private async leaveTestGroups(userId: string, groupIds: string[]) {
-// //     for (const groupId of groupIds) {
-// //       await this.firebaseService.leaveGroup(groupId);
-// //     }
-// //     this.testGroups.delete(userId);
-// //   }
-
-// //   private async deleteTestUser(userId: string) {
-// //     // Delete user data
-// //     await this.firestore.doc(`accounts/${userId}`).delete();
-// //     // Delete auth user
-// //     const user = await this.afAuth.currentUser;
-// //     if (user && user.uid === userId) {
-// //       await user.delete();
-// //     }
-// //   }
-
-//   private shuffleArray(array: any[]) {
-//     for (let i = array.length - 1; i > 0; i--) {
-//       const j = Math.floor(Math.random() * (i + 1));
-//       [array[i], array[j]] = [array[j], array[i]];
-//     }
-//     return array;
-//   }
-// }
+    for (const user of users) {
+      if (!user.groups || user.groups.length === 0) {
+        console.log(`User ${user.username} has no groups, assigning default groups`);
+        // If user has no groups, assign some default ones
+        if (groups.length > 0) {
+          const shuffledGroups = [...groups].sort(() => 0.5 - Math.random());
+          const selectedGroups = shuffledGroups.slice(0, Math.min(3, groups.length));
+          user.groups = selectedGroups.map(g => g.id);
+          
+          // Update user's groups in database
+          await this.firestore.doc(`accounts/${user.id}`).update({
+            groups: user.groups
+          });
+        }
+      }
+      
+      // For each group the user is in, create different types of posts
+      for (const groupId of user.groups) {
+        // Find group in our groups array
+        const group = groups.find(g => g.id === groupId);
+        if (!group) {
+          console.log(`Group ${groupId} not found, skipping`);
+          continue;
+        }
+        
+        const groupName = group.name;
+        
+        try {
+          // Create a general post
+          await this.createGeneralPost(user, groupId, groupName);
+          postCount++;
+          
+          // Create a poll
+          await this.createPollPost(user, groupId, groupName);
+          postCount++;
+          
+          // Create an event
+          await this.createEventPost(user, groupId, groupName);
+          postCount++;
+        } catch (error) {
+          console.error(`Error creating posts for user ${user.username} in group ${groupName}:`, error);
+        }
+      }
+    }
+    
+    console.log(`Created a total of ${postCount} posts`);
+  }
+  
+  private async createGeneralPost(user: any, groupId: string, groupName: string): Promise<void> {
+    const postData = {
+      addedByUser: {
+        addedByKey: user.id,
+        addedByUsername: user.username,
+        addedByImg: user.img
+      },
+      date: firebase.firestore.FieldValue.serverTimestamp(),
+      title: `General post by ${user.username}`,
+      data: {
+        message: `This is a test general post created in the ${groupName} group. It contains some sample text content that would typically be found in a social media post.`
+      },
+      postTags: ['test', 'general', 'sample'],
+      groupId: groupId,
+      groupName: groupName,
+      type: 'general',
+      totalReactionCount: 0,
+      totalReviewCount: 0,
+      searchableText: `general post by ${user.username} test general sample`,
+      searchKeywords: ['general', 'post', 'test', 'sample']
+    };
+    
+    const result = await this.firestore.collection('posts').add(postData);
+    console.log(`Created general post with ID ${result.id} for user ${user.username} in group ${groupName}`);
+    
+    // Update group's posts array
+    const groupRef = this.firestore.doc(`groups/${groupId}`);
+    const groupDoc = await groupRef.get().toPromise();
+    
+    if (groupDoc.exists) {
+      const groupData = groupDoc.data() as Record<string, any>;
+      const posts = groupData?.posts as string[] || [];
+      
+      posts.push(result.id);
+      await groupRef.update({ posts });
+    }
+  }
+  
+  private async createPollPost(user: any, groupId: string, groupName: string): Promise<void> {
+    const now = new Date();
+    const endDate = new Date();
+    endDate.setDate(now.getDate() + 7); // Poll ends in 7 days
+    
+    const pollData = {
+      addedByUser: {
+        addedByKey: user.id,
+        addedByUsername: user.username,
+        addedByImg: user.img
+      },
+      date: firebase.firestore.FieldValue.serverTimestamp(),
+      title: `Poll: What's your favorite feature?`,
+      data: {
+        pollOptions: [
+          { name: 'Chat', members: [] },
+          { name: 'Groups', members: [] },
+          { name: 'Posts', members: [] },
+          { name: 'Events', members: [] }
+        ],
+        dateEnding: firebase.firestore.Timestamp.fromDate(endDate)
+      },
+      postTags: ['poll', 'question', 'feedback'],
+      groupId: groupId,
+      groupName: groupName,
+      type: 'poll',
+      totalReactionCount: 0,
+      totalReviewCount: 0,
+      totalPollCount: 0,
+      searchableText: `poll what's your favorite feature chat groups posts events`,
+      searchKeywords: ['poll', 'favorite', 'feature', 'chat', 'groups', 'posts', 'events']
+    };
+    
+    const result = await this.firestore.collection('posts').add(pollData);
+    console.log(`Created poll post with ID ${result.id} for user ${user.username} in group ${groupName}`);
+    
+    // Update group's polls array
+    const groupRef = this.firestore.doc(`groups/${groupId}`);
+    const groupDoc = await groupRef.get().toPromise();
+    
+    if (groupDoc.exists) {
+      const groupData = groupDoc.data() as Record<string, any>;
+      const polls = groupData?.polls as string[] || [];
+      const posts = groupData?.posts as string[] || [];
+      
+      polls.push(result.id);
+      posts.push(result.id);
+      await groupRef.update({ polls, posts });
+    }
+  }
+  
+  private async createEventPost(user: any, groupId: string, groupName: string): Promise<void> {
+    const eventDate = new Date();
+    eventDate.setDate(eventDate.getDate() + 14); // Event in 14 days
+    
+    const eventTime = new Date();
+    eventTime.setHours(18, 0, 0, 0); // 6:00 PM
+    
+    const eventData = {
+      addedByUser: {
+        addedByKey: user.id,
+        addedByUsername: user.username,
+        addedByImg: user.img
+      },
+      date: firebase.firestore.FieldValue.serverTimestamp(),
+      title: `${groupName} Meetup Event`,
+      data: {
+        eventDate: firebase.firestore.Timestamp.fromDate(eventDate),
+        eventTime: firebase.firestore.Timestamp.fromDate(eventTime),
+        location: 'Virtual Meeting',
+        videoLink: 'https://meet.google.com/test-link',
+        message: `Join us for a virtual meetup to discuss ${groupName} topics. Everyone is welcome!`
+      },
+      postTags: ['event', 'meetup', 'virtual'],
+      groupId: groupId,
+      groupName: groupName,
+      type: 'event',
+      totalReactionCount: 0,
+      totalReviewCount: 0,
+      totalCheckinCount: 0,
+      searchableText: `${groupName} meetup event virtual meeting`,
+      searchKeywords: ['event', 'meetup', 'virtual', groupName.toLowerCase()]
+    };
+    
+    const result = await this.firestore.collection('posts').add(eventData);
+    console.log(`Created event post with ID ${result.id} for user ${user.username} in group ${groupName}`);
+    
+    // Update group's posts array
+    const groupRef = this.firestore.doc(`groups/${groupId}`);
+    const groupDoc = await groupRef.get().toPromise();
+    
+    if (groupDoc.exists) {
+      const groupData = groupDoc.data() as Record<string, any>;
+      const posts = groupData?.posts as string[] || [];
+      
+      posts.push(result.id);
+      await groupRef.update({ posts });
+    }
+  }
+}
