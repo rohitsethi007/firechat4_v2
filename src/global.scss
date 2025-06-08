@@ -25,6 +25,19 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
+/* Safe area insets for notches and dynamic islands */
+ion-content {
+  --padding-top: env(safe-area-inset-top);
+}
+
+ion-header {
+  padding-top: env(safe-area-inset-top);
+}
+
+ion-footer, ion-tab-bar {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
 /* Custom styles for action sheets */
 .share-action-sheet {
   --backdrop-opacity: 0.6;
