@@ -61,7 +61,13 @@ export class MessagePage implements OnInit {
 
   ionViewDidEnter() {
     this.userId = this.route.snapshot.params.id;
-    this.loggedInUserId = firebase.auth().currentUser.uid;
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) {
+      console.error('No user logged in');
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.loggedInUserId = currentUser.uid;
     console.log('inside message',this.userId);
 
     // Get friend details.

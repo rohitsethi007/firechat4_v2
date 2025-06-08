@@ -40,7 +40,7 @@
 
       <!-- Avatar -->
       <ion-avatar slot="start" *ngIf="conversation.friend">
-      <img [src]="conversation.friend.img" 
+      <img [src]="conversation.friend.userId | userImage | async" 
       [alt]="conversation.friend.name"
       onError="this.src='./assets/images/default-dp.png'">
       </ion-avatar>

@@ -183,7 +183,11 @@ export class MessagesPage implements OnInit {
                 return null;
               }
   
-              conversation.friend = userSnapshot.data();
+              const userData = userSnapshot.data() as Record<string, any>;
+              conversation.friend = {
+                ...(userData || {}),
+                userId: conversation.key // Add userId explicitly for the UserImagePipe
+              };
   
               const conversationSnapshot = await this.dataProvider
                 .getConversation(conversation.conversationId)

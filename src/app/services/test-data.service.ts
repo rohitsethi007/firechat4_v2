@@ -69,12 +69,26 @@ export class TestDataService {
         const userCredential = await this.auth.createUserWithEmailAndPassword(email, password);
         const userId = userCredential.user.uid;
         
+        // Real names for test users
+        const names = [
+          'Emma Johnson',
+          'James Smith',
+          'Olivia Williams',
+          'Noah Brown',
+          'Sophia Jones',
+          'Liam Garcia',
+          'Ava Miller',
+          'William Davis',
+          'Isabella Martinez',
+          'Mason Wilson'
+        ];
+        
         // Create user profile in Firestore
         const userData = {
           userId: userId,
           email: email,
-          name: `Test User ${i}`,
-          username: `testuser${i}`,
+          name: names[i-1],
+          username: `${names[i-1].toLowerCase().replace(' ', '')}`,
           img: `https://randomuser.me/api/portraits/${i % 2 === 0 ? 'men' : 'women'}/${i}.jpg`,
           dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
           groups: [],
@@ -203,25 +217,82 @@ export class TestDataService {
   }
   
   private async createGeneralPost(user: any, groupId: string, groupName: string): Promise<void> {
+    // Generate content relevant to the group
+    const groupMessages = {
+      default: `This is a discussion about ${groupName}. I'd like to share some thoughts on our recent activities and get your feedback.`,
+      'Sports': `Just finished an amazing game with the ${groupName} team! The energy was incredible and everyone played their best. Looking forward to our next match!`,
+      'Technology': `Check out this new tech trend related to ${groupName}! The innovation in this space is moving so quickly. What do you all think about these developments?`,
+      'Education': `I found some great resources for our ${groupName} study group. These materials should help everyone prepare for the upcoming session.`,
+      'Music': `Just discovered an amazing artist that would be perfect for our ${groupName} playlist! Their sound is exactly what we've been looking for.`,
+      'Art': `I'm working on a new piece inspired by our ${groupName} discussions. The creative process has been so fulfilling and I can't wait to share the final result.`,
+      'Food': `Tried a new recipe that would be perfect for our next ${groupName} meetup! It's delicious, easy to make, and fits our theme perfectly.`,
+      'Travel': `Planning a trip related to our ${groupName} interests. Has anyone been to these locations before? Looking for recommendations!`,
+      'Business': `Found some interesting insights about ${groupName} market trends. This could be valuable for our next strategy discussion.`,
+      'Health': `Discovered a new approach to wellness that aligns with our ${groupName} philosophy. It's been working great for me!`
+    };
+    
+    // Find the most relevant message based on group name
+    let message = groupMessages.default;
+    for (const [category, text] of Object.entries(groupMessages)) {
+      if (groupName.toLowerCase().includes(category.toLowerCase())) {
+        message = text;
+        break;
+      }
+    }
+    
+    // Create relevant title
+    const titles = {
+      default: `Discussion about ${groupName}`,
+      'Sports': `Game day with ${groupName}!`,
+      'Technology': `Latest ${groupName} innovations`,
+      'Education': `Resources for ${groupName} study`,
+      'Music': `New discoveries for ${groupName} playlist`,
+      'Art': `Creative inspiration from ${groupName}`,
+      'Food': `Recipe idea for ${groupName}`,
+      'Travel': `Trip planning for ${groupName} enthusiasts`,
+      'Business': `${groupName} market insights`,
+      'Health': `Wellness approach for ${groupName}`
+    };
+    
+    // Find the most relevant title
+    let title = titles.default;
+    for (const [category, text] of Object.entries(titles)) {
+      if (groupName.toLowerCase().includes(category.toLowerCase())) {
+        title = text;
+        break;
+      }
+    }
+    
+    // Generate relevant tags
+    const tags = ['discussion'];
+    if (groupName.toLowerCase().includes('tech')) tags.push('technology');
+    if (groupName.toLowerCase().includes('sport')) tags.push('sports');
+    if (groupName.toLowerCase().includes('music')) tags.push('music');
+    if (groupName.toLowerCase().includes('art')) tags.push('creative');
+    if (groupName.toLowerCase().includes('food')) tags.push('recipe');
+    if (groupName.toLowerCase().includes('travel')) tags.push('adventure');
+    if (groupName.toLowerCase().includes('business')) tags.push('professional');
+    if (groupName.toLowerCase().includes('health')) tags.push('wellness');
+    if (tags.length < 3) tags.push('community');
+    
     const postData = {
       addedByUser: {
         addedByKey: user.id,
-        addedByUsername: user.username,
-        addedByImg: user.img
+        addedByUsername: user.username
       },
       date: firebase.firestore.FieldValue.serverTimestamp(),
-      title: `General post by ${user.username}`,
+      title: title,
       data: {
-        message: `This is a test general post created in the ${groupName} group. It contains some sample text content that would typically be found in a social media post.`
+        message: message
       },
-      postTags: ['test', 'general', 'sample'],
+      postTags: tags,
       groupId: groupId,
       groupName: groupName,
       type: 'general',
       totalReactionCount: 0,
       totalReviewCount: 0,
-      searchableText: `general post by ${user.username} test general sample`,
-      searchKeywords: ['general', 'post', 'test', 'sample']
+      searchableText: `${title} ${message} ${tags.join(' ')}`,
+      searchKeywords: [...tags, 'post', groupName.toLowerCase()]
     };
     
     const result = await this.firestore.collection('posts').add(postData);
@@ -245,32 +316,134 @@ export class TestDataService {
     const endDate = new Date();
     endDate.setDate(now.getDate() + 7); // Poll ends in 7 days
     
+    // Define poll questions and options based on group type
+    const pollQuestions = {
+      default: `What would you like to see more of in ${groupName}?`,
+      'Sports': `What's your favorite ${groupName} activity?`,
+      'Technology': `Which ${groupName} topic should we focus on next?`,
+      'Education': `What learning format works best for ${groupName}?`,
+      'Music': `What genre should we explore next in ${groupName}?`,
+      'Art': `What medium should our next ${groupName} project use?`,
+      'Food': `What cuisine should we try at the next ${groupName} meetup?`,
+      'Travel': `What destination should ${groupName} plan for next?`,
+      'Business': `What skill is most valuable for ${groupName} members?`,
+      'Health': `What wellness practice has helped you most in ${groupName}?`
+    };
+    
+    // Find the most relevant question
+    let question = pollQuestions.default;
+    for (const [category, text] of Object.entries(pollQuestions)) {
+      if (groupName.toLowerCase().includes(category.toLowerCase())) {
+        question = text;
+        break;
+      }
+    }
+    
+    // Define poll options based on group type
+    const pollOptions = {
+      default: [
+        { name: 'Discussion topics', members: [] },
+        { name: 'Group activities', members: [] },
+        { name: 'Resource sharing', members: [] },
+        { name: 'Community events', members: [] }
+      ],
+      'Sports': [
+        { name: 'Team games', members: [] },
+        { name: 'Individual sports', members: [] },
+        { name: 'Watching events together', members: [] },
+        { name: 'Training sessions', members: [] }
+      ],
+      'Technology': [
+        { name: 'Coding projects', members: [] },
+        { name: 'New frameworks', members: [] },
+        { name: 'Hardware discussions', members: [] },
+        { name: 'Industry trends', members: [] }
+      ],
+      'Education': [
+        { name: 'Study groups', members: [] },
+        { name: 'Online courses', members: [] },
+        { name: 'Book discussions', members: [] },
+        { name: 'Practical workshops', members: [] }
+      ],
+      'Music': [
+        { name: 'Live performances', members: [] },
+        { name: 'Music production', members: [] },
+        { name: 'Playlist sharing', members: [] },
+        { name: 'Instrument practice', members: [] }
+      ],
+      'Art': [
+        { name: 'Painting', members: [] },
+        { name: 'Digital art', members: [] },
+        { name: 'Sculpture', members: [] },
+        { name: 'Photography', members: [] }
+      ],
+      'Food': [
+        { name: 'Cooking classes', members: [] },
+        { name: 'Restaurant outings', members: [] },
+        { name: 'Recipe exchanges', members: [] },
+        { name: 'Food photography', members: [] }
+      ],
+      'Travel': [
+        { name: 'Local trips', members: [] },
+        { name: 'International travel', members: [] },
+        { name: 'Virtual tours', members: [] },
+        { name: 'Travel planning', members: [] }
+      ],
+      'Business': [
+        { name: 'Networking events', members: [] },
+        { name: 'Skill workshops', members: [] },
+        { name: 'Market analysis', members: [] },
+        { name: 'Mentorship programs', members: [] }
+      ],
+      'Health': [
+        { name: 'Fitness activities', members: [] },
+        { name: 'Nutrition discussions', members: [] },
+        { name: 'Mental wellness', members: [] },
+        { name: 'Outdoor activities', members: [] }
+      ]
+    };
+    
+    // Find the most relevant options
+    let options = pollOptions.default;
+    for (const [category, opts] of Object.entries(pollOptions)) {
+      if (groupName.toLowerCase().includes(category.toLowerCase())) {
+        options = opts;
+        break;
+      }
+    }
+    
+    // Generate relevant tags
+    const tags = ['poll', 'question'];
+    if (groupName.toLowerCase().includes('tech')) tags.push('technology');
+    if (groupName.toLowerCase().includes('sport')) tags.push('sports');
+    if (groupName.toLowerCase().includes('music')) tags.push('music');
+    if (groupName.toLowerCase().includes('art')) tags.push('creative');
+    if (groupName.toLowerCase().includes('food')) tags.push('cuisine');
+    if (groupName.toLowerCase().includes('travel')) tags.push('destinations');
+    if (groupName.toLowerCase().includes('business')) tags.push('professional');
+    if (groupName.toLowerCase().includes('health')) tags.push('wellness');
+    if (tags.length < 3) tags.push('feedback');
+    
     const pollData = {
       addedByUser: {
         addedByKey: user.id,
-        addedByUsername: user.username,
-        addedByImg: user.img
+        addedByUsername: user.username
       },
       date: firebase.firestore.FieldValue.serverTimestamp(),
-      title: `Poll: What's your favorite feature?`,
+      title: `Poll: ${question}`,
       data: {
-        pollOptions: [
-          { name: 'Chat', members: [] },
-          { name: 'Groups', members: [] },
-          { name: 'Posts', members: [] },
-          { name: 'Events', members: [] }
-        ],
+        pollOptions: options,
         dateEnding: firebase.firestore.Timestamp.fromDate(endDate)
       },
-      postTags: ['poll', 'question', 'feedback'],
+      postTags: tags,
       groupId: groupId,
       groupName: groupName,
       type: 'poll',
       totalReactionCount: 0,
       totalReviewCount: 0,
       totalPollCount: 0,
-      searchableText: `poll what's your favorite feature chat groups posts events`,
-      searchKeywords: ['poll', 'favorite', 'feature', 'chat', 'groups', 'posts', 'events']
+      searchableText: `poll ${question} ${options.map(o => o.name).join(' ')} ${tags.join(' ')}`,
+      searchKeywords: [...tags, 'poll', groupName.toLowerCase()]
     };
     
     const result = await this.firestore.collection('posts').add(pollData);
@@ -298,30 +471,111 @@ export class TestDataService {
     const eventTime = new Date();
     eventTime.setHours(18, 0, 0, 0); // 6:00 PM
     
+    // Define event titles based on group type
+    const eventTitles = {
+      default: `${groupName} Monthly Meetup`,
+      'Sports': `${groupName} Game Day`,
+      'Technology': `${groupName} Tech Workshop`,
+      'Education': `${groupName} Study Session`,
+      'Music': `${groupName} Listening Party`,
+      'Art': `${groupName} Creative Workshop`,
+      'Food': `${groupName} Tasting Event`,
+      'Travel': `${groupName} Trip Planning`,
+      'Business': `${groupName} Networking Event`,
+      'Health': `${groupName} Wellness Session`
+    };
+    
+    // Find the most relevant title
+    let title = eventTitles.default;
+    for (const [category, text] of Object.entries(eventTitles)) {
+      if (groupName.toLowerCase().includes(category.toLowerCase())) {
+        title = text;
+        break;
+      }
+    }
+    
+    // Define event descriptions based on group type
+    const eventDescriptions = {
+      default: `Join us for our monthly ${groupName} meetup! We'll discuss recent developments and future plans. Everyone is welcome!`,
+      'Sports': `Let's get together for a fun ${groupName} session! All skill levels welcome. Bring your equipment and enthusiasm!`,
+      'Technology': `Join us for an interactive workshop on the latest ${groupName} technologies. We'll have demos and hands-on activities.`,
+      'Education': `Time to boost our knowledge of ${groupName}! This study session will focus on key concepts and practical applications.`,
+      'Music': `Experience new sounds with our ${groupName} listening party! We'll explore different artists and genres together.`,
+      'Art': `Express yourself at our ${groupName} workshop! We'll be exploring different techniques and sharing our creative processes.`,
+      'Food': `Taste and share at our ${groupName} event! Bring a dish or just your appetite - all food enthusiasts welcome.`,
+      'Travel': `Let's plan our next ${groupName} adventure! We'll discuss destinations, logistics, and travel tips.`,
+      'Business': `Expand your professional network at our ${groupName} event. Great opportunity to connect with like-minded professionals.`,
+      'Health': `Focus on wellbeing at our ${groupName} session. We'll practice techniques for physical and mental wellness.`
+    };
+    
+    // Find the most relevant description
+    let description = eventDescriptions.default;
+    for (const [category, text] of Object.entries(eventDescriptions)) {
+      if (groupName.toLowerCase().includes(category.toLowerCase())) {
+        description = text;
+        break;
+      }
+    }
+    
+    // Define locations based on group type
+    const locations = {
+      default: 'Virtual Meeting',
+      'Sports': 'Local Sports Center',
+      'Technology': 'Tech Hub Coworking Space',
+      'Education': 'Community Library',
+      'Music': 'Sound Studio',
+      'Art': 'Creative Space Gallery',
+      'Food': 'Community Kitchen',
+      'Travel': 'Travel Agency Meeting Room',
+      'Business': 'Business Center',
+      'Health': 'Wellness Center'
+    };
+    
+    // Find the most relevant location
+    let location = locations.default;
+    for (const [category, place] of Object.entries(locations)) {
+      if (groupName.toLowerCase().includes(category.toLowerCase())) {
+        location = place;
+        break;
+      }
+    }
+    
+    // Generate relevant tags
+    const tags = ['event', 'meetup'];
+    if (groupName.toLowerCase().includes('tech')) tags.push('technology');
+    if (groupName.toLowerCase().includes('sport')) tags.push('sports');
+    if (groupName.toLowerCase().includes('music')) tags.push('concert');
+    if (groupName.toLowerCase().includes('art')) tags.push('creative');
+    if (groupName.toLowerCase().includes('food')) tags.push('cuisine');
+    if (groupName.toLowerCase().includes('travel')) tags.push('adventure');
+    if (groupName.toLowerCase().includes('business')) tags.push('networking');
+    if (groupName.toLowerCase().includes('health')) tags.push('wellness');
+    if (location.toLowerCase().includes('virtual')) tags.push('virtual');
+    else tags.push('in-person');
+    
     const eventData = {
       addedByUser: {
         addedByKey: user.id,
-        addedByUsername: user.username,
-        addedByImg: user.img
+        addedByUsername: user.username
       },
       date: firebase.firestore.FieldValue.serverTimestamp(),
-      title: `${groupName} Meetup Event`,
+      title: title,
       data: {
         eventDate: firebase.firestore.Timestamp.fromDate(eventDate),
         eventTime: firebase.firestore.Timestamp.fromDate(eventTime),
-        location: 'Virtual Meeting',
-        videoLink: 'https://meet.google.com/test-link',
-        message: `Join us for a virtual meetup to discuss ${groupName} topics. Everyone is welcome!`
+        location: location,
+        videoLink: location === 'Virtual Meeting' ? 'https://meet.google.com/test-link' : null,
+        message: description
       },
-      postTags: ['event', 'meetup', 'virtual'],
+      postTags: tags,
       groupId: groupId,
       groupName: groupName,
       type: 'event',
       totalReactionCount: 0,
       totalReviewCount: 0,
       totalCheckinCount: 0,
-      searchableText: `${groupName} meetup event virtual meeting`,
-      searchKeywords: ['event', 'meetup', 'virtual', groupName.toLowerCase()]
+      searchableText: `${title} ${description} ${location} ${tags.join(' ')}`,
+      searchKeywords: [...tags, 'event', groupName.toLowerCase()]
     };
     
     const result = await this.firestore.collection('posts').add(eventData);

@@ -533,8 +533,8 @@ ion-header {
       
         ion-buttons {
           ion-button {
-            --padding-start: 8px;
-            --padding-end: 8px;
+            --padding-start: 4px;
+            --padding-end: 4px;
             height: 36px;
             
             .icon {
@@ -593,9 +593,12 @@ ion-header {
         // Right aligned buttons
         .ion-text-end {
           ion-buttons {
-            gap: 4px;
+            gap: 0px;
             
             ion-button {
+              --padding-start: 4px;
+              --padding-end: 4px;
+              
               &:last-child {
                 --padding-end: 0;
               }

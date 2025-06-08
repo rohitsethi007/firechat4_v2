@@ -1,4 +1,6 @@
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { FriendPipe } from '../pipes/friend';
 import { ConversationPipe } from '../pipes/conversation';
 import { GroupPipe } from '../pipes/group';
@@ -7,9 +9,12 @@ import { DateFormatPipe } from '../pipes/date';
 import { PollPipe } from '../pipes/poll';
 import { ResourcePipe } from '../pipes/resource';
 import { ReversePipe } from '../pipes/reverse.pipe';
+import { UserImagePipe } from '../pipes/user-image.pipe';
+import { FirebaseDatePipe } from '../pipes/firebase-date.pipe';
 
 @NgModule({
     imports: [
+        CommonModule
     ],
     declarations: [
         FriendPipe,
@@ -19,7 +24,9 @@ import { ReversePipe } from '../pipes/reverse.pipe';
         DateFormatPipe,
         PollPipe,
         ResourcePipe,
-        ReversePipe
+        ReversePipe,
+        UserImagePipe,
+        FirebaseDatePipe
     ],
     exports: [
         FriendPipe,
@@ -29,7 +36,12 @@ import { ReversePipe } from '../pipes/reverse.pipe';
         DateFormatPipe,
         PollPipe,
         ResourcePipe,
-        ReversePipe
+        ReversePipe,
+        UserImagePipe,
+        FirebaseDatePipe
+    ],
+    providers: [
+        DatePipe
     ]
 })
 

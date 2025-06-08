@@ -19,7 +19,7 @@
       <div class="post-header">
         <div class="user-info">
           <ion-avatar class="user-avatar">
-            <img [src]="post.avatar" 
+            <img [src]="post.addedByUser.addedByKey | userImage | async" 
                  [alt]="post.addedByUser.addedByUsername"
                  (error)="$event.target.src='./assets/images/default-dp.png'">
           </ion-avatar>
@@ -124,7 +124,7 @@
     <div class="comment-item">
       <div class="comment-wrapper">
         <ion-avatar>
-          <img [src]="comment.addedByUser.addedByImg || 'assets/default-avatar.png'" alt="avatar">
+          <img [src]="comment.addedByUser.addedByKey | userImage | async" alt="avatar">
         </ion-avatar>
         
         <div class="comment-content">
@@ -148,7 +148,7 @@
                 <ion-icon name="chatbubble-outline" color="medium"></ion-icon>
                 <small>Reply</small>
               </span>
-              <span class="timestamp">{{comment.createdAt.toDate() | date:'shortTime'}}</span>
+              <span class="timestamp">{{comment.createdAt | firebaseDate:'shortTime'}}</span>
             </div>
           </div>
   
@@ -156,7 +156,7 @@
           <div class="reply-section" *ngIf="comment.showReplyInput && !comment.parentId">
             <div class="reply-input-wrapper">
               <ion-avatar>
-                <img [src]="loggedInUser?.img || 'assets/default-avatar.png'" alt="user avatar">
+                <img [src]="loggedInUser?.userId | userImage | async" alt="user avatar">
               </ion-avatar>
               <ion-input 
                 placeholder="Write a reply..."
@@ -207,7 +207,7 @@
       <div class="post-header">
         <div class="user-info">
           <ion-avatar class="user-avatar">
-            <img [src]="post.avatar" 
+            <img [src]="post.addedByUser.addedByKey | userImage | async" 
                  [alt]="post.addedByUser.addedByUsername"
                  (error)="$event.target.src='./assets/images/default-dp.png'">
           </ion-avatar>
@@ -328,82 +328,6 @@
       </ng-container>
     </ng-container>
   </div>
-  
-  <!-- Comment Template -->
-  <ng-template #commentTemplate let-comment>
-    <div class="comment-item">
-      <div class="comment-wrapper">
-        <ion-avatar>
-          <img [src]="comment.addedByUser.addedByImg || 'assets/default-avatar.png'" alt="avatar">
-        </ion-avatar>
-        
-        <div class="comment-content">
-          <div class="comment-text">
-            <span class="username">{{comment.addedByUser.addedByUsername}}</span>
-            <span class="message">{{comment.content}}</span>
-          </div>
-          
-          <div class="comment-footer">
-            <div class="actions">
-              <span class="action-btn like-btn" 
-              [class.liked]="isCommentLikedByUser(comment)"
-              (click)="likeComment(comment)">
-            <ion-icon [name]="isCommentLikedByUser(comment) ? 'heart' : 'heart-outline'"
-                      [color]="isCommentLikedByUser(comment) ? 'danger' : 'medium'">
-            </ion-icon>
-            <small *ngIf="comment.likes">{{comment.likes}}</small>
-          </span>
-              <!-- Only show reply button if this is not already a reply -->
-              <span class="action-btn" (click)="toggleReplyInput(comment)" *ngIf="!comment.parentId">
-                <ion-icon name="chatbubble-outline" color="medium"></ion-icon>
-                <small>Reply</small>
-              </span>
-              <span class="timestamp">{{comment.createdAt.toDate() | date:'shortTime'}}</span>
-            </div>
-          </div>
-  
-          <!-- Only show reply input if this is not already a reply -->
-          <div class="reply-section" *ngIf="comment.showReplyInput && !comment.parentId">
-            <div class="reply-input-wrapper">
-              <ion-avatar>
-                <img [src]="loggedInUser?.img || 'assets/default-avatar.png'" alt="user avatar">
-              </ion-avatar>
-              <ion-input 
-                placeholder="Write a reply..."
-                [(ngModel)]="comment.replyText"
-                (keyup.enter)="submitReply(comment)"
-                class="reply-input">
-              </ion-input>
-              <ion-button 
-                fill="clear" 
-                [disabled]="!comment.replyText?.trim()"
-                (click)="submitReply(comment)"
-                class="send-button">
-                <ion-icon name="send" [class.active]="comment.replyText?.trim()"></ion-icon>
-              </ion-button>
-            </div>
-          </div>
-  
-          <!-- Replies section -->
-          <div class="replies-section" *ngIf="comment.replies && comment.replies.length > 0">
-            <ng-container *ngFor="let reply of comment.replies">
-              <div class="nested-reply">
-                <ng-container *ngTemplateOutlet="commentTemplate; context: { $implicit: reply }">
-                </ng-container>
-              </div>
-            </ng-container>
-          </div>
-        </div>
-  
-        <div class="options-btn" *ngIf="comment.addedByUser.addedByKey === loggedInUserId">
-          <ion-button fill="clear" (click)="deleteComment(comment)">
-            <ion-icon name="trash-outline" color="danger"></ion-icon>
-          </ion-button>
-        </div>
-      </div>
-    </div>
-  </ng-template>
-  
 </div>
     </ion-card>
   </div>
@@ -414,7 +338,7 @@
       <div class="post-header">
         <div class="user-info">
           <ion-avatar class="user-avatar">
-            <img [src]="post.avatar" 
+            <img [src]="post.addedByUser.addedByKey | userImage | async" 
                  [alt]="post.addedByUser.addedByUsername"
                  (error)="$event.target.src='./assets/images/default-dp.png'">
           </ion-avatar>
@@ -456,8 +380,8 @@
           <div class="event-banner" [style.backgroundImage]="'url(' + (post.bannerImage || './assets/sample-images/default-event.jpg') + ')'">
             <div class="banner-overlay">
               <div class="event-date-badge">
-                <span class="month">{{post.data.eventDate | date:'MMM'}}</span>
-                <span class="day">{{post.data.eventDate | date:'dd'}}</span>
+                <span class="month">{{post.data.eventDate | firebaseDate:'MMM'}}</span>
+                <span class="day">{{post.data.eventDate | firebaseDate:'dd'}}</span>
               </div>
             </div>
           </div>
@@ -482,8 +406,8 @@
               <ion-icon name="calendar-outline" slot="start"></ion-icon>
               <ion-label>
                 <h3>Date & Time</h3>
-                <p>{{post.data.eventDate | date:'EEEE, MMMM d, y'}}</p>
-                <p>{{post.data.eventTime | date:'shortTime'}}</p>
+                <p>{{post.data.eventDate | firebaseDate:'EEEE, MMMM d, y'}}</p>
+                <p>{{post.data.eventTime | firebaseDate:'shortTime'}}</p>
               </ion-label>
             </ion-item>
       
@@ -569,11 +493,11 @@
       </ion-card-content>
       <hr class="details-divider">
       <div class="user-preferences-wrapper">
-        <div  >
+        <div>
           <div class="reviews" *ngFor="let r of postReviews">
             <ion-row>
               <ion-col size="2">
-                  <img class="addedByImgReview" src="{{r.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" />
+                  <img class="addedByImgReview" [src]="r.addedByUser.addedByKey | userImage | async" onError="this.src='./assets/images/default-dp.png'" />
               </ion-col>
               <ion-col class="review" size="9">
                   <span class="addedByTitleReview"><a (click)="viewUser(r.addedByUser.addedByKey)" >
@@ -581,7 +505,7 @@
                   </span>
                       <br/>
                       <br/>
-                      <div *ngIf="r.reviewMedia.length > 0" class="bgSizeContain" 
+                      <div *ngIf="r.reviewMedia?.length > 0" class="bgSizeContain" 
                       [ngStyle]="{'background-image':'url('+r.reviewMedia+')'}"></div>
                       <div class="messageReview" [innerHTML]="r.review"></div>
                 </ion-col>
@@ -600,217 +524,9 @@
       </ng-container>
     </ng-container>
   </div>
-  
-  <!-- Comment Template -->
-  <ng-template #commentTemplate let-comment>
-    <div class="comment-item">
-      <div class="comment-wrapper">
-        <ion-avatar>
-          <img [src]="comment.addedByUser.addedByImg || 'assets/default-avatar.png'" alt="avatar">
-        </ion-avatar>
-        
-        <div class="comment-content">
-          <div class="comment-text">
-            <span class="username">{{comment.addedByUser.addedByUsername}}</span>
-            <span class="message">{{comment.content}}</span>
-          </div>
-          
-          <div class="comment-footer">
-            <div class="actions">
-              <span class="action-btn like-btn" 
-              [class.liked]="isCommentLikedByUser(comment)"
-              (click)="likeComment(comment)">
-            <ion-icon [name]="isCommentLikedByUser(comment) ? 'heart' : 'heart-outline'"
-                      [color]="isCommentLikedByUser(comment) ? 'danger' : 'medium'">
-            </ion-icon>
-            <small *ngIf="comment.likes">{{comment.likes}}</small>
-          </span>
-              <!-- Only show reply button if this is not already a reply -->
-              <span class="action-btn" (click)="toggleReplyInput(comment)" *ngIf="!comment.parentId">
-                <ion-icon name="chatbubble-outline" color="medium"></ion-icon>
-                <small>Reply</small>
-              </span>
-              <span class="timestamp">{{comment.createdAt.toDate() | date:'shortTime'}}</span>
-            </div>
-          </div>
-  
-          <!-- Only show reply input if this is not already a reply -->
-          <div class="reply-section" *ngIf="comment.showReplyInput && !comment.parentId">
-            <div class="reply-input-wrapper">
-              <ion-avatar>
-                <img [src]="loggedInUser?.img || 'assets/default-avatar.png'" alt="user avatar">
-              </ion-avatar>
-              <ion-input 
-                placeholder="Write a reply..."
-                [(ngModel)]="comment.replyText"
-                (keyup.enter)="submitReply(comment)"
-                class="reply-input">
-              </ion-input>
-              <ion-button 
-                fill="clear" 
-                [disabled]="!comment.replyText?.trim()"
-                (click)="submitReply(comment)"
-                class="send-button">
-                <ion-icon name="send" [class.active]="comment.replyText?.trim()"></ion-icon>
-              </ion-button>
-            </div>
-          </div>
-  
-          <!-- Replies section -->
-          <div class="replies-section" *ngIf="comment.replies && comment.replies.length > 0">
-            <ng-container *ngFor="let reply of comment.replies">
-              <div class="nested-reply">
-                <ng-container *ngTemplateOutlet="commentTemplate; context: { $implicit: reply }">
-                </ng-container>
-              </div>
-            </ng-container>
-          </div>
-        </div>
-  
-        <div class="options-btn" *ngIf="comment.addedByUser.addedByKey === loggedInUserId">
-          <ion-button fill="clear" (click)="deleteComment(comment)">
-            <ion-icon name="trash-outline" color="danger"></ion-icon>
-          </ion-button>
-        </div>
-      </div>
-    </div>
-  </ng-template>
-  
 </div>
     </ion-card>
   </div>
-  
-  <!-- RESOURCE SECTION COMMENTED OUT -->
-
-  <!-- <ion-card *ngIf="post.type=='resource'">
-    <ion-card-header>
-      <ion-row>
-        <ion-col size=10>
-      <ion-card-subtitle class="addedBy">
-        <img class="addedByImg" src="{{post.avatar}}" onError="this.src='./assets/images/default-dp.png'" /> 
-        <p><a class="addedByTitle" (click)="viewUser(post.addedByUser.addedByKey)" ><b>{{post.addedByUser.addedByUsername}}</b></a><!-- <img *ngIf="item.showNewIcon" class="newIcon" src="./assets/icon/new.svg" />  -->
-   <!--        <br/>
-        <span class="addedByDate">posted {{post.date.toDate() | DateFormat}}</span><br/>
-        <a (click)="viewGroup(post.groupId)" class="addedByTitle">in <b>{{post.groupName}}</b></a></p>
-      </ion-card-subtitle>
-    </ion-col>
-    <ion-col size=2>
-      <ion-buttons>
-        <ion-button (click)="showPostOptions(post)">
-          <ion-icon slot="end" name="chevron-down-outline"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-col>
-    </ion-row>
-    </ion-card-header>
-    <ion-card-content class="message">
-      <div *ngIf="post.postMedia">
-        <ion-slides class="slider" pager="true" [options]="slideOptsOne" #slideWithNav>
-        <ion-slide *ngFor="let s of post.postMedia">
-          <div class="bgSizeContain" 
-          [ngStyle]="{'background-image':'url('+s+')'}">
-        </div>
-        </ion-slide>
-      </ion-slides>
-      </div>
-      <ion-label>         <b>{{post.title}}.</b>       </ion-label>
-      <div *ngIf="post.data.type == 'contact'" >
-        {{post.data.name}}<br/>
-        {{post.data.address}}<br/><br/>
-        {{post.data.email}}<br/>
-        {{post.data.phones}}<br/>
-    </div>
-    <div *ngIf="post.data.type == 'weblink'" >
-      {{post.data.metatitle}}<br/>
-      <img [src]="post.data.metaicon"/>   
-      {{post.data.metadescription}}<br/><br/>
-      <a href="{{post.data.metasite}}">{{post.data.metasite}}</a>
-    </div>
-    <div *ngIf="post.data.type == 'upload'" >
-      <div *ngIf="post.data.uploadtype == 'location'" [innerHtml]="resource.url"></div>
-      <div *ngIf="post.data.uploadtype == 'contact'">
-        {{post.data.name}}<br/>
-        {{post.data.address}}<br/>
-        {{post.data.phones}}<br/>
-        {{post.data.email}}<br/>
-      </div>
-      <div *ngIf="post.data.uploadtype == 'image'">
-        <img src="{{post.data.resolvedurl}}" />
-      </div>
-      <div *ngIf="post.data.uploadtype == 'video'">
-        <video controls width="100%" src="{{post.data.resolvedurl}}" ></video>
-      </div>
-    </div>
-    <div class="tags-wrapper">
-      <ion-row >
-        <div class="tags" *ngFor="let tag of post.postTags">
-          <span *ngIf="tag.isChecked" class="item-rating" [attr.ratingBase]="1">#{{tag.val}}</span>
-          <span *ngIf="!tag.isChecked" class="item-rating" [attr.ratingBase]="0">#{{tag.val}}</span>
-        </div>
-      </ion-row>
-    </div>
-    <div class="reactions">
-      <ion-row>
-        <ion-col size=3>
-          <ion-buttons>
-            <ion-button (click)="submitReactionSmile()">
-          <div *ngIf="post.showSmiley"><ion-icon size="small" class="icon" src="./assets/icon/smile-active.svg" ></ion-icon> <span class="text">Thanks</span></div> 
-          <div *ngIf="!post.showSmiley"><ion-icon size="small" class="icon"  src="./assets/icon/smile.svg" ></ion-icon> <span class="text">Thanks</span></div> 
-          </ion-button>
-          </ion-buttons> 
-        </ion-col>
-        <ion-col size=3>
-          <ion-buttons>
-            <ion-button (click)="submitReactionBookmark()">
-          <div *ngIf="post.showBookmark"><ion-icon size="small" class="icon" src="./assets/icon/bookmark-active.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
-          <div *ngIf="!post.showBookmark"><ion-icon size="small" class="icon"  src="./assets/icon/bookmark.svg" ></ion-icon> <span class="text">Bookmark</span></div> 
-          </ion-button>
-          </ion-buttons> 
-        </ion-col>
-        <ion-col size=2></ion-col>
-        <ion-col size=2>
-          <ion-buttons>
-            <ion-button (click)="showReactionsList()">
-          <div><ion-icon size="small" src="./assets/icon/bookmark-active.svg" class="icon"></ion-icon><ion-icon size="small" src="./assets/icon/smile-active.svg" class="icon"></ion-icon><span class="text">{{post.totalReactionCount}}</span></div>
-        </ion-button>
-      </ion-buttons> 
-        </ion-col>
-        <ion-col size=2>
-          <ion-buttons>
-            <ion-button>
-            <div><ion-icon size="small" class="icon" name="chatbox-outline"></ion-icon> <span class="text">{{post.totalReviewCount}}</span></div>
-          </ion-button>
-      </ion-buttons> 
-        </ion-col>
-      </ion-row>
-    </div>
-    </ion-card-content> 
- <hr class="details-divider">
-  
-    <h3 class="detail-title">Selected Tags</h3> 
-    <hr class="details-divider">
-    <div class="user-preferences-wrapper">
-      <div  >
-        <div class="reviews" *ngFor="let r of postReviews">
-          <ion-row>
-            <ion-col size="2">
-                <img class="addedByImgReview" src="{{r.addedByUser.addedByImg}}" onError="this.src='./assets/images/default-dp.png'" />
-            </ion-col>
-            <ion-col class="review" size="9">
-                <span class="addedByTitleReview"><a (click)="viewUser(r.addedByUser.addedByKey)" >
-                  <b>{{post.addedByUser.addedByUsername}}</b></a>, <span class="addedByDateReview">{{r.dateCreated.toDate() | DateFormat}}</span>
-                </span>
-                    <br/>
-                    <br/>
-                    <div *ngIf="r.reviewMedia.length > 0" class="bgSizeContain" 
-                    [ngStyle]="{'background-image':'url('+r.reviewMedia+')'}"></div>
-                    <div class="messageReview" [innerHTML]="r.review"></div>
-              </ion-col>
-        </ion-row>
-      </div>
-      </div>
-    </div>
-</ion-card> -->
   
 </ion-content>
 <ion-footer>
@@ -819,7 +535,7 @@
   <div class="comment-input-wrapper">
     <ion-item lines="none" class="comment-input-container">
       <ion-avatar slot="start">
-        <img [src]="loggedInUser?.img || 'assets/default-avatar.png'" alt="user avatar">
+        <img [src]="loggedInUser?.userId | userImage | async" alt="user avatar">
       </ion-avatar>
       <ion-input 
         #commentInput
@@ -839,4 +555,3 @@
   </div>
   </div>
 </ion-footer>
-

@@ -145,7 +145,7 @@
           <div class="post-header">
             <div class="user-info">
               <ion-avatar class="user-avatar">
-                <img [src]="item.avatar" 
+                <img [src]="item.addedByUser.addedByKey | userImage | async" 
                      [alt]="item.addedByUser.addedByUsername"
                      (error)="$event.target.src='./assets/images/default-dp.png'">
               </ion-avatar>
@@ -236,8 +236,8 @@
             <!-- Date Badge -->
             <div class="date-container">
               <div class="date-badge">
-                <span class="month">{{item.data.eventDate | date:'MMM'}}</span>
-                <span class="day">{{item.data.eventDate | date:'dd'}}</span>
+                <span class="month">{{item.data.eventDate | firebaseDate:'MMM'}}</span>
+                <span class="day">{{item.data.eventDate | firebaseDate:'dd'}}</span>
               </div>
             </div>
         
@@ -254,7 +254,7 @@
               <div class="event-details">
                 <div class="detail-item">
                   <ion-icon name="time-outline"></ion-icon>
-                  <span>{{item.data.eventTime | date:'shortTime'}}</span>
+                  <span>{{item.data.eventTime | firebaseDate:'shortTime'}}</span>
                 </div>
                 <div class="detail-item">
                   <ion-icon name="location-outline"></ion-icon>
@@ -265,7 +265,7 @@
               <!-- Attendance Count -->
               <div class="attendance-count">
                 <ion-icon name="people-outline"></ion-icon>
-                <span>{{item.checkins.length}} attending</span>
+                <span>{{item.checkins?.length || 0}} attending</span>
               </div>
             </div>
           </ion-card-content>
@@ -305,7 +305,7 @@
             <div class="poll-footer">
               <div class="poll-status" [class.closed]="item.pollClosed">
                 <ion-icon name="time-outline"></ion-icon>
-                <span *ngIf="!item.pollClosed">Ends {{item.data.dateEnding.toDate() | DateFormat}}</span>
+                <span *ngIf="!item.pollClosed">Ends {{item.data.dateEnding | firebaseDate:'mediumDate'}}</span>
                 <span *ngIf="item.pollClosed">Poll closed</span>
               </div>
               <div class="total-votes">

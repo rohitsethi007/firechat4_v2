@@ -97,8 +97,8 @@ export class NewPostPage implements OnInit {
         console.info('value', value.payload.data())
         this.addedByUser = {
         addedByKey: value.payload.data().userId,
-        addedByUsername: value.payload.data().username,
-        addedByImg: value.payload.data().img
+        addedByUsername: value.payload.data().username
+        // Removed addedByImg to avoid duplication
       };
   
         this.userNotifications = value.payload.data().userNotifications;

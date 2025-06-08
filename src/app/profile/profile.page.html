@@ -18,7 +18,7 @@
     <!-- Profile Header Section -->
     <section class="profile-header">
       <div class="profile-image-container">
-        <img [src]="user.img" 
+        <img [src]="user.userId | userImage | async" 
              (click)="setPhoto()"
              [alt]="user.name"
              onerror="this.src='./assets/images/default-dp_rect.png'"
