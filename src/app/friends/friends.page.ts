@@ -186,44 +186,70 @@ export class FriendsPage implements OnInit {
     this.requestsSent = [];
 
     this.loadingProvider.show();
+    console.log('Getting friend requests...');
+    
     // Get user info
     this.dataProvider.getCurrentUser().then((u) => {
       u.snapshotChanges().subscribe((accountRes: any) => {
         this.account = accountRes.payload.data();
+        console.log('Current user account:', this.account);
+        
         // Get friendRequests and requestsSent of the user.
         this.dataProvider.getRequests(this.account.userId).snapshotChanges().subscribe((requestsRes: any) => {
+          console.log('Raw requests data:', requestsRes.payload.data());
+          
           // friendRequests.
           let requests = requestsRes.payload.data();
           if (requests != null) {
-            if (requests.friendRequests != null && requests.friendRequests !== undefined) {
+            // Process friend requests (received)
+            if (requests.friendRequests && Array.isArray(requests.friendRequests) && requests.friendRequests.length > 0) {
               this.friendRequests = [];
               this.friendRequestCount = requests.friendRequests.length;
+              console.log('Friend requests found:', requests.friendRequests);
+              
               requests.friendRequests.forEach((userId) => {
                 this.dataProvider.getUser(userId).snapshotChanges().subscribe((sender: any) => {
-                  sender = { $key: sender.payload.data().userId, ...sender.payload.data() };
-                  this.addOrUpdateFriendRequest(sender);
+                  if (sender.payload && sender.payload.data()) {
+                    const senderData = sender.payload.data();
+                    const senderObj = { $key: senderData.userId, ...senderData };
+                    console.log('Adding friend request from:', senderObj.name);
+                    this.addOrUpdateFriendRequest(senderObj);
+                  }
                 });
               });
             } else {
+              console.log('No friend requests found');
               this.friendRequests = [];
             }
-            // requestsSent.
-            if (requests.requestsSent != null && requests.requestsSent != undefined) {
+            
+            // Process requests sent
+            if (requests.requestsSent && Array.isArray(requests.requestsSent) && requests.requestsSent.length > 0) {
               this.requestsSent = [];
+              console.log('Requests sent found:', requests.requestsSent);
+              
               requests.requestsSent.forEach((userId) => {
                 this.dataProvider.getUser(userId).snapshotChanges().subscribe((receiver: any) => {
-                  receiver = { $key: receiver.payload.data().userId, ...receiver.payload.data() };
-                  this.addOrUpdateRequestSent(receiver);
+                  if (receiver.payload && receiver.payload.data()) {
+                    const receiverData = receiver.payload.data();
+                    const receiverObj = { $key: receiverData.userId, ...receiverData };
+                    console.log('Adding request sent to:', receiverObj.name);
+                    this.addOrUpdateRequestSent(receiverObj);
+                  }
                 });
               });
             } else {
+              console.log('No requests sent found');
               this.requestsSent = [];
             }
+          } else {
+            console.log('No requests data found');
+            this.friendRequests = [];
+            this.requestsSent = [];
           }
+          
           this.loadingProvider.hide();
         });
-  
-    });
+      });
     })
   }
 
@@ -323,9 +349,13 @@ export class FriendsPage implements OnInit {
           }
           // Get requests of the currentUser.
           this.dataProvider.getRequests(account.userId).get().subscribe((requests: any) => {
-            if (requests.payload != null) {
-              this.requestsSent = requests.payload.data().requestsSent;
-              this.friendRequests = requests.payload.data().friendRequests;
+            if (requests.payload != null && requests.payload.data()) {
+              const requestsData = requests.payload.data();
+              this.requestsSent = requestsData.requestsSent || [];
+              this.friendRequests = requestsData.friendRequests || [];
+            } else {
+              this.requestsSent = [];
+              this.friendRequests = [];
             }
           });
       });
@@ -424,20 +454,30 @@ export class FriendsPage implements OnInit {
     // 0 when user can be requested as friend.
     // 1 when a friend request was already sent to this user.
     // 2 when this user has a pending friend request.
-    if (this.requestsSent) {
+    
+    // Check if user is already a friend
+    if (this.account && this.account.friends && this.account.friends.includes(user.$key)) {
+      return 3; // Already friends
+    }
+    
+    // Check if request was sent to this user
+    if (this.requestsSent && Array.isArray(this.requestsSent)) {
       for (let i = 0; i < this.requestsSent.length; i++) {
         if (this.requestsSent[i] === user.$key) {
           return 1;
         }
       }
     }
-    if (this.friendRequests) {
+    
+    // Check if this user sent a request
+    if (this.friendRequests && Array.isArray(this.friendRequests)) {
       for (let j = 0; j < this.friendRequests.length; j++) {
         if (this.friendRequests[j] === user.$key) {
           return 2;
         }
       }
     }
+    
     return 0;
   }
 }

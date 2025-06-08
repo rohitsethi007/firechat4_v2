@@ -51,7 +51,7 @@ export class FirebaseService {
         // Add requestsSent information.
         this.firestore.collection('requests').doc(loggedInUserId).set({
           requestsSent
-        }).then((success) => {
+        }, { merge: true }).then((success) => {
           let friendRequests;
           // tslint:disable-next-line: no-shadowed-variable
           this.dataProvider.getRequests(userId).get().subscribe((requests: any) => {
@@ -70,7 +70,7 @@ export class FirebaseService {
             // Add friendRequest information.
             this.firestore.collection('requests').doc(userId).set({
               friendRequests
-            }).then(async (succ) => {
+            }, { merge: true }).then(async (succ) => {
               // Create notification using the injected NotificationsService
               await this.notificationsService.createNotification({
                 type: 'message' as const,
@@ -128,7 +128,7 @@ export class FirebaseService {
             // Update friendRequests information.
             this.firestore.collection('requests').doc(userId).set({
               friendRequests
-            }).then(async (succ) => {
+            }, { merge: true }).then(async (succ) => {
               // Create notification using the injected NotificationsService
               await this.notificationsService.createNotification({
                 type: 'message' as const,
@@ -172,7 +172,7 @@ export class FirebaseService {
       // Update friendRequests information.
       this.firestore.collection('requests').doc(loggedInUserId).set({
         friendRequests
-      }).then((success) => {
+      }, { merge: true }).then((success) => {
         let requestsSent;
         this.dataProvider.getRequests(userId).get().subscribe((req: any) => {
           requestsSent = req.data().requestsSent;
@@ -181,7 +181,7 @@ export class FirebaseService {
           // Update requestsSent information.
           this.firestore.collection('requests').doc(userId).set({
             requestsSent
-          }).then((succ) => {
+          }, { merge: true }).then((succ) => {
             console.log(succ);
             this.loadingProvider.hide();
 
