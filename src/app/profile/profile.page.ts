@@ -18,6 +18,7 @@ import firebase from 'firebase/compat/app';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { BookmarkService } from '../services/bookmark.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
@@ -44,6 +45,7 @@ export class ProfilePage implements OnInit {
   submitAttempt = false;
   errorMessages: any = [];
   alert: any;
+  showBackButton = false;
 
   friendRequestStatus: 'none' | 'pending' | 'accepted' = 'none';
 
@@ -63,7 +65,8 @@ export class ProfilePage implements OnInit {
     public modalCtrl: ModalController,
     private routerOutlet: IonRouterOutlet,
     private alertController: AlertController,
-    private bookmarkService: BookmarkService
+    private bookmarkService: BookmarkService,
+    private location: Location
   ) {
    
     this.loggedInUserId = firebase.auth().currentUser.uid;
@@ -95,7 +98,13 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewDidEnter() {
+    const previousUrl = this.router.url;
+    console.log('Current URL:', previousUrl);
+    this.showBackButton = !previousUrl.includes('/tabs/tab5') && this.myProfile;
+  
+
     this.getUserData();
+
     if (!this.myProfile) {
       this.checkFriendRequestStatus();
     }
@@ -143,7 +152,7 @@ export class ProfilePage implements OnInit {
         }
 
         // get user Reaction Posts
-        if (this.user.userReactions && this.user.userReactions > 0) {
+        if (this.user.userReactions && this.user.userReactions.length > 0) {
           console.log('this.user.userReactions', this.user.userReactions);
           this.firestore.collection('posts').ref
           .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userReactions)
@@ -151,6 +160,8 @@ export class ProfilePage implements OnInit {
           this.userReactions = [];
           this.loadEachPostData(po, 'userReactions');
           });
+        } else {
+          this.userReactions = [];
         }
 
         // get user Comments

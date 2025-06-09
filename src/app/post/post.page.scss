@@ -9,6 +9,18 @@ ion-header {
     &::after {
       display: none;
     }
+    
+    ion-title {
+      max-width: 80%;
+      
+      .title-text {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: initial;
+        font-size: 16px;
+        line-height: 1.3;
+      }
+    }
   }
 }
 

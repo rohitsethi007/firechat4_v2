@@ -38,6 +38,16 @@ ion-footer, ion-tab-bar {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/* Temporary class for screenshots - add/remove 'screenshot-mode' class as needed */
+.screenshot-mode ion-header,
+ion-header {
+  padding-top: 50px !important; /* Larger value for iPhone frame screenshots */
+}
+
+.no-padding-top {
+  padding-top: 0 !important;
+}
+
 /* Custom styles for action sheets */
 .share-action-sheet {
   --backdrop-opacity: 0.6;

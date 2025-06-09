@@ -1,6 +1,6 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons *ngIf="!myProfile" slot="start">
+    <ion-buttons *ngIf="!myProfile || showBackButton" slot="start">
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
     <ion-title>{{title}}</ion-title>

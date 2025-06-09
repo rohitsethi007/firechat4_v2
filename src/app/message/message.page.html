@@ -66,30 +66,30 @@
   </div>
 </ion-content>
 
-<ion-footer class="ion-no-border">
-  <ion-toolbar>
-    <div class="input-container">
-      <ion-textarea
+<ion-footer>
+  <div class="message-input-wrapper">
+    <ion-item lines="none" class="message-input-container">
+      <ion-avatar slot="start">
+        <img [src]="loggedInUser?.img || './assets/images/default-dp.png'" alt="user avatar">
+      </ion-avatar>
+      <ion-input 
         #messageInput
+        placeholder="Write a message..."
         [(ngModel)]="message"
-        placeholder="Message"
-        [autoGrow]="true"
-        [rows]="1"
+        (keyup.enter)="send('text')"
         class="message-input">
-      </ion-textarea>
-
-      <div class="action-buttons">
-        <ion-button class="attachment-btn" fill="clear" (click)="attach()">
-          <ion-icon slot="icon-only" name="attach-outline"></ion-icon>
-        </ion-button>
-        <ion-button 
-          class="send-btn" 
-          [disabled]="!message?.trim()"
-          (click)="send('text')">
-          <ion-icon slot="icon-only" name="send"></ion-icon>
-        </ion-button>
-      </div>
-    </div>
-  </ion-toolbar>
+      </ion-input>
+      <ion-button 
+        fill="clear" 
+        [disabled]="!message?.trim()"
+        (click)="send('text')"
+        class="send-button">
+        <ion-icon name="send" [class.active]="message?.trim()"></ion-icon>
+      </ion-button>
+      <ion-button class="attachment-btn" fill="clear" (click)="attach()">
+        <ion-icon name="attach-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </div>
 </ion-footer>
 

@@ -9,12 +9,13 @@ ion-content {
 // Header Styling
 // feed.page.scss
 ion-header {
+  padding-left: 10px;
   ion-toolbar {
     --background: transparent;
     
     // Search Mode Styles
     .search-header {
-      padding: 0 16px;
+      padding: 10px 16px;
 
       .back-button-col {
         padding: 0;
@@ -397,7 +398,7 @@ ion-header {
 
 // Feed Items Styling
 .listing-item {
-  margin: 12px 8px;
+  margin: 4px 8px;
   animation: fadeIn 0.3s ease-out;
 
   ion-card {

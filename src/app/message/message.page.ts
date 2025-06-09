@@ -39,6 +39,10 @@ export class MessagePage implements OnInit {
 
   // MessagePage
   // This is the page where the user can chat with a friend.
+  loggedInUser: any;
+  userAvatar: string;
+  isOnline: boolean = false;
+  
   constructor(
     // public navCtrl: NavController,
     // public navParams: NavParams,
@@ -69,10 +73,20 @@ export class MessagePage implements OnInit {
     }
     this.loggedInUserId = currentUser.uid;
     console.log('inside message',this.userId);
+    
+    // Get logged in user data for avatar
+    this.firestore.doc(`accounts/${this.loggedInUserId}`).get().subscribe(userData => {
+      if (userData.exists) {
+        this.loggedInUser = userData.data();
+      }
+    });
 
     // Get friend details.
     this.dataProvider.getUser(this.userId).snapshotChanges().subscribe((user: any) => {
-      this.title = user.payload.data().name;
+      const userData = user.payload.data();
+      this.title = userData.name;
+      this.userAvatar = userData.img;
+      this.isOnline = userData.showOnline || false;
     });
 
     // Get conversationInfo with friend.

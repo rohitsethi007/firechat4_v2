@@ -127,7 +127,7 @@
   </div>
 
   <!-- Regular Feed (when not searching) -->
-  <div class="feed-container" *ngIf="!isSearchActive">
+  <div class="feed-container no-padding-top" *ngIf="!isSearchActive">
     <!-- Your existing feed content -->
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
       <ion-refresher-content

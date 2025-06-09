@@ -373,12 +373,17 @@ export class PostPage implements OnInit {
     this.imageProvider.deletePostPhoto(media);
   }
 
-viewUser(userId) {
-    if (this.loggedInUserId === userId) {
-      this.router.navigateByUrl('/profile');
-    } else {
-      this.router.navigateByUrl('/userinfo/' + userId);
-    }
+  viewUser(userId) {
+    // Check if user is logged in before navigating
+    this.afAuth.currentUser.then(user => {
+      if (user) {
+        this.router.navigateByUrl('/profile/' + userId);
+      } else {
+        // Store the profile ID to navigate after login
+        localStorage.setItem('pendingProfileView', userId);
+        this.router.navigateByUrl('/login');
+      }
+    });
   }
 
 viewGroup(groupId) {
