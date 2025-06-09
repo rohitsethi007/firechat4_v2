@@ -39,7 +39,8 @@ export class FriendsPage implements OnInit {
     public alertCtrl: AlertController,
     public firebaseProvider: FirebaseService,
     private afAuth: AngularFireAuth,
-    private router: Router
+    private router: Router,
+    private firestore: AngularFirestore
   ) { }
 
   ngOnInit() {
@@ -138,6 +139,22 @@ export class FriendsPage implements OnInit {
         this.friends.push(friend);
       }
     }
+    
+    // Check if the friend is blocked
+    this.checkIfBlocked(friend);
+  }
+  
+  // Check if a user is blocked
+  checkIfBlocked(friend) {
+    const conversationRef = this.firestore.doc(`/accounts/${this.loggedInUserId}/conversations/${friend.$key}`);
+    conversationRef.get().subscribe(doc => {
+      if (doc.exists) {
+        const data = doc.data() as { blocked?: boolean };
+        friend.isBlocked = data?.blocked || false;
+      } else {
+        friend.isBlocked = false;
+      }
+    });
   }
 
   // Proceed to userInfo page.

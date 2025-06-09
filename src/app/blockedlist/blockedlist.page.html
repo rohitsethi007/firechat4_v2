@@ -11,32 +11,34 @@
   <!-- Empty State -->
   <div *ngIf="blockedList.length === 0" class="empty-state">
     <ion-icon name="shield-checkmark-outline"></ion-icon>
-    <h3>No Blocked Contacts</h3>
+    <h2>No Blocked Contacts</h2>
     <p>When you block someone, they'll appear here</p>
   </div>
 
   <!-- Blocked List -->
-  <ion-list *ngIf="blockedList.length > 0" class="blocked-list">
-    <ion-item-sliding *ngFor="let user of blockedList">
-      <ion-item class="user-item">
-        <ion-avatar slot="start">
-          <img [src]="user.img" 
-               [alt]="user.name"
-               (error)="$event.target.src='assets/images/default-avatar.png'">
-        </ion-avatar>
-        <ion-label>
-          <h2>{{user.name}}</h2>
-          <p>Blocked</p>
-        </ion-label>
-        <ion-button slot="end" 
-                    (click)="unblock(user.key)"
-                    fill="clear"
-                    color="medium"
-                    class="unblock-button">
-          <ion-icon slot="start" name="lock-open-outline"></ion-icon>
-          Unblock
-        </ion-button>
-      </ion-item>
-    </ion-item-sliding>
+  <ion-list *ngIf="blockedList.length > 0" class="friends-list">
+    <ion-item *ngFor="let user of blockedList"
+              button
+              detail="false"
+              class="friend-item"
+              (click)="viewUser(user.key)">
+      <ion-avatar slot="start">
+        <img [src]="user.img" 
+             [alt]="user.name || 'User'"
+             onError="this.src='./assets/images/default-dp.png'">
+      </ion-avatar>
+      <ion-label>
+        <h2>{{user.name || 'Unknown User'}}</h2>
+        <p>{{user.description || 'Blocked User'}}</p>
+      </ion-label>
+      <ion-button slot="end" 
+                  (click)="unblock(user.key); $event.stopPropagation()"
+                  fill="outline"
+                  color="medium"
+                  class="unblock-button">
+        <ion-icon slot="start" name="lock-open-outline"></ion-icon>
+        Unblock
+      </ion-button>
+    </ion-item>
   </ion-list>
 </ion-content>

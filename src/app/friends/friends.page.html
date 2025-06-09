@@ -49,7 +49,8 @@
                   button
                   detail="false"
                   class="friend-item"
-                  [routerLink]="['/message', friend.$key]">
+                  [disabled]="friend.isBlocked"
+                  [routerLink]="friend.isBlocked ? null : ['/message', friend.$key]">
           <ion-avatar slot="start">
             <img [src]="friend.img" [alt]="friend.name" onError="this.src='./assets/images/default-dp.png'">
           </ion-avatar>
@@ -57,7 +58,8 @@
             <h2>{{friend.name}}</h2>
             <p>{{friend.description}}</p>
           </ion-label>
-          <ion-badge slot="end" color="success" class="online-badge" *ngIf="friend.online">
+          <ion-badge slot="end" color="danger" *ngIf="friend.isBlocked">Blocked</ion-badge>
+          <ion-badge slot="end" color="success" class="online-badge" *ngIf="friend.online && !friend.isBlocked">
             <ion-icon name="ellipse"></ion-icon>
             Online
           </ion-badge>

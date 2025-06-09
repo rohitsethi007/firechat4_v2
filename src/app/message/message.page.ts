@@ -80,7 +80,30 @@ export class MessagePage implements OnInit {
         this.loggedInUser = userData.data();
       }
     });
-
+    
+    // Check if user is blocked before loading messages
+    const conversationRef = this.firestore.doc(`/accounts/${this.loggedInUserId}/conversations/${this.userId}`);
+    conversationRef.get().subscribe(doc => {
+      if (doc.exists) {
+        const data = doc.data() as { blocked?: boolean };
+        if (data?.blocked) {
+          // User is blocked, show message and don't load conversation
+          this.loadingProvider.showToast('This user is blocked. Unblock them to see messages.');
+          this.messagesToShow = [];
+          return;
+        } else {
+          // User is not blocked, proceed with loading messages
+          this.loadMessages();
+        }
+      } else {
+        // No conversation exists yet, proceed normally
+        this.loadMessages();
+      }
+    });
+  }
+  
+  // Load messages method
+  loadMessages() {
     // Get friend details.
     this.dataProvider.getUser(this.userId).snapshotChanges().subscribe((user: any) => {
       const userData = user.payload.data();
@@ -158,6 +181,7 @@ export class MessagePage implements OnInit {
 
     this.scrollBottom();
   }
+  
   // Load previous messages in relation to numberOfMessages.
   loadPreviousMessages() {
     var that = this;

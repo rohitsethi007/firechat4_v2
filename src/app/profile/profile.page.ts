@@ -18,7 +18,6 @@ import firebase from 'firebase/compat/app';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { BookmarkService } from '../services/bookmark.service';
-import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
@@ -46,8 +45,9 @@ export class ProfilePage implements OnInit {
   errorMessages: any = [];
   alert: any;
   showBackButton = false;
+  isBlocked = false;
 
-  friendRequestStatus: 'none' | 'pending' | 'accepted' = 'none';
+  friendRequestStatus: 'none' | 'pending' | 'accepted' | 'hidden' = 'none';
 
   constructor(
     private loginService: LoginService,
@@ -65,8 +65,7 @@ export class ProfilePage implements OnInit {
     public modalCtrl: ModalController,
     private routerOutlet: IonRouterOutlet,
     private alertController: AlertController,
-    private bookmarkService: BookmarkService,
-    private location: Location
+    private bookmarkService: BookmarkService
   ) {
    
     this.loggedInUserId = firebase.auth().currentUser.uid;
@@ -101,17 +100,18 @@ export class ProfilePage implements OnInit {
     const previousUrl = this.router.url;
     console.log('Current URL:', previousUrl);
     this.showBackButton = !previousUrl.includes('/tabs/tab5') && this.myProfile;
-  
-
     this.getUserData();
-
-    if (!this.myProfile) {
-      this.checkFriendRequestStatus();
-    }
     this.loadBookmarkedPosts();
   }
   
   checkFriendRequestStatus() {
+    // First check if the user has public visibility enabled
+    if (this.user && this.user.publicVisibility === false) {
+      // If visibility is off, don't show connect button
+      this.friendRequestStatus = 'hidden';
+      return;
+    }
+
     // Check if there's a pending friend request
     this.firestore.collection('friendRequests', ref => 
       ref.where('fromUserId', '==', this.loggedInUserId)
@@ -141,6 +141,22 @@ export class ProfilePage implements OnInit {
         this.user = account;
         console.log('user data', this.user)
         this.title = this.user.username;
+        
+        // Check if the user is blocked
+        if (!this.myProfile) {
+          const conversationRef = this.firestore.doc(`/accounts/${this.loggedInUserId}/conversations/${this.userId}`);
+          conversationRef.get().subscribe(doc => {
+            if (doc.exists) {
+              const data = doc.data() as { blocked?: boolean };
+              this.isBlocked = data?.blocked || false;
+            }
+          });
+        }
+        // Check friend request status after user data is loaded
+        if (!this.myProfile) {
+          this.checkFriendRequestStatus();
+        }
+        
         // get user Posts
         if (this.user.userPosts) {
           this.firestore.collection('posts').ref
@@ -454,6 +470,53 @@ export class ProfilePage implements OnInit {
 
   messageUser() {
     this.router.navigateByUrl('/message/' + this.userId);
+  }
+  
+  blockUser() {
+    const action = this.isBlocked ? 'unblock' : 'block';
+    const message = this.isBlocked ? 
+      `Are you sure you want to unblock ${this.user.name}? You will start receiving messages from this user again.` :
+      `Are you sure you want to block ${this.user.name}? You won't receive messages from this user anymore.`;
+    
+    this.alertCtrl.create({
+      header: `${this.isBlocked ? 'Unblock' : 'Block'} User`,
+      message: message,
+      cssClass: 'custom-alert',
+      buttons: [
+        {
+          text: 'Cancel',
+          cssClass: 'alert-button-cancel',
+          role: 'cancel'
+        },
+        {
+          text: this.isBlocked ? 'Unblock' : 'Block',
+          cssClass: 'alert-button-delete',
+          handler: () => {
+            this.loadingProvider.show();
+            
+            // Get the conversation reference
+            const conversationRef = this.firestore.doc(`/accounts/${this.loggedInUserId}/conversations/${this.userId}`);
+            
+            // Update the conversation to toggle blocked status
+            conversationRef.update({
+              blocked: !this.isBlocked
+            }).then(() => {
+              this.isBlocked = !this.isBlocked;
+              this.loadingProvider.hide();
+              this.loadingProvider.showToast(
+                this.isBlocked ? 
+                  `${this.user.name} has been blocked` : 
+                  `${this.user.name} has been unblocked`
+              );
+            }).catch(error => {
+              console.error(`Error ${action}ing user:`, error);
+              this.loadingProvider.hide();
+              this.loadingProvider.showToast(`Error ${action}ing user. Please try again.`);
+            });
+          }
+        }
+      ]
+    }).then(alert => alert.present());
   }
 
   connectUser() {

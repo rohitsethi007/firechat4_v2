@@ -65,13 +65,23 @@
             Request Sent
           </ion-button>
           
-          <!-- Message button - shown when users are friends -->
-          <ion-button *ngIf="messageMe" 
+          <!-- Message button - shown when users are friends and not blocked -->
+          <ion-button *ngIf="messageMe && !isBlocked" 
                       (click)="messageUser()" 
                       expand="block" 
                       class="message-button">
             <ion-icon name="chatbubble-outline"></ion-icon>
             Message
+          </ion-button>
+          
+          <!-- Block/Unblock button - shown when users are friends -->
+          <ion-button *ngIf="messageMe" 
+                      (click)="blockUser()" 
+                      expand="block" 
+                      color="danger"
+                      class="block-button">
+            <ion-icon name="ban-outline"></ion-icon>
+            {{isBlocked ? 'Unblock User' : 'Block User'}}
           </ion-button>
         </div>
       </div>
