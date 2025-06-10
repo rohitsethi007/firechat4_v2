@@ -2,16 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../services/login.service';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
-import { AlertController, Platform, ModalController, IonRouterOutlet } from '@ionic/angular';
+import { AlertController, Platform, ModalController } from '@ionic/angular';
 import { ImageService } from '../services/image.service';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { FirebaseMessaging } from '@capacitor-firebase/messaging';
-import { FirebaseAnalytics } from '@capacitor-firebase/analytics';
-
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Validator } from 'src/environments/validator';
-
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FirebaseService } from '../services/firebase.service';
 import { UserProfileModalPage } from '../user-profile-modal/user-profile-modal.page';
 import firebase from 'firebase/compat/app';
@@ -63,7 +60,6 @@ export class ProfilePage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public modalCtrl: ModalController,
-    private routerOutlet: IonRouterOutlet,
     private alertController: AlertController,
     private bookmarkService: BookmarkService
   ) {

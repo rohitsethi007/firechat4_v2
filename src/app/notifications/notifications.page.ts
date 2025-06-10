@@ -23,7 +23,6 @@ export class NotificationsPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    console.log('NotificationsPage initialized');
     this.loadNotifications();
   }
 
@@ -38,7 +37,6 @@ export class NotificationsPage implements OnInit, OnDestroy {
     this.notificationsSub = this.notificationsService.getUserNotifications()
       .subscribe({
         next: (notifications) => {
-          console.log('Received notifications:', notifications);
           this.notifications = notifications;
           this.loading = false;
         },
@@ -50,7 +48,6 @@ export class NotificationsPage implements OnInit, OnDestroy {
   }
 
   async handleNotificationClick(notification: Notification) {
-    console.log('Notification clicked:', notification);
     await this.notificationsService.markAsRead(notification.id);
     
     switch(notification.type) {

@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
-import { HttpClient } from '@angular/common/http';
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
@@ -47,7 +46,6 @@ export class NewEventPage implements OnInit {
     public dataProvider: DataService,
     public loadingProvider: LoadingService,
     public navCtrl: NavController,
-    private http: HttpClient,
     public actionSheet: ActionSheetController,
     public imageProvider: ImageService,
     public firestore: AngularFirestore,

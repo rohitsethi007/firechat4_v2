@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage-angular';
 
-// Firebase imports - Use compat version for better compatibility
+// Firebase imports 
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
@@ -64,7 +64,6 @@ import { PhoneAuthComponentModule } from './components/phone-auth/phone-auth.mod
 })
 export class AppModule { }
 
-// Keep your FileReader extension if needed
 export class FileReaderA extends window.FileReader {
   constructor() {
     super();

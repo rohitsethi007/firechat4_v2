@@ -3,11 +3,11 @@ import { LoadingService } from '../services/loading.service';
 import { DataService } from '../services/data.service';
 import { Router } from '@angular/router';
 import { register } from 'swiper/element/bundle';
-import { AlertController, IonicSlides } from '@ionic/angular';
-import firebase from 'firebase/compat/app';
+import { AlertController } from '@ionic/angular';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Swiper } from 'swiper';
+import firebase from 'firebase/compat/app';
 
 // Register Swiper custom elements
 register();

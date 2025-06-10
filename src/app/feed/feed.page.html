@@ -61,9 +61,6 @@
     <div class="search-section" *ngIf="recentSearches.length > 0">
       <div class="section-header">
         <h2>Recent Searches</h2>
-        <!-- <ion-button fill="clear" class="clear-all" size="small">
-          Clear All
-        </ion-button> -->
       </div>
       <div class="search-items">
         <div class="search-item" *ngFor="let search of recentSearches">
@@ -192,7 +189,6 @@
                       <ion-col>
                         <ion-buttons>
                           <ion-button (click)="showEmojiPicker($event, item)">
-                            <!-- Keep your existing Thanks/Smile reaction display -->
                             <div>
                               <ion-icon *ngIf="item.reactionType === ''" size="medium" class="icon" src="./assets/icon/smile-inactive.svg"></ion-icon>
                               <ion-icon *ngIf="item.reactionType !== ''" size="medium" class="icon" [src]="'./assets/icon/' + item.reactionType + '.svg'"></ion-icon>

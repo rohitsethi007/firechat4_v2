@@ -143,7 +143,6 @@ export class NewgroupPage implements OnInit {
           });
         })
         let cat = this.categories.find(c => c.id = this.category.value);
-        console.log('cat', cat, this.categories);
         if (!cat.groups) {
           cat.groups = [groupId];
         } else {

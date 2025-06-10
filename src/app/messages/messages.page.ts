@@ -5,10 +5,7 @@ import { DataService } from '../services/data.service';
 import { of, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ConversationData, Conversation} from '../models/interfaces';
-
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat/app';
 
 @Component({
   selector: 'app-messages',
@@ -27,7 +24,6 @@ export class MessagesPage implements OnInit {
   constructor(
     private router: Router,
     private afAuth: AngularFireAuth,
-    private firestore: AngularFirestore,
     private loadingProvider: LoadingService,
     private dataProvider: DataService
   ) { }
@@ -137,7 +133,6 @@ export class MessagesPage implements OnInit {
   // Open chat with friend.
   message(userId) {
     this.router.navigateByUrl('/message/' + userId)
-    // this.app.getRootNav().push(MessagePage, { userId: userId });
   }
 
   // Return class based if conversation has unreadMessages or not.
@@ -179,7 +174,7 @@ export class MessagesPage implements OnInit {
               const userData = userSnapshot.data() as Record<string, any>;
               conversation.friend = {
                 ...(userData || {}),
-                userId: conversation.key // Add userId explicitly for the UserImagePipe
+                userId: conversation.key 
               };
   
               const conversationSnapshot = await this.dataProvider

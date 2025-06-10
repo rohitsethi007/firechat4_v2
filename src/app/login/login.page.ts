@@ -4,7 +4,6 @@ import { LoginService } from '../services/login.service';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Validator } from '../../environments/validator';
 import { Router } from '@angular/router';   
-import { AnimationController } from '@ionic/angular';
 import firebase from 'firebase/compat/app';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { LoadingService } from '../services/loading.service';
@@ -25,7 +24,6 @@ export class LoginPage implements OnInit {
     private loginService: LoginService,
     private formBuilder: UntypedFormBuilder,
     private router: Router,
-    private animationCtrl: AnimationController,
     private afAuth: AngularFireAuth,
     private loadingProvider: LoadingService
   ) {

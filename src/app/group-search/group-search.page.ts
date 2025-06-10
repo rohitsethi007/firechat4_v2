@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { NavController, AlertController } from '@ionic/angular';
 import { filter } from 'rxjs/operators';
@@ -22,7 +22,6 @@ export class GroupSearchPage implements OnInit {
   searchGroup: string = '';
 
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     public dataProvider: DataService,
     private firestore: AngularFirestore,

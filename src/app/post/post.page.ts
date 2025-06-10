@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, ActionSheetController, AlertController, ModalController } from '@ionic/angular';
 import { Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
@@ -7,13 +7,17 @@ import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
 import { NotificationsService } from '../services/notifications.service';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
-import { Contacts } from '@capacitor-community/contacts';
-import { Camera, CameraSource, CameraResultType } from '@capacitor/camera';
+import { CameraSource } from '@capacitor/camera';
 import { Keyboard } from '@capacitor/keyboard';
-// import { Geolocation } from '@capacitor/geolocation';
-
-import { Chart, ChartConfiguration, ChartData, ChartType } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
+import { Chart, ChartConfiguration, ChartData } from 'chart.js';
+import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
+import { BookmarkService } from '../services/bookmark.service';
+import { Reaction, Checkin, UserDocument, PollOption, Comment, PollData} from '../models/interfaces';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
 
 // Register the required Chart.js components
 import { 
@@ -27,7 +31,6 @@ import {
   Legend,
   ArcElement // for pie charts
 } from 'chart.js';
-// Register the components
 Chart.register(
   CategoryScale,
   LinearScale,
@@ -39,17 +42,6 @@ Chart.register(
   Legend,
   ArcElement
 );
-import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { EmojiPickerComponentModule } from '../components/emoji-picker/emoji-picker.module';
-import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
-
-import { BookmarkService } from '../services/bookmark.service';
-import { Reaction, Checkin, UserDocument, PollOption, Comment, PollData} from '../models/interfaces';
-
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat/app';
 
 @Component({
   selector: 'app-post',
@@ -140,13 +132,11 @@ export class PostPage implements OnInit {
     private modalCtrl: ModalController,
     public imageProvider: ImageService,
     public notificationsService: NotificationsService,
-    // public geolocation: Geolocation,
     public alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
     private afAuth: AngularFireAuth,
     private bookmarkService: BookmarkService
   ) {
-   // this.reviewMedia.push('https://firebasestorage.googleapis.com/v0/b/firechat-8fb8c.appspot.com/o/images%2Fposts%2FkjD2RUnc.jpg?alt=media&token=d0073c88-58cf-4fc0-9e5c-c6a491bb2673');
     this.post = {reactionType: '', addedByUser: {}, data: {}, date: firebase.firestore.Timestamp.now(), reviewMedia: []};
     this.pollOptionForm = new UntypedFormGroup({
       selected_poll_option: new UntypedFormControl('', Validators.compose([

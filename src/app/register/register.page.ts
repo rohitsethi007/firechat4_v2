@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../services/login.service';
-
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Validator } from 'src/environments/validator';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -25,8 +23,7 @@ export class RegisterPage implements OnInit {
 
   constructor(
     private loginService: LoginService,
-    private formBuilder: UntypedFormBuilder,
-    private router: Router
+    private formBuilder: UntypedFormBuilder
   ) {
     this.errorMessages = Validator.errorMessages
     this.myForm = this.formBuilder.group({

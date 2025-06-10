@@ -4,11 +4,9 @@ import { ActionSheetController, AlertController, ModalController, IonContent } f
 import { LoadingService } from '../services/loading.service';
 import { ImageService } from '../services/image.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Camera, CameraSource } from '@capacitor/camera';
-
+import { CameraSource } from '@capacitor/camera';
 import { ImagemodalPage } from '../imagemodal/imagemodal.page';
-import { ConversationData, LocationData, ContactData } from '../models/interfaces';
-
+import { ConversationData } from '../models/interfaces';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
@@ -41,8 +39,6 @@ export class MessagePage implements OnInit {
   isOnline: boolean = false;
   
   constructor(
-    // public navCtrl: NavController,
-    // public navParams: NavParams,
     private router: Router,
     private route: ActivatedRoute,
     public dataProvider: DataService,
@@ -179,7 +175,6 @@ export class MessagePage implements OnInit {
   // Load previous messages in relation to numberOfMessages.
   loadPreviousMessages() {
     var that = this;
-    // Show loading.
     this.loadingProvider.show();
     setTimeout(function () {
       // Set startIndex to load more messages.
@@ -199,7 +194,6 @@ export class MessagePage implements OnInit {
     }, 1000);
   }
 
-  // Update messagesRead when user lefts this page.
   ionViewWillLeave() {
     this.setMessagesRead();
   }
