@@ -497,4 +497,101 @@ export class FriendsPage implements OnInit {
     
     return 0;
   }
+  
+  // Import contacts functions
+  importPhoneContacts() {
+    this.alertCtrl.create({
+      header: 'Import Phone Contacts',
+      message: 'This feature allows you to find friends who are already using the app from your phone contacts.',
+      cssClass: 'custom-alert',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'alert-button-cancel'
+        },
+        {
+          text: 'Allow Access',
+          cssClass: 'alert-button-confirm',
+          handler: () => {
+            this.loadingProvider.show();
+            
+            // Simulate API call
+            setTimeout(() => {
+              this.loadingProvider.hide();
+              this.alertCtrl.create({
+                header: 'No Matches Found',
+                message: 'We couldn\'t find any of your contacts using the app yet. Invite them to join!',
+                buttons: ['OK']
+              }).then(alert => alert.present());
+            }, 2000);
+          }
+        }
+      ]
+    }).then(alert => alert.present());
+  }
+  
+  importFacebookContacts() {
+    this.alertCtrl.create({
+      header: 'Connect with Facebook',
+      message: 'This will help you find your Facebook friends who are using the app.',
+      cssClass: 'custom-alert',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'alert-button-cancel'
+        },
+        {
+          text: 'Connect',
+          cssClass: 'alert-button-confirm',
+          handler: () => {
+            this.loadingProvider.show();
+            
+            // Simulate API call
+            setTimeout(() => {
+              this.loadingProvider.hide();
+              this.alertCtrl.create({
+                header: 'Facebook Integration',
+                message: 'Facebook integration is coming soon!',
+                buttons: ['OK']
+              }).then(alert => alert.present());
+            }, 1500);
+          }
+        }
+      ]
+    }).then(alert => alert.present());
+  }
+  
+  importTwitterContacts() {
+    this.alertCtrl.create({
+      header: 'Connect with Twitter',
+      message: 'This will help you find your Twitter connections who are using the app.',
+      cssClass: 'custom-alert',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'alert-button-cancel'
+        },
+        {
+          text: 'Connect',
+          cssClass: 'alert-button-confirm',
+          handler: () => {
+            this.loadingProvider.show();
+            
+            // Simulate API call
+            setTimeout(() => {
+              this.loadingProvider.hide();
+              this.alertCtrl.create({
+                header: 'Twitter Integration',
+                message: 'Twitter integration is coming soon!',
+                buttons: ['OK']
+              }).then(alert => alert.present());
+            }, 1500);
+          }
+        }
+      ]
+    }).then(alert => alert.present());
+  }
 }
