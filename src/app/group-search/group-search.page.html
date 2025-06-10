@@ -47,12 +47,9 @@
       </ion-label>
 
       <ion-button slot="end" 
-          fill="solid"
+          fill="clear"
           [color]="group.isUserMember ? 'danger' : 'primary'"
-          class="join-group-btn"
           (click)="$event.stopPropagation(); group.isUserMember ? confirmLeaveGroup(group) : joinGroup(group.key)">
-            <ion-icon [name]="group.isUserMember ? 'exit-outline' : 'add-outline'"
-                  slot="start"></ion-icon>
             {{group.isUserMember ? 'Leave' : 'Join'}}
       </ion-button>
     </ion-item>
