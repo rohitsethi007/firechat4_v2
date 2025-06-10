@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { UserDocument } from '../models/interfaces';
-import firebase from 'firebase/compat/app';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { LoadingService } from './loading.service';
-
 import { environment } from 'src/environments/environment.prod';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
@@ -28,7 +26,6 @@ export class LoginService {
   
   async login(email: string, password: string) {
     this.loadingProvider.show();
-    console.info('im in login')
     try {
       const result = await this.afAuth.signInWithEmailAndPassword(email, password);
       
@@ -59,12 +56,10 @@ export class LoginService {
     return this.afAuth.createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.info('New user created:', user);
         
         if (user) {
            return this.createNewUser(user.uid, name, username, user.email, "I am available", "Firebase")
              .then(() => {
-               // After user creation, redirect to interest selection
                this.router.navigateByUrl('/interest-selection', { replaceUrl: true });
                return user;
              });

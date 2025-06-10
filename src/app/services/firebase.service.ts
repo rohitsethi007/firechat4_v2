@@ -3,8 +3,6 @@ import { LoadingService } from './loading.service';
 import { DataService } from './data.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { take } from 'rxjs/operators';
-import firebase from 'firebase/compat/app';
 import { NotificationsService } from './notifications.service';
 
 @Injectable({

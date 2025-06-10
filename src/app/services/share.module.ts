@@ -6,9 +6,6 @@ import { ConversationPipe } from '../pipes/conversation';
 import { GroupPipe } from '../pipes/group';
 import { SearchPipe } from '../pipes/search';
 import { DateFormatPipe } from '../pipes/date';
-import { PollPipe } from '../pipes/poll';
-import { ResourcePipe } from '../pipes/resource';
-import { ReversePipe } from '../pipes/reverse.pipe';
 import { UserImagePipe } from '../pipes/user-image.pipe';
 import { FirebaseDatePipe } from '../pipes/firebase-date.pipe';
 
@@ -22,9 +19,6 @@ import { FirebaseDatePipe } from '../pipes/firebase-date.pipe';
         GroupPipe,
         SearchPipe,
         DateFormatPipe,
-        PollPipe,
-        ResourcePipe,
-        ReversePipe,
         UserImagePipe,
         FirebaseDatePipe
     ],
@@ -34,9 +28,6 @@ import { FirebaseDatePipe } from '../pipes/firebase-date.pipe';
         GroupPipe,
         SearchPipe,
         DateFormatPipe,
-        PollPipe,
-        ResourcePipe,
-        ReversePipe,
         UserImagePipe,
         FirebaseDatePipe
     ],

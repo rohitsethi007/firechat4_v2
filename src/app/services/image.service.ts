@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Filesystem, Directory } from '@capacitor/filesystem';
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, StorageReference, uploadBytesResumable,UploadTask,
-  UploadTaskSnapshot  } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, uploadBytesResumable, UploadTaskSnapshot  } from 'firebase/storage';
 import { Firestore } from '@angular/fire/firestore';
 import { LoadingService } from './loading.service';
-import { Camera, CameraResultType, CameraSource, Photo, GalleryPhoto, GalleryPhotos } from '@capacitor/camera';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 @Injectable({
   providedIn: 'root'
