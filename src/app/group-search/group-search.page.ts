@@ -3,7 +3,6 @@ import { Router, NavigationEnd } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { NavController, AlertController } from '@ionic/angular';
 import { filter } from 'rxjs/operators';
-
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';

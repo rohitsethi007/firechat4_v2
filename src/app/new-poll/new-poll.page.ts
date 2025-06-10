@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, UntypedFormGroup, UntypedFormControl, FormArray } from '@angular/forms';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
-
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
 

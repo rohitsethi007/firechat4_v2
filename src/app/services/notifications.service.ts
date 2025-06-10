@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
 import firebase from 'firebase/compat/app';
 import { map } from 'rxjs/operators';
 import { Notification } from '../models/interfaces';
@@ -10,8 +9,7 @@ import { Notification } from '../models/interfaces';
 })
 export class NotificationsService {
   constructor(
-    private firestore: AngularFirestore,
-    private auth: AngularFireAuth
+    private firestore: AngularFirestore
   ) {}
 
   // Create a new notification

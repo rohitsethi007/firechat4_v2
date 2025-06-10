@@ -1,23 +1,19 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { DataService } from '../services/data.service';
-import { PopoverController, NavController, ActionSheetController, AlertController, ModalController, IonRouterOutlet, IonInfiniteScroll } from '@ionic/angular';
+import { PopoverController, NavController, ActionSheetController, AlertController, ModalController, IonInfiniteScroll } from '@ionic/angular';
 import { LoadingService } from '../services/loading.service';
 import { FilterComponent } from './filter.component';
-
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { Router } from '@angular/router';
 import { ReactionListModalPage } from '../reaction-list-modal/reaction-list-modal.page';
 import { IonSearchbar } from '@ionic/angular';
-
 import { Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-
 import { EmojiPickerComponent } from '../components/emoji-picker/emoji-picker.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
 import { BookmarkService } from '../services/bookmark.service';
 import { NotificationsService } from '../services/notifications.service';
 import { UserDocument } from '../models/interfaces' 
-
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
@@ -86,10 +82,8 @@ export class FeedPage implements OnInit {
       public navCtrl: NavController,
       public modalCtrl: ModalController,
       public alertCtrl: AlertController,
-      private routerOutlet: IonRouterOutlet,
       public loadingProvider: LoadingService,
       public actionSheet: ActionSheetController,
-      private route: ActivatedRoute,
       private router: Router,
       private afAuth: AngularFireAuth,
       public firestore: AngularFirestore,
@@ -110,16 +104,8 @@ export class FeedPage implements OnInit {
             console.log("Received in foreground");
           };
         });
-
-        this.fcm.onTokenRefresh().subscribe(token => {
-          // Register your new token in your back-end if you want
-          // backend.registerToken(token);
-          console.log('fcm token', token);
-        });
       });
 
-      // this.client = algoliasearch(this.ALOGOLIA_APP_ID, this.ALGOLIA_API_KEY, {protocol: 'https'});
-      // this.index = this.client.initIndex('posts');
       this.isSearchActive = false;
     }
 
@@ -129,8 +115,6 @@ export class FeedPage implements OnInit {
 
     getToken() {
       this.fcm.getToken().then(token => {
-        // Register your new token in your back-end if you want
-        // backend.registerToken(token);
       });
     }
 
@@ -1010,20 +994,6 @@ export class FeedPage implements OnInit {
       ];
       return colors[index % colors.length];
     }
-    
-    // async toggleBookmark(post: any) {
-    //   try {
-    //     this.loadingProvider.show();
-    //     console.log('toggling bookmark')
-    //     const userId = this.loggedInUserId;
-    //     post.isBookmarked = await this.bookmarkService.toggleBookmark(post, userId, this.userBookmarks);
-    //     this.loadingProvider.hide();
-
-    //   } catch (error) {
-    //     console.error('Error toggling bookmark:', error);
-    //     this.loadingProvider.hide();
-    //   }
-    // }
 
     async toggleBookmark(post: any) {
       if (!this.loggedInUserId) return;

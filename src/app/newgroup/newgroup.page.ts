@@ -3,12 +3,10 @@ import { ImageService } from '../services/image.service';
 import { DataService } from '../services/data.service';
 import { AlertController } from '@ionic/angular';
 import { LoadingService } from '../services/loading.service';
-
 import { Router } from '@angular/router';
 import { UntypedFormGroup, Validators, UntypedFormControl } from '@angular/forms';
 import { PickerController } from '@ionic/angular';
 import { PickerOptions } from '@ionic/core';
-
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 

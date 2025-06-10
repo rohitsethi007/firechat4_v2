@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
-
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
 
