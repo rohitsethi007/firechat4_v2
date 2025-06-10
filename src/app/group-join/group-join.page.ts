@@ -27,16 +27,13 @@ export class GroupJoinPage implements OnInit {
     public navCtrl: NavController
   ) {
     this.groupId = this.route.snapshot.params.id;
-    console.info('groupId', this.groupId);
     this.afAuth.authState.subscribe(user => {
       if (user) {
         this.loggedInUserId = user.uid;
         this.loggedInUser = user;
-        console.info('userId', user);
       } else {
         this.loggedInUserId = null;
         this.loggedInUser = null;
-        console.info('userId', user);
       }
     });
   }
@@ -62,8 +59,6 @@ export class GroupJoinPage implements OnInit {
   }
 
   joinGroup() {
-    console.info('loggedinuser', this.loggedInUser)
-    
     // First check if user is already a member of this group
     if (this.group.members && this.group.members.includes(this.loggedInUserId)) {
       // User is already a member, just navigate back

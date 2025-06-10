@@ -59,7 +59,6 @@ export class MessagePage implements OnInit {
   ) {     }
 
   ngOnInit() {
-    console.log('inside message',this.userId);
     this.scrollBottom();
   }
 
@@ -67,12 +66,10 @@ export class MessagePage implements OnInit {
     this.userId = this.route.snapshot.params.id;
     const currentUser = firebase.auth().currentUser;
     if (!currentUser) {
-      console.error('No user logged in');
       this.router.navigate(['/login']);
       return;
     }
     this.loggedInUserId = currentUser.uid;
-    console.log('inside message',this.userId);
     
     // Get logged in user data for avatar
     this.firestore.doc(`accounts/${this.loggedInUserId}`).get().subscribe(userData => {
@@ -221,18 +218,16 @@ export class MessagePage implements OnInit {
             const data = doc.data() as ConversationData;
             const messagesLength = data.messages?.length || 0;
             
-            console.log('Total messages:', messagesLength);
-  
             // Update the messagesRead count in user's conversation reference
             this.firestore.doc(`/accounts/${this.loggedInUserId}/conversations/${this.userId}`)
               .update({
                 messagesRead: messagesLength
               })
               .then(() => {
-                console.log('Messages marked as read:', messagesLength);
+                // Messages marked as read
               })
               .catch(error => {
-                console.error('Error updating messagesRead:', error);
+                // Error updating messagesRead
               });
           }
         });
@@ -241,7 +236,6 @@ export class MessagePage implements OnInit {
   
 
   scrollBottom() {
-    console.log("Calling Sb")
     setTimeout(() => {
       if (this.contentArea.scrollToBottom) {
         this.contentArea.scrollToBottom();
@@ -251,7 +245,6 @@ export class MessagePage implements OnInit {
   }
 
   scrollTop() {
-    console.log("Calling St")
     setTimeout(() => {
       if (this.contentArea.scrollToTop) {
         this.contentArea.scrollToTop();
@@ -291,7 +284,6 @@ export class MessagePage implements OnInit {
         this.message = '';
         this.scrollBottom();
       } else {
-        console.log("else")
         // New Conversation with friend.
         var messages = [];
         messages.push({
@@ -361,7 +353,7 @@ export class MessagePage implements OnInit {
           icon: 'close',
           cssClass: 'cancelAction',
           role: 'cancel',
-          handler: () => console.log('Cancel clicked')
+          handler: () => { }
         }
       ]
     });
@@ -381,7 +373,7 @@ export class MessagePage implements OnInit {
       this.message = url;
       await this.send('image');
     } catch (error) {
-      console.error('Error uploading photo:', error);
+      // Error uploading photo
     }
   }
   
@@ -391,7 +383,7 @@ export class MessagePage implements OnInit {
       this.message = url;
       await this.send('video');
     } catch (error) {
-      console.error('Error uploading video:', error);
+      // Error uploading video
     }
   }
   
@@ -409,55 +401,6 @@ export class MessagePage implements OnInit {
     await errorAlert.present();
   }
   
-  
-  // private async handleContact(): Promise<void> {
-  //   try {
-  //     const contact = await this.contacts.pickContact();
-      
-  //     // Transform the contact to match our interface
-  //     const contactData: ContactData = {
-  //       displayName: contact.displayName,
-  //       name: {
-  //         givenName: contact.name?.givenName || '',
-  //         familyName: contact.name?.familyName || ''
-  //       },
-  //       phoneNumbers: contact.phoneNumbers || []
-  //     };
-  
-  //     const contactMessage = this.formatContactMessage(contactData);
-  //     this.message = contactMessage;
-  //     await this.send('contact');
-  //   } catch (error) {
-  //     console.error('Error picking contact:', error);
-  //   }
-  // }
-
-  
-  
-  private formatLocationMessage(location: LocationData) {
-    const text = `Location:<br> lat:${location.latitude}<br> lng:${location.longitude}`;
-    const mapUrl = `<a href='https://www.google.com/maps/search/${location.latitude},${location.longitude}'>View on Map</a>`;
-    
-    return {
-      text,
-      fullMessage: `${text}<br>${mapUrl}`
-    };
-  }
-  
-  private formatContactMessage(contact: ContactData): string {
-    // Add parentheses to properly group the operators
-    const name = contact.displayName || 
-      ((contact.name && contact.name.givenName || '') + ' ' + (contact.name && contact.name.familyName || '')).trim() || 'Unknown';
-    
-    // Safely access phone number with additional null checks
-    const phoneNumber = contact.phoneNumbers && contact.phoneNumbers.length > 0 ? contact.phoneNumbers[0].value : '';
-    
-    return phoneNumber ? 
-      '<b>Name:</b> ' + name + '<br><b>Mobile:</b> <a href="tel:' + phoneNumber + '">' + phoneNumber + '</a>' :
-      '<b>Name:</b> ' + name;
-  }
-  
-
   // Enlarge image messages.
   enlargeImage(img) {
     this.modalCtrl.create({

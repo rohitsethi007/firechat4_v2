@@ -94,11 +94,9 @@ export class NewPostPage implements OnInit {
     this.dataProvider.getCurrentUser().then((u) => {
       u.snapshotChanges().subscribe((value: any) => {
         this.user = value.payload.data();
-        console.info('value', value.payload.data())
         this.addedByUser = {
         addedByKey: value.payload.data().userId,
         addedByUsername: value.payload.data().username
-        // Removed addedByImg to avoid duplication
       };
   
         this.userNotifications = value.payload.data().userNotifications;
@@ -243,7 +241,6 @@ export class NewPostPage implements OnInit {
             this.postMediaImgs = [];
             this.ngZone.run(() => {
             this.postMediaVideo = this.postMediaVideo.concat(url);
-            console.log(url);
           });
           });
         }
@@ -261,8 +258,6 @@ export class NewPostPage implements OnInit {
   removeMedia(media) {
     this.postMediaImgs.splice();
     this.postMediaImgs = this.postMediaImgs.filter(x => x !== media);
-    console.log('this.postMedia:', this.postMediaImgs);
-    // this.imageProvider.deletePostPhoto(media);
   }
 
 }

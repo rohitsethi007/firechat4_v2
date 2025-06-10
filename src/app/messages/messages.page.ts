@@ -41,7 +41,6 @@ export class MessagesPage implements OnInit {
       this.afAuth.authState.pipe(
         switchMap(user => {
           if (!user) {
-            console.log('No user logged in');
             return of(0);
           }
           
@@ -74,7 +73,7 @@ export class MessagesPage implements OnInit {
                     }
                   }
                 } catch (error) {
-                  console.error(`Error calculating unread messages:`, error);
+                  // Error calculating unread messages
                 }
               }
               
@@ -86,7 +85,7 @@ export class MessagesPage implements OnInit {
         next: (count) => {
         },
         error: (error) => {
-          console.error('Error in unread messages subscription:', error);
+          // Error in unread messages subscription
         }
       })
     );
@@ -153,16 +152,13 @@ export class MessagesPage implements OnInit {
     try {
       const userId = await this.afAuth.currentUser;
       if (!userId) {
-        console.error('No user logged in');
         return;
       }
   
       this.dataProvider.getConversations(this.loggedInUserId).snapshotChanges().subscribe({
         next: async (conversationsInfoRes: any) => {
-          console.log('Raw conversations response:', conversationsInfoRes);
           
           if (!conversationsInfoRes || conversationsInfoRes.length === 0) {
-            console.log('No conversations found');
             this.conversations = [];
             this.loadingProvider.hide();
             return;
@@ -173,13 +169,10 @@ export class MessagesPage implements OnInit {
             ...c.payload.doc.data()
           }));
   
-          console.log('Mapped conversations:', conversations);
-  
           const conversationPromises = conversations.map(async (conversation) => {
             try {
               const userSnapshot = await this.dataProvider.getUser(conversation.key).get().toPromise();
               if (!userSnapshot.exists) {
-                console.log(`No user found for conversation ${conversation.key}`);
                 return null;
               }
   
@@ -195,14 +188,12 @@ export class MessagesPage implements OnInit {
                 .toPromise();
   
               if (!conversationSnapshot.exists) {
-                console.log(`No conversation found for ID ${conversation.conversationId}`);
                 return null;
               }
   
               const conversationData = conversationSnapshot.data() as ConversationData;
               
               if (!conversationData?.messages?.length) {
-                console.log(`No messages in conversation ${conversation.conversationId}`);
                 return null;
               }
   
@@ -226,7 +217,6 @@ export class MessagesPage implements OnInit {
   
               return conversation;
             } catch (error) {
-              console.error(`Error processing conversation:`, error);
               return null;
             }
           });
@@ -237,15 +227,12 @@ export class MessagesPage implements OnInit {
             .filter((conv): conv is Conversation => conv !== null)
             .sort((a, b) => b.date - a.date);
   
-          console.log('Processed conversations:', validConversations);
-  
           validConversations.forEach(conversation => {
             this.addOrUpdateConversation(conversation);
           });
   
         },
         error: (error) => {
-          console.error('Error fetching conversations:', error);
           this.loadingProvider.hide();
         },
         complete: () => {
@@ -254,7 +241,6 @@ export class MessagesPage implements OnInit {
       });
   
     } catch (error) {
-      console.error('Error in loadConversations:', error);
       this.loadingProvider.hide();
     }
   }

@@ -181,8 +181,6 @@ export class NewPollPage implements OnInit {
           this.poll.data.pollOptions.push({
             name : this.pollForm.value.pollOption4.trim()});
       }
-      console.info('this.poll:', this.poll)
-
           // Add the poll and get the ID
         const success = await this.dataProvider.addPost(this.poll);
         const pollId = success.id;
@@ -230,7 +228,6 @@ export class NewPollPage implements OnInit {
 
   selectGroup(groupId) {
     this.groupId = groupId;
-    console.log('groupId', groupId);
     this.step = 2;
     this.title = 'New Poll';
 

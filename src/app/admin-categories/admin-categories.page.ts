@@ -27,7 +27,6 @@ export class AdminCategoriesPage implements OnInit {
         catsRes.forEach(cat => {
           let category = cat.payload.doc.data();
           category.key = cat.payload.doc.id;
-          console.log('category', category);
           this.categories.push(category);
         });
       }

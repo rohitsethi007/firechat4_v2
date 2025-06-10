@@ -129,7 +129,6 @@ export class GroupsPage implements OnInit, AfterViewInit {
       this.dataProvider.getCurrentUser().then((userRef) => {
         userRef.get().subscribe((userData: any) => {
           const userGroups = userData.data()?.groups || [];
-          console.log('User is member of groups:', userGroups);
           
           // Get all groups
           this.dataProvider.getGroups().snapshotChanges().subscribe((groups: any) => {
@@ -201,9 +200,7 @@ export class GroupsPage implements OnInit, AfterViewInit {
  
   searchGroupByCategory(category) {
     const groupSearch = {category};
-    // this.router.navigateByUrl('group-search/' + groupSearch);
     this.router.navigateByUrl('/group-search', { state: groupSearch });
-    // this.router.navigateByUrl(['group-search', {state: {data: {category}}});
   }
 
   joinGroup(groupId) {
@@ -291,7 +288,6 @@ export class GroupsPage implements OnInit, AfterViewInit {
         this.loadingProvider.showToast('You have left the group');
       })
       .catch(error => {
-        console.error('Error leaving group:', error);
         this.loadingProvider.showToast('Error leaving group. Please try again.');
         this.loadingProvider.hide();
       });

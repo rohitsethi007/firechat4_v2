@@ -163,8 +163,6 @@ export class NewEventPage implements OnInit {
 
   async submitEventForm() {
     this.loadingProvider.show();
-    console.info('new group id', this.groupId);
-
     // Add post info and date.
     this.event.date = new Date();
     this.event.title = this.eventForm.value.title;
@@ -224,7 +222,6 @@ export class NewEventPage implements OnInit {
 
     selectGroup(groupId) {
       this.groupId = groupId;
-      console.log('groupId', groupId);
       this.step = 2;
       this.title = 'New Event';
   

@@ -53,13 +53,8 @@ export class RegisterPage implements OnInit {
           this.email,
           this.password
         ) as { uid: string };
-        console.info('userCredential:', userCredential.uid);  
-        
-        // Navigation is now handled in the login service
-        
       } catch (error) {
         console.error('Registration error:', error);
-        // Handle specific error cases here
       } finally {
         this.loading = false;
       }

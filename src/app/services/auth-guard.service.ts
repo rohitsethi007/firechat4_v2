@@ -27,7 +27,6 @@ async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
       
       // Fallback to storage check
       const val = await this.dataService.getFromStorageAsync('currentUser');
-      console.log('val:' + val);
       if (val === null) {
         this.router.navigate(['/login']);
         return false;

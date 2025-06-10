@@ -63,7 +63,6 @@ export class BlockedlistPage implements OnInit {
   }
 
   async unblock(uid) {
-    console.log(uid);
     let fuid = await this.afAuth.currentUser.then((data) => { return data.uid });
     this.firestore.doc('accounts/' + fuid + '/conversations/' + uid).update({
       blocked: false

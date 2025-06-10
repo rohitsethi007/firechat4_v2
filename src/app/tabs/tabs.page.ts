@@ -39,7 +39,6 @@ export class TabsPage {
   // Get friend requests count.
   this.afAuth.currentUser.then(user => {
     this.loggedInUserId = user?.uid;
-    console.info('this.afAuth.currentUser', this.loggedInUserId)
     this.dataProvider.getRequests(this.loggedInUserId).snapshotChanges().subscribe((requestsRes: any) => {
       if (requestsRes.payload != null) {
       const requests = requestsRes.payload.data();
@@ -60,8 +59,7 @@ export class TabsPage {
     this.afAuth.currentUser.then(user => {
       if (user) {
         this.loggedInUserId = user.uid;
-        console.info('User ID set:', this.loggedInUserId);
-        console.info('this.afAuth.currentUser', this.loggedInUserId)
+
         this.dataProvider.getRequests(this.loggedInUserId).snapshotChanges().subscribe((requestsRes: any) => {
           if (requestsRes.payload != null) {
           const requests = requestsRes.payload.data();
@@ -75,7 +73,6 @@ export class TabsPage {
         // Only start the subscription after we have the user ID
         this.unreadSubscription = this.getUnreadUserMessagesCountStream()
           .subscribe(totalUnread => {
-            console.log('Total unread messages:', totalUnread);
             this.totalUnreadMessages = totalUnread;
           });
       } 
@@ -96,50 +93,6 @@ export class TabsPage {
     this.router.navigateByUrl('/admin');
   }
 
-  // getFriendRequests() {
-  //   this.friendRequests = [];
-  //   // Get user info
-  //   this.dataProvider.getCurrentUser().then((u) => {
-  //     u.snapshotChanges().subscribe((accountRes: any) => {
-  //       this.account = accountRes.payload.data();
-  //       // Get friendRequests and requestsSent of the user.
-  //       this.dataProvider.getRequests(this.account.userId).snapshotChanges().subscribe((requestsRes: any) => {
-  //         // friendRequests.
-  //         let requests = requestsRes.payload.data();
-  //         if (requests != null) {
-  //           if (requests.friendRequests != null && requests.friendRequests !== undefined) {
-  //             this.friendRequests = [];
-  //             this.friendRequestCount = requests.friendRequests.length;
-  //             requests.friendRequests.forEach((userId) => {
-  //               this.dataProvider.getUser(userId).snapshotChanges().subscribe((sender: any) => {
-  //                 sender = { $key: sender.payload.data().userId, ...sender.payload.data() };
-  //                 this.addOrUpdateFriendRequest(sender);
-  //               });
-  //             });
-  //           } else {
-  //             this.friendRequests = [];
-  //           }
-  //           // requestsSent.
-  //           if (requests.requestsSent != null && requests.requestsSent != undefined) {
-  //             this.requestsSent = [];
-  //             requests.requestsSent.forEach((userId) => {
-  //               this.dataProvider.getUser(userId).snapshotChanges().subscribe((receiver: any) => {
-  //                 receiver = { $key: receiver.payload.data().userId, ...receiver.payload.data() };
-  //                 this.addOrUpdateRequestSent(receiver);
-  //               });
-  //             });
-  //           } else {
-  //             this.requestsSent = [];
-  //           }
-  //         }
-  //         this.loadingProvider.hide();
-  //       });
-  
-  //   });
-  //   })
-  // }
-
-  // Alternative real-time version using observables
   getUnreadUserMessagesCountStream(): Observable<number> {
     if (!this.loggedInUserId) {
       console.warn('No user ID available');
@@ -192,10 +145,4 @@ export class TabsPage {
         })
       );
   }
-
-
-
-
-
-
 }

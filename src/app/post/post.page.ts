@@ -154,22 +154,12 @@ export class PostPage implements OnInit {
       ]))
     });
   }
-  // async getCurrentPosition() {
-  //   try {
-  //     // Use Geolocation directly as a static class
-  //     const coordinates = await Geolocation.getCurrentPosition();
-  //     console.log('Current position:', coordinates);
-  //   } catch (error) {
-  //     console.error('Error getting location', error);
-  //   }
-  // }
+
   ionViewDidEnter() {
     this.loggedInUserId = firebase.auth().currentUser.uid;
-    console.log('Entering feed view');
     
     this.afAuth.currentUser.then(user => {
       this.loggedInUserId = user?.uid;
-      console.log('Current user:', this.loggedInUserId);
   
       // Get Posts with snapshot changes to get real-time updates
       this.dataProvider.getCurrentUser().then((u) => {
@@ -179,8 +169,6 @@ export class PostPage implements OnInit {
             this.userNotifications = userData.userNotifications || [];
             this.loggedInUser = userData;
             this.userBookmarks = userData.userBookmarks || [];
-            console.info('userData', userData)
-
             this.getPostDetails();
           }
         });
@@ -200,7 +188,6 @@ export class PostPage implements OnInit {
     this.dataProvider.getPostDetails(this.postId).get().subscribe((post: any) => {
       if (post) {
         let p = post.data(); 
-        console.info('p', p)
         p.reactions = [];
         p.key = post.id;
         p.checkins = []; // Initialize empty array
@@ -244,7 +231,7 @@ export class PostPage implements OnInit {
                 }
               },
               error: (error) => {
-                console.error('Error fetching reactions:', error);
+                this.loadingProvider.showToast('Error fetching reactions. Please try again.');
               }
             });
 
@@ -303,19 +290,15 @@ export class PostPage implements OnInit {
              }
            },
            error: (error) => {
-             console.error('Error fetching reactions:', error);
+            this.loadingProvider.showToast('Error fetching reactions. Please try again.'); 
            }
          });
-         console.info('this.userBookmarks', this.userBookmarks)
-         console.info('post.id', post.id) 
          p.isBookmarked = this.userBookmarks?.includes(post.id) || false;
         // poll related data
         if (p.type === 'poll') {
-          console.log('inside poll');
           this.initializePollData(p)
         }
         this.post = p;
-        console.info('post', this.post)
         this.loadComments();
       }
       this.loadingProvider.hide();
@@ -521,7 +504,6 @@ viewGroup(groupId) {
 
   vote() {
     const pollOptionIndex = this.pollOptionForm.value["selected_poll_option"];
-    console.log('pollOptionIndex', pollOptionIndex);
     
     // Initialize members array if it doesn't exist
     if (!this.post.data.pollOptions[pollOptionIndex].members) {
@@ -592,23 +574,19 @@ viewGroup(groupId) {
   
     const { data } = await popover.onDidDismiss();
     if (data) {
-      console.log('emoji selected', data);
       this.submitReactionPost(data.post, data.emoji.value);
     }
   }
 
   submitReactionPost(post, reactionType) {
   if (post.reactionType === '') {
-    console.info('1')
       this.addPostReaction(post, reactionType);
       post.totalReactionCount += 1;
     } else if(post.reactionType !== reactionType) {
-      console.info('2')
         this.removePostReaction(post, post.reactionType);
 
         this.addPostReaction(post, reactionType);
     } else if(post.reactionType === reactionType) {
-      console.info('3')
       this.removePostReaction(post, reactionType);
       post.totalReactionCount -= 1;
     }
@@ -661,15 +639,12 @@ viewGroup(groupId) {
   }
 
   removePostReaction(post, reactionType) {
-    console.info('removePostReaction', post, reactionType);
-    // first find the post in the collection
     const p = this.post;
     if (p.reactions && p.reactions.length > 0) {
       const reaction = p.reactions.find(
         el => el.addedByUser.addedByKey === this.loggedInUserId);
 
       if (reaction && reaction.reactionType === reactionType && reaction.id) {
-        console.info('here!!', post.key, reaction)
         this.dataProvider.removePostReaction(post.key, reaction.id);
       } 
     }
@@ -748,34 +723,6 @@ viewGroup(groupId) {
     document.body.removeChild(textarea);
   }
   
-  // async toggleBookmark(post: any) {
-  //   try {
-  //     const userId = this.loggedInUserId;
-  //     const result = await this.bookmarkService.toggleBookmark(
-  //       post, 
-  //       userId, 
-  //       this.userBookmarks || []
-  //     );
-      
-  //     // Update local state immediately
-  //     post.isBookmarked = result;
-      
-  //     // Update userBookmarks array
-  //     if (result) {
-  //       if (!this.userBookmarks) this.userBookmarks = [];
-  //       if (!this.userBookmarks.includes(post.key)) {
-  //         this.userBookmarks.push(post.key);
-  //       }
-  //     } else {
-  //       if (this.userBookmarks) {
-  //         this.userBookmarks = this.userBookmarks.filter(id => id !== post.key);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error('Error toggling bookmark:', error);
-  //   }
-  // }
-
   async toggleBookmark(post: any) {
     if (!this.loggedInUserId) return;
     
@@ -820,8 +767,6 @@ viewGroup(groupId) {
   private initializePollData(p: any) {
     if (p.type !== 'poll') return;
 
-    console.log('Initializing poll data');
-
     try {
       // Create new arrays for labels and data
       const labels: string[] = [];
@@ -831,7 +776,6 @@ viewGroup(groupId) {
       p.data.pollOptions.forEach((option: PollOption) => {
         if (option) {
           const voteCount = option.members?.length || 0;
-          console.log(`Option ${option.name}: ${voteCount} votes`);
           
           labels.push(option.name);
           data.push(voteCount);
@@ -867,13 +811,6 @@ viewGroup(groupId) {
       const today = new Date();
       const pollEndDate = p.data.dateEnding.toDate();
       this.pollClosed = pollEndDate < today;
-
-      console.log('Chart initialization complete:', {
-        data: this.chartData.datasets[0].data,
-        labels: this.chartData.labels,
-        voted: this.voted,
-        closed: this.pollClosed
-      });
 
     } catch (error) {
       console.error('Error initializing poll data:', error);
@@ -920,7 +857,6 @@ async submitReactionCheckin() {
     }
 
   } catch (error) {
-    console.error('Error handling checkin:', error);
     this.loadingProvider.showToast('Error updating check-in. Please try again.');
   }
 }
@@ -987,8 +923,7 @@ async submitComment() {
      
     this.loadComments();
   } catch (error) {
-    console.error('Error submitting comment:', error);
-    // Handle error (show toast or alert)
+    this.loadingProvider.showToast('Error submitting comments. Please try again.');
   }
 }
 
@@ -1052,7 +987,6 @@ async likeComment(comment: Comment) {
       });
     }
   } catch (error) {
-    console.error('Error updating like:', error);
     this.loadingProvider.showToast('Error updating like. Please try again.');
   }
 }
@@ -1109,7 +1043,6 @@ async submitReply(parentComment: Comment) {
     parentComment.showReplyInput = false;
 
   } catch (error) {
-    console.error('Error submitting reply:', error);
     this.loadingProvider.showToast('Error submitting reply. Please try again.');
   }
 }

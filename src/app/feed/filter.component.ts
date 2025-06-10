@@ -431,8 +431,6 @@ export class FilterComponent {
   ) {}
 
   ionViewWillEnter() {
-    console.log('Entering feed view');
-    
     this.afAuth.currentUser.then(user => {
         this.loggedInUserId = user?.uid;
 

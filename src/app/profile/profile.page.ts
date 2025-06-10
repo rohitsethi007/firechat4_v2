@@ -69,9 +69,7 @@ export class ProfilePage implements OnInit {
   ) {
    
     this.loggedInUserId = firebase.auth().currentUser.uid;
-    console.info('profile page, loggedinuser', this.loggedInUserId)
     this.userId = this.route.snapshot.params.id;
-    console.info('profile page, userId', this.userId)
     if (this.userId === this.loggedInUserId) {
       this.myProfile = true;
     } else {
@@ -82,7 +80,6 @@ export class ProfilePage implements OnInit {
       this.userId = this.loggedInUserId; // Set userId to loggedInUserId when undefined
     }
 
-    console.info('profile page, myProfile', this.myProfile)
     this.errorMessages = Validator.errorMessages;
     this.myForm = this.formBuilder.group({
       name: Validator.nameValidator,
@@ -98,7 +95,6 @@ export class ProfilePage implements OnInit {
 
   ionViewDidEnter() {
     const previousUrl = this.router.url;
-    console.log('Current URL:', previousUrl);
     this.showBackButton = !previousUrl.includes('/tabs/tab5') && this.myProfile;
     this.getUserData();
     this.loadBookmarkedPosts();
@@ -139,7 +135,6 @@ export class ProfilePage implements OnInit {
       let account = user.payload.data();
       if (account != null) {
         this.user = account;
-        console.log('user data', this.user)
         this.title = this.user.username;
         
         // Check if the user is blocked
@@ -169,7 +164,6 @@ export class ProfilePage implements OnInit {
 
         // get user Reaction Posts
         if (this.user.userReactions && this.user.userReactions.length > 0) {
-          console.log('this.user.userReactions', this.user.userReactions);
           this.firestore.collection('posts').ref
           .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userReactions)
           .get().then((po: any) => {
@@ -182,7 +176,6 @@ export class ProfilePage implements OnInit {
 
         // get user Comments
         if (this.user.userComments && this.user.userComments.length > 0) {
-          console.log('this.user.userComments', this.user.userComments);
           this.firestore.collection('posts').ref
           .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.userComments)
           .get().then((po: any) => {
@@ -196,7 +189,6 @@ export class ProfilePage implements OnInit {
 
         // Get User Friends list
         if (this.user.friends && this.user.friends.length > 0) {
-          console.log('this.user.friends', this.user.friends);
           this.firestore.collection('accounts').ref
           .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.friends)
           .get().then((user: any) => {
@@ -658,7 +650,6 @@ export class ProfilePage implements OnInit {
         // Get the token
         const tokenResult = await FirebaseMessaging.getToken();
         const token = tokenResult.token;
-        console.log('Push registration success:', token);
   
         // Update Firestore
         await this.firestore.doc(`/accounts/${uid}`).update({

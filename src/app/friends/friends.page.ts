@@ -55,7 +55,7 @@ export class FriendsPage implements OnInit {
 
     this.afAuth.currentUser.then(user => {
       this.loggedInUserId = user?.uid;
-      console.info('this.afAuth.currentUser', this.loggedInUserId)
+
       this.dataProvider.getRequests(this.loggedInUserId).snapshotChanges().subscribe((requestsRes: any) => {
         if (requestsRes.payload != null) {
         const requests = requestsRes.payload.data();
@@ -107,7 +107,7 @@ export class FriendsPage implements OnInit {
         this.loadingProvider.hide();
         if (account != null && account.friends != null) {
           for (let i = 0; i < account.friends.length; i++) {
-            console.log('friends:', account.friends[i]);
+
             this.dataProvider.getUser(account.friends[i]).snapshotChanges().subscribe((friend: any) => {
               if (friend.payload != null) {
                 const friendData = { $key: friend.payload.data().userId, ...friend.payload.data() };
