@@ -1,128 +1,63 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-title size="large">Groups</ion-title>
-    <!-- <ion-buttons slot="end">
-      <ion-button fill="solid" color="primary" routerLink="/newgroup">
-        <ion-icon slot="start" name="add-outline"></ion-icon>
-        Create New
-      </ion-button>
-    </ion-buttons> -->
   </ion-toolbar>
 </ion-header>
 
-<!-- Search Bar -->
-<!-- <ion-toolbar class="search-toolbar">
-  <ion-searchbar 
-    [(ngModel)]="searchTerm"
-    (ionInput)="filterGroups()"
-    placeholder="Search groups"
-    animated="true"
-    class="custom-searchbar"
-    clear-icon="close-circle"
-    search-icon="search-outline">
-  </ion-searchbar>
-</ion-toolbar> -->
-
-<ion-content class="ion-padding">
+<ion-content>
   <!-- Categories Section -->
-  <ion-grid class="ion-no-padding">
-    <ion-row class="ion-align-items-center ion-justify-content-between">
-      <ion-col>
-        <h2 class="ion-no-margin">Popular Categories</h2>
-      </ion-col>
-      <!-- <ion-col size="auto">
-        <ion-button fill="clear" color="secondary" routerLink="/newgroup">
-          See All
-          <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
-        </ion-button>
-      </ion-col> -->
-    </ion-row>
-  </ion-grid>
-
- <!-- Categories Slider -->
- <div class="slider-container ion-margin-top">
-  <swiper-container #swiper
-  [init]="false"
-  class="categories-slider">
-    <swiper-slide *ngFor="let category of categories">
-      <ion-card class="category-card" (click)="searchGroupByCategory(category)">
-        <ion-img [src]="category.img" [alt]="category.name"></ion-img>
-        <ion-card-header>
-          <ion-card-subtitle>{{category.name}}</ion-card-subtitle>
-        </ion-card-header>
-      </ion-card>
-    </swiper-slide>
-  </swiper-container>
-  
-  <div class="swiper-nav-buttons">
-    <ion-button fill="clear" (click)="prevSlide()">
-      <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
-    </ion-button>
-    <ion-button fill="clear" (click)="nextSlide()">
-      <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
-    </ion-button>
+  <div class="section-header">
+    <h2>Categories</h2>
   </div>
-</div>
+
+  <!-- Categories Horizontal Scroll -->
+  <div class="categories-scroll">
+    <div class="category-item" *ngFor="let category of categories" (click)="searchGroupByCategory(category)">
+      <div class="category-image">
+        <img [src]="category.img" [alt]="category.name">
+      </div>
+      <p>{{category.name}}</p>
+    </div>
+  </div>
 
   <!-- Suggested Groups Section -->
-  <ion-grid class="ion-no-padding">
-    <ion-row class="ion-align-items-center ion-justify-content-between">
-      <ion-col>
-        <h2 class="ion-no-margin">Suggested Groups</h2>
-      </ion-col>
-      <!-- <ion-col size="auto">
-        <ion-button fill="clear" color="secondary" routerLink="/newgroup">
-          See All
-          <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
-        </ion-button>
-      </ion-col> -->
-    </ion-row>
-  </ion-grid>
+  <div class="section-header">
+    <h2>Suggested Groups</h2>
+  </div>
 
   <!-- Groups List -->
-  <ion-list class="ion-no-padding">
+  <ion-list class="groups-list">
     <ion-item *ngFor="let group of filteredGroups" 
               button 
               detail="false" 
-              class="ion-margin-bottom"
+              class="group-item"
               (click)="viewGroup(group)">
-      <ion-thumbnail slot="start">
-        <ion-img [src]="group.img" [alt]="group.name"></ion-img>
-      </ion-thumbnail>
+      <ion-avatar slot="start">
+        <img [src]="group.img" [alt]="group.name">
+      </ion-avatar>
       
       <ion-label>
-        <h3 class="ion-no-margin">{{group.name}}</h3>
-        <p class="ion-text-wrap">
-          <ion-text color="medium">
-            <ion-icon name="people-outline"></ion-icon>
-            {{group.members?.length || 0}} Members · 
-            <ion-icon name="chatbubbles-outline"></ion-icon>
-            {{group.posts?.length || 0}} posts
-          </ion-text>
+        <h3>{{group.name}}</h3>
+        <p class="group-stats">
+          <span>{{group.members?.length || 0}} Members</span>
+          <span class="dot-separator">•</span>
+          <span>{{group.posts?.length || 0}} Posts</span>
         </p>
       </ion-label>
 
       <ion-button slot="end" 
-      fill="solid"
-      [color]="group.isUserMember ? 'danger' : 'primary'"
-      (click)="$event.stopPropagation(); group.isUserMember ? confirmLeaveGroup(group) : joinGroup(group.key)"
-      class="join-group-btn">
-        <ion-icon [name]="group.isUserMember ? 'exit-outline' : 'add-outline'"
-                slot="start"></ion-icon>
+                  fill="clear"
+                  [color]="group.isUserMember ? 'danger' : 'primary'"
+                  (click)="$event.stopPropagation(); group.isUserMember ? confirmLeaveGroup(group) : joinGroup(group.key)">
         {{group.isUserMember ? 'Leave' : 'Join'}}
-  </ion-button>
-
+      </ion-button>
     </ion-item>
   </ion-list>
 
   <!-- Empty State -->
-  <ion-list *ngIf="groups?.length === 0">
-    <ion-item lines="none">
-      <ion-label class="ion-text-center">
-        <ion-icon name="people-outline" size="large" color="medium"></ion-icon>
-        <h2>No Groups Found</h2>
-        <p>Create a new group or join existing ones</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+  <div class="empty-state" *ngIf="groups?.length === 0">
+    <ion-icon name="people-outline"></ion-icon>
+    <h2>No Groups Found</h2>
+    <p>Create a new group or join existing ones</p>
+  </div>
 </ion-content>
