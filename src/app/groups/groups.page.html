@@ -1,14 +1,14 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title size="large">Groups</ion-title>
+    <ion-title size="large">Categories</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!-- Categories Section -->
+  <!-- Categories Section
   <div class="section-header">
     <h2>Categories</h2>
-  </div>
+  </div> -->
 
   <!-- Categories Horizontal Scroll -->
   <div class="categories-scroll">
@@ -30,8 +30,7 @@
     <ion-item *ngFor="let group of filteredGroups" 
               button 
               detail="false" 
-              class="group-item"
-              (click)="viewGroup(group)">
+              class="group-item">
       <ion-avatar slot="start">
         <img [src]="group.img" [alt]="group.name">
       </ion-avatar>

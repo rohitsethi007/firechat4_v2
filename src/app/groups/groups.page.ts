@@ -198,16 +198,7 @@ export class GroupsPage implements OnInit, AfterViewInit {
     });
   }
 
-  // Open Group Chat.
-  viewGroup(group) {
-    if (group.isUserMember) {
-      this.router.navigateByUrl('groupinfo/' + group.key);
-    } else {
-      // If user is not a member, redirect to join page
-      this.joinGroup(group.key);
-    }
-  }
-  
+ 
   searchGroupByCategory(category) {
     const groupSearch = {category};
     // this.router.navigateByUrl('group-search/' + groupSearch);

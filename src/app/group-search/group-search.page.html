@@ -29,7 +29,7 @@
               button 
               detail="false" 
               class="ion-margin-bottom"
-              (click)="viewGroup(group.key)">
+              (click)="viewGroup(group)">
       <ion-thumbnail slot="start">
         <ion-img [src]="group.img" [alt]="group.name"></ion-img>
       </ion-thumbnail>
@@ -48,11 +48,12 @@
 
       <ion-button slot="end" 
           fill="solid"
-          [color]="group.isUserMember ? 'success' : 'primary'"
-          class="join-group-btn">
-            <ion-icon [name]="group.isUserMember ? 'checkmark-outline' : 'add-outline'"
+          [color]="group.isUserMember ? 'danger' : 'primary'"
+          class="join-group-btn"
+          (click)="$event.stopPropagation(); group.isUserMember ? confirmLeaveGroup(group) : joinGroup(group.key)">
+            <ion-icon [name]="group.isUserMember ? 'exit-outline' : 'add-outline'"
                   slot="start"></ion-icon>
-            {{group.isUserMember ? 'Joined' : 'Join'}}
+            {{group.isUserMember ? 'Leave' : 'Join'}}
       </ion-button>
     </ion-item>
   </ion-list>
