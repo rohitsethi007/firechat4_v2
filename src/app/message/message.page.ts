@@ -1,13 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DataService } from '../services/data.service';
-
 import { ActionSheetController, AlertController, ModalController, IonContent } from '@ionic/angular';
 import { LoadingService } from '../services/loading.service';
 import { ImageService } from '../services/image.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Camera, CameraSource, CameraResultType } from '@capacitor/camera';
-import { Keyboard } from '@capacitor/keyboard';
+import { Camera, CameraSource } from '@capacitor/camera';
 
 import { ImagemodalPage } from '../imagemodal/imagemodal.page';
 import { ConversationData, LocationData, ContactData } from '../models/interfaces';

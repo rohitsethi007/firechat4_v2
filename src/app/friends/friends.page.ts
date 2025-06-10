@@ -2,13 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
 import { AlertController } from '@ionic/angular';
-
 import { Router } from '@angular/router';
 import { FirebaseService } from '../services/firebase.service';
-import { take, takeLast } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat/app';
+
 @Component({
   selector: 'app-friends',
   templateUrl: './friends.page.html',

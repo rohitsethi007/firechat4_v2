@@ -7,12 +7,8 @@ import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
 import { HttpClient } from '@angular/common/http';
 
-import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
-
-import { Event, Group } from '../models/interfaces'
-
 
 @Component({
   selector: 'app-new-event',
@@ -106,7 +102,6 @@ export class NewEventPage implements OnInit {
         addedByUser: this.addedByUser,
         date: '',
         title: '',
-        postTags: [],
         groupId: '',
         groupName: '',
         type: 'event',

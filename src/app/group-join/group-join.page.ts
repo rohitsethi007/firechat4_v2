@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { ActivatedRoute } from '@angular/router';
-import { Firestore } from '@angular/fire/firestore';
 import { NavController } from '@ionic/angular';
-import * as firebase from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 
@@ -23,7 +21,6 @@ export class GroupJoinPage implements OnInit {
     private dataProvider: DataService,
     private afAuth: AngularFireAuth,
     private route: ActivatedRoute,
-    private firestore: Firestore,
     public navCtrl: NavController
   ) {
     this.groupId = this.route.snapshot.params.id;

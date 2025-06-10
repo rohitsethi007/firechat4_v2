@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { DataService } from '../services/data.service';
-
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat/app';
+
 @Component({
   selector: 'app-blockedlist',
   templateUrl: './blockedlist.page.html',
@@ -16,7 +14,6 @@ export class BlockedlistPage implements OnInit {
 
   constructor(
     private afAuth: AngularFireAuth,
-    private dataProvider: DataService,
     private firestore: AngularFirestore,
     private router: Router
   ) { }

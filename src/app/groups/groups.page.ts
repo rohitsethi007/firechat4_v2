@@ -137,15 +137,27 @@ export class GroupsPage implements OnInit, AfterViewInit {
               let group = element.payload.doc.data();
               group.key = element.payload.doc.id;
               
-              // Check if the user is a member using the user's groups array
-              if (Array.isArray(userGroups) && userGroups.includes(group.key)) {
+              // ONLY use the group's members array to determine membership
+              // This ensures consistency with what's actually in the database
+              if (group.members && Array.isArray(group.members) && group.members.includes(this.loggedInUserId)) {
                 group.isUserMember = true;
+                
+                // If user is a member according to group but not in user's groups array,
+                // fix the user's groups array
+                if (!userGroups.includes(group.key)) {
+                  this.dataProvider.getUser(this.loggedInUserId).update({
+                    groups: firebase.firestore.FieldValue.arrayUnion(group.key)
+                  });
+                }
               } else {
-                // Double-check with the group's members array as a fallback
-                if (group.members && Array.isArray(group.members) && group.members.includes(this.loggedInUserId)) {
-                  group.isUserMember = true;
-                } else {
-                  group.isUserMember = false;
+                group.isUserMember = false;
+                
+                // If user is not a member according to group but is in user's groups array,
+                // fix the user's groups array
+                if (userGroups.includes(group.key)) {
+                  this.dataProvider.getUser(this.loggedInUserId).update({
+                    groups: firebase.firestore.FieldValue.arrayRemove(group.key)
+                  });
                 }
               }
               this.groups.push(group);

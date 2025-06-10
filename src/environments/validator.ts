@@ -32,10 +32,6 @@ export namespace Validator {
         Validators.required,
     ]]
 
-    export const groupTagsValidator = ['', [
-        Validators.required,
-    ]]
-
     export const errorMessages = {
         email: [
             { type: 'required', message: 'Email is required' },

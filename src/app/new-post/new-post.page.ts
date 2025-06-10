@@ -1,11 +1,10 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { ActionSheetController, IonicSlides } from '@ionic/angular';
-import { FormArray, UntypedFormGroup, Validators, UntypedFormControl } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { ImageService } from '../services/image.service';
 import { LoadingService } from '../services/loading.service';
-import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
@@ -16,14 +15,11 @@ import firebase from 'firebase/compat/app';
   styleUrls: ['./new-post.page.scss'],
 })
 export class NewPostPage implements OnInit {
-  // @ViewChild('slideWithNav', { static: false }) slideWithNav: IonSlides;
-
   private postForm: UntypedFormGroup;
   private post: any;
   private postId: any;
   private groupId: any;
   private group: any;
-  private postTags: any = [];
   private title: any;
   private addedByUser: any;
   private user: any;
@@ -57,16 +53,11 @@ export class NewPostPage implements OnInit {
     this.postForm = new UntypedFormGroup(
       {
         title: new UntypedFormControl('', Validators.compose([
-            // Validators.minLength(5),
-            // Validators.maxLength(20),
             Validators.required
           ])),
         message: new UntypedFormControl('', Validators.compose([
-          // Validators.minLength(10),
-          // Validators.maxLength(100),
           Validators.required
         ]))
-        //  tags: new FormArray([], CheckboxCheckedValidator.tagsSelected(1))
     });
    }
 
@@ -105,7 +96,6 @@ export class NewPostPage implements OnInit {
             addedByUser: this.addedByUser,
             date: '',
             title: '',
-            postTags: [],
             groupId: '',
             groupName: '',
             type: 'general',
@@ -119,31 +109,37 @@ export class NewPostPage implements OnInit {
             this.title = 'Select a group ...';
                 // Get User Groups List
             if (this.user.groups) {
-              this.firestore.collection('groups').ref
-              .where(firebase.firestore.FieldPath.documentId(), 'in', this.user.groups)
-              .get().then((group: any) => {
+              // Process groups in batches to handle large arrays
+              const fetchGroups = async () => {
                 this.groups = [];
-                group.forEach(g => {
-                  let group: any;
-                  group = g.data();
-                  group.key = g.id;
-                  this.addOrUpdateUserGroup(group);
-                });
-              });
+                
+                // Firestore has a limit of 10 items in 'in' queries
+                const batchSize = 10;
+                const groupBatches = [];
+                
+                // Split the groups array into batches
+                for (let i = 0; i < this.user.groups.length; i += batchSize) {
+                  groupBatches.push(this.user.groups.slice(i, i + batchSize));
+                }
+                
+                // Process each batch
+                for (const batch of groupBatches) {
+                  const groupSnapshot = await this.firestore.collection('groups').ref
+                    .where(firebase.firestore.FieldPath.documentId(), 'in', batch)
+                    .get();
+                    
+                  groupSnapshot.forEach(g => {
+                    let group: any = g.data();
+                    group.key = g.id;
+                    this.addOrUpdateUserGroup(group);
+                  });
+                }
+              };
+              
+              fetchGroups();
               }
             } else {
               this.title = 'Create a Post in';
-  
-              this.dataProvider.getGroup(this.groupId).snapshotChanges().subscribe((group) => {
-                this.group = group.payload.data();
-                if (this.group && this.group.groupTags) {
-                  this.group.groupTags.forEach((element: any) => {
-                    this.postTags.push({val: element, isChecked: false});
-                  });
-                }
-                //TAGS commented
-                // this.addTagControls();
-              });
             }
         });
     })
@@ -156,11 +152,9 @@ export class NewPostPage implements OnInit {
     this.post.date = new Date();
     this.post.title = this.postForm.value.title;
     this.post.data.message = this.postForm.value.message;
-    this.post.postTags = this.postTags || [];
     this.post.groupId = this.groupId || '';
     this.post.groupName = this.group?.name || '';
     this.post.type = 'general';
-  // Add post to database.
       this.dataProvider.addPost(this.post).then((success) => {
         const postId = success.id;
         this.postId = postId;

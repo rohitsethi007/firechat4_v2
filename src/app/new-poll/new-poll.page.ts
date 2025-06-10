@@ -3,9 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, UntypedFormGroup, UntypedFormControl, FormArray } from '@angular/forms';
 import { DataService } from '../services/data.service';
 import { LoadingService } from '../services/loading.service';
-import { CheckboxCheckedValidator } from '../validators/checkbox-checked.validator';
 
-import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
 
@@ -22,7 +20,6 @@ export class NewPollPage implements OnInit {
   private groupId: any;
   private group: any;
   private pollId: any;
-  // private postTags: any = [];
   private addedByUser: any;
   private step: any = 1;
   groups: any;
@@ -47,23 +44,16 @@ export class NewPollPage implements OnInit {
 
     this.pollForm = new UntypedFormGroup({
       description: new UntypedFormControl('', Validators.compose([
-        // Validators.minLength(10),
-        // Validators.maxLength(50),
         Validators.required
       ])),
       pollOption1: new UntypedFormControl('', Validators.compose([
-        // Validators.minLength(1),
-        // Validators.maxLength(20),
         Validators.required
       ])),
       pollOption2: new UntypedFormControl('', Validators.compose([
-        // Validators.minLength(1),
-        // Validators.maxLength(20),
         Validators.required
       ])),
       pollOption3: new UntypedFormControl(''),
       pollOption4: new UntypedFormControl(''),
-      // tags: new FormArray([], CheckboxCheckedValidator.tagsSelected(1))
       });
    }
 
@@ -86,7 +76,6 @@ export class NewPollPage implements OnInit {
         addedByUser: this.addedByUser,
         date: '',
         title: '',
-        // postTags: [],
         groupId: '',
         groupName: '',
         type: 'poll',
@@ -143,8 +132,6 @@ export class NewPollPage implements OnInit {
       this.poll.groupName = this.group.name;
       this.poll.date = new Date();
       this.poll.title = this.pollForm.value.description;
-      // this.poll.postTags = [];
-      // this.poll.postTags = this.postTags;
 
       const today = new Date();
       const dd = today.getDate();

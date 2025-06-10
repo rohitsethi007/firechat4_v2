@@ -5,13 +5,13 @@ import { AlertController } from '@ionic/angular';
 import { LoadingService } from '../services/loading.service';
 
 import { Router } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, Validators, UntypedFormControl } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormControl } from '@angular/forms';
 import { PickerController } from '@ionic/angular';
 import { PickerOptions } from '@ionic/core';
 
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat/app';
+
 @Component({
   selector: 'app-newgroup',
   templateUrl: './newgroup.page.html',
@@ -28,7 +28,6 @@ export class NewgroupPage implements OnInit {
   name: any;
   img: any;
   description: any;
-  groupTags: any;
   category: any = {text: '', value: ''};
   account: any;
   myForm: UntypedFormGroup;
@@ -44,7 +43,6 @@ export class NewgroupPage implements OnInit {
     public firestore: AngularFirestore,
     private afAuth: AngularFireAuth,
     public loadingProvider: LoadingService,
-    private formBuilder: UntypedFormBuilder,
     private pickerController: PickerController
   ) {
     this.myForm = new UntypedFormGroup(
@@ -53,9 +51,6 @@ export class NewgroupPage implements OnInit {
           Validators.required
         ])),
         groupDescription: new UntypedFormControl('', Validators.compose([
-          Validators.required
-        ])),
-        groupTags: new UntypedFormControl('', Validators.compose([
           Validators.required
         ])),
         img: new UntypedFormControl('')
@@ -73,8 +68,7 @@ export class NewgroupPage implements OnInit {
       messages: [],
       members: [],
       name: '',
-      description: '',
-      groupTags: []
+      description: ''
     };
     this.searchFriend = '';
 
@@ -131,7 +125,6 @@ export class NewgroupPage implements OnInit {
       this.group.members = members;
       this.group.name = this.name;
       this.group.description = this.description;
-      this.group.groupTags = this.groupTags.split('\n');
       this.group.categoryId = this.category.value;
       this.group.img = '';
 
