@@ -50,12 +50,12 @@ Chart.register(
 })
 export class PostPage implements OnInit {
   private postId: any;
-  private post: any;
-  private title: any;
-  private postReviews: any;
+  post: any;
+  title: any;
+  postReviews: any;
   private message: any;
   private notifications: any = [];
-  private loggedInUserId: any;
+  loggedInUserId: any;
   private reviewMedia: any = [];
   userReactions: any[] = [];
   private uploadingImage: boolean;
@@ -77,7 +77,7 @@ export class PostPage implements OnInit {
   // Poll related fields
   private poll: any;
   private pollId: any;
-  private pollOptionForm: UntypedFormGroup;
+  pollOptionForm: UntypedFormGroup;
   private optionsArray: string[];
    // Update chart properties
    chartData: ChartData = {
@@ -117,7 +117,7 @@ export class PostPage implements OnInit {
   pollClosed = false;
   selectedOption = '';
 
-  private slideOptsOne = {
+  slideOptsOne = {
     initialSlide: 0,
     slidesPerView: 1,
     autoplay: false
@@ -168,7 +168,8 @@ export class PostPage implements OnInit {
   }
 
   ngOnInit() {
-
+    // Initialize empty comments array
+    this.comments = [];
   }
 
   getPostDetails() {
@@ -866,7 +867,7 @@ async showCheckinsList() {
 }
 async submitComment() {
   if (!this.newComment?.trim()) return;
-
+  
   try {
     const commentData = {
       postId: this.post.key,
@@ -877,10 +878,11 @@ async submitComment() {
         addedByImg: this.loggedInUser.img
       },      
       createdAt: new Date(),
-      likes: 0
+      likes: 0,
+      likedBy: []
     };
-
-    // Add the comment
+    
+    // Add the comment to the comments collection
     await this.firestore
       .collection('comments')
       .add(commentData);
@@ -900,7 +902,7 @@ async submitComment() {
 
     // add Notifications
     await this.notificationsService.createNotification({
-      type:  'comment' as const,  // use type assertion,
+      type: 'comment' as const,
       fromUser: {
         userId: this.loggedInUserId,
         username: this.loggedInUser.username,
@@ -917,8 +919,14 @@ async submitComment() {
   }
 }
 
+
 loadComments() {
-  if (!this.post?.key) return;
+  if (!this.post?.key) {
+    console.log('Cannot load comments: post key is undefined');
+    return;
+  }
+
+  console.log('Loading comments for post:', this.post.key, 'Post type:', this.post.type);
 
   this.firestore
     .collection<Comment>('comments', ref => 
@@ -935,17 +943,24 @@ loadComments() {
         replyText: ''
       } as Comment));
 
+      console.log('Comments loaded:', allComments.length);
+      
       // Build tree with max 2 levels
       this.comments = this.buildCommentTree(allComments, 2);
       
       // Update the comment count in the post object and in Firestore
       const commentCount = allComments.length;
       this.post.totalReviewCount = commentCount;
+      this.post.totalCommentCount = commentCount;
       
       // Update the count in Firestore if it doesn't match
       this.firestore.collection('posts').doc(this.post.key).update({
         totalCommentCount: commentCount
+      }).catch(error => {
+        console.error('Error updating comment count:', error);
       });
+    }, error => {
+      console.error('Error loading comments:', error);
     });
 }
 

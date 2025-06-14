@@ -25,16 +25,12 @@ export class DataCleanupService {
         'trendingSearches',
         'notifications',
         'friendRequests',
-        'events',
-        'polls',
-        'reactions',
-        'reviews',
-        'resources',
+        'posts',
         'requests',
-        'subcollections',
         'users',
         'messages',
-        'comments'
+        'comments',
+        'userSearches'
       ];
       
       // Delete all accounts
