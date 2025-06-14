@@ -1,23 +1,61 @@
-<ion-header>
-  <ion-toolbar color="primary">
+<ion-header class="ion-no-border">
+  <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="/admin"></ion-back-button>
     </ion-buttons>
     <ion-title>Categories</ion-title>
     <ion-buttons slot="end">
-      <ion-button routerLink="/new-category-modal">New Category</ion-button>
+      <ion-button routerLink="/new-category-modal" color="primary">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        New
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-row>
-    <ion-col>
-      <ion-list>
-        <ion-item *ngFor="let category of categories">
-        <ion-label>{{category.name}}</ion-label>
+<ion-content class="ion-padding">
+  <div class="category-header">
+    <h2>All Categories</h2>
+  </div>
+
+  <ng-container *ngIf="!isLoading && categories && categories.length > 0; else noCategories">
+    <ion-list>
+      <ion-item *ngFor="let category of categories" class="category-item">
+        <ion-thumbnail slot="start" *ngIf="category.img">
+          <img [src]="category.img" alt="Category image">
+        </ion-thumbnail>
+        <ion-label>
+          <h2>{{category.name}}</h2>
+          <p *ngIf="category.description">{{category.description}}</p>
+        </ion-label>
+        <div slot="end" class="category-actions">
+          <ion-button fill="clear" color="primary" (click)="editCategory(category)">
+            <ion-icon name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="deleteCategory(category)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
       </ion-item>
-      </ion-list>
-    </ion-col>
-  </ion-row>
+    </ion-list>
+  </ng-container>
+
+  <ng-container *ngIf="isLoading">
+    <div class="ion-padding ion-text-center">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading categories...</p>
+    </div>
+  </ng-container>
+
+  <ng-template #noCategories>
+    <div class="empty-state" *ngIf="!isLoading">
+      <ion-icon name="folder-open-outline"></ion-icon>
+      <h3>No Categories Found</h3>
+      <p>Create your first category to get started</p>
+      <ion-button expand="block" routerLink="/new-category-modal" color="primary" class="ion-margin-top">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Create Category
+      </ion-button>
+    </div>
+  </ng-template>
 </ion-content>

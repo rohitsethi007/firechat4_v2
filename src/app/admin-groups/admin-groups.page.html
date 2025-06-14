@@ -1,0 +1,77 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Groups</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="group-header">
+    <h2>All Groups</h2>
+  </div>
+
+  <ion-item lines="none" class="filter-item">
+    <ion-label>Filter by Category</ion-label>
+    <ion-select [(ngModel)]="selectedCategoryFilter" (ionChange)="filterByCategory($event)" interface="popover">
+      <ion-select-option value="all">All Categories</ion-select-option>
+      <ion-select-option *ngFor="let category of categories" [value]="category.key">
+        {{ category.name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ng-container *ngIf="!isLoading && filteredGroups && filteredGroups.length > 0; else noGroups">
+    <ion-list>
+      <ion-item *ngFor="let group of filteredGroups" class="group-item">
+        <ion-thumbnail slot="start" *ngIf="group.img">
+          <img [src]="group.img" alt="Group image">
+        </ion-thumbnail>
+        <ion-thumbnail slot="start" *ngIf="!group.img">
+          <div class="placeholder-thumbnail">
+            <ion-icon name="people"></ion-icon>
+          </div>
+        </ion-thumbnail>
+        <ion-label>
+          <h2>{{group.name}}</h2>
+          <p *ngIf="group.description">{{group.description}}</p>
+          <p class="category-label">
+            <ion-badge color="medium">{{getCategoryName(group.categoryId)}}</ion-badge>
+            <span *ngIf="group.members && group.members.length > 0" class="members-count">
+              {{group.members.length}} members
+            </span>
+          </p>
+        </ion-label>
+        <div slot="end" class="group-actions">
+          <ion-button fill="clear" color="primary" (click)="editGroup(group)">
+            <ion-icon name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="deleteGroup(group)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+
+  <ng-container *ngIf="isLoading">
+    <div class="ion-padding ion-text-center">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading groups...</p>
+    </div>
+  </ng-container>
+
+  <ng-template #noGroups>
+    <div class="empty-state" *ngIf="!isLoading">
+      <ion-icon name="people-outline"></ion-icon>
+      <h3>No Groups Found</h3>
+      <p *ngIf="selectedCategoryFilter !== 'all'">No groups in this category. Try selecting a different category or create a new group.</p>
+      <p *ngIf="selectedCategoryFilter === 'all'">Create your first group to get started</p>
+      <ion-button expand="block" (click)="presentNewGroupModal()" color="primary" class="ion-margin-top">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Create Group
+      </ion-button>
+    </div>
+  </ng-template>
+</ion-content>
