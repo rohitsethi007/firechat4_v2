@@ -92,6 +92,15 @@ export class ProfilePage implements OnInit {
   ionViewDidEnter() {
     const previousUrl = this.router.url;
     this.showBackButton = !previousUrl.includes('/tabs/tab5') && this.myProfile;
+    
+    // Check for stored friend request status before loading user data
+    if (!this.myProfile) {
+      const storedStatus = localStorage.getItem(`friendRequest_${this.userId}`);
+      if (storedStatus === 'pending') {
+        this.friendRequestStatus = 'pending';
+      }
+    }
+    
     this.getUserData();
     this.loadBookmarkedPosts();
   }
@@ -113,12 +122,22 @@ export class ProfilePage implements OnInit {
     .subscribe(snapshot => {
       if (!snapshot.empty) {
         this.friendRequestStatus = 'pending';
+        
+        // Store the request status in localStorage to persist between visits
+        localStorage.setItem(`friendRequest_${this.userId}`, 'pending');
       } else {
         // Check if they're already friends (which would set messageMe to true)
         if (this.messageMe) {
           this.friendRequestStatus = 'accepted';
+          localStorage.removeItem(`friendRequest_${this.userId}`);
         } else {
-          this.friendRequestStatus = 'none';
+          // Check if we have a stored status in localStorage
+          const storedStatus = localStorage.getItem(`friendRequest_${this.userId}`);
+          if (storedStatus === 'pending') {
+            this.friendRequestStatus = 'pending';
+          } else {
+            this.friendRequestStatus = 'none';
+          }
         }
       }
     });
@@ -525,6 +544,10 @@ export class ProfilePage implements OnInit {
           handler: () => {
             this.firebaseProvider.sendFriendRequest(this.userId);
             this.friendRequestStatus = 'pending'; // Update status immediately
+            
+            // Store the request status in localStorage
+            localStorage.setItem(`friendRequest_${this.userId}`, 'pending');
+            
             this.loadingProvider.showToast('Friend request sent to ' + this.user.name);
           }
         }
