@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../services/login.service';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { Validator } from '../../environments/validator';
+import { Validator } from '../services/validator';
 import { Router } from '@angular/router';   
 import firebase from 'firebase/compat/app';
 import { AngularFireAuth } from '@angular/fire/compat/auth';

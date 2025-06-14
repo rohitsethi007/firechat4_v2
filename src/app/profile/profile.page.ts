@@ -7,7 +7,7 @@ import { ImageService } from '../services/image.service';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { FirebaseMessaging } from '@capacitor-firebase/messaging';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { Validator } from 'src/environments/validator';
+import { Validator } from 'src/app/services/validator';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirebaseService } from '../services/firebase.service';
 import { UserProfileModalPage } from '../user-profile-modal/user-profile-modal.page';

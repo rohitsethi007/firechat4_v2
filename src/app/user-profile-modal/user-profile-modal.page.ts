@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams} from '@ionic/angular';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { Validator } from 'src/environments/validator';
+import { Validator } from 'src/app/services/validator';
 import { LoadingService } from '../services/loading.service';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 
