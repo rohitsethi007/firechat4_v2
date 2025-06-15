@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
@@ -25,6 +25,7 @@ const routes: Routes = [
     EmojiPickerComponentModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [FeedPage]
+  declarations: [FeedPage],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class FeedPageModule {}
