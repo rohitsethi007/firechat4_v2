@@ -49,6 +49,10 @@ Chart.register(
   styleUrls: ['./post.page.scss'],
 })
 export class PostPage implements OnInit {
+  // Add method to handle image errors
+  handleImageError(event: any) {
+    event.target.src = './assets/images/default-image.png';
+  }
   private postId: any;
   post: any;
   title: any;
@@ -295,7 +299,7 @@ export class PostPage implements OnInit {
       this.loadingProvider.hide();
     });
   }
-  async showReactionsList() {
+  async showReactionsList(post?: any) {
     if (this.post.totalReactionCount === 0) {
       return;
     }
@@ -755,7 +759,7 @@ viewGroup(groupId) {
     }
   }
   
-  private initializePollData(p: any) {
+  initializePollData(p: any) {
     if (p.type !== 'poll') return;
 
     try {
@@ -852,7 +856,7 @@ async submitReactionCheckin() {
   }
 }
 
-async showCheckinsList() {
+async showCheckinsList(post?: any) {
   if (this.post.totalCheckinCount === 0) {
     return;
   }
@@ -1001,14 +1005,26 @@ isCommentLikedByUser(comment: Comment): boolean {
   return comment?.likedBy?.includes(this.loggedInUserId) || false;
 }
 
-
-
-replyToComment(comment: Comment) {
-  // Implement reply functionality
-}
-
 deleteComment(comment: Comment) {
-  // Implement delete functionality
+  try {
+    // Delete the comment from Firestore
+    this.firestore.collection('comments').doc(comment.id).delete();
+    
+    // Update the post's comment count in Firestore
+    this.firestore.collection('posts').doc(this.post.key).update({
+      totalCommentCount: firebase.firestore.FieldValue.increment(-1),
+      totalReviewCount: firebase.firestore.FieldValue.increment(-1)
+    });
+    
+    // Update local counts
+    this.post.totalReviewCount = Math.max((this.post.totalReviewCount || 1) - 1, 0);
+    this.post.totalCommentCount = Math.max((this.post.totalCommentCount || 1) - 1, 0);
+    
+    // Reload comments to refresh the UI
+    this.loadComments();
+  } catch (error) {
+    this.loadingProvider.showToast('Error deleting comment. Please try again.');
+  }
 }
 
 toggleReplyInput(comment: any) {

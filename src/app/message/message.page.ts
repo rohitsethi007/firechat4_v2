@@ -18,7 +18,7 @@ import firebase from 'firebase/compat/app';
 })
 export class MessagePage implements OnInit {
 
-  @ViewChild(IonContent, null) contentArea: IonContent;
+  @ViewChild(IonContent) contentArea: IonContent;
 
   userId: any;
   title: any;

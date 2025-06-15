@@ -57,7 +57,7 @@ export class FeedPage implements OnInit {
 
     private title: any;
     private groupId: any;
-    private posts: any = [];
+    posts: any = [];
     private searchPosts: any = [];
     private memberofGroups: any = [];
 
@@ -536,7 +536,7 @@ export class FeedPage implements OnInit {
 
     reportPost(post) {
       this.dataProvider.addReports(this.loggedInUserId, post).then(() => {
-        this.loadingProvider.showToast('Thank you for reporting the post.');
+        this.loadingProvider.showToast('This functionality is not implemented.');
       });
     }
 

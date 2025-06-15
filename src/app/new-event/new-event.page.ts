@@ -14,10 +14,10 @@ import firebase from 'firebase/compat/app';
   styleUrls: ['./new-event.page.scss'],
 })
 export class NewEventPage implements OnInit {
-  private title: any;
+  title: any;
   private event: any;
   private user: any;
-  private eventForm: UntypedFormGroup;
+  eventForm: UntypedFormGroup;
   private groupId: any;
   private group: any;
   private eventId: any;

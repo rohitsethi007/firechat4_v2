@@ -68,7 +68,7 @@ export class GroupSearchPage implements OnInit {
     });
   }
 
-  onCancel() {
+  onCancel(event?: any) {
     this.navCtrl.back();
   }
 
