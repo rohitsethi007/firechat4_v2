@@ -24,6 +24,9 @@ export class UserProfileModalPage implements OnInit {
     private loadingProvider: LoadingService,
     ) {
       this.user = this.navParam.data.user;
+      
+      // Log the user object to verify email is present
+      console.log('User in modal:', this.user);
 
       this.errorMessages = Validator.errorMessages
       this.myForm = this.formBuilder.group({
@@ -35,6 +38,8 @@ export class UserProfileModalPage implements OnInit {
     }
 
   ngOnInit() {
+    // Set email value in the form
+    this.myForm.get('email').setValue(this.user.email);
   }
 
   save() {

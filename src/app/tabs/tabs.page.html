@@ -28,7 +28,7 @@
       <ion-label size="small">More</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button (click)="goToAdminPage()">
+    <ion-tab-button *ngIf="isAdmin" (click)="goToAdminPage()">
       <ion-icon size="large" name="settings-outline"></ion-icon>
       <ion-label size="small">Admin</ion-label>
     </ion-tab-button>

@@ -22,6 +22,7 @@ export class TabsPage {
   conversationList: any;
   conversationsInfo: any; 
   isSuperAdmin: false;
+  isAdmin: boolean = false;
   loggedInUserId: any;
   private unreadSubscription: Subscription;
   totalUnreadMessages: any;
@@ -36,9 +37,18 @@ export class TabsPage {
     public firestore: AngularFirestore
     ) {
 
-  // Get friend requests count.
+  // Get friend requests count and check if user is admin
   this.afAuth.currentUser.then(user => {
     this.loggedInUserId = user?.uid;
+    
+    // Check if user is admin
+    this.firestore.doc(`accounts/${this.loggedInUserId}`).get().subscribe(userDoc => {
+      if (userDoc.exists) {
+        const userData = userDoc.data() as any;
+        this.isAdmin = userData.isAdmin === true || userData.email === 'test2011@test.com';
+      }
+    });
+    
     this.dataProvider.getRequests(this.loggedInUserId).snapshotChanges().subscribe((requestsRes: any) => {
       if (requestsRes.payload != null) {
       const requests = requestsRes.payload.data();

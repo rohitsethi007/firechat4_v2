@@ -60,6 +60,52 @@ export class TestDataService {
   private async createTestUsers(): Promise<any[]> {
     const users = [];
     
+    // Create admin account first
+    try {
+      const adminEmail = 'test2011@test.com';
+      const password = 'test123';
+      
+      // Create admin user in Firebase Auth
+      let adminUserId;
+      try {
+        const adminCredential = await this.auth.createUserWithEmailAndPassword(adminEmail, password);
+        adminUserId = adminCredential.user.uid;
+      } catch (error) {
+        // If admin already exists, get the user ID
+        const existingAdmin = await this.auth.signInWithEmailAndPassword(adminEmail, password);
+        adminUserId = existingAdmin.user.uid;
+      }
+      
+      // Create admin profile in Firestore
+      const adminData = {
+        userId: adminUserId,
+        email: adminEmail,
+        name: 'Admin',
+        username: 'admin',
+        img: 'https://randomuser.me/api/portraits/men/0.jpg',
+        dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
+        groups: [],
+        userReactions: [],
+        userNotifications: [],
+        userBookmarks: [],
+        publicVisibility: true,
+        showOnline: true,
+        isAdmin: true
+      };
+      
+      await this.firestore.doc(`accounts/${adminUserId}`).set(adminData, { merge: true });
+      
+      users.push({
+        id: adminUserId,
+        ...adminData
+      });
+      
+      console.log(`Created/updated admin user: ${adminEmail}`);
+    } catch (adminError) {
+      console.error('Error creating admin user:', adminError);
+    }
+    
+    // Create regular test users
     for (let i = 1; i <= 10; i++) {
       const email = `test${i}@test.com`;
       const password = 'test123';
@@ -96,7 +142,8 @@ export class TestDataService {
           userNotifications: [],
           userBookmarks: [],
           publicVisibility: true,
-          showOnline: true
+          showOnline: true,
+          isAdmin: false
         };
         
         await this.firestore.doc(`accounts/${userId}`).set(userData);

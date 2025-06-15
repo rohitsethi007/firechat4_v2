@@ -466,6 +466,15 @@ export class ProfilePage implements OnInit {
   }
 
   async editProfile() {
+    // Make sure email is included in the user object
+    if (this.user && !this.user.email) {
+      // Get the current user's email if it's not in the user object
+      const currentUser = await this.afAuth.currentUser;
+      if (currentUser && currentUser.email) {
+        this.user.email = currentUser.email;
+      }
+    }
+    
     const modal = await this.modalCtrl.create({
       component: UserProfileModalPage,
       componentProps: {
